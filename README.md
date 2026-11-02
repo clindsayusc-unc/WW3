@@ -88,17 +88,17 @@ main menu resumes it.
 
 ## Development
 
-| Command                  | What it does                                                                                                                                                          |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`            | Vite dev server                                                                                                                                                       |
-| `npm run check`          | typecheck + lint + unit tests + production build (CI runs this)                                                                                                       |
-| `npm test`               | Vitest: determinism, economy bounds, combat monotonicity, AI order validity, 120-turn soak, data validation                                                           |
-| `npm run e2e`            | Playwright: new game as USA, every screen, 10 turns, no console errors; screenshots in `docs/screenshots/`. Set `PW_CHROMIUM_PATH` if the bundled browser is missing. |
-| `npm run perf`           | 20-second camera sweep; writes `docs/perf-last-run.json`                                                                                                              |
-| `npm run soak`           | Headless 60-turn simulation with timing and a world event log                                                                                                         |
-| `npm run build:map`      | Rebuild regions/sea zones/ID texture from Natural Earth                                                                                                               |
-| `npm run build:textures` | Rebuild globe textures from NASA imagery                                                                                                                              |
-| `npm run build:nations`  | Rebuild `data/nations.json` from the IMF/World Bank APIs                                                                                                              |
+| Command                  | What it does                                                                                                                                                                                                                                    |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`            | Vite dev server                                                                                                                                                                                                                                 |
+| `npm run check`          | typecheck + lint + unit tests + production build (CI runs this)                                                                                                                                                                                 |
+| `npm test`               | Vitest: determinism, economy bounds, combat monotonicity, AI order validity, 120-turn soak, data validation                                                                                                                                     |
+| `npm run e2e`            | Playwright: new game as USA, every screen, war declaration + move order, 10 turns; Taiwan Strait Crisis as China for 50 turns; no console errors; screenshots in `docs/screenshots/`. Set `PW_CHROMIUM_PATH` if the bundled browser is missing. |
+| `npm run perf`           | 20-second camera sweep; writes `docs/perf-last-run.json`                                                                                                                                                                                        |
+| `npm run soak`           | Headless 60-turn simulation with timing and a world event log                                                                                                                                                                                   |
+| `npm run build:map`      | Rebuild regions/sea zones/ID texture from Natural Earth                                                                                                                                                                                         |
+| `npm run build:textures` | Rebuild globe textures from NASA imagery                                                                                                                                                                                                        |
+| `npm run build:nations`  | Rebuild `data/nations.json` from the IMF/World Bank APIs                                                                                                                                                                                        |
 
 Layout: `src/sim` (pure deterministic simulation, runs in a Web Worker), `src/render` (globe, layers,
 units, camera), `src/ui` (React HUD and screens), `src/state` (zustand stores, worker bridge, saves),

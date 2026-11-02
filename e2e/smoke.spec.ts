@@ -23,6 +23,29 @@ async function fly(page: Page, lat: number, lon: number, d: number) {
   );
 }
 
+/** Ends `n` turns, answering any decision modal that appears while waiting for the End Turn button. */
+async function playTurns(page: Page, n: number, onEvent?: () => Promise<void>): Promise<void> {
+  for (let i = 0; i < n; i++) {
+    const deadline = Date.now() + 90_000;
+    for (;;) {
+      if (await page.getByTestId('end-screen').isVisible().catch(() => false)) return;
+      if (await page.getByTestId('event-modal').isVisible().catch(() => false)) {
+        if (onEvent) await onEvent();
+        await page.getByTestId('choice-0').click();
+        await page.waitForTimeout(150);
+        continue;
+      }
+      if (await page.getByTestId('end-turn').isEnabled().catch(() => false)) {
+        await page.getByTestId('end-turn').click();
+        await page.waitForTimeout(250);
+        break;
+      }
+      if (Date.now() > deadline) throw new Error(`turn ${i + 1}: End Turn never became available`);
+      await page.waitForTimeout(200);
+    }
+  }
+}
+
 async function shot(page: Page, name: string) {
   mkdirSync(SHOTS, { recursive: true });
   await page.waitForTimeout(1500);
@@ -145,25 +168,18 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
 
   // Ten turns, resolving any event that pops up (screenshot the first one).
   let eventShot = false;
-  for (let i = 0; i < 10; i++) {
-    const event = page.getByTestId('event-modal');
-    if (await event.isVisible().catch(() => false)) {
-      if (!eventShot) {
-        await shot(page, 'event');
-        eventShot = true;
-      }
-      await page.getByTestId('choice-0').click();
+  await playTurns(page, 10, async () => {
+    if (!eventShot) {
+      await shot(page, 'event');
+      eventShot = true;
     }
-    await expect(page.getByTestId('end-turn')).toBeEnabled({ timeout: 60_000 });
-    await page.getByTestId('end-turn').click();
-    await page.waitForTimeout(400);
-  }
-  const event = page.getByTestId('event-modal');
-  if (await event.isVisible().catch(() => false)) {
-    await shot(page, 'event');
-    await page.getByTestId('choice-0').click();
-  }
+  });
   await expect(page.getByTestId('hud')).toContainText('November 2027', { timeout: 60_000 });
+  // A decision may be waiting after the last turn; answer it before opening other screens.
+  while (await page.getByTestId('event-modal').isVisible().catch(() => false)) {
+    await page.getByTestId('choice-0').click();
+    await page.waitForTimeout(200);
+  }
   await page.getByTestId('nav-summary').click();
   await shot(page, 'summary');
   await page.getByTestId('modal-close').click();
@@ -171,6 +187,30 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.waitForTimeout(4000);
   await shot(page, 'ukraine-front');
   await shot(page, 'feat-playable-v1');
+  expect(errors).toEqual([]);
+});
+
+test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(m.text());
+  });
+  await page.goto('/');
+  await expect(page.getByTestId('loading')).toBeHidden({ timeout: 120_000 });
+  await page.getByTestId('menu-new').click();
+  await page.getByTestId('scenario-taiwan').click();
+  await page.getByTestId('scenario-next').click();
+  await page.getByTestId('leader-grid').getByTestId('leader-CHN').click();
+  await page.getByTestId('start-game').click();
+  await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
+  // Set a research project and a budget so the economy loop is exercised.
+  await page.getByTestId('nav-research').click();
+  await page.getByTestId('tech-semi-mature-nodes').click();
+  await page.getByTestId('modal-close').click();
+  await playTurns(page, 50);
+  await page.waitForTimeout(1000);
+  await shot(page, 'taiwan-crisis-50-turns');
   expect(errors).toEqual([]);
 });
 
