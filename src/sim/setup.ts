@@ -102,6 +102,7 @@ export function createGame(world: World, options: NewGameOptions): GameState {
         deficit: 0,
       },
       monthsUnstable: 0,
+      capitalLostMonths: 0,
       aiNote: '',
       leaderName: leader?.name ?? 'Head of State',
       leaderTitle: leader?.title ?? 'Leader',
@@ -266,7 +267,11 @@ function placeStartingForces(world: World, state: GameState): void {
   const navies = forcesData.navies as Record<string, Record<string, number>>;
   const bombers = forcesData.bombers as Record<string, number>;
   for (const n of world.nationList) {
-    const owned = (world.regionsByNation.get(n.iso3) ?? []).filter(
+    // Garrison every region the nation controls at start, including occupied ones (e.g. Donetsk).
+    const controlled = Object.values(state.regions)
+      .filter((r) => r.controller === n.iso3 && r.owner !== n.iso3)
+      .map((r) => r.id);
+    const owned = [...controlled, ...(world.regionsByNation.get(n.iso3) ?? [])].filter(
       (rid) => state.regions[rid]?.controller === n.iso3,
     );
     if (owned.length === 0) continue;
@@ -289,7 +294,10 @@ function placeStartingForces(world: World, state: GameState): void {
       ['artillery', 0.1],
     ];
     const weights = owned.map(
-      (rid) => (world.regions.get(rid)?.populationShare ?? 0) + (rid === cap ? 0.3 : 0),
+      (rid) =>
+        (world.regions.get(rid)?.populationShare ?? 0) +
+        (rid === cap ? 0.08 : 0) +
+        (controlled.includes(rid) ? 0.25 : 0),
     );
     const totalW = weights.reduce((a, b) => a + b, 0) || 1;
     const pickRegion = (i: number): RegionId => {

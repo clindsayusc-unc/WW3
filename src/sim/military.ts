@@ -19,11 +19,11 @@ import {
 
 export const LANCHESTER_K = 3;
 /** Attack firepower saturates beyond this many land units in one region (front width). */
-export const FRONT_WIDTH = 8;
+export const FRONT_WIDTH = 6;
 /** Defenders fighting on their own nation's soil. */
 export const HOME_DEFENCE = 1.3;
 /** Regions held unchanged for 6+ months are fortified. */
-export const ENTRENCHED = 1.25;
+export const ENTRENCHED = 1.5;
 
 export function isFriendly(world: World, state: GameState, iso: Iso3, other: Iso3 | null): boolean {
   if (other === null) return true;
@@ -263,8 +263,7 @@ export function runCombat(world: World, state: GameState): BattleResult[] {
         void t;
         return s + f;
       }, 0);
-    const congestion =
-      attackers.length > FRONT_WIDTH ? Math.sqrt(FRONT_WIDTH / attackers.length) : 1;
+    const congestion = attackers.length > FRONT_WIDTH ? (FRONT_WIDTH / attackers.length) ** 0.7 : 1;
     const fAtt =
       firepower(attackers, 'attack') * congestion + attSupport.strike * clamp(attSup * 1.6, 0.2, 1);
     const fDef =
@@ -457,8 +456,13 @@ export function checkCapitulations(world: World, state: GameState): void {
     const cap = world.capitalRegion.get(n.iso3);
     if (cap === undefined) continue;
     const capCtrl = state.regions[cap]?.controller;
-    if (!capCtrl || capCtrl === n.iso3 || !atWar(state, n.iso3, capCtrl)) continue;
-    if (controlShare(world, state, n.iso3) > 0.3) continue;
+    if (!capCtrl || capCtrl === n.iso3 || !atWar(state, n.iso3, capCtrl)) {
+      n.capitalLostMonths = 0;
+      continue;
+    }
+    n.capitalLostMonths += 1;
+    // Capitulation needs the capital held by the enemy for three months and ≤ 30% of the population controlled.
+    if (n.capitalLostMonths < 3 || controlShare(world, state, n.iso3) > 0.3) continue;
     capitulate(world, state, n.iso3, capCtrl);
   }
 }
@@ -519,21 +523,34 @@ export function estimateOdds(
   if (!controller || !atWar(state, owner, controller))
     return { ratio: 0, text: `Cannot enter: not at war with ${nationName(world, controller)}.` };
   const terrain = world.terrain[meta.terrain] ?? { defence: 1, armorBonus: 1 };
-  const att = movers.reduce(
-    (s, u) =>
-      s + unitPower(world, state, u, 'attack') * (u.type === 'armored' ? terrain.armorBonus : 1),
-    0,
-  );
+  const r = state.regions[target]!;
+  // Mirror runCombat's multipliers so the AI and the player see the odds the battle will use.
+  const landMovers = movers.filter((u) => world.unitTypes.get(u.type)?.domain === 'land');
+  const alreadyThere = unitsIn(state, target).filter((u) => u.owner === owner && world.unitTypes.get(u.type)?.domain === 'land' && !movers.includes(u));
+  const attackersAll = [...landMovers, ...alreadyThere];
+  const congestion = attackersAll.length > FRONT_WIDTH ? (FRONT_WIDTH / attackersAll.length) ** 0.7 : 1;
+  const att =
+    attackersAll.reduce((s, u) => {
+      let f = unitPower(world, state, u, 'attack');
+      if (u.type === 'armored' || u.type === 'mechanized') f *= terrain.armorBonus;
+      f *= 1 + 0.05 * (state.nations[u.owner]?.mobilization ?? 0);
+      return s + f;
+    }, 0) * congestion;
   const defenders = unitsIn(state, target).filter(
     (u) =>
       !atWar(state, u.owner, controller) &&
       atWar(state, u.owner, owner) &&
       world.unitTypes.get(u.type)?.domain === 'land',
   );
-  const def = defenders.reduce(
-    (s, u) => s + unitPower(world, state, u, 'defence') * terrain.defence,
-    0,
-  );
+  const def = defenders.reduce((s, u) => {
+    let f = unitPower(world, state, u, 'defence') * terrain.defence;
+    if (u.type === 'armored' || u.type === 'mechanized') f *= terrain.armorBonus;
+    if (r.owner === u.owner) f *= HOME_DEFENCE;
+    if (state.turn - r.flippedTurn >= 6) f *= ENTRENCHED;
+    if (state.nations[u.owner]?.mobilization === 2) f *= 1.1;
+    if (!r.supplied) f *= 0.6;
+    return s + f;
+  }, 0);
   if (def === 0) return { ratio: Infinity, text: 'Undefended: the region will be captured.' };
   const ratio = att / def;
   const text =

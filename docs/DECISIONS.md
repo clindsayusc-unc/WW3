@@ -387,3 +387,23 @@ stops and resolves with average/p95 frame time, fps, JS heap (Chrome only), text
 estimated GPU bytes of uploaded textures. `npm run perf` runs it under Playwright and writes
 `docs/perf-last-run.json`. Headless SwiftShader numbers are recorded in `docs/PERF.md` as
 non-representative; the M3 figures must be measured on the owner's machine.
+
+## D-047 — 2026-11-02 — Balance pass from multi-seed soaks
+
+Headless soaks (`scripts/soak.ts`, six seeds) showed Ukraine falling in 7–10 months. Causes and
+fixes: (1) the occupied Donetsk region had no Russian garrison because starting units were placed
+only in owned regions — units are now placed in every controlled region, with extra weight for
+occupied ones; (2) the AI's odds estimate ignored the defender bonuses the battle applies (home
+soil, entrenchment, mobilisation, supply, front-width congestion), so Ukraine's AI attacked into
+Rostov at ruinous odds — `estimateOdds` now mirrors `runCombat`, for the AI and the player's odds
+display alike; (3) entrenchment raised to ×1.5, front width to 6 units with a (6/n)^0.7 saturation;
+(4) capitulation needs the capital in enemy hands for three consecutive months. Result: Ukraine
+survives in 6/6 seeds, holding 3–4 of 7 regions at a negotiated peace after 5–8 months.
+
+## D-048 — 2026-11-02 — Log noise and proposal frequency
+
+AI-to-AI trade agreements between non-majors are executed silently (they still affect relations
+and growth); rejections are logged only when a major or the player is involved. AI trade proposals
+run at 1.5%/pair/month (0.6% toward the player) so the player's inbox holds a few meaningful offers
+rather than a flood. Starting garrisons weight the capital by +0.08 population share instead of
++0.3, so the capital holds a strong but not overwhelming share of the army.

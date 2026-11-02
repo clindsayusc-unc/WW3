@@ -135,6 +135,30 @@ export function CameraRig({ idMap }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gl, camera, idMap]);
 
+  // Dev/e2e hook: client-space position of a region centroid, and world lookups.
+  useEffect(() => {
+    const w = window as unknown as { ww3?: Record<string, unknown> };
+    w.ww3 = w.ww3 ?? {};
+    w.ww3.screenPos = (regionId: number) => {
+      const meta = world.regions.get(regionId);
+      if (!meta) return null;
+      const p = latLonToVec3(meta.lat, meta.lon, 1.004).project(camera);
+      const rect = gl.domElement.getBoundingClientRect();
+      return {
+        x: rect.left + (p.x * 0.5 + 0.5) * rect.width,
+        y: rect.top + (-p.y * 0.5 + 0.5) * rect.height,
+        z: p.z,
+      };
+    };
+    w.ww3.neighbours = (regionId: number) => [...(world.regions.get(regionId)?.neighbours ?? [])];
+    w.ww3.capital = (iso3: string) => world.capitalRegion.get(iso3) ?? null;
+    w.ww3.isLand = (regionId: number) => !(world.regions.get(regionId)?.sea ?? true);
+    w.ww3.regionLatLon = (regionId: number) => {
+      const m = world.regions.get(regionId);
+      return m ? { lat: m.lat, lon: m.lon } : null;
+    };
+  }, [camera, gl]);
+
   // Fly-to requests from the UI.
   const flyTo = useUiStore((s) => s.flyTo);
   useEffect(() => {

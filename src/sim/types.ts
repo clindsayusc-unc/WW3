@@ -73,6 +73,8 @@ export interface NationState {
   production: ProductionItem[];
   finances: Finances;
   monthsUnstable: number;
+  /** Consecutive months the capital has been in enemy hands. */
+  capitalLostMonths: number;
   /** Latest one-line AI rationale (for the diplomacy screen). */
   aiNote: string;
   /** Leader name shown in the UI; may be replaced by a fictional successor. */

@@ -5,6 +5,17 @@ const SHOTS = 'docs/screenshots';
 test.setTimeout(900_000);
 
 type Ww3Window = { ww3: { fly: (lat: number, lon: number, d: number) => void } };
+type Ww3Hook = {
+  capital: (iso3: string) => number | null;
+  neighbours: (id: number) => number[];
+  isLand: (id: number) => boolean;
+  screenPos: (id: number) => { x: number; y: number; z: number } | null;
+  regionLatLon: (id: number) => { lat: number; lon: number } | null;
+  ui: { getState: () => { select: (id: number | null) => void } };
+  game: {
+    getState: () => { game: { regions: Record<number, { controller: string | null }> } | null };
+  };
+};
 async function fly(page: Page, lat: number, lon: number, d: number) {
   await page.evaluate(
     ([a, b, c]) => (globalThis as unknown as Ww3Window).ww3.fly(a!, b!, c!),
@@ -91,14 +102,58 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await shot(page, 'military');
   await page.getByTestId('modal-close').click();
 
+  // Fight a war: declare war on Cuba, then order the capital garrison to an adjacent region.
+  await page.getByTestId('nav-diplomacy').click();
+  await page.getByTestId('diplomacy-search').fill('Cuba');
+  await page.getByTestId('dip-CUB').click();
+  await page.getByTestId('act-declareWar').click();
+  await page.getByTestId('modal-close').click();
+  await expect(page.getByTestId('alerts')).toContainText('declares war on Cuba');
+  const move = await page.evaluate(() => {
+    const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
+    const cap = w.capital('USA')!;
+    const game = w.game.getState().game!;
+    const target = w
+      .neighbours(cap)
+      .find((n) => w.isLand(n) && game.regions[n]?.controller === 'USA')!;
+    const meta = { cap, target };
+    w.ui.getState().select(cap);
+    return meta;
+  });
+  const capMeta = await page.evaluate(
+    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.regionLatLon(id),
+    move.cap,
+  );
+  await fly(page, capMeta!.lat, capMeta!.lon, 1.35);
+  await page.waitForTimeout(3500);
+  await page.getByTestId('own-stack').first().click();
+  await expect(page.getByTestId('orders-hint')).toBeVisible();
+  const pos = await page.evaluate(
+    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.screenPos(id),
+    move.target,
+  );
+  expect(pos).not.toBeNull();
+  await page.mouse.move(pos!.x, pos!.y);
+  await page.waitForTimeout(500);
+  await page.mouse.click(pos!.x, pos!.y, { button: 'right' });
+  await expect(page.getByTestId('context-panel')).toContainText('Moving to', { timeout: 10_000 });
+  await shot(page, 'orders');
+
   await page.getByTestId('nav-settings').click();
   await expect(page.getByTestId('modal-settings')).toBeVisible();
   await page.getByTestId('modal-close').click();
 
-  // Ten turns, resolving any event that pops up.
+  // Ten turns, resolving any event that pops up (screenshot the first one).
+  let eventShot = false;
   for (let i = 0; i < 10; i++) {
     const event = page.getByTestId('event-modal');
-    if (await event.isVisible().catch(() => false)) await page.getByTestId('choice-0').click();
+    if (await event.isVisible().catch(() => false)) {
+      if (!eventShot) {
+        await shot(page, 'event');
+        eventShot = true;
+      }
+      await page.getByTestId('choice-0').click();
+    }
     await expect(page.getByTestId('end-turn')).toBeEnabled({ timeout: 60_000 });
     await page.getByTestId('end-turn').click();
     await page.waitForTimeout(400);
