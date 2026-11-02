@@ -89,6 +89,9 @@ export interface RegionState {
   controller: Iso3 | null;
   /** 0..1 — war damage; reduces the region's economic output. */
   devastation: number;
+  /** Supply level 0..1 reaching this region for its controller (D-050). */
+  supply: number;
+  /** `supply >= 0.25`; kept for the UI and older saves. */
   supplied: boolean;
   /** Set when the region changed controller this turn (for the renderer). */
   flippedTurn: number;
@@ -105,6 +108,49 @@ export interface Unit {
   path: RegionId[];
   /** Region the unit was in at the start of the last turn (for movement animation). */
   prevRegion: RegionId;
+  /** Movement points banked toward the next step when terrain costs more than one turn. */
+  moveProgress: number;
+}
+
+export type ChokepointStatus = 'open' | 'contested' | 'closed';
+export interface ChokepointState {
+  status: ChokepointStatus;
+  /** Nation closing or contesting it (null when open). */
+  by: Iso3 | null;
+  mined: boolean;
+  minedBy: Iso3 | null;
+  /** Turn the status last changed. */
+  since: number;
+}
+
+/** One factor in a combat, movement or supply calculation, shown to the player (D-018). */
+export interface Modifier {
+  readonly label: string;
+  readonly factor: number;
+  readonly detail: string;
+}
+
+export interface PathPreview {
+  readonly regions: RegionId[];
+  /** Movement cost of each step (1 = one month for a speed-1 unit). */
+  readonly costs: number[];
+  /** Supply level at each step (0..1, as it stands now). */
+  readonly supply: number[];
+  readonly turns: number;
+  readonly totalCost: number;
+}
+
+export interface OddsReport {
+  readonly target: RegionId;
+  readonly ratio: number;
+  readonly text: string;
+  readonly attacker: Modifier[];
+  readonly defender: Modifier[];
+  readonly attackPower: number;
+  readonly defencePower: number;
+  readonly defenders: number;
+  readonly path: PathPreview | null;
+  readonly pathNote: string | null;
 }
 
 export interface War {
@@ -228,6 +274,9 @@ export interface GameState {
   news: string[];
   strikes: Strike[];
   detonations: number;
+  chokepoints: Record<string, ChokepointState>;
+  /** Oil price index, 1 = January 2027; rises while chokepoints are closed. */
+  oilPrice: number;
   resolutionPassed: boolean;
   victory: Victory | null;
   defeat: Defeat | null;
@@ -259,7 +308,12 @@ export type Command =
   | { readonly type: 'respond'; readonly proposalId: number; readonly accept: boolean }
   | { readonly type: 'resolveEvent'; readonly pendingId: string; readonly choice: number }
   | { readonly type: 'nuclearStrike'; readonly target: Iso3; readonly region: RegionId }
-  | { readonly type: 'disband'; readonly unitIds: number[] };
+  | { readonly type: 'disband'; readonly unitIds: number[] }
+  | {
+      readonly type: 'chokepoint';
+      readonly id: string;
+      readonly action: 'close' | 'open' | 'mine' | 'clear';
+    };
 
 export interface NewGameOptions {
   readonly seed: number;
@@ -275,10 +329,5 @@ export type WorkerRequest =
 
 export type WorkerResponse =
   | { readonly kind: 'state'; readonly state: GameState; readonly ms: number }
-  | {
-      readonly kind: 'odds';
-      readonly target: RegionId;
-      readonly ratio: number;
-      readonly text: string;
-    }
+  | { readonly kind: 'odds'; readonly report: OddsReport }
   | { readonly kind: 'error'; readonly message: string };

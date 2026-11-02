@@ -118,7 +118,8 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       owner,
       controller: owner,
       devastation: 0,
-      supplied: true,
+      supply: owner ? 1 : 0,
+      supplied: owner !== null,
       flippedTurn: -1,
     };
   }
@@ -151,6 +152,13 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     news: [],
     strikes: [],
     detonations: 0,
+    chokepoints: Object.fromEntries(
+      world.chokepoints.map((c) => [
+        c.id,
+        { status: 'open', by: null, mined: false, minedBy: null, since: 0 },
+      ]),
+    ),
+    oilPrice: 1,
     resolutionPassed: false,
     victory: null,
     defeat: null,
@@ -243,6 +251,7 @@ function addUnit(
     morale: 80,
     path: [],
     prevRegion: region,
+    moveProgress: 0,
   };
   state.units[u.id] = u;
   return u;

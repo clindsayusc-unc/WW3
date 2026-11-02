@@ -2,6 +2,7 @@ import type {
   Command,
   GameState,
   NewGameOptions,
+  OddsReport,
   RegionId,
   WorkerRequest,
   WorkerResponse,
@@ -10,7 +11,7 @@ import { useGameStore } from './gameStore';
 
 /** Owns the simulation Web Worker and pipes its state into the zustand store. */
 let worker: Worker | null = null;
-let oddsListener: ((target: RegionId, ratio: number, text: string) => void) | null = null;
+let oddsListener: ((report: OddsReport) => void) | null = null;
 
 function ensureWorker(): Worker {
   if (worker) return worker;
@@ -18,7 +19,7 @@ function ensureWorker(): Worker {
   worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
     const msg = event.data;
     if (msg.kind === 'state') useGameStore.getState().setGame(msg.state, msg.ms);
-    else if (msg.kind === 'odds') oddsListener?.(msg.target, msg.ratio, msg.text);
+    else if (msg.kind === 'odds') oddsListener?.(msg.report);
     else useGameStore.getState().setError(msg.message);
   };
   worker.onerror = (e) => useGameStore.getState().setError(e.message);
@@ -47,7 +48,7 @@ export function dispatch(command: Command): void {
 export function requestOdds(
   unitIds: number[],
   target: RegionId,
-  cb: (target: RegionId, ratio: number, text: string) => void,
+  cb: (report: OddsReport) => void,
 ): void {
   oddsListener = cb;
   send({ kind: 'odds', unitIds, target });

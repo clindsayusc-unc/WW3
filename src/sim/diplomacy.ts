@@ -165,6 +165,16 @@ export function makePeace(
   });
   headline(state, `PEACE: ${nationName(world, a)} and ${nationName(world, b)} end hostilities`);
   state.globalTension = clamp(state.globalTension - 6, 0, 100);
+  // Orders that would have attacked the former enemy are stale: stand the units down.
+  for (const u of Object.values(state.units)) {
+    if (u.path.length === 0) continue;
+    const owner = u.owner;
+    if (u.path.some((r) => {
+      const c = state.regions[r]?.controller;
+      return !!c && c !== owner && !atWar(state, owner, c) && !alliesOf(world, state, owner).includes(c);
+    }))
+      u.path = [];
+  }
 }
 
 function settlePair(

@@ -1581,3 +1581,98 @@ input[type='range'] {
     gap: 10px;
   }
 }
+
+/* --- geography: modifier breakdowns, route preview, chokepoints (D-053) --- */
+.breakdown {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2px 8px;
+  font-size: 11px;
+  margin-top: 6px;
+}
+.breakdown .bk-head {
+  grid-column: 1 / -1;
+  color: var(--muted, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  margin-top: 4px;
+}
+.breakdown .bk-label {
+  color: #cbd5e1;
+}
+.breakdown .bk-bar {
+  align-self: center;
+  height: 4px;
+  background: rgba(148, 163, 184, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.breakdown .bk-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+}
+.breakdown .bk-value {
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+}
+.breakdown .bk-value.good {
+  color: #4ade80;
+}
+.breakdown .bk-value.bad {
+  color: #f87171;
+}
+.route {
+  margin-top: 6px;
+  font-size: 11px;
+}
+.route-step {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 1px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+.route-step .mono {
+  font-family: 'JetBrains Mono', monospace;
+  color: #94a3b8;
+}
+.cover-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 4px 0 2px;
+  background: rgba(148, 163, 184, 0.1);
+}
+.cover-bar span {
+  display: block;
+  height: 100%;
+}
+.choke-status {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.choke-status.open {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+.choke-status.contested {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+.choke-status.closed {
+  background: rgba(248, 113, 113, 0.18);
+  color: #f87171;
+}
+.choke-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}

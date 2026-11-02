@@ -21,8 +21,7 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
       state = refreshLeaders(world, req.state);
     } else if (req.kind === 'odds') {
       if (!state) throw new Error('Simulation not initialised');
-      const odds = estimateOdds(world, state, req.unitIds, req.target);
-      post({ kind: 'odds', target: req.target, ratio: odds.ratio, text: odds.text });
+      post({ kind: 'odds', report: estimateOdds(world, state, req.unitIds, req.target) });
       return;
     } else {
       if (!state) throw new Error('Simulation not initialised');

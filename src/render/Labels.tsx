@@ -7,6 +7,9 @@ import { loadWorld } from '../sim/world';
 import { useGameStore } from '../state/gameStore';
 import { useUiStore } from '../state/uiStore';
 import { nationHex } from './palette';
+import { chokepointState } from '../sim/geography';
+
+const CHOKE_COLOR = { open: '#4ade80', contested: '#fbbf24', closed: '#f87171' } as const;
 
 interface LabelItem {
   text: string;
@@ -109,10 +112,53 @@ export function Labels() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size.width, size.height);
     const ui = useUiStore.getState();
-    if (!ui.showLabels || ui.screen !== 'game') return;
+    if (ui.screen !== 'game') return;
     const game = useGameStore.getState().game;
     const dist = camera.position.length();
     const camDir = camera.position.clone().normalize();
+    // Chokepoint overlay (D-053): an anchor icon with the strait's status colour, always on top.
+    if (ui.showChokepoints && game) {
+      const horizon0 = 1 / dist;
+      for (const c of world.chokepoints) {
+        const pos = latLonToVec3(c.lat, c.lon, 1);
+        const facing = pos.dot(camDir);
+        if (facing < horizon0 + 0.02) continue;
+        tmp.copy(pos).multiplyScalar(1.003).project(camera);
+        if (tmp.z > 1) continue;
+        const x = (tmp.x * 0.5 + 0.5) * size.width;
+        const y = (-tmp.y * 0.5 + 0.5) * size.height;
+        const s = chokepointState(game, c.id);
+        const color = CHOKE_COLOR[s.status];
+        const r = dist > 2.6 ? 6 : 8;
+        ctx.globalAlpha = Math.min(1, (facing - horizon0) / 0.2);
+        ctx.beginPath();
+        ctx.arc(x, y, r + 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(2,6,12,0.85)';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = `700 ${r + 2}px Inter, system-ui, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = color;
+        ctx.fillText(s.status === 'closed' ? '✕' : s.status === 'contested' ? '!' : '⚓', x, y + 0.5);
+        if (dist < 2.6) {
+          ctx.font = '600 10px Inter, system-ui, sans-serif';
+          ctx.letterSpacing = '0.04em';
+          const label = `${c.name.toUpperCase()}${s.status !== 'open' ? ` · ${s.status.toUpperCase()}` : ''}${s.mined ? ' · MINED' : ''}`;
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = 'rgba(2,6,12,0.85)';
+          ctx.strokeText(label, x, y + r + 9);
+          ctx.fillStyle = color;
+          ctx.fillText(label, x, y + r + 9);
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+    if (!ui.showLabels) return;
     // Visibility by kind and zoom.
     const countryAlpha = dist > 3.6 ? 0.6 : dist < 1.25 ? Math.max(0, (dist - 1.1) / 0.15) : 1;
     const capitalAlpha = dist < 2.6 ? Math.min(1, (2.6 - dist) / 0.4) : 0;

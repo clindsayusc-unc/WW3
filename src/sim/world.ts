@@ -11,7 +11,78 @@ import eventsData from '../../data/events.json';
 import unitsData from '../../data/units.json';
 import techsData from '../../data/techs.json';
 import citiesData from '../../data/cities.json';
+import terrainData from '../../data/terrain.json';
+import climateData from '../../data/climate.json';
+import crossingsData from '../../data/crossings.json';
+import infrastructureData from '../../data/infrastructure.json';
+import chokepointsData from '../../data/chokepoints.json';
 import type { Iso3, RegionId, TechId, UnitTypeId } from './types';
+
+export type TerrainClass =
+  | 'plains'
+  | 'hills'
+  | 'mountains'
+  | 'desert'
+  | 'jungle'
+  | 'forest'
+  | 'marsh'
+  | 'urban'
+  | 'arctic'
+  | 'ice'
+  | 'sea';
+
+/** Area shares of MODIS IGBP land-cover groups (data/terrain.json). */
+export interface CoverShares {
+  readonly forest: number;
+  readonly jungle: number;
+  readonly woodland: number;
+  readonly shrub: number;
+  readonly savanna: number;
+  readonly grassland: number;
+  readonly marsh: number;
+  readonly cropland: number;
+  readonly urban: number;
+  readonly ice: number;
+  readonly barren: number;
+  readonly water: number;
+}
+
+/** Twelve monthly values (January first) from data/climate.json. */
+export interface ClimateMeta {
+  readonly tempC: readonly number[];
+  readonly precipMm: readonly number[];
+  readonly winter: readonly number[];
+  readonly monsoon: readonly number[];
+  readonly heat: readonly number[];
+}
+
+/** A crossing feature on the border between two adjacent land regions (data/crossings.json). */
+export interface CrossingMeta {
+  readonly a: RegionId;
+  readonly b: RegionId;
+  readonly borderKm: number;
+  readonly rivers: readonly string[];
+  readonly mountain: boolean;
+  readonly ranges: readonly string[];
+  readonly borderRuggedness: number;
+  readonly borderElev: number;
+  readonly pass: string | null;
+}
+
+export interface ChokepointMeta {
+  readonly id: string;
+  readonly name: string;
+  readonly lat: number;
+  readonly lon: number;
+  readonly zones: readonly RegionId[];
+  readonly shores: readonly RegionId[];
+  readonly oilMbd: number | null;
+  readonly tradeShare: number;
+  readonly oilShock: number;
+  readonly semiconductors: boolean;
+  readonly dependents: Readonly<Record<Iso3, number>>;
+  readonly note: string;
+}
 
 export interface RegionMeta {
   readonly id: RegionId;
@@ -23,10 +94,26 @@ export interface RegionMeta {
   readonly populationShare: number;
   readonly population: number;
   readonly neighbours: readonly RegionId[];
-  readonly terrain: string;
+  readonly terrain: TerrainClass;
   readonly coastal: boolean;
   readonly capital: boolean;
   readonly sea: boolean;
+  /** Mean / standard deviation / maximum elevation in metres (ETOPO 2022). */
+  readonly elevMean: number;
+  readonly elevStd: number;
+  readonly elevMax: number;
+  /** Terrain ruggedness index: mean |Δelevation| to neighbouring 3.7 km cells, metres. */
+  readonly ruggedness: number;
+  readonly cover: CoverShares;
+  /** Road + rail density index 0.08..1 (Natural Earth). */
+  readonly infrastructure: number;
+  /** Abstract port throughput (Σ harbour sizes, NGA World Port Index), 0 when landlocked. */
+  readonly portCapacity: number;
+  readonly majorPort: boolean;
+  readonly ports: readonly { readonly name: string; readonly size: string }[];
+  readonly climate: ClimateMeta | null;
+  /** Connected water bodies the region borders (ids from the raster); landings need a shared one. */
+  readonly waterBodies: readonly number[];
 }
 
 export interface NationMeta {
@@ -217,7 +304,6 @@ export interface World {
   readonly events: readonly EventMeta[];
   readonly unitTypes: ReadonlyMap<UnitTypeId, UnitTypeMeta>;
   readonly unitTypeList: readonly UnitTypeMeta[];
-  readonly terrain: Readonly<Record<string, { defence: number; armorBonus: number }>>;
   readonly techs: ReadonlyMap<TechId, TechMeta>;
   readonly techList: readonly TechMeta[];
   readonly branches: readonly { id: string; name: string; color: string }[];
@@ -226,7 +312,18 @@ export interface World {
   readonly regionsByNation: ReadonlyMap<Iso3, readonly RegionId[]>;
   /** National capital region per nation (falls back to the most populous region). */
   readonly capitalRegion: ReadonlyMap<Iso3, RegionId>;
+  /** Crossing features keyed by `crossingKey(a, b)` (numeric, order-independent). */
+  readonly crossings: ReadonlyMap<number, CrossingMeta>;
+  readonly chokepoints: readonly ChokepointMeta[];
+  readonly chokepointsByZone: ReadonlyMap<RegionId, readonly ChokepointMeta[]>;
 }
+
+export const crossingKey = (a: RegionId, b: RegionId): number => (a < b ? a * 4096 + b : b * 4096 + a);
+
+const NO_COVER: CoverShares = {
+  forest: 0, jungle: 0, woodland: 0, shrub: 0, savanna: 0, grassland: 0, marsh: 0, cropland: 0,
+  urban: 0, ice: 0, barren: 0, water: 1,
+};
 
 export const relationKey = (a: Iso3, b: Iso3): string => (a < b ? `${a}|${b}` : `${b}|${a}`);
 export const sanctionKey = (from: Iso3, to: Iso3): string => `${from}>${to}`;
@@ -247,8 +344,16 @@ let cached: World | null = null;
 
 export function loadWorld(): World {
   if (cached) return cached;
+  const terrainById = new Map(terrainData.regions.map((t) => [t.id, t]));
+  const climateById = new Map(climateData.regions.map((c) => [c.id, c]));
+  const infraById = new Map(infrastructureData.regions.map((i) => [i.id, i]));
   const regionList: RegionMeta[] = [];
   for (const r of regionsMeta.regions) {
+    const t = terrainById.get(r.id);
+    const c = climateById.get(r.id);
+    const inf = infraById.get(r.id);
+    if (!t || !c || !inf)
+      throw new Error(`data/terrain|climate|infrastructure.json: region ${r.id} missing`);
     regionList.push({
       id: r.id,
       name: r.name,
@@ -259,10 +364,21 @@ export function loadWorld(): World {
       populationShare: r.populationShare,
       population: r.population,
       neighbours: r.neighbours,
-      terrain: r.terrain,
+      terrain: t.terrain as TerrainClass,
       coastal: r.coastal,
       capital: r.capital,
       sea: false,
+      elevMean: t.elevMean,
+      elevStd: t.elevStd,
+      elevMax: t.elevMax,
+      ruggedness: t.ruggedness,
+      cover: t.cover,
+      infrastructure: inf.infrastructure,
+      portCapacity: r.coastal ? inf.portCapacity : 0,
+      majorPort: r.coastal && inf.majorPort,
+      ports: r.coastal ? inf.ports : [],
+      climate: c,
+      waterBodies: t.waterBodies,
     });
   }
   for (const z of regionsMeta.seaZones) {
@@ -280,6 +396,17 @@ export function loadWorld(): World {
       coastal: true,
       capital: false,
       sea: true,
+      elevMean: 0,
+      elevStd: 0,
+      elevMax: 0,
+      ruggedness: 0,
+      cover: NO_COVER,
+      infrastructure: 0,
+      portCapacity: 0,
+      majorPort: false,
+      ports: [],
+      climate: null,
+      waterBodies: [],
     });
   }
   const regions = new Map(regionList.map((r) => [r.id, r]));
@@ -417,6 +544,33 @@ export function loadWorld(): World {
     capitalRegion.set(iso, best);
   }
 
+  const crossings = new Map<number, CrossingMeta>();
+  for (const e of crossingsData.edges) {
+    if (!regions.get(e.a)?.neighbours.includes(e.b)) continue;
+    crossings.set(crossingKey(e.a, e.b), e);
+  }
+  const chokepoints: ChokepointMeta[] = chokepointsData.chokepoints.map((c) => ({
+    id: c.id,
+    name: c.name,
+    lat: c.lat,
+    lon: c.lon,
+    zones: c.zones,
+    shores: c.shores,
+    oilMbd: c.oilMbd,
+    tradeShare: c.tradeShare,
+    oilShock: c.oilShock,
+    semiconductors: c.semiconductors,
+    dependents: Object.fromEntries(
+      Object.entries(c.dependents as Record<string, number | undefined>).filter(
+        (e): e is [string, number] => typeof e[1] === 'number',
+      ),
+    ),
+    note: c.note,
+  }));
+  const chokepointsByZone = new Map<RegionId, ChokepointMeta[]>();
+  for (const c of chokepoints)
+    for (const z of c.zones) chokepointsByZone.set(z, [...(chokepointsByZone.get(z) ?? []), c]);
+
   cached = {
     regions,
     regionList,
@@ -430,13 +584,15 @@ export function loadWorld(): World {
     events,
     unitTypes,
     unitTypeList,
-    terrain: unitsData.terrain,
     techs,
     techList,
     branches: techsData.branches,
     cities,
     regionsByNation,
     capitalRegion,
+    crossings,
+    chokepoints,
+    chokepointsByZone,
   };
   return cached;
 }

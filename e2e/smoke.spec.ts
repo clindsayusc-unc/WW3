@@ -118,6 +118,17 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.waitForTimeout(4500);
   await shot(page, 'taiwan-strait');
 
+  // Terrain map mode (key 7): land-cover tint shaded by elevation.
+  await fly(page, 32, 55, 1.9);
+  await page.getByTestId('mode-terrain').click();
+  await page.waitForTimeout(3500);
+  await shot(page, 'terrain-mode');
+  // Chokepoint overlay: Hormuz with its status icon and label.
+  await fly(page, 26.5, 56.3, 1.5);
+  await page.waitForTimeout(3500);
+  await shot(page, 'chokepoints');
+  await page.getByTestId('mode-political').click();
+
   // Screens.
   await page.getByTestId('nav-budget').click();
   await expect(page.getByTestId('modal-budget')).toBeVisible();
@@ -150,6 +161,41 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await expect(page.getByTestId('modal-military')).toBeVisible();
   await shot(page, 'military');
   await page.getByTestId('modal-close').click();
+
+  // Battle odds in the Zagros: declare war on Iran, select the capital garrison and hover
+  // Kermanshah (mountains) to see the full modifier breakdown.
+  await page.getByTestId('nav-diplomacy').click();
+  await page.getByTestId('diplomacy-search').fill('Iran');
+  await page.getByTestId('dip-IRN').click();
+  await page.getByTestId('act-declareWar').click();
+  await page.getByTestId('modal-close').click();
+  await expect(page.getByTestId('alerts')).toContainText('declares war on Iran');
+  const kermanshah = await page.evaluate(() => {
+    const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
+    w.ui.getState().select(w.capital('USA')!);
+    return 584;
+  });
+  await page.getByTestId('own-stack').first().click();
+  await expect(page.getByTestId('orders-hint')).toBeVisible();
+  const kLatLon = await page.evaluate(
+    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.regionLatLon(id),
+    kermanshah,
+  );
+  await fly(page, kLatLon!.lat, kLatLon!.lon, 1.35);
+  await page.waitForTimeout(3500);
+  const kPos = await page.evaluate(
+    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.screenPos(id),
+    kermanshah,
+  );
+  expect(kPos).not.toBeNull();
+  await page.mouse.move(kPos!.x, kPos!.y);
+  await expect(page.getByTestId('odds-breakdown')).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByTestId('odds-breakdown')).toContainText('Terrain');
+  await page.getByTestId('odds-breakdown').scrollIntoViewIfNeeded();
+  await shot(page, 'zagros-odds');
+  await page.evaluate(() => (globalThis as unknown as { ww3: Ww3Hook }).ww3.ui.getState().select(null));
+  // window.ww3 keeps the renderer's hooks after the app installs its own (perf must survive).
+  expect(await page.evaluate(() => typeof (globalThis as unknown as { ww3: { perf?: unknown } }).ww3.perf)).toBe('function');
 
   // Fight a war: declare war on Cuba, then order the capital garrison to an adjacent region.
   await page.getByTestId('nav-diplomacy').click();

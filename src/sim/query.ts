@@ -124,10 +124,7 @@ export function hasTreaty(state: GameState, a: Iso3, b: Iso3, type?: string): bo
   );
 }
 
-const allyCache = new WeakMap<
-  GameState,
-  { version: number; alive: number; map: Map<Iso3, Iso3[]> }
->();
+const allyCache = new WeakMap<GameState, { version: number; map: Map<Iso3, Iso3[]> }>();
 
 export function bumpDiplomacy(state: GameState): void {
   state.diplomacyVersion += 1;
@@ -135,10 +132,9 @@ export function bumpDiplomacy(state: GameState): void {
 
 /** Defence-pact partners: explicit defensive/alliance treaties plus NATO and CSTO membership (D-024). Cached. */
 export function alliesOf(world: World, state: GameState, iso: Iso3): Iso3[] {
-  let alive = 0;
-  for (const n of Object.values(state.nations)) if (n.alive) alive++;
+  // Deaths bump diplomacyVersion (capitulate), so the version alone keys the cache.
   let entry = allyCache.get(state);
-  if (!entry || entry.version !== state.diplomacyVersion || entry.alive !== alive) {
+  if (!entry || entry.version !== state.diplomacyVersion) {
     const map = new Map<Iso3, Set<Iso3>>();
     const add = (a: Iso3, b: Iso3) => {
       if (a === b || !state.nations[a]?.alive || !state.nations[b]?.alive) return;
@@ -156,7 +152,7 @@ export function alliesOf(world: World, state: GameState, iso: Iso3): Iso3[] {
     }
     const flat = new Map<Iso3, Iso3[]>();
     for (const [k, v] of map) flat.set(k, [...v]);
-    entry = { version: state.diplomacyVersion, alive, map: flat };
+    entry = { version: state.diplomacyVersion, map: flat };
     allyCache.set(state, entry);
   }
   return entry.map.get(iso) ?? [];
@@ -295,37 +291,3 @@ export function worldGdp(world: World, state: GameState): number {
 
 export const isLand = (world: World, id: RegionId): boolean =>
   !(world.regions.get(id)?.sea ?? true);
-
-/** Land adjacency across a shared sea zone, usable by amphibious units when the mover holds sea control (D-025). */
-export function amphibiousTargets(
-  world: World,
-  state: GameState,
-  from: RegionId,
-  iso: Iso3,
-): RegionId[] {
-  const out: RegionId[] = [];
-  const meta = world.regions.get(from);
-  if (!meta || meta.sea) return out;
-  for (const z of meta.neighbours) {
-    const zm = world.regions.get(z);
-    if (!zm?.sea) continue;
-    if (!hasSeaControl(world, state, z, iso)) continue;
-    for (const t of zm.neighbours) {
-      if (t !== from && isLand(world, t) && !out.includes(t)) out.push(t);
-    }
-  }
-  return out;
-}
-
-export function hasSeaControl(world: World, state: GameState, zone: RegionId, iso: Iso3): boolean {
-  let mine = 0;
-  let theirs = 0;
-  for (const u of unitsIn(state, zone)) {
-    const t = world.unitTypes.get(u.type);
-    if (!t || t.domain !== 'sea') continue;
-    const p = unitPower(world, state, u, 'attack');
-    if (u.owner === iso || alliesOf(world, state, iso).includes(u.owner)) mine += p;
-    else if (atWar(state, iso, u.owner)) theirs += p;
-  }
-  return mine > 0 && mine >= theirs;
-}

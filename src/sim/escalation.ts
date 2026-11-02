@@ -1,5 +1,6 @@
 /** Global tension, DEFCON and nuclear use (D-028). */
 import { nationName, traitsOf, type World } from './world';
+import { invalidateGeoCache } from './geography';
 import type { Defcon, GameState, Iso3, RegionId } from './types';
 import {
   adjustRelation,
@@ -121,6 +122,7 @@ export function nuclearStrike(
     if (roll(state) < damage) delete state.units[u.id];
     else u.strength = clamp(u.strength * (1 - damage), 1, 100);
   }
+  invalidateGeoCache(state);
   a.stability = clamp(a.stability - 8, 0, 100);
   state.globalTension = 100;
   const from = world.capitalRegion.get(attacker) ?? region;

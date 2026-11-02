@@ -34,8 +34,11 @@ export function App() {
   useKeyboard();
   useEffect(() => {
     useUiStore.getState().setQuality(loadQuality());
-    // Dev/e2e hook: window.ww3.fly(lat, lon, distance), window.ww3.ui, window.ww3.game.
-    (window as unknown as { ww3: unknown }).ww3 = {
+    // Dev/e2e hook: window.ww3.fly(lat, lon, distance), window.ww3.ui, window.ww3.game. Merged
+    // into the existing object so hooks installed by the renderer (perf, screenPos, …) survive.
+    const w = window as unknown as { ww3?: Record<string, unknown> };
+    w.ww3 = {
+      ...(w.ww3 ?? {}),
       fly: (lat: number, lon: number, d?: number) => useUiStore.getState().fly(lat, lon, d),
       ui: useUiStore,
       game: useGameStore,

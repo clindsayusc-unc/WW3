@@ -2,6 +2,7 @@
 import { nationName, type World } from './world';
 import type { GameState, Iso3 } from './types';
 import { headline, log } from './query';
+import { semiconductorDisruption } from './geography';
 
 export function researchPointsPerMonth(world: World, state: GameState, iso: Iso3): number {
   const n = state.nations[iso]!;
@@ -10,7 +11,9 @@ export function researchPointsPerMonth(world: World, state: GameState, iso: Iso3
   const base = 10 * Math.sqrt(Math.max(0, spendBn));
   const major = world.nations.get(iso)?.major ? 1.1 : 1;
   const sanctions = state.sanctions.some((k) => k.endsWith(`>${iso}`)) ? 0.85 : 1;
-  return base * major * sanctions * (1 + (n.modifiers.researchSpeed ?? 0));
+  // Closed semiconductor chokepoints (Taiwan Strait, Malacca) starve chip importers (D-052).
+  const chips = 1 - semiconductorDisruption(world, state, iso);
+  return base * major * sanctions * chips * (1 + (n.modifiers.researchSpeed ?? 0));
 }
 
 export function availableTechs(world: World, state: GameState, iso: Iso3): string[] {

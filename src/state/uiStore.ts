@@ -14,7 +14,14 @@ export type Modal =
   | 'load'
   | 'nuclear'
   | 'end';
-export type MapMode = 'political' | 'blocs' | 'relations' | 'economy' | 'military' | 'tension';
+export type MapMode =
+  | 'political'
+  | 'blocs'
+  | 'relations'
+  | 'economy'
+  | 'military'
+  | 'tension'
+  | 'terrain';
 export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: string }[] = [
   {
     id: 'political',
@@ -47,6 +54,13 @@ export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: stri
     key: '6',
     tooltip: 'Flashpoint tension and active war zones.',
   },
+  {
+    id: 'terrain',
+    label: 'Terrain',
+    key: '7',
+    tooltip:
+      'Real terrain: land-cover tint (forest, jungle, desert, plains, marsh, tundra, cities) shaded by elevation (ETOPO 2022, MODIS).',
+  },
 ];
 export type Quality = 'low' | 'medium' | 'high';
 
@@ -70,6 +84,8 @@ interface UiStore {
   muted: boolean;
   showLabels: boolean;
   showClouds: boolean;
+  /** Chokepoint overlay: icons with open / contested / closed status (key C). */
+  showChokepoints: boolean;
   cameraDistance: number;
   fps: number;
   setScreen: (s: Screen) => void;
@@ -84,6 +100,7 @@ interface UiStore {
   toggleMute: () => void;
   toggleLabels: () => void;
   toggleClouds: () => void;
+  toggleChokepoints: () => void;
   setCameraDistance: (d: number) => void;
   setFps: (f: number) => void;
 }
@@ -101,6 +118,7 @@ export const useUiStore = create<UiStore>((set) => ({
   muted: false,
   showLabels: true,
   showClouds: true,
+  showChokepoints: true,
   cameraDistance: 3,
   fps: 60,
   setScreen: (screen) => set({ screen }),
@@ -116,6 +134,7 @@ export const useUiStore = create<UiStore>((set) => ({
   toggleMute: () => set((s) => ({ muted: !s.muted })),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
   toggleClouds: () => set((s) => ({ showClouds: !s.showClouds })),
+  toggleChokepoints: () => set((s) => ({ showChokepoints: !s.showChokepoints })),
   setCameraDistance: (cameraDistance) =>
     set((s) => (Math.abs(s.cameraDistance - cameraDistance) < 0.002 ? s : { cameraDistance })),
   setFps: (fps) => set({ fps }),
