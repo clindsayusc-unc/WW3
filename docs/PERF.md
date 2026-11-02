@@ -125,3 +125,20 @@ Chrome or Safari and paste the numbers into the log below.
   only when the state or map mode changes and hidden outside map mode 4; per frame it updates one
   uniform. The resources map mode writes the palette texture like the others.
 - The 240-turn soak in `src/sim/economy.test.ts` takes ≈ 150 s in vitest.
+
+## Diplomacy AI pass (D-071, D-072, D-073)
+
+- Budget: **turn < 400 ms** in Node. Before this pass the World of 2027 turn measured ≈ 360–560 ms
+  on the dev container (player BRA, seeds 1–12). Profiling (`node --cpu-prof`) put `runSupply` at
+  ≈ 45 % of the turn (≈ 110 ms per call, two calls a turn); the air cache rebuilt
+  `Object.keys(units)` on every interdiction lookup; the geography memo built a version string
+  per call. Fixes in D-073 cut the turn to ≈ 250 ms before the new systems.
+- New per-turn work: strategy (13 majors; target selection every six months or when a plan lapses,
+  cached military power per state), aid (≈ 70 candidate donors × the nations at war), blocs
+  (cohesion from ≤ 15 pairs per bloc), UN (≤ 1 vote a month), memory decay (≤ 14 entries per
+  holder). Together ≈ 20–30 ms.
+- Result: the 10-seed × 24-month Ukraine calibration averages **≈ 287 ms per turn** (first
+  turn ≈ 500 ms while V8 warms up). The calibration test asserts < 800 ms (1,200 ms on CI) because
+  vitest runs files in parallel and contention inflates wall time.
+- UI: the negotiation panel evaluates the draft deal on the main thread (pure function, < 1 ms);
+  the UN tab forecasts 15 votes per render. No renderer changes.

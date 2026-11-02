@@ -20,7 +20,27 @@ import resourcesData from '../../data/resources.json';
 import tradeData from '../../data/trade.json';
 import politicsData from '../../data/politics.json';
 import economyData from '../../data/economy.json';
-import type { Iso3, RegionId, Regime, ResourceId, TechId, UnitTypeId } from './types';
+import agendasData from '../../data/agendas.json';
+import unscData from '../../data/unsc.json';
+import type { AgendaId, Iso3, RegionId, Regime, ResourceId, TechId, UnitTypeId } from './types';
+
+/** A leader's long-term agenda from data/agendas.json (D-071). */
+export interface AgendaMeta {
+  readonly id: AgendaId;
+  /** 0..1 pull of the agenda (default 1). */
+  readonly weight: number;
+  readonly targets: readonly Iso3[];
+  readonly sphere: readonly Iso3[];
+  readonly flashpoint: string | null;
+  readonly basis: string;
+  readonly url: string;
+}
+
+export interface UnscMeta {
+  readonly permanent: readonly Iso3[];
+  readonly elected: readonly { readonly iso3: Iso3; readonly until: number }[];
+  readonly votesToPass: number;
+}
 
 /** A strategic resource from data/resources.json (D-061). */
 export interface ResourceMeta {
@@ -372,6 +392,9 @@ export interface World {
   readonly startInflation: ReadonlyMap<Iso3, number>;
   /** Connected-water component of each sea zone (trade routes need a shared one). */
   readonly seaComponent: ReadonlyMap<RegionId, number>;
+  /** Leader agendas (D-071); nations without an entry get a default from their regime. */
+  readonly agendas: ReadonlyMap<Iso3, readonly AgendaMeta[]>;
+  readonly unsc: UnscMeta;
 }
 
 export const crossingKey = (a: RegionId, b: RegionId): number => (a < b ? a * 4096 + b : b * 4096 + a);
@@ -684,7 +707,43 @@ export function loadWorld(): World {
     comp++;
   }
 
+  const agendas = new Map<Iso3, AgendaMeta[]>();
+  for (const e of agendasData.agendas as unknown as { iso3: string; agendas: Record<string, unknown>[] }[])
+    agendas.set(
+      e.iso3,
+      e.agendas.map((a) => ({
+        id: a.id as AgendaId,
+        weight: typeof a.weight === 'number' ? a.weight : 1,
+        targets: (a.targets as string[] | undefined) ?? [],
+        sphere: (a.sphere as string[] | undefined) ?? [],
+        flashpoint: (a.flashpoint as string | undefined) ?? null,
+        basis: String(a.basis ?? ''),
+        url: String(a.url ?? ''),
+      })),
+    );
+  for (const n of nationList) {
+    if (agendas.has(n.iso3)) continue;
+    const autocracy = politics.get(n.iso3)?.regime === 'autocracy';
+    agendas.set(n.iso3, [
+      {
+        id: autocracy ? 'regimeSurvival' : 'economicDevelopment',
+        weight: 0.6,
+        targets: [],
+        sphere: [],
+        flashpoint: null,
+        basis: autocracy ? 'Default for an autocratic government without a researched agenda.' : 'Default for a government without a researched agenda.',
+        url: '',
+      },
+    ]);
+  }
+
   cached = {
+    agendas,
+    unsc: {
+      permanent: unscData.permanent,
+      elected: unscData.elected,
+      votesToPass: unscData.votesToPass,
+    },
     regions,
     regionList,
     landCount: regionsMeta.landCount,

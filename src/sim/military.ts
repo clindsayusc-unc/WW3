@@ -19,7 +19,9 @@ import {
 import { interdictionAttrition, interdictionFactor, invalidateAirCache } from './air';
 import { intelLevel } from './intel';
 import {
-  alliesOf,
+  allySet,
+  enemiesOf,
+  hasBasing,
   atWar,
   bumpDiplomacy,
   clamp,
@@ -99,7 +101,8 @@ export function prepNeeded(world: World, type: string): number {
 export function isFriendly(world: World, state: GameState, iso: Iso3, other: Iso3 | null): boolean {
   if (other === null) return true;
   if (other === iso) return true;
-  return alliesOf(world, state, iso).includes(other);
+  // Basing rights (D-071) let a guest's forces move through and draw supply in the host's territory.
+  return allySet(world, state, iso).has(other) || hasBasing(state, other, iso);
 }
 
 /** Can `unit` step into `to` from `from`? Returns 'move' | 'attack' | null. */
@@ -422,6 +425,8 @@ export function attackerFactors(
     factor: Math.round(experienceFactor(u.experience) * 100) / 100,
     detail: `Experience ${Math.round(u.experience)}/100: green formations fight at ×0.95, veterans at up to ×1.20. Each battle survived adds experience.`,
   });
+  const aidA = state.nations[u.owner]?.aidSupply ?? 0;
+  if (aidA > 0) mods.push({ label: 'Foreign aid', factor: 1 + 0.6 * aidA, detail: 'Donated munitions, long-range fires and intelligence (D-072).' });
   const cm = commanderAttackModifier(u.commander);
   if (cm) mods.push(cm);
   return { factor: mods.reduce((f, m) => f * m.factor, 1), mods };
@@ -448,6 +453,11 @@ export function defenderFactors(
     mods.push({ label: 'Unit type', factor: tf, detail: `${world.unitTypes.get(u.type)?.name ?? u.type} in ${rule.name.toLowerCase()}.` });
   if (r.owner === u.owner)
     mods.push({ label: 'Home soil', factor: HOME_DEFENCE, detail: 'Defending their own country: local knowledge, reserves and motivation.' });
+  if (r.owner === u.owner && world.capitalRegion.get(u.owner) === region)
+    mods.push({ label: 'Capital', factor: CAPITAL_DEFENCE, detail: 'Defending the national capital: fortified suburbs, dense city fighting and the government’s last reserves.' });
+  const aidD = n?.aidSupply ?? 0;
+  if (aidD > 0)
+    mods.push({ label: 'Foreign aid', factor: 1 + 0.6 * aidD, detail: 'Donated munitions, air defence and intelligence (D-072).' });
   if (state.turn - r.flippedTurn >= 6)
     mods.push({ label: 'Entrenched', factor: ENTRENCHED, detail: 'Held for six months or more: prepared positions and minefields.' });
   if (opts.onlyFromSea && world.regions.get(region)?.coastal)
@@ -740,6 +750,9 @@ function supplyLoss(world: World, state: GameState, iso: Iso3, from: RegionId, t
   return clamp(loss, 0, 0.9);
 }
 
+/** Defensive bonus in the defender's own capital region (D-072). */
+export const CAPITAL_DEFENCE = 1.3;
+
 const portCap = (capacity: number) => Math.min(1, BEACHHEAD_SUPPLY + 0.15 * capacity);
 
 /** Supply sources (D-059): the capital, industrial regions and major ports of a nation. */
@@ -771,26 +784,72 @@ export function depotKind(world: World, iso: Iso3, region: RegionId): 'capital' 
  */
 export function runSupply(world: World, state: GameState): void {
   invalidateGeoCache(state);
-  const levels = new Map<Iso3, Map<RegionId, number>>();
+  // Home regions per nation in one pass (instead of one scan of every region per nation).
+  const homes = new Map<Iso3, RegionId[]>();
+  for (const r of Object.values(state.regions)) {
+    if (!r.owner || r.owner !== r.controller) continue;
+    const list = homes.get(r.owner);
+    if (list) list.push(r.id);
+    else homes.set(r.owner, [r.id]);
+  }
+  const size = world.regionList.length + 2;
+  // Best level per land region over its controller and the controller's allies: every land region
+  // a nation's search enters is friendly to it, and alliances are symmetric, so the search of
+  // every nation counts for each region it reaches (D-071).
+  const best = new Float64Array(size);
+  const level = new Float64Array(size);
+  const done = new Uint8Array(size);
+  const touched: RegionId[] = [];
+  const heapId: RegionId[] = [];
+  const heapV: number[] = [];
+  const push = (id: RegionId, v: number) => {
+    if (level[id]! >= v) return;
+    if (level[id] === 0) touched.push(id);
+    level[id] = v;
+    heapId.push(id);
+    heapV.push(v);
+    let i = heapId.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (heapV[p]! >= heapV[i]!) break;
+      [heapV[p], heapV[i]] = [heapV[i]!, heapV[p]!];
+      [heapId[p], heapId[i]] = [heapId[i]!, heapId[p]!];
+      i = p;
+    }
+  };
+  const popMax = (): void => {
+    const lastId = heapId.pop()!;
+    const lastV = heapV.pop()!;
+    if (heapId.length === 0) return;
+    heapId[0] = lastId;
+    heapV[0] = lastV;
+    let i = 0;
+    for (;;) {
+      const l = 2 * i + 1;
+      const r = l + 1;
+      let m = i;
+      if (l < heapV.length && heapV[l]! > heapV[m]!) m = l;
+      if (r < heapV.length && heapV[r]! > heapV[m]!) m = r;
+      if (m === i) break;
+      [heapV[m], heapV[i]] = [heapV[i]!, heapV[m]!];
+      [heapId[m], heapId[i]] = [heapId[i]!, heapId[m]!];
+      i = m;
+    }
+  };
   for (const n of Object.values(state.nations)) {
     if (!n.alive) continue;
     const iso = n.iso3;
-    const level = new Map<RegionId, number>();
+    const home = homes.get(iso);
+    if (!home || home.length === 0) continue;
     const cap = world.capitalRegion.get(iso);
-    const home: RegionId[] = [];
-    for (const r of Object.values(state.regions))
-      if (r.owner === iso && r.controller === iso) home.push(r.id);
-    if (home.length === 0) {
-      levels.set(iso, level);
-      continue;
-    }
+    const peaceful = enemiesOf(state, iso).length === 0;
     // Home regions connected to the capital by friendly land are full depots.
     const connected = new Set<RegionId>();
     const start = cap !== undefined && state.regions[cap]?.controller === iso ? cap : home[0]!;
     const queue = [start];
     connected.add(start);
-    while (queue.length > 0) {
-      const cur = queue.shift()!;
+    for (let qi = 0; qi < queue.length; qi++) {
+      const cur = queue[qi]!;
       for (const nb of world.regions.get(cur)!.neighbours) {
         if (connected.has(nb) || !isLand(world, nb)) continue;
         if (!isFriendly(world, state, iso, state.regions[nb]?.controller ?? null)) continue;
@@ -798,13 +857,7 @@ export function runSupply(world: World, state: GameState): void {
         queue.push(nb);
       }
     }
-    // Dijkstra in log space: a max-product search over supply levels.
-    const heap: { id: RegionId; v: number }[] = [];
-    const push = (id: RegionId, v: number) => {
-      if ((level.get(id) ?? 0) >= v) return;
-      level.set(id, v);
-      heap.push({ id, v });
-    };
+    // Dijkstra in log space: a max-product search over supply levels (binary max-heap).
     // Depots (D-059): the capital, industrial regions and major ports. Other home regions draw
     // from them along the network, never below a floor when they connect to the capital.
     for (const id of home) {
@@ -815,16 +868,12 @@ export function runSupply(world: World, state: GameState): void {
       if (connected.has(id)) push(id, depot ? full : HOME_SUPPLY_FLOOR * (1 - 0.5 * damage));
       else push(id, Math.min(depot ? full : HOME_SUPPLY_FLOOR, meta.portCapacity > 0 ? portCap(meta.portCapacity) : 0.5));
     }
-    const done = new Set<RegionId>();
-    while (heap.length > 0) {
-      // Small graphs: a linear extract-max is fast enough (regions ≈ 1,200).
-      let bi = 0;
-      for (let i = 1; i < heap.length; i++) if (heap[i]!.v > heap[bi]!.v) bi = i;
-      const { id, v } = heap[bi]!;
-      heap[bi] = heap[heap.length - 1]!;
-      heap.pop();
-      if (done.has(id) || (level.get(id) ?? 0) > v) continue;
-      done.add(id);
+    while (heapId.length > 0) {
+      const id = heapId[0]!;
+      const v = heapV[0]!;
+      popMax();
+      if (done[id] || level[id]! > v) continue;
+      done[id] = 1;
       const meta = world.regions.get(id)!;
       for (const nb of meta.neighbours) {
         const nbMeta = world.regions.get(nb)!;
@@ -832,8 +881,13 @@ export function runSupply(world: World, state: GameState): void {
           // Convoy leg: needs a port (or a sea zone we are already in) and a zone the enemy does not
           // command (merchant shipping does not need an escort where there is nothing to escort from).
           if (!meta.sea && meta.portCapacity <= 0) continue;
-          if (!convoySafe(world, state, nb, iso)) continue;
           if (meta.sea && chokepointBlocks(world, state, id, nb, iso)) continue;
+          if (peaceful) {
+            // No enemies: no hostile fleets or submarines can touch the convoy.
+            push(nb, v * 0.95);
+            continue;
+          }
+          if (!convoySafe(world, state, nb, iso)) continue;
           const b = seaBalance(world, state, nb, iso);
           const subs = b.enemySubs > 0 ? (b.myEscorts > 0 ? 0.12 : 0.3) * Math.min(2, b.enemySubs) : 0;
           push(nb, v * (1 - 0.05 - subs));
@@ -850,7 +904,12 @@ export function runSupply(world: World, state: GameState): void {
         }
       }
     }
-    levels.set(iso, level);
+    for (const id of touched) {
+      if (level[id]! > best[id]!) best[id] = level[id]!;
+      level[id] = 0;
+      done[id] = 0;
+    }
+    touched.length = 0;
   }
   for (const r of Object.values(state.regions)) {
     if (!r.controller || !isLand(world, r.id)) {
@@ -858,9 +917,10 @@ export function runSupply(world: World, state: GameState): void {
       r.supplied = false;
       continue;
     }
-    let s = levels.get(r.controller)?.get(r.id) ?? 0;
-    // Allies supplying each other's territory.
-    for (const ally of alliesOf(world, state, r.controller)) s = Math.max(s, levels.get(ally)?.get(r.id) ?? 0);
+    let s = best[r.id] ?? 0;
+    // Munitions aid (D-072) tops up depots and dumps behind the front.
+    const aid = state.nations[r.controller]?.aidSupply ?? 0;
+    if (aid > 0 && s > 0) s = Math.min(1, s * (1 + aid));
     // Enemy interdiction wings over the region (D-059).
     s *= interdictionFactor(world, state, r.id, r.controller);
     r.supply = Math.round(s * 100) / 100;
@@ -930,7 +990,9 @@ export function runRecovery(world: World, state: GameState, fought: Set<RegionId
     if (supply < SUPPLY_THRESHOLD) continue;
     const home = meta?.sea ? true : r?.owner !== null && r?.owner !== undefined && isFriendly(world, state, u.owner, r.owner);
     const w = meta?.sea ? 0 : weatherAt(world, u.region, state.date.month).winter;
-    const rate = 8 * supply * (home ? 1 : 0.35) * (1 - w);
+    // Munitions and spare parts from foreign aid speed up refits (D-072).
+    const aid = 1 + 1.5 * (state.nations[u.owner]?.aidSupply ?? 0);
+    const rate = 8 * supply * (home ? 1 : 0.35) * (1 - w) * aid;
     u.strength = clamp(u.strength + rate, 0, 100);
     u.morale = clamp(u.morale + 3 * (home ? 1 : 0.5), 0, 100);
   }

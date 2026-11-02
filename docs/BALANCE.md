@@ -96,11 +96,11 @@ built-in AI. Numbers from the run on 2026-11-02 (seeded, deterministic).
 | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | US corps (24 formations, carriers in the Gulf) vs mobilised Iran (≈ 50 formations) | Khuzestan taken in month 1; no attack on the Zagros ever reaches 0.7:1 odds; the corps is ground down on the coast by heat, partisans and counter-attacks (2,400 → 507 strength over 18 months). | coast ≤ 6 months; Tehran ≥ 9 months or never; attacker losses > 250          |
 | Invasion of the continental US                 | No sea route to California exists while the US Navy holds the Pacific (the uncontested route is > 3 zones); no Chinese unit can land anywhere in the US. A force granted total naval dominance and already ashore holds nothing after 12 months. | route null; no landing targets; ≤ 1 US region held; landed strength < 300     |
-| Russia vs Baltics, no NATO                     | Tallinn month 1, Riga month 2, Vilnius month 3.                                                                                                | ≥ 2 capitals, first within 3 months                                             |
+| Russia vs Baltics, no NATO (no troops, no aid) | Tallinn month 1, Riga month 2, Vilnius month 3.                                                                                                | ≥ 2 capitals, first within 3 months                                             |
 | Russia vs Estonia with NATO pact               | 30 NATO members enter; Tallinn falls in month 2 but Russia loses 8 home regions to NATO counter-attacks within 4 months.                       | Tallinn holds, or Russia loses home regions, or its army shrinks 30 %           |
 | China vs Taiwan (US fleet in the strait)       | No sea control, no landing possible.                                                                                                         | `hasSeaControl` false; Taipei not a landing target                              |
 | China vs Taiwan (US stays out, PLAN controls strait) | Taipei falls in month 3 after 8 battles; 2,700 strength (≈ 27 formations) lost in 9 months.                                                   | losses > 1,500; Taipei ≥ 3 months                                               |
-| KPA (≈ 48 formations incl. 4 SAM brigades) across the DMZ | Gyeonggi (urban) in month 5 once the ROK corps has embarked for its Yellow Sea counter-landing (two months of preparation under D-059); Seoul still South Korean after 8 months; 23 battles, attacker −367, defender −284. | Seoul ≥ 4 months; Gyeonggi ≥ 3 months; combined losses > 500; defender losses > 200; ≥ 10 battles |
+| KPA (≈ 48 formations incl. 4 SAM brigades) across the DMZ | Gyeonggi (urban) in month 5; Seoul still South Korean after 8 months; 18 battles, attacker −232, defender −73. Since D-072 the ROK AI holds Seoul with a standing garrison (capital defence) rather than counter-attacking the massed KPA corps, so the attacker pays far more than the defender. | Seoul ≥ 4 months; Gyeonggi ≥ 3 months; combined losses > 250; defender losses > 50; attacker loses more; ≥ 10 battles |
 | Chinese army group two regions deep in Russia  | Winter (Dec–Mar): −2,257 strength in 4 months with one battle. Summer: −1,335 with four battles.                                              | winter losses > 1.5 × summer and > 1,200                                        |
 | India vs China on the LAC / China vs India     | India never finds 0.6:1 odds against Tibet; China takes Ladakh in month 6 for 1,600 strength and nothing more.                                | each side ≤ 2 regions                                                           |
 
@@ -162,3 +162,17 @@ model is in D-061. Reference outcomes from headless runs (seed 1, player USA, pa
 - 240-turn soak (seed 3): every nation stays within 6 %/yr compound decline and 11 %/yr compound
   growth, output within 40–130 % of potential, inflation −3…150 % (majors < 60 %), debt below the
   default line, treasury ≥ 0, prices 0.6–5.
+
+## Ukraine with and without Western aid (D-072)
+
+World of 2027, Brazil as a passive player, seeds 1–10, 24 months (`src/sim/ukraine-*.test.ts`).
+
+| Condition | Result | Test bound |
+| --- | --- | --- |
+| Western aid (≈ US$ 7 bn/month at the start) | Kyiv held 24 months in 10 of 10 seeds; about half end in a negotiated peace along the front | ≥ 7 of 10 hold Kyiv |
+| Every donor suspended | Kyiv lost in 4 of 10 seeds, in months 4–6; two capitulations | ≥ 3 of 10 lose Kyiv |
+
+What holds Kyiv: aid formations (≈ 1–2 a month), munitions (supply and a ×1.1–1.2 combat
+modifier), the capital-first defensive AI and the ×1.3 capital modifier. What loses it: Russian
+corps staging through Belarus (Gomel borders the Kyiv region) while Ukraine's reserves are on the
+eastern front.

@@ -1,184 +1,2721 @@
 {
-  "source": "Bilateral goods trade, exports + imports, US$ bn per year, approximately 2024. US–China is the USTR 2025 figure ($414.6 bn: exports $106.0 bn, imports $308.7 bn, from Census Bureau data). All other rows are rounded approximations of 2024 national customs statistics as published by the US Census Bureau (US pairs), China's General Administration of Customs (China pairs), Destatis / Eurostat (EU pairs; Eurostat 2025: EU–China €759 bn, EU–US €910 bn total) and UN Comtrade via WITS (others) — marked estimate. Pairs already under sanctions at game start carry their post-sanctions volumes.",
+  "source": "Bilateral goods trade (exports + imports, merchandise only), US$ bn, latest full calendar year (2025 for 173 pairs; 2024 for RUS-IRN and the Iranian-year IRN-ARE/IRN-IRQ figures). Each row is read from one reporter's official statistics, cited per row in 'rowSources': US Census Bureau (US pairs), China General Administration of Customs (China pairs), Destatis (German pairs), Eurostat Comext (EU-reported pairs), HMRC (UK pairs), UN Comtrade (national customs filings of Japan, Korea, India, Canada, Brazil, Turkey, Saudi Arabia, Pakistan, Israel, Egypt, Malaysia, Kazakhstan), Taiwan Ministry of Finance, Iran IRICA, and official statements where no customs table exists (Russia-Belarus, Russia-Iran, Russia-Uzbekistan). Russia no longer publishes customs data, so Russian pairs use the partner's (mirror) figures. EUR/GBP/JPY converted at 2025 annual averages (ECB 1.1300 USD/EUR, 0.8568 GBP/EUR; Fed 149.57 JPY/USD).",
   "asOf": "2026-11-02",
-  "estimate": true,
-  "notes": "Each row: [nationA, nationB, two-way goods trade in US$ bn/year]. 'sourced' lists rows taken directly from a cited figure; every other row is an approximation (estimate). Only the largest relationships are listed; trade outside these pairs is represented by the chokepoint dependence shares in data/chokepoints.json.",
-  "sourced": [["USA", "CHN"]],
+  "notes": "Each row: [nationA, nationB, two-way goods trade in US$ bn/year]. rowSources['A|B'] gives year, reporter, source and URL. Only IRN-IRQ is partly estimated (Iraq's exports to Iran estimated from a 10-month chamber-of-commerce figure) and carries estimate: true; every other row is sourced. Caveats: USA-CHE includes large gold flows; NLD/BEL pairs include port transit (Rotterdam/Antwerp effect); Saudi partner data omit most crude oil. Only the largest relationships are listed; trade outside these pairs is represented by the chokepoint dependence shares in data/chokepoints.json.",
+  "sourced": [
+    [
+      "USA",
+      "MEX"
+    ],
+    [
+      "USA",
+      "CAN"
+    ],
+    [
+      "USA",
+      "CHN"
+    ],
+    [
+      "USA",
+      "DEU"
+    ],
+    [
+      "USA",
+      "JPN"
+    ],
+    [
+      "USA",
+      "KOR"
+    ],
+    [
+      "USA",
+      "TWN"
+    ],
+    [
+      "USA",
+      "VNM"
+    ],
+    [
+      "USA",
+      "IND"
+    ],
+    [
+      "USA",
+      "GBR"
+    ],
+    [
+      "USA",
+      "IRL"
+    ],
+    [
+      "USA",
+      "ITA"
+    ],
+    [
+      "USA",
+      "FRA"
+    ],
+    [
+      "USA",
+      "NLD"
+    ],
+    [
+      "USA",
+      "CHE"
+    ],
+    [
+      "USA",
+      "BRA"
+    ],
+    [
+      "USA",
+      "SGP"
+    ],
+    [
+      "USA",
+      "MYS"
+    ],
+    [
+      "USA",
+      "THA"
+    ],
+    [
+      "USA",
+      "ISR"
+    ],
+    [
+      "USA",
+      "AUS"
+    ],
+    [
+      "USA",
+      "SAU"
+    ],
+    [
+      "USA",
+      "TUR"
+    ],
+    [
+      "USA",
+      "ESP"
+    ],
+    [
+      "USA",
+      "RUS"
+    ],
+    [
+      "USA",
+      "PHL"
+    ],
+    [
+      "USA",
+      "COL"
+    ],
+    [
+      "USA",
+      "BEL"
+    ],
+    [
+      "USA",
+      "IDN"
+    ],
+    [
+      "USA",
+      "CHL"
+    ],
+    [
+      "USA",
+      "ARE"
+    ],
+    [
+      "USA",
+      "QAT"
+    ],
+    [
+      "USA",
+      "NOR"
+    ],
+    [
+      "USA",
+      "PAK"
+    ],
+    [
+      "USA",
+      "EGY"
+    ],
+    [
+      "USA",
+      "UKR"
+    ],
+    [
+      "CHN",
+      "JPN"
+    ],
+    [
+      "CHN",
+      "KOR"
+    ],
+    [
+      "CHN",
+      "TWN"
+    ],
+    [
+      "CHN",
+      "DEU"
+    ],
+    [
+      "CHN",
+      "RUS"
+    ],
+    [
+      "CHN",
+      "AUS"
+    ],
+    [
+      "CHN",
+      "VNM"
+    ],
+    [
+      "CHN",
+      "MYS"
+    ],
+    [
+      "CHN",
+      "BRA"
+    ],
+    [
+      "CHN",
+      "IND"
+    ],
+    [
+      "CHN",
+      "IDN"
+    ],
+    [
+      "CHN",
+      "SAU"
+    ],
+    [
+      "CHN",
+      "THA"
+    ],
+    [
+      "CHN",
+      "SGP"
+    ],
+    [
+      "CHN",
+      "NLD"
+    ],
+    [
+      "CHN",
+      "GBR"
+    ],
+    [
+      "CHN",
+      "FRA"
+    ],
+    [
+      "CHN",
+      "ITA"
+    ],
+    [
+      "CHN",
+      "MEX"
+    ],
+    [
+      "CHN",
+      "CAN"
+    ],
+    [
+      "CHN",
+      "IRN"
+    ],
+    [
+      "CHN",
+      "PAK"
+    ],
+    [
+      "CHN",
+      "TUR"
+    ],
+    [
+      "CHN",
+      "PHL"
+    ],
+    [
+      "CHN",
+      "ARE"
+    ],
+    [
+      "CHN",
+      "IRQ"
+    ],
+    [
+      "CHN",
+      "ZAF"
+    ],
+    [
+      "CHN",
+      "CHL"
+    ],
+    [
+      "CHN",
+      "KAZ"
+    ],
+    [
+      "CHN",
+      "PRK"
+    ],
+    [
+      "CHN",
+      "ESP"
+    ],
+    [
+      "CHN",
+      "NGA"
+    ],
+    [
+      "CHN",
+      "QAT"
+    ],
+    [
+      "CHN",
+      "KWT"
+    ],
+    [
+      "CHN",
+      "OMN"
+    ],
+    [
+      "CHN",
+      "PER"
+    ],
+    [
+      "CHN",
+      "ARG"
+    ],
+    [
+      "CHN",
+      "ISR"
+    ],
+    [
+      "CHN",
+      "EGY"
+    ],
+    [
+      "CHN",
+      "BGD"
+    ],
+    [
+      "CHN",
+      "MMR"
+    ],
+    [
+      "CHN",
+      "UKR"
+    ],
+    [
+      "DEU",
+      "FRA"
+    ],
+    [
+      "DEU",
+      "NLD"
+    ],
+    [
+      "DEU",
+      "POL"
+    ],
+    [
+      "DEU",
+      "ITA"
+    ],
+    [
+      "DEU",
+      "AUT"
+    ],
+    [
+      "DEU",
+      "CHE"
+    ],
+    [
+      "DEU",
+      "CZE"
+    ],
+    [
+      "DEU",
+      "BEL"
+    ],
+    [
+      "DEU",
+      "GBR"
+    ],
+    [
+      "DEU",
+      "ESP"
+    ],
+    [
+      "DEU",
+      "HUN"
+    ],
+    [
+      "DEU",
+      "SWE"
+    ],
+    [
+      "DEU",
+      "DNK"
+    ],
+    [
+      "DEU",
+      "RUS"
+    ],
+    [
+      "DEU",
+      "TUR"
+    ],
+    [
+      "DEU",
+      "KOR"
+    ],
+    [
+      "DEU",
+      "JPN"
+    ],
+    [
+      "DEU",
+      "IND"
+    ],
+    [
+      "DEU",
+      "UKR"
+    ],
+    [
+      "DEU",
+      "NOR"
+    ],
+    [
+      "DEU",
+      "ISR"
+    ],
+    [
+      "FRA",
+      "ITA"
+    ],
+    [
+      "FRA",
+      "ESP"
+    ],
+    [
+      "FRA",
+      "BEL"
+    ],
+    [
+      "FRA",
+      "GBR"
+    ],
+    [
+      "FRA",
+      "NLD"
+    ],
+    [
+      "FRA",
+      "CHE"
+    ],
+    [
+      "FRA",
+      "IND"
+    ],
+    [
+      "FRA",
+      "DZA"
+    ],
+    [
+      "NLD",
+      "BEL"
+    ],
+    [
+      "NLD",
+      "GBR"
+    ],
+    [
+      "ITA",
+      "ESP"
+    ],
+    [
+      "GBR",
+      "IRL"
+    ],
+    [
+      "GBR",
+      "NOR"
+    ],
+    [
+      "GBR",
+      "BEL"
+    ],
+    [
+      "POL",
+      "CZE"
+    ],
+    [
+      "ITA",
+      "CHE"
+    ],
+    [
+      "ESP",
+      "PRT"
+    ],
+    [
+      "SWE",
+      "NOR"
+    ],
+    [
+      "SWE",
+      "FIN"
+    ],
+    [
+      "AUT",
+      "ITA"
+    ],
+    [
+      "RUS",
+      "IND"
+    ],
+    [
+      "RUS",
+      "TUR"
+    ],
+    [
+      "RUS",
+      "KAZ"
+    ],
+    [
+      "RUS",
+      "BLR"
+    ],
+    [
+      "RUS",
+      "KOR"
+    ],
+    [
+      "RUS",
+      "JPN"
+    ],
+    [
+      "RUS",
+      "IRN"
+    ],
+    [
+      "RUS",
+      "EGY"
+    ],
+    [
+      "RUS",
+      "UZB"
+    ],
+    [
+      "JPN",
+      "KOR"
+    ],
+    [
+      "JPN",
+      "TWN"
+    ],
+    [
+      "JPN",
+      "AUS"
+    ],
+    [
+      "JPN",
+      "THA"
+    ],
+    [
+      "JPN",
+      "VNM"
+    ],
+    [
+      "JPN",
+      "IDN"
+    ],
+    [
+      "JPN",
+      "SAU"
+    ],
+    [
+      "JPN",
+      "ARE"
+    ],
+    [
+      "JPN",
+      "IND"
+    ],
+    [
+      "JPN",
+      "QAT"
+    ],
+    [
+      "JPN",
+      "MYS"
+    ],
+    [
+      "JPN",
+      "SGP"
+    ],
+    [
+      "JPN",
+      "PHL"
+    ],
+    [
+      "KOR",
+      "VNM"
+    ],
+    [
+      "KOR",
+      "TWN"
+    ],
+    [
+      "KOR",
+      "AUS"
+    ],
+    [
+      "KOR",
+      "SAU"
+    ],
+    [
+      "KOR",
+      "QAT"
+    ],
+    [
+      "KOR",
+      "IND"
+    ],
+    [
+      "KOR",
+      "SGP"
+    ],
+    [
+      "TWN",
+      "SGP"
+    ],
+    [
+      "TWN",
+      "MYS"
+    ],
+    [
+      "TWN",
+      "VNM"
+    ],
+    [
+      "IND",
+      "ARE"
+    ],
+    [
+      "IND",
+      "SAU"
+    ],
+    [
+      "IND",
+      "IRQ"
+    ],
+    [
+      "IND",
+      "SGP"
+    ],
+    [
+      "IND",
+      "GBR"
+    ],
+    [
+      "IND",
+      "QAT"
+    ],
+    [
+      "IND",
+      "AUS"
+    ],
+    [
+      "IND",
+      "IDN"
+    ],
+    [
+      "CAN",
+      "MEX"
+    ],
+    [
+      "BRA",
+      "ARG"
+    ],
+    [
+      "MEX",
+      "DEU"
+    ],
+    [
+      "IRN",
+      "ARE"
+    ],
+    [
+      "IRN",
+      "TUR"
+    ],
+    [
+      "IRN",
+      "IND"
+    ],
+    [
+      "SAU",
+      "ARE"
+    ],
+    [
+      "TUR",
+      "ITA"
+    ],
+    [
+      "TUR",
+      "GBR"
+    ],
+    [
+      "TUR",
+      "IRQ"
+    ],
+    [
+      "PAK",
+      "ARE"
+    ],
+    [
+      "UKR",
+      "POL"
+    ],
+    [
+      "UKR",
+      "TUR"
+    ],
+    [
+      "ISR",
+      "TUR"
+    ],
+    [
+      "EGY",
+      "SAU"
+    ]
+  ],
+  "estimated": [
+    [
+      "IRN",
+      "IRQ"
+    ]
+  ],
   "pairs": [
-    ["USA", "MEX", 840],
-    ["USA", "CAN", 762],
-    ["USA", "CHN", 415],
-    ["USA", "DEU", 236],
-    ["USA", "JPN", 227],
-    ["USA", "KOR", 198],
-    ["USA", "TWN", 158],
-    ["USA", "VNM", 149],
-    ["USA", "IND", 129],
-    ["USA", "GBR", 148],
-    ["USA", "IRL", 120],
-    ["USA", "ITA", 102],
-    ["USA", "FRA", 103],
-    ["USA", "NLD", 124],
-    ["USA", "CHE", 85],
-    ["USA", "BRA", 92],
-    ["USA", "SGP", 89],
-    ["USA", "MYS", 80],
-    ["USA", "THA", 81],
-    ["USA", "ISR", 37],
-    ["USA", "AUS", 50],
-    ["USA", "SAU", 26],
-    ["USA", "TUR", 32],
-    ["USA", "ESP", 47],
-    ["USA", "RUS", 3.5],
-    ["USA", "PHL", 23],
-    ["USA", "COL", 34],
-    ["USA", "BEL", 70],
-    ["USA", "IDN", 38],
-    ["USA", "CHL", 30],
-    ["USA", "ARE", 34],
-    ["USA", "QAT", 6],
-    ["USA", "NOR", 12],
-    ["USA", "PAK", 7],
-    ["USA", "EGY", 9],
-    ["USA", "UKR", 4],
-    ["CHN", "JPN", 308],
-    ["CHN", "KOR", 328],
-    ["CHN", "TWN", 293],
-    ["CHN", "DEU", 250],
-    ["CHN", "RUS", 245],
-    ["CHN", "AUS", 212],
-    ["CHN", "VNM", 261],
-    ["CHN", "MYS", 212],
-    ["CHN", "BRA", 188],
-    ["CHN", "IND", 138],
-    ["CHN", "IDN", 147],
-    ["CHN", "SAU", 107],
-    ["CHN", "THA", 134],
-    ["CHN", "SGP", 111],
-    ["CHN", "NLD", 113],
-    ["CHN", "GBR", 99],
-    ["CHN", "FRA", 80],
-    ["CHN", "ITA", 72],
-    ["CHN", "MEX", 110],
-    ["CHN", "CAN", 92],
-    ["CHN", "IRN", 14],
-    ["CHN", "PAK", 23],
-    ["CHN", "TUR", 44],
-    ["CHN", "PHL", 70],
-    ["CHN", "ARE", 101],
-    ["CHN", "IRQ", 54],
-    ["CHN", "ZAF", 52],
-    ["CHN", "CHL", 66],
-    ["CHN", "KAZ", 44],
-    ["CHN", "PRK", 2.2],
-    ["CHN", "ESP", 50],
-    ["CHN", "NGA", 23],
-    ["CHN", "QAT", 26],
-    ["CHN", "KWT", 23],
-    ["CHN", "OMN", 40],
-    ["CHN", "PER", 40],
-    ["CHN", "ARG", 17],
-    ["CHN", "ISR", 18],
-    ["CHN", "EGY", 17],
-    ["CHN", "BGD", 23],
-    ["CHN", "MMR", 25],
-    ["CHN", "UKR", 9],
-    ["DEU", "FRA", 205],
-    ["DEU", "NLD", 230],
-    ["DEU", "POL", 190],
-    ["DEU", "ITA", 170],
-    ["DEU", "AUT", 125],
-    ["DEU", "CHE", 140],
-    ["DEU", "CZE", 125],
-    ["DEU", "BEL", 115],
-    ["DEU", "GBR", 130],
-    ["DEU", "ESP", 85],
-    ["DEU", "HUN", 60],
-    ["DEU", "SWE", 50],
-    ["DEU", "DNK", 40],
-    ["DEU", "RUS", 9],
-    ["DEU", "TUR", 50],
-    ["DEU", "KOR", 35],
-    ["DEU", "JPN", 45],
-    ["DEU", "IND", 30],
-    ["DEU", "UKR", 10],
-    ["DEU", "NOR", 30],
-    ["DEU", "ISR", 9],
-    ["FRA", "ITA", 110],
-    ["FRA", "ESP", 100],
-    ["FRA", "BEL", 100],
-    ["FRA", "GBR", 85],
-    ["FRA", "NLD", 65],
-    ["FRA", "CHE", 45],
-    ["FRA", "IND", 15],
-    ["FRA", "DZA", 12],
-    ["NLD", "BEL", 130],
-    ["NLD", "GBR", 85],
-    ["ITA", "ESP", 60],
-    ["GBR", "IRL", 75],
-    ["GBR", "NOR", 45],
-    ["GBR", "BEL", 50],
-    ["POL", "CZE", 40],
-    ["ITA", "CHE", 40],
-    ["ESP", "PRT", 45],
-    ["SWE", "NOR", 30],
-    ["SWE", "FIN", 20],
-    ["AUT", "ITA", 30],
-    ["RUS", "IND", 66],
-    ["RUS", "TUR", 52],
-    ["RUS", "KAZ", 28],
-    ["RUS", "BLR", 50],
-    ["RUS", "KOR", 11],
-    ["RUS", "JPN", 15],
-    ["RUS", "IRN", 5],
-    ["RUS", "EGY", 8],
-    ["RUS", "UZB", 10],
-    ["JPN", "KOR", 75],
-    ["JPN", "TWN", 80],
-    ["JPN", "AUS", 70],
-    ["JPN", "THA", 55],
-    ["JPN", "VNM", 50],
-    ["JPN", "IDN", 37],
-    ["JPN", "SAU", 40],
-    ["JPN", "ARE", 40],
-    ["JPN", "IND", 22],
-    ["JPN", "QAT", 12],
-    ["JPN", "MYS", 35],
-    ["JPN", "SGP", 25],
-    ["JPN", "PHL", 20],
-    ["KOR", "VNM", 85],
-    ["KOR", "TWN", 50],
-    ["KOR", "AUS", 50],
-    ["KOR", "SAU", 30],
-    ["KOR", "QAT", 15],
-    ["KOR", "IND", 27],
-    ["KOR", "SGP", 25],
-    ["TWN", "SGP", 40],
-    ["TWN", "MYS", 30],
-    ["TWN", "VNM", 25],
-    ["IND", "ARE", 100],
-    ["IND", "SAU", 43],
-    ["IND", "IRQ", 34],
-    ["IND", "SGP", 35],
-    ["IND", "GBR", 42],
-    ["IND", "QAT", 15],
-    ["IND", "AUS", 25],
-    ["IND", "IDN", 30],
-    ["CAN", "MEX", 45],
-    ["BRA", "ARG", 28],
-    ["MEX", "DEU", 20],
-    ["IRN", "ARE", 25],
-    ["IRN", "TUR", 12],
-    ["IRN", "IRQ", 11],
-    ["IRN", "IND", 2],
-    ["SAU", "ARE", 30],
-    ["TUR", "ITA", 25],
-    ["TUR", "GBR", 25],
-    ["TUR", "IRQ", 20],
-    ["PAK", "ARE", 10],
-    ["UKR", "POL", 14],
-    ["UKR", "TUR", 7],
-    ["ISR", "TUR", 6],
-    ["EGY", "SAU", 9]
-  ]
+    [
+      "USA",
+      "MEX",
+      871.6
+    ],
+    [
+      "USA",
+      "CAN",
+      715.5
+    ],
+    [
+      "USA",
+      "CHN",
+      414.6
+    ],
+    [
+      "USA",
+      "DEU",
+      238.6
+    ],
+    [
+      "USA",
+      "JPN",
+      227.2
+    ],
+    [
+      "USA",
+      "KOR",
+      194.6
+    ],
+    [
+      "USA",
+      "TWN",
+      256.1
+    ],
+    [
+      "USA",
+      "VNM",
+      209.5
+    ],
+    [
+      "USA",
+      "IND",
+      149.1
+    ],
+    [
+      "USA",
+      "GBR",
+      162.2
+    ],
+    [
+      "USA",
+      "IRL",
+      152.9
+    ],
+    [
+      "USA",
+      "ITA",
+      117.5
+    ],
+    [
+      "USA",
+      "FRA",
+      118.6
+    ],
+    [
+      "USA",
+      "NLD",
+      128.9
+    ],
+    [
+      "USA",
+      "CHE",
+      179.9
+    ],
+    [
+      "USA",
+      "BRA",
+      94.2
+    ],
+    [
+      "USA",
+      "SGP",
+      79.9
+    ],
+    [
+      "USA",
+      "MYS",
+      88.2
+    ],
+    [
+      "USA",
+      "THA",
+      110.8
+    ],
+    [
+      "USA",
+      "ISR",
+      34.4
+    ],
+    [
+      "USA",
+      "AUS",
+      62.7
+    ],
+    [
+      "USA",
+      "SAU",
+      24.6
+    ],
+    [
+      "USA",
+      "TUR",
+      36.8
+    ],
+    [
+      "USA",
+      "ESP",
+      47.9
+    ],
+    [
+      "USA",
+      "RUS",
+      4.4
+    ],
+    [
+      "USA",
+      "PHL",
+      27.0
+    ],
+    [
+      "USA",
+      "COL",
+      37.3
+    ],
+    [
+      "USA",
+      "BEL",
+      63.5
+    ],
+    [
+      "USA",
+      "IDN",
+      45.5
+    ],
+    [
+      "USA",
+      "CHL",
+      38.1
+    ],
+    [
+      "USA",
+      "ARE",
+      39.1
+    ],
+    [
+      "USA",
+      "QAT",
+      6.5
+    ],
+    [
+      "USA",
+      "NOR",
+      11.1
+    ],
+    [
+      "USA",
+      "PAK",
+      8.5
+    ],
+    [
+      "USA",
+      "EGY",
+      12.3
+    ],
+    [
+      "USA",
+      "UKR",
+      3.8
+    ],
+    [
+      "CHN",
+      "JPN",
+      322.2
+    ],
+    [
+      "CHN",
+      "KOR",
+      331.2
+    ],
+    [
+      "CHN",
+      "TWN",
+      314.3
+    ],
+    [
+      "CHN",
+      "DEU",
+      211.1
+    ],
+    [
+      "CHN",
+      "RUS",
+      228.1
+    ],
+    [
+      "CHN",
+      "AUS",
+      206.6
+    ],
+    [
+      "CHN",
+      "VNM",
+      296.1
+    ],
+    [
+      "CHN",
+      "MYS",
+      191.7
+    ],
+    [
+      "CHN",
+      "BRA",
+      188.0
+    ],
+    [
+      "CHN",
+      "IND",
+      155.6
+    ],
+    [
+      "CHN",
+      "IDN",
+      167.5
+    ],
+    [
+      "CHN",
+      "SAU",
+      108.2
+    ],
+    [
+      "CHN",
+      "THA",
+      153.3
+    ],
+    [
+      "CHN",
+      "SGP",
+      119.3
+    ],
+    [
+      "CHN",
+      "NLD",
+      114.3
+    ],
+    [
+      "CHN",
+      "GBR",
+      103.7
+    ],
+    [
+      "CHN",
+      "FRA",
+      84.0
+    ],
+    [
+      "CHN",
+      "ITA",
+      76.2
+    ],
+    [
+      "CHN",
+      "MEX",
+      109.4
+    ],
+    [
+      "CHN",
+      "CAN",
+      89.6
+    ],
+    [
+      "CHN",
+      "IRN",
+      10.0
+    ],
+    [
+      "CHN",
+      "PAK",
+      25.2
+    ],
+    [
+      "CHN",
+      "TUR",
+      44.6
+    ],
+    [
+      "CHN",
+      "PHL",
+      72.3
+    ],
+    [
+      "CHN",
+      "ARE",
+      108.0
+    ],
+    [
+      "CHN",
+      "IRQ",
+      51.2
+    ],
+    [
+      "CHN",
+      "ZAF",
+      53.6
+    ],
+    [
+      "CHN",
+      "CHL",
+      66.9
+    ],
+    [
+      "CHN",
+      "KAZ",
+      48.7
+    ],
+    [
+      "CHN",
+      "PRK",
+      2.7
+    ],
+    [
+      "CHN",
+      "ESP",
+      55.0
+    ],
+    [
+      "CHN",
+      "NGA",
+      28.1
+    ],
+    [
+      "CHN",
+      "QAT",
+      23.8
+    ],
+    [
+      "CHN",
+      "KWT",
+      18.6
+    ],
+    [
+      "CHN",
+      "OMN",
+      32.9
+    ],
+    [
+      "CHN",
+      "PER",
+      51.0
+    ],
+    [
+      "CHN",
+      "ARG",
+      23.5
+    ],
+    [
+      "CHN",
+      "ISR",
+      33.7
+    ],
+    [
+      "CHN",
+      "EGY",
+      20.8
+    ],
+    [
+      "CHN",
+      "BGD",
+      24.1
+    ],
+    [
+      "CHN",
+      "MMR",
+      19.4
+    ],
+    [
+      "CHN",
+      "UKR",
+      7.8
+    ],
+    [
+      "DEU",
+      "FRA",
+      210.7
+    ],
+    [
+      "DEU",
+      "NLD",
+      236.6
+    ],
+    [
+      "DEU",
+      "POL",
+      203.9
+    ],
+    [
+      "DEU",
+      "ITA",
+      176.1
+    ],
+    [
+      "DEU",
+      "AUT",
+      151.0
+    ],
+    [
+      "DEU",
+      "CHE",
+      146.1
+    ],
+    [
+      "DEU",
+      "CZE",
+      130.5
+    ],
+    [
+      "DEU",
+      "BEL",
+      119.4
+    ],
+    [
+      "DEU",
+      "GBR",
+      133.8
+    ],
+    [
+      "DEU",
+      "ESP",
+      111.1
+    ],
+    [
+      "DEU",
+      "HUN",
+      73.9
+    ],
+    [
+      "DEU",
+      "SWE",
+      54.0
+    ],
+    [
+      "DEU",
+      "DNK",
+      44.2
+    ],
+    [
+      "DEU",
+      "RUS",
+      9.2
+    ],
+    [
+      "DEU",
+      "TUR",
+      62.0
+    ],
+    [
+      "DEU",
+      "KOR",
+      34.0
+    ],
+    [
+      "DEU",
+      "JPN",
+      48.6
+    ],
+    [
+      "DEU",
+      "IND",
+      35.4
+    ],
+    [
+      "DEU",
+      "UKR",
+      14.0
+    ],
+    [
+      "DEU",
+      "NOR",
+      42.2
+    ],
+    [
+      "DEU",
+      "ISR",
+      9.9
+    ],
+    [
+      "FRA",
+      "ITA",
+      119.9
+    ],
+    [
+      "FRA",
+      "ESP",
+      110.7
+    ],
+    [
+      "FRA",
+      "BEL",
+      123.5
+    ],
+    [
+      "FRA",
+      "GBR",
+      71.3
+    ],
+    [
+      "FRA",
+      "NLD",
+      97.8
+    ],
+    [
+      "FRA",
+      "CHE",
+      44.9
+    ],
+    [
+      "FRA",
+      "IND",
+      15.9
+    ],
+    [
+      "FRA",
+      "DZA",
+      10.5
+    ],
+    [
+      "NLD",
+      "BEL",
+      172.7
+    ],
+    [
+      "NLD",
+      "GBR",
+      82.7
+    ],
+    [
+      "ITA",
+      "ESP",
+      80.5
+    ],
+    [
+      "GBR",
+      "IRL",
+      55.3
+    ],
+    [
+      "GBR",
+      "NOR",
+      33.8
+    ],
+    [
+      "GBR",
+      "BEL",
+      48.0
+    ],
+    [
+      "POL",
+      "CZE",
+      44.1
+    ],
+    [
+      "ITA",
+      "CHE",
+      57.0
+    ],
+    [
+      "ESP",
+      "PRT",
+      61.9
+    ],
+    [
+      "SWE",
+      "NOR",
+      36.9
+    ],
+    [
+      "SWE",
+      "FIN",
+      24.0
+    ],
+    [
+      "AUT",
+      "ITA",
+      28.7
+    ],
+    [
+      "RUS",
+      "IND",
+      63.6
+    ],
+    [
+      "RUS",
+      "TUR",
+      49.1
+    ],
+    [
+      "RUS",
+      "KAZ",
+      27.8
+    ],
+    [
+      "RUS",
+      "BLR",
+      52.0
+    ],
+    [
+      "RUS",
+      "KOR",
+      10.9
+    ],
+    [
+      "RUS",
+      "JPN",
+      8.0
+    ],
+    [
+      "RUS",
+      "IRN",
+      4.8
+    ],
+    [
+      "RUS",
+      "EGY",
+      6.0
+    ],
+    [
+      "RUS",
+      "UZB",
+      13.0
+    ],
+    [
+      "JPN",
+      "KOR",
+      76.6
+    ],
+    [
+      "JPN",
+      "TWN",
+      86.2
+    ],
+    [
+      "JPN",
+      "AUS",
+      60.2
+    ],
+    [
+      "JPN",
+      "THA",
+      53.7
+    ],
+    [
+      "JPN",
+      "VNM",
+      49.2
+    ],
+    [
+      "JPN",
+      "IDN",
+      32.8
+    ],
+    [
+      "JPN",
+      "SAU",
+      33.3
+    ],
+    [
+      "JPN",
+      "ARE",
+      46.9
+    ],
+    [
+      "JPN",
+      "IND",
+      26.2
+    ],
+    [
+      "JPN",
+      "QAT",
+      8.7
+    ],
+    [
+      "JPN",
+      "MYS",
+      33.6
+    ],
+    [
+      "JPN",
+      "SGP",
+      28.9
+    ],
+    [
+      "JPN",
+      "PHL",
+      20.8
+    ],
+    [
+      "KOR",
+      "VNM",
+      94.5
+    ],
+    [
+      "KOR",
+      "TWN",
+      81.4
+    ],
+    [
+      "KOR",
+      "AUS",
+      46.3
+    ],
+    [
+      "KOR",
+      "SAU",
+      32.3
+    ],
+    [
+      "KOR",
+      "QAT",
+      10.8
+    ],
+    [
+      "KOR",
+      "IND",
+      25.6
+    ],
+    [
+      "KOR",
+      "SGP",
+      30.9
+    ],
+    [
+      "TWN",
+      "SGP",
+      53.4
+    ],
+    [
+      "TWN",
+      "MYS",
+      61.9
+    ],
+    [
+      "TWN",
+      "VNM",
+      39.7
+    ],
+    [
+      "IND",
+      "ARE",
+      94.5
+    ],
+    [
+      "IND",
+      "SAU",
+      42.0
+    ],
+    [
+      "IND",
+      "IRQ",
+      30.6
+    ],
+    [
+      "IND",
+      "SGP",
+      19.1
+    ],
+    [
+      "IND",
+      "GBR",
+      23.4
+    ],
+    [
+      "IND",
+      "QAT",
+      14.6
+    ],
+    [
+      "IND",
+      "AUS",
+      23.7
+    ],
+    [
+      "IND",
+      "IDN",
+      25.5
+    ],
+    [
+      "CAN",
+      "MEX",
+      44.6
+    ],
+    [
+      "BRA",
+      "ARG",
+      31.5
+    ],
+    [
+      "MEX",
+      "DEU",
+      28.3
+    ],
+    [
+      "IRN",
+      "ARE",
+      29.2
+    ],
+    [
+      "IRN",
+      "TUR",
+      5.6
+    ],
+    [
+      "IRN",
+      "IRQ",
+      12.3
+    ],
+    [
+      "IRN",
+      "IND",
+      2.1
+    ],
+    [
+      "SAU",
+      "ARE",
+      42.4
+    ],
+    [
+      "TUR",
+      "ITA",
+      29.5
+    ],
+    [
+      "TUR",
+      "GBR",
+      25.8
+    ],
+    [
+      "TUR",
+      "IRQ",
+      14.3
+    ],
+    [
+      "PAK",
+      "ARE",
+      8.9
+    ],
+    [
+      "UKR",
+      "POL",
+      20.3
+    ],
+    [
+      "UKR",
+      "TUR",
+      6.6
+    ],
+    [
+      "ISR",
+      "TUR",
+      0.9
+    ],
+    [
+      "EGY",
+      "SAU",
+      12.4
+    ]
+  ],
+  "rowSources": {
+    "USA|MEX": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Mexico (2025: exports 337.3, imports 534.3; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c2010.html"
+    },
+    "USA|CAN": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Canada (2025: exports 333.6, imports 381.9; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c1220.html"
+    },
+    "USA|CHN": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with China (2025: exports 106.0, imports 308.7; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5700.html",
+      "note": "2025 sharply down on tariffs (2024 total was 583.6)."
+    },
+    "USA|DEU": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Germany (2025: exports 82.8, imports 155.8; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4280.html"
+    },
+    "USA|JPN": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Japan (2025: exports 81.4, imports 145.8; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5880.html"
+    },
+    "USA|KOR": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Korea, South (2025: exports 69.1, imports 125.5; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5800.html"
+    },
+    "USA|TWN": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Taiwan (2025: exports 54.8, imports 201.4; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5830.html",
+      "note": "2025 surge driven by AI server/semiconductor imports (2024 total was 158.8)."
+    },
+    "USA|VNM": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Vietnam (2025: exports 15.6, imports 193.9; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5520.html"
+    },
+    "USA|IND": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with India (2025: exports 45.4, imports 103.8; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5330.html"
+    },
+    "USA|GBR": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with United Kingdom (2025: exports 97.4, imports 64.8; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4120.html"
+    },
+    "USA|IRL": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Ireland (2025: exports 19.3, imports 133.6; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4190.html"
+    },
+    "USA|ITA": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Italy (2025: exports 43.1, imports 74.4; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4759.html"
+    },
+    "USA|FRA": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with France (2025: exports 50.6, imports 68.1; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4279.html"
+    },
+    "USA|NLD": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Netherlands (2025: exports 93.9, imports 34.9; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4210.html"
+    },
+    "USA|CHE": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Switzerland (2025: exports 73.7, imports 106.2; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4419.html",
+      "note": "2025 Census figure is inflated by large non-monetary gold flows (2024 total was 88.3)."
+    },
+    "USA|BRA": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Brazil (2025: exports 54.3, imports 39.9; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c3510.html"
+    },
+    "USA|SGP": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Singapore (2025: exports 41.6, imports 38.2; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5590.html"
+    },
+    "USA|MYS": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Malaysia (2025: exports 28.7, imports 59.5; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5570.html"
+    },
+    "USA|THA": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Thailand (2025: exports 19.6, imports 91.3; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5490.html"
+    },
+    "USA|ISR": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Israel (2025: exports 13.7, imports 20.7; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5081.html"
+    },
+    "USA|AUS": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Australia (2025: exports 33.7, imports 29.0; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c6021.html"
+    },
+    "USA|SAU": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Saudi Arabia (2025: exports 14.1, imports 10.5; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5170.html"
+    },
+    "USA|TUR": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Turkey (2025: exports 20.4, imports 16.4; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4890.html"
+    },
+    "USA|ESP": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Spain (2025: exports 26.6, imports 21.3; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4700.html"
+    },
+    "USA|RUS": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Russia (2025: exports 0.6, imports 3.8; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4621.html",
+      "note": "US still publishes its own Russia trade; figure is US-reported, sanctions-depressed."
+    },
+    "USA|PHL": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Philippines (2025: exports 9.2, imports 17.8; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5650.html"
+    },
+    "USA|COL": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Colombia (2025: exports 19.5, imports 17.9; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c3010.html"
+    },
+    "USA|BEL": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Belgium (2025: exports 36.3, imports 27.2; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4231.html"
+    },
+    "USA|IDN": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Indonesia (2025: exports 10.8, imports 34.6; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5600.html"
+    },
+    "USA|CHL": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Chile (2025: exports 19.1, imports 19.0; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c3370.html"
+    },
+    "USA|ARE": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with United Arab Emirates (2025: exports 31.4, imports 7.7; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5200.html"
+    },
+    "USA|QAT": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Qatar (2025: exports 4.4, imports 2.1; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5180.html"
+    },
+    "USA|NOR": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Norway (2025: exports 4.5, imports 6.6; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4039.html"
+    },
+    "USA|PAK": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Pakistan (2025: exports 3.1, imports 5.4; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c5350.html"
+    },
+    "USA|EGY": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Egypt (2025: exports 9.4, imports 2.8; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c7290.html"
+    },
+    "USA|UKR": {
+      "year": 2025,
+      "reporter": "USA",
+      "source": "US Census Bureau, Trade in Goods with Ukraine (2025: exports 2.4, imports 1.4; Census basis, NSA, exports total + general imports)",
+      "url": "https://www.census.gov/foreign-trade/balance/c4623.html"
+    },
+    "CHN|JPN": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 157.3, imports 164.8)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|KOR": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 144.2, imports 187.0)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|TWN": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 83.6, imports 230.7)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html",
+      "note": "GACC lists the partner as 'Taiwan, China'."
+    },
+    "CHN|DEU": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 118.3, imports 92.8)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|RUS": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 103.3, imports 124.8)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html",
+      "note": "Russia stopped publishing; China's (partner) customs data used."
+    },
+    "CHN|AUS": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 76.3, imports 130.3)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|VNM": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 198.1, imports 98.0)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|MYS": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 103.7, imports 88.0)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|BRA": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 71.6, imports 116.4)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|IND": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 135.9, imports 19.7)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|IDN": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 85.3, imports 82.2)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|SAU": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 53.4, imports 54.7)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|THA": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 103.5, imports 49.8)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|SGP": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 82.7, imports 36.6)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|NLD": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 93.8, imports 20.5)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|GBR": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 85.1, imports 18.6)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|FRA": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 47.8, imports 36.2)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|ITA": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 51.2, imports 24.9)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|MEX": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 89.2, imports 20.2)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|CAN": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 47.9, imports 41.7)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|IRN": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 6.9, imports 3.0)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html",
+      "note": "Official GACC figure; widely reported to understate actual trade because Iranian crude reaches China relabelled as Malaysian/other origin."
+    },
+    "CHN|PAK": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 22.4, imports 2.8)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|TUR": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 40.1, imports 4.5)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|PHL": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 55.6, imports 16.7)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|ARE": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 72.9, imports 35.1)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|IRQ": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 17.2, imports 34.0)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|ZAF": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 23.0, imports 30.6)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|CHL": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 25.1, imports 41.8)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|KAZ": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 29.7, imports 19.0)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|PRK": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 2.3, imports 0.4)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html",
+      "note": "Official GACC figure; excludes unrecorded/sanctioned trade."
+    },
+    "CHN|ESP": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 45.7, imports 9.3)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|NGA": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 24.9, imports 3.2)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|QAT": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 5.5, imports 18.3)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|KWT": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 6.0, imports 12.5)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|OMN": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 5.6, imports 27.3)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|PER": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 16.3, imports 34.7)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|ARG": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 14.5, imports 9.1)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|ISR": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 16.6, imports 17.1)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|EGY": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 20.0, imports 0.8)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|BGD": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 22.8, imports 1.3)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|MMR": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 11.4, imports 8.0)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "CHN|UKR": {
+      "year": 2025,
+      "reporter": "CHN",
+      "source": "China General Administration of Customs (GACC), Monthly Bulletin table (2) Imports and Exports by Country (Region) of Origin/Destination, Dec 2025, Jan-Dec cumulative, US$ (2025: China exports 5.0, imports 2.7)",
+      "url": "http://english.customs.gov.cn/Statics/ef1a478f-8a43-4b51-9690-fb975762a2c2.html"
+    },
+    "DEU|FRA": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to France EUR 117.3bn, imports EUR 69.1bn, total EUR 186.4bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|NLD": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Netherlands EUR 112.4bn, imports EUR 97.0bn, total EUR 209.4bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|POL": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Poland EUR 100.1bn, imports EUR 80.4bn, total EUR 180.5bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|ITA": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Italy EUR 83.5bn, imports EUR 72.4bn, total EUR 155.8bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|AUT": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Austria EUR 80.0bn, imports EUR 53.6bn, total EUR 133.6bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|CHE": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Switzerland EUR 73.8bn, imports EUR 55.5bn, total EUR 129.3bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|CZE": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Czechia EUR 53.5bn, imports EUR 62.0bn, total EUR 115.5bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|BEL": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Belgium EUR 58.5bn, imports EUR 47.1bn, total EUR 105.7bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|GBR": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to United Kingdom EUR 79.9bn, imports EUR 38.6bn, total EUR 118.4bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|ESP": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Spain EUR 59.1bn, imports EUR 39.2bn, total EUR 98.3bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|HUN": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Hungary EUR 30.5bn, imports EUR 34.9bn, total EUR 65.4bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|SWE": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Sweden EUR 28.9bn, imports EUR 18.9bn, total EUR 47.8bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|DNK": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Denmark EUR 24.1bn, imports EUR 15.0bn, total EUR 39.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|RUS": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Aussenhandel - Rangfolge der Handelspartner (51000-02, Jahr 2025): German exports to Russia EUR 6.91bn, imports EUR 1.27bn, total EUR 8.18bn; converted at ECB 2025 annual average 1.1300 USD/EUR (exports 7.8, imports 1.4 US$bn)",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx",
+      "note": "Mirror data (partner reporter). EUR->USD at ECB annual average reference rate 2025 = 1.12998."
+    },
+    "DEU|TUR": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Türkiye EUR 29.4bn, imports EUR 25.5bn, total EUR 54.9bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|KOR": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to South Korea EUR 17.9bn, imports EUR 12.2bn, total EUR 30.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|JPN": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Japan EUR 21.0bn, imports EUR 22.0bn, total EUR 43.0bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|IND": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to India EUR 16.3bn, imports EUR 15.0bn, total EUR 31.3bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|UKR": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Ukraine EUR 9.3bn, imports EUR 3.1bn, total EUR 12.4bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|NOR": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Norway EUR 10.8bn, imports EUR 26.5bn, total EUR 37.3bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "DEU|ISR": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Israel EUR 5.6bn, imports EUR 3.1bn, total EUR 8.7bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "FRA|ITA": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner Italy, TOTAL product, 2025: France exports EUR 47.9bn, imports EUR 58.2bn, total EUR 106.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.IT.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "FRA|ESP": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner Spain, TOTAL product, 2025: France exports EUR 45.2bn, imports EUR 52.7bn, total EUR 97.9bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.ES.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "FRA|BEL": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner Belgium, TOTAL product, 2025: France exports EUR 45.2bn, imports EUR 64.1bn, total EUR 109.3bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.BE.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "FRA|GBR": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner United Kingdom, TOTAL product, 2025: France exports EUR 38.2bn, imports EUR 24.9bn, total EUR 63.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.GB.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "FRA|NLD": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner Netherlands, TOTAL product, 2025: France exports EUR 23.8bn, imports EUR 62.8bn, total EUR 86.6bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.NL.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "FRA|CHE": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner Switzerland, TOTAL product, 2025: France exports EUR 22.0bn, imports EUR 17.7bn, total EUR 39.7bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.CH.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "FRA|IND": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner India, TOTAL product, 2025: France exports EUR 6.4bn, imports EUR 7.7bn, total EUR 14.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.IN.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "FRA|DZA": {
+      "year": 2025,
+      "reporter": "FRA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter France, partner Algeria, TOTAL product, 2025: France exports EUR 4.2bn, imports EUR 5.1bn, total EUR 9.3bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.FR.DZ.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "NLD|BEL": {
+      "year": 2025,
+      "reporter": "NLD",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Netherlands, partner Belgium, TOTAL product, 2025: Netherlands exports EUR 94.2bn, imports EUR 58.7bn, total EUR 152.9bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.NL.BE.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "NLD|GBR": {
+      "year": 2025,
+      "reporter": "NLD",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Netherlands, partner United Kingdom, TOTAL product, 2025: Netherlands exports EUR 49.9bn, imports EUR 23.3bn, total EUR 73.2bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.NL.GB.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "ITA|ESP": {
+      "year": 2025,
+      "reporter": "ITA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Italy, partner Spain, TOTAL product, 2025: Italy exports EUR 38.2bn, imports EUR 33.1bn, total EUR 71.3bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.IT.ES.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "GBR|IRL": {
+      "year": 2025,
+      "reporter": "GBR",
+      "source": "HMRC Overseas Trade Statistics (uktradeinfo OTS API), calendar 2025: UK exports to Ireland GBP 23.3bn, imports GBP 18.6bn, total GBP 41.9bn; converted at ECB 2025 annual average cross rate 1.3189 USD/GBP (1.1300 USD/EUR / 0.8568 GBP/EUR)",
+      "url": "https://api.uktradeinfo.com/OTS?$apply=filter(MonthId ge 202501 and MonthId le 202512 and CountryId eq 7)/groupby((CountryId,FlowTypeId),aggregate(Value with sum as Value))",
+      "note": "HMRC OTS (customs basis, whole UK incl. Northern Ireland) used rather than partner data for consistency; Eurostat Comext reporter Ireland gives EUR 42.9bn (~$48.5bn) for IE-GB."
+    },
+    "GBR|NOR": {
+      "year": 2025,
+      "reporter": "GBR",
+      "source": "HMRC Overseas Trade Statistics (uktradeinfo OTS API), calendar 2025: UK exports to Norway GBP 3.4bn, imports GBP 22.3bn, total GBP 25.6bn; converted at ECB 2025 annual average cross rate 1.3189 USD/GBP (1.1300 USD/EUR / 0.8568 GBP/EUR)",
+      "url": "https://api.uktradeinfo.com/OTS?$apply=filter(MonthId ge 202501 and MonthId le 202512 and CountryId eq 28)/groupby((CountryId,FlowTypeId),aggregate(Value with sum as Value))",
+      "note": "HMRC OTS (customs basis, whole UK incl. Northern Ireland) used rather than partner data for consistency; "
+    },
+    "GBR|BEL": {
+      "year": 2025,
+      "reporter": "BEL",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Belgium, partner United Kingdom, TOTAL product, 2025: Belgium exports EUR 27.7bn, imports EUR 14.7bn, total EUR 42.5bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.BE.GB.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "POL|CZE": {
+      "year": 2025,
+      "reporter": "POL",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Poland, partner Czechia, TOTAL product, 2025: Poland exports EUR 22.9bn, imports EUR 16.2bn, total EUR 39.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.PL.CZ.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "ITA|CHE": {
+      "year": 2025,
+      "reporter": "ITA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Italy, partner Switzerland, TOTAL product, 2025: Italy exports EUR 35.1bn, imports EUR 15.3bn, total EUR 50.4bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.IT.CH.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "ESP|PRT": {
+      "year": 2025,
+      "reporter": "ESP",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Spain, partner Portugal, TOTAL product, 2025: Spain exports EUR 35.7bn, imports EUR 19.1bn, total EUR 54.8bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.ES.PT.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "SWE|NOR": {
+      "year": 2025,
+      "reporter": "SWE",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Sweden, partner Norway, TOTAL product, 2025: Sweden exports EUR 16.7bn, imports EUR 16.0bn, total EUR 32.7bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.SE.NO.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "SWE|FIN": {
+      "year": 2025,
+      "reporter": "SWE",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Sweden, partner Finland, TOTAL product, 2025: Sweden exports EUR 12.0bn, imports EUR 9.2bn, total EUR 21.2bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.SE.FI.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "AUT|ITA": {
+      "year": 2025,
+      "reporter": "AUT",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Austria, partner Italy, TOTAL product, 2025: Austria exports EUR 12.8bn, imports EUR 12.6bn, total EUR 25.4bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.AT.IT.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "RUS|IND": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "India Ministry of Commerce & Industry (DGCI&S), TRADESTAT Monthly EIDB, Country-wise all commodities, Russia, calendar year Jan-Dec 2025, US$ million (India exports 4,469.29, imports 59,128.80)",
+      "url": "https://tradestat.commerce.gov.in/meidb/country_wise_all_commodities_import",
+      "note": "Mirror data (India reporter). Calendar-year option of TRADESTAT, figures marked revised (R)."
+    },
+    "RUS|TUR": {
+      "year": 2025,
+      "reporter": "TUR",
+      "source": "TurkStat data as reported to UN Comtrade (reporter Turkiye, partner Russian Federation, 2025, HS TOTAL): Turkish exports 6.73, imports 42.37 US$bn. Import figure matches TurkStat's published Jan-Dec 2025 imports from Russia of US$42,373 mn.",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=792&period=2025&partnerCode=643&cmdCode=TOTAL&flowCode=M,X",
+      "note": "Mirror data (Turkiye reporter) via UN Comtrade; could not reach TurkStat's country table directly."
+    },
+    "RUS|KAZ": {
+      "year": 2025,
+      "reporter": "KAZ",
+      "source": "Kazakhstan national data as reported to UN Comtrade (reporter Kazakhstan, partner Russian Federation, 2025, HS TOTAL): Kazakh exports 8.25, imports 19.54 US$bn",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=398&period=2025&partnerCode=643&cmdCode=TOTAL&flowCode=M,X",
+      "note": "Mirror data (Kazakhstan reporter). Kazakh Trade Minister Shakkaliev cited a preliminary US$27.4bn for 2025 (Times of Central Asia); Comtrade submission (27.8) used as the more complete figure."
+    },
+    "RUS|BLR": {
+      "year": 2025,
+      "reporter": "RUS",
+      "source": "President Putin at the Supreme State Council of the Union State (TASS, 26 Feb 2026): bilateral trade turnover totaled about US$52 bn in 2025",
+      "url": "https://tass.com/politics/2092223",
+      "note": "Neither country publishes bilateral customs data; official statement, rounded ('about'). Belarusian officials cite US$55-62bn, which appear to include services. Treat as approximate."
+    },
+    "RUS|KOR": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "Korea International Trade Association (KITA) via Republic of Korea MOFA country page: 2025 Korean exports to Russia 4.04, imports 6.89 US$bn",
+      "url": "https://www.mofa.go.kr/eng/nation/m_4902/view.do?seq=116",
+      "note": "Mirror data (Korea reporter). Russian ambassador cites US$10.939bn from Korean customs data, consistent."
+    },
+    "RUS|JPN": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "Japan Ministry of Finance / Japan Customs, Trade Statistics time series d42ca006 (Central & Eastern Europe, Russia; calendar year, thousand yen): 2025 Japanese exports to Russia JPY 366.5bn, imports JPY 828.1bn; converted at Federal Reserve 2025 annual average 149.57 JPY/USD (exports 2.45, imports 5.54 US$bn)",
+      "url": "https://www.customs.go.jp/toukei/suii/html/data/d42ca006.csv",
+      "note": "Mirror data (Japan reporter). TASS converted the same yen total to ~US$7.54bn at a spot rate; annual-average rate used here per method."
+    },
+    "RUS|IRN": {
+      "year": 2024,
+      "reporter": "RUS",
+      "source": "Russian Energy Minister Sergey Tsivilev (co-chair of the intergovernmental commission), TASS, Apr 2025: Russia-Iran trade turnover grew 16.2% in 2024 to US$4.8 bn",
+      "url": "https://tass.com/economy/1949413",
+      "note": "No full-year 2025 figure published by either side; Iran's IRICA reports only by Iranian year. Tsivilev put Jan-Nov 2025 at US$4.8bn (+13.1%) (https://tass.com/economy/2088433), so 2025 full year was likely ~US$5.2-5.5bn. Official statement, rounded."
+    },
+    "RUS|EGY": {
+      "year": 2025,
+      "reporter": "EGY",
+      "source": "Egypt (CAPMAS) data as reported to UN Comtrade (reporter Egypt, partner Russian Federation, 2025, HS TOTAL): Egyptian exports 0.81, imports 5.19 US$bn",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=818&period=2025&partnerCode=643&cmdCode=TOTAL&flowCode=M,X",
+      "note": "Mirror data (Egypt reporter) via UN Comtrade."
+    },
+    "RUS|UZB": {
+      "year": 2025,
+      "reporter": "UZB",
+      "source": "Uzbekistan National Statistics Committee, preliminary 2025 foreign trade by top-10 partners (via UzA): Russia US$13.0 bn (16.0% of US$81.2bn turnover)",
+      "url": "https://uza.uz/ar/posts/top-10-countries-in-uzbekistans-foreign-trade-turnover_812211",
+      "note": "Mirror data (Uzbekistan reporter), preliminary. Export/import split not given in source (bilateral working group cited Uzbek exports of ~US$4.4bn). Russian Deputy PM Manturov cited US$11.5bn."
+    },
+    "JPN|KOR": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to KOR 46.5, imports from KOR 30.1",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=410&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|TWN": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to TWN 52.9, imports from TWN 33.3",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=490&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Taiwan is recorded in UN Comtrade as partner 490 \"Other Asia, nes\"."
+    },
+    "JPN|AUS": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to AUS 14.9, imports from AUS 45.3",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=36&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|THA": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to THA 28.2, imports from THA 25.5",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=764&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|VNM": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to VNM 18.9, imports from VNM 30.4",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=704&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|IDN": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to IDN 12.6, imports from IDN 20.2",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=360&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|SAU": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to SAU 7.1, imports from SAU 26.2",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=682&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Japan import figure is CIF and dominated by crude oil."
+    },
+    "JPN|ARE": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to ARE 14.1, imports from ARE 32.8",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=784&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|IND": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to IND 19.2, imports from IND 7.0",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=699&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|QAT": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to QAT 1.5, imports from QAT 7.2",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=634&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|MYS": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to MYS 14.1, imports from MYS 19.5",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=458&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|SGP": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to SGP 21.3, imports from SGP 7.6",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=702&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "JPN|PHL": {
+      "year": 2025,
+      "reporter": "JPN",
+      "source": "UN Comtrade, reported by JPN (Japan Ministry of Finance customs), 2025: JPN exports to PHL 10.4, imports from PHL 10.4",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=392&period=2025&partnerCode=608&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "KOR|VNM": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "UN Comtrade, reported by KOR (Korea Customs Service), 2025: KOR exports to VNM 62.8, imports from VNM 31.8",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=410&period=2025&partnerCode=704&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "KOR|TWN": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "UN Comtrade, reported by KOR (Korea Customs Service), 2025: KOR exports to TWN 49.1, imports from TWN 32.3",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=410&period=2025&partnerCode=490&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Taiwan is recorded in UN Comtrade as partner 490 \"Other Asia, nes\"."
+    },
+    "KOR|AUS": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "UN Comtrade, reported by KOR (Korea Customs Service), 2025: KOR exports to AUS 14.2, imports from AUS 32.1",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=410&period=2025&partnerCode=36&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "KOR|SAU": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "UN Comtrade, reported by KOR (Korea Customs Service), 2025: KOR exports to SAU 4.9, imports from SAU 27.4",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=410&period=2025&partnerCode=682&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Korea import figure is CIF and dominated by crude oil."
+    },
+    "KOR|QAT": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "UN Comtrade, reported by KOR (Korea Customs Service), 2025: KOR exports to QAT 0.8, imports from QAT 9.9",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=410&period=2025&partnerCode=634&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "KOR|IND": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "UN Comtrade, reported by KOR (Korea Customs Service), 2025: KOR exports to IND 19.2, imports from IND 6.4",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=410&period=2025&partnerCode=699&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "KOR|SGP": {
+      "year": 2025,
+      "reporter": "KOR",
+      "source": "UN Comtrade, reported by KOR (Korea Customs Service), 2025: KOR exports to SGP 19.6, imports from SGP 11.4",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=410&period=2025&partnerCode=702&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "TWN|SGP": {
+      "year": 2025,
+      "reporter": "TWN",
+      "source": "Taiwan Ministry of Finance, Dec-2025 customs trade release (Tables 10 & 13), 2025: TWN exports to SGP 40.404; imports from SGP 13.035 (= exports minus 27.369 surplus)",
+      "url": "https://service.mof.gov.tw/public/Data/statistic/trade/news/11412/11412_%E4%B8%AD%E6%96%87%E6%96%B0%E8%81%9E%E7%A8%BF(%E6%9C%AC%E6%96%87%E5%8F%8A%E9%99%84%E8%A1%A8).pdf",
+      "note": "Imports derived from MOF exports and bilateral surplus. Singapore-reported figure (incl. re-exports/transit) is far higher: 130.4 (UN Comtrade 2025)."
+    },
+    "TWN|MYS": {
+      "year": 2025,
+      "reporter": "MYS",
+      "source": "UN Comtrade, reported by MYS (Malaysia DOSM), 2025: MYS exports to TWN 28.0, imports from TWN 33.9",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=458&period=2025&partnerCode=490&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Taiwan MOF release does not publish imports from Malaysia separately, so Malaysia (DOSM) reporting used; Taiwan partner = Comtrade 490 \"Other Asia, nes\". For comparison Taiwan MOF 2025 exports to Malaysia were 37.7."
+    },
+    "TWN|VNM": {
+      "year": 2025,
+      "reporter": "VNM",
+      "source": "Vietnam customs data as cited by Taiwan representative to Vietnam (CNA/Taiwan News): 2025 two-way trade US$39.68bn (VNM imports from TWN >33.0, exports to TWN >6.6), up from 28.30 in 2024",
+      "url": "https://www.taiwannews.com.tw/en/news/6307618",
+      "note": "Secondary report of official figures; Taiwan MOF 2025 exports to Vietnam were 18.168 (imports not published in MOF release). Neither country reports 2025 to UN Comtrade."
+    },
+    "IND|ARE": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to ARE 38.7, imports from ARE 55.8",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=784&flowCode=M,X&cmdCode=TOTAL",
+      "note": "UAE has not reported 2024/2025 to Comtrade."
+    },
+    "IND|SAU": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to SAU 10.8, imports from SAU 31.3",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=682&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "IND|IRQ": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to IRQ 3.3, imports from IRQ 27.3",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=368&flowCode=M,X&cmdCode=TOTAL",
+      "note": "India imports mostly Iraqi crude oil."
+    },
+    "IND|SGP": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to SGP 10.7, imports from SGP 8.3",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=702&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "IND|GBR": {
+      "year": 2025,
+      "reporter": "GBR",
+      "source": "HMRC Overseas Trade Statistics (uktradeinfo OTS API), calendar 2025: UK exports to India GBP 7.6bn, imports GBP 10.2bn, total GBP 17.7bn; converted at ECB 2025 annual average cross rate 1.3189 USD/GBP (1.1300 USD/EUR / 0.8568 GBP/EUR)",
+      "url": "https://api.uktradeinfo.com/OTS?$apply=filter(MonthId ge 202501 and MonthId le 202512 and CountryId eq 664)/groupby((CountryId,FlowTypeId),aggregate(Value with sum as Value))",
+      "note": "HMRC OTS (customs basis, whole UK incl. Northern Ireland) used rather than partner data for consistency; India's commerce ministry reports on an April-March fiscal year, so HMRC calendar-year data used."
+    },
+    "IND|QAT": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to QAT 1.7, imports from QAT 12.9",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=634&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "IND|AUS": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to AUS 7.7, imports from AUS 16.0",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=36&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "IND|IDN": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to IDN 4.3, imports from IDN 21.2",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=360&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "CAN|MEX": {
+      "year": 2025,
+      "reporter": "CAN",
+      "source": "UN Comtrade, reported by CAN (Statistics Canada), 2025: CAN exports to MEX 6.4, imports from MEX 38.3",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=124&period=2025&partnerCode=484&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Canadian imports are by country of origin (incl. goods transshipped via US). Mexico-reported 2025 figure is 34.5."
+    },
+    "BRA|ARG": {
+      "year": 2025,
+      "reporter": "BRA",
+      "source": "UN Comtrade, reported by BRA (Brazil SECEX/MDIC), 2025: BRA exports to ARG 18.1, imports from ARG 13.4",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=76&period=2025&partnerCode=32&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "MEX|DEU": {
+      "year": 2025,
+      "reporter": "DEU",
+      "source": "Destatis, Statistischer Bericht Außenhandelsrangfolge (July 2026 ed.), table 51000-02 Jahr 2025: German exports to Mexico EUR 15.6bn, imports EUR 9.5bn, total EUR 25.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://www.destatis.de/DE/Themen/Wirtschaft/Aussenhandel/Publikationen/Downloads-Aussenhandel/statistischer-bericht-aussenhandel-rangfolgen-5510007.xlsx?__blob=publicationFile",
+      "note": "Destatis national concept (special trade); EUR converted to USD at ECB 2025 annual average reference rate 1.1300."
+    },
+    "IRN|ARE": {
+      "year": 2024,
+      "reporter": "IRN",
+      "source": "Iran Customs Administration (IRICA), Iranian year 1403 (21 Mar 2024-20 Mar 2025): non-oil exports to UAE 7.2, imports from UAE 21.98",
+      "url": "https://newspaper.irandaily.ir/7799/3/14582",
+      "note": "Iranian fiscal year, not calendar year; non-oil trade only (excludes crude). UAE does not publish bilateral data with Iran; neither reports to Comtrade for 2024/2025."
+    },
+    "IRN|TUR": {
+      "year": 2025,
+      "reporter": "TUR",
+      "source": "UN Comtrade, reported by TUR (TurkStat), 2025: TUR exports to IRN 3.1, imports from IRN 2.5",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=792&period=2025&partnerCode=364&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Iran (IRICA) does not report to Comtrade; Turkish reporting used."
+    },
+    "IRN|IRQ": {
+      "year": 2024,
+      "reporter": "IRN",
+      "source": "Iran Customs Administration (IRICA), Iranian year 1403 (21 Mar 2024-20 Mar 2025): non-oil exports to Iraq 11.9; imports from Iraq ~0.4 (estimate, from Iran-Iraq Joint Chamber 10-month figure of US$446m)",
+      "url": "https://newspaper.irandaily.ir/7799/3/14582",
+      "note": "ESTIMATE (estimate: true) for the import leg; Iranian fiscal year, non-oil only; excludes Iranian gas/electricity exports to Iraq. Iraq-reported 2024 (Comtrade) imports from Iran only 3.1.",
+      "estimate": true
+    },
+    "IRN|IND": {
+      "year": 2025,
+      "reporter": "IND",
+      "source": "UN Comtrade, reported by IND (India DGCI&S / Ministry of Commerce), 2025: IND exports to IRN 1.2, imports from IRN 0.9",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=699&period=2025&partnerCode=364&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Iran (IRICA) does not report to Comtrade; Indian reporting used."
+    },
+    "SAU|ARE": {
+      "year": 2025,
+      "reporter": "SAU",
+      "source": "UN Comtrade, reported by SAU (GASTAT Saudi Arabia), 2025: SAU exports to ARE 28.0, imports from ARE 14.4",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=682&period=2025&partnerCode=784&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Saudi partner-level export data in Comtrade appear to exclude/underallocate crude oil (cf. SAU-JPN), so this may understate total trade; UAE has not reported 2024/2025 to Comtrade."
+    },
+    "TUR|ITA": {
+      "year": 2025,
+      "reporter": "ITA",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Italy, partner Türkiye, TOTAL product, 2025: Italy exports EUR 13.7bn, imports EUR 12.4bn, total EUR 26.1bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.IT.TR.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "TUR|GBR": {
+      "year": 2025,
+      "reporter": "GBR",
+      "source": "HMRC Overseas Trade Statistics (uktradeinfo OTS API), calendar 2025: UK exports to Türkiye GBP 6.5bn, imports GBP 13.1bn, total GBP 19.6bn; converted at ECB 2025 annual average cross rate 1.3189 USD/GBP (1.1300 USD/EUR / 0.8568 GBP/EUR)",
+      "url": "https://api.uktradeinfo.com/OTS?$apply=filter(MonthId ge 202501 and MonthId le 202512 and CountryId eq 52)/groupby((CountryId,FlowTypeId),aggregate(Value with sum as Value))",
+      "note": "HMRC OTS (customs basis, whole UK incl. Northern Ireland) used rather than partner data for consistency; "
+    },
+    "TUR|IRQ": {
+      "year": 2025,
+      "reporter": "TUR",
+      "source": "UN Comtrade, reported by TUR (TurkStat), 2025: TUR exports to IRQ 12.4, imports from IRQ 2.0",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=792&period=2025&partnerCode=368&flowCode=M,X&cmdCode=TOTAL"
+    },
+    "PAK|ARE": {
+      "year": 2025,
+      "reporter": "PAK",
+      "source": "UN Comtrade, reported by PAK (Pakistan Bureau of Statistics), 2025: PAK exports to ARE 1.9, imports from ARE 7.0",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=586&period=2025&partnerCode=784&flowCode=M,X&cmdCode=TOTAL",
+      "note": "UAE has not reported 2024/2025 to Comtrade."
+    },
+    "UKR|POL": {
+      "year": 2025,
+      "reporter": "POL",
+      "source": "Eurostat Comext DS-045409 (EU trade since 1988 by HS2-4-6 and CN8), reporter Poland, partner Ukraine, TOTAL product, 2025: Poland exports EUR 13.4bn, imports EUR 4.5bn, total EUR 18.0bn; converted at ECB 2025 annual average 1.1300 USD/EUR",
+      "url": "https://ec.europa.eu/eurostat/api/comext/dissemination/sdmx/2.1/data/DS-045409/A.PL.UA.TOTAL.1+2.VALUE_IN_EUROS?startPeriod=2025&endPeriod=2025&format=SDMX-CSV",
+      "note": "Eurostat Comext (community concept, national data of the EU reporter as transmitted to Eurostat); EUR converted at ECB 2025 annual average 1.1300."
+    },
+    "UKR|TUR": {
+      "year": 2025,
+      "reporter": "TUR",
+      "source": "TurkStat data as reported to UN Comtrade (reporter Türkiye, partner Ukraine, HS TOTAL, 2025): Türkiye exports $ 3.97bn, imports $ 2.63bn",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=792&partnerCode=804&period=2025&cmdCode=TOTAL&flowCode=M,X",
+      "note": "Ukraine (SSSU) 2025 figures not yet in Comtrade; total matches the $6.6bn 2025 figure reported by Daily Sabah citing official data."
+    },
+    "ISR|TUR": {
+      "year": 2025,
+      "reporter": "ISR",
+      "source": "UN Comtrade, reported by ISR (Israel CBS), 2025: ISR exports to TUR 0.0, imports from TUR 0.9",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=376&period=2025&partnerCode=792&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Turkey suspended all trade with Israel in May 2024; Turkey reports no 2025 trade with Israel. Israel 2024 two-way figure was 2.6."
+    },
+    "EGY|SAU": {
+      "year": 2025,
+      "reporter": "EGY",
+      "source": "UN Comtrade, reported by EGY (CAPMAS Egypt), 2025: EGY exports to SAU 3.0, imports from SAU 9.5",
+      "url": "https://comtradeapi.un.org/public/v1/preview/C/A/HS?reporterCode=818&period=2025&partnerCode=682&flowCode=M,X&cmdCode=TOTAL",
+      "note": "Saudi-reported 2025 figure is 9.5 (excludes much oil allocation)."
+    }
+  }
 }

@@ -23,6 +23,9 @@ export function Hud() {
   const pp = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}`;
   const growthTip = `Annualised growth. Trend ${g.base.toFixed(1)}%, infrastructure ${pp(g.infrastructure)}, tech ${pp(g.tech)}, taxes ${pp(g.tax)}, trade ${pp(g.trade)}, resources ${pp(g.resources)}, financial sanctions ${pp(g.sanctions)}, war ${pp(g.war)}, mobilisation ${pp(g.mobilization)}, debt ${pp(g.debt)}, inflation ${pp(g.inflation)}, recovery ${pp(g.recovery)}, events ${pp(g.events)}, chokepoints ${pp(g.chokepoints)}.${me.recession ? ' The economy is in recession.' : ''} Open the Economy screen (E) for the full picture.`;
   const left = me.nextElection !== null ? me.nextElection - game.turn : null;
+  const recent = game.dispatches.filter((d) => d.turn >= game.turn - 1);
+  const fresh = recent.length;
+  const toMe = recent.filter((d) => d.to === game.player).length;
   const tensionClass = game.globalTension >= 80 ? 'danger' : game.globalTension >= 55 ? 'warn' : '';
   const open = (m: typeof modal) => {
     playSound('open');
@@ -110,6 +113,20 @@ export function Hud() {
             {label}
           </button>
         ))}
+        <button
+          className="nav-btn"
+          onClick={() => {
+            useUiStore.getState().setDiplomacyTab('dispatches');
+            open('diplomacy');
+          }}
+          data-tip={`Diplomatic wire: statements from world leaders. ${fresh} new this month${toMe ? `, ${toMe} addressed to you` : ''}.`}
+          data-testid="nav-dispatches"
+        >
+          Wire
+          {fresh > 0 ? (
+            <Stat value={fresh} tooltip={`${fresh} statements this month${toMe ? `, ${toMe} addressed to you` : ''}.`} className={`nav-badge ${toMe ? 'hot' : ''}`} inline />
+          ) : null}
+        </button>
         <button
           className="nav-btn"
           onClick={() => open('settings')}

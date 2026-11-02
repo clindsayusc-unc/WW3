@@ -2093,3 +2093,198 @@ input[type='range'] {
   backdrop-filter: blur(14px);
   white-space: nowrap;
 }
+
+/* diplomacy AI (D-071): negotiation, dispatches, blocs, UN */
+.input.small {
+  padding: 4px 6px;
+  font-size: 12px;
+  min-width: 0;
+}
+.deal-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.deal-col {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.deal-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.deal-editor .input {
+  max-width: 180px;
+}
+.deal-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.deal-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.07);
+}
+.deal-items li.bad {
+  color: var(--bad);
+}
+.deal-verdict {
+  margin-top: 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.likelihood-bar {
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(148, 163, 184, 0.15);
+  overflow: hidden;
+}
+.likelihood-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 5px;
+  transition: width 0.25s ease;
+}
+.likelihood-mark {
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--text);
+  opacity: 0.6;
+}
+.deal-reason {
+  margin: 0;
+  font-style: italic;
+}
+.deal-lines {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  font-size: 12px;
+}
+.deal-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dispatch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+.dispatch-card {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.06), transparent 60%);
+}
+.dispatch-card .portrait {
+  width: 64px;
+  height: 64px;
+}
+.dispatch-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dispatch-from {
+  font-weight: 600;
+}
+.dispatch-date {
+  margin-left: auto;
+  font-size: 11px;
+}
+.dispatch-title {
+  font-size: 11px;
+}
+.dispatch-text {
+  margin: 6px 0 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.bloc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+.bloc-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.resolution {
+  border-bottom: 1px solid var(--line);
+  padding: 6px 0;
+  font-size: 12px;
+}
+.resolution.pending {
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 8px 0;
+}
+.vote-forecast {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0;
+}
+.leader-intel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+.reply.warn {
+  border-left-color: var(--bad);
+  background: rgba(248, 113, 113, 0.08);
+}
+.nav-badge {
+  display: inline-block;
+  margin-left: 5px;
+  min-width: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  background: rgba(148, 163, 184, 0.3);
+  color: var(--text);
+}
+.nav-badge.hot {
+  background: var(--accent);
+  color: #0b1220;
+}

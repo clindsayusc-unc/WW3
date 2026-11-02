@@ -43,12 +43,33 @@ export function headline(state: GameState, text: string): void {
 
 // --- relations ------------------------------------------------------------------------------
 
-export function defaultRelation(world: World, a: Iso3, b: Iso3): number {
+const liveBlocCache = new WeakMap<GameState, { version: number; map: Map<Iso3, string[]> }>();
+/** Blocs a nation belongs to now (members can leave, D-071); falls back to the data. */
+export function liveBlocs(world: World, state: GameState | undefined, iso: Iso3): readonly string[] {
+  if (!state?.blocs) return world.nations.get(iso)?.blocs ?? [];
+  let e = liveBlocCache.get(state);
+  if (!e || e.version !== state.diplomacyVersion) {
+    const map = new Map<Iso3, string[]>();
+    for (const [id, b] of Object.entries(state.blocs))
+      for (const m of b.members) {
+        const l = map.get(m);
+        if (l) l.push(id);
+        else map.set(m, [id]);
+      }
+    e = { version: state.diplomacyVersion, map };
+    liveBlocCache.set(state, e);
+  }
+  return e.map.get(iso) ?? [];
+}
+
+export function defaultRelation(world: World, a: Iso3, b: Iso3, state?: GameState): number {
   const na = world.nations.get(a);
   const nb = world.nations.get(b);
   if (!na || !nb) return 0;
   let v = 0;
-  const shared = na.blocs.filter((x) => nb.blocs.includes(x));
+  const ba = liveBlocs(world, state, a);
+  const bb = liveBlocs(world, state, b);
+  const shared = ba.filter((x) => bb.includes(x));
   if (shared.length > 0) v = 40;
   const hostile: [string, string][] = [
     ['NATO', 'CSTO'],
@@ -59,8 +80,8 @@ export function defaultRelation(world: World, a: Iso3, b: Iso3): number {
   ];
   for (const [x, y] of hostile) {
     if (
-      (na.blocs.includes(x) && nb.blocs.includes(y)) ||
-      (na.blocs.includes(y) && nb.blocs.includes(x))
+      (ba.includes(x) && bb.includes(y)) ||
+      (ba.includes(y) && bb.includes(x))
     )
       v = Math.min(v, x === 'NATO' && y === 'CSTO' ? -50 : -25);
   }
@@ -70,7 +91,7 @@ export function defaultRelation(world: World, a: Iso3, b: Iso3): number {
 
 export function getRelation(world: World, state: GameState, a: Iso3, b: Iso3): number {
   if (a === b) return 100;
-  return state.relations[relationKey(a, b)] ?? defaultRelation(world, a, b);
+  return state.relations[relationKey(a, b)] ?? defaultRelation(world, a, b, state);
 }
 
 export function adjustRelation(
@@ -82,7 +103,7 @@ export function adjustRelation(
 ): void {
   if (a === b) return;
   const key = relationKey(a, b);
-  const cur = state.relations[key] ?? defaultRelation(world, a, b);
+  const cur = state.relations[key] ?? defaultRelation(world, a, b, state);
   state.relations[key] = clamp(Math.round((cur + delta) * 10) / 10, -100, 100);
 }
 
@@ -124,7 +145,11 @@ export function hasTreaty(state: GameState, a: Iso3, b: Iso3, type?: string): bo
   );
 }
 
-const allyCache = new WeakMap<GameState, { version: number; map: Map<Iso3, Iso3[]> }>();
+const allyCache = new WeakMap<
+  GameState,
+  { version: number; map: Map<Iso3, Iso3[]>; sets: Map<Iso3, Set<Iso3>> }
+>();
+const NO_ALLIES: ReadonlySet<Iso3> = new Set();
 
 export function bumpDiplomacy(state: GameState): void {
   state.diplomacyVersion += 1;
@@ -146,16 +171,35 @@ export function alliesOf(world: World, state: GameState, iso: Iso3): Iso3[] {
       add(t.a, t.b);
       add(t.b, t.a);
     }
-    for (const bloc of ['NATO', 'CSTO']) {
-      const members = world.nationList.filter((n) => n.blocs.includes(bloc)).map((n) => n.iso3);
+    for (const bloc of ['NATO', 'CSTO'] as const) {
+      const members =
+        state.blocs?.[bloc]?.members ?? world.nationList.filter((n) => n.blocs.includes(bloc)).map((n) => n.iso3);
       for (const a of members) for (const b of members) add(a, b);
     }
     const flat = new Map<Iso3, Iso3[]>();
     for (const [k, v] of map) flat.set(k, [...v]);
-    entry = { version: state.diplomacyVersion, map: flat };
+    entry = { version: state.diplomacyVersion, map: flat, sets: map };
     allyCache.set(state, entry);
   }
   return entry.map.get(iso) ?? [];
+}
+
+/** Same as alliesOf, as a Set (fast membership tests on hot paths). */
+export function allySet(world: World, state: GameState, iso: Iso3): ReadonlySet<Iso3> {
+  alliesOf(world, state, iso);
+  return allyCache.get(state)!.sets.get(iso) ?? NO_ALLIES;
+}
+
+const basingCache = new WeakMap<GameState, { version: number; set: Set<string> }>();
+/** Has `host` granted basing rights to `guest` (D-071)? */
+export function hasBasing(state: GameState, host: Iso3, guest: Iso3): boolean {
+  if (!state.basing || state.basing.length === 0) return false;
+  let e = basingCache.get(state);
+  if (!e || e.version !== state.diplomacyVersion) {
+    e = { version: state.diplomacyVersion, set: new Set(state.basing) };
+    basingCache.set(state, e);
+  }
+  return e.set.has(`${host}>${guest}`);
 }
 
 export const isSanctioned = (state: GameState, from: Iso3, to: Iso3): boolean =>

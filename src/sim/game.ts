@@ -57,6 +57,12 @@ import { updateTension, canLaunchNuclear, nuclearStrike } from './escalation';
 import { drawEvents, resolvePendingEvent } from './events';
 import { runAi } from './ai';
 import { checkVictory } from './victory';
+import { executeDeal, proposeDeal } from './deals';
+import { runStrategy } from './strategy';
+import { runAid } from './aid';
+import { initBlocs, leaveBloc, runBlocs } from './blocs';
+import { castPlayerVote, initUn, runUn, tableResolution } from './un';
+import { decayMemories } from './personality';
 import { adjustRelation, clamp, controlledRegions, getRelation, log, headline } from './query';
 
 export { START_DATE };
@@ -185,7 +191,9 @@ export function applyCommand(world: World, input: GameState, command: Command): 
       const p = state.proposals.find((x) => x.id === command.proposalId);
       if (!p) return state;
       state.proposals = state.proposals.filter((x) => x.id !== command.proposalId);
-      if (command.accept) {
+      if (command.accept && p.type === 'deal' && p.deal) {
+        executeDeal(world, state, p.deal);
+      } else if (command.accept) {
         // The player's acceptance is final: execute without re-evaluating the AI side.
         executeAccepted(world, state, p.from, p.to, p.type);
       } else {
@@ -205,6 +213,26 @@ export function applyCommand(world: World, input: GameState, command: Command): 
     case 'chokepoint':
       applyChokepointCommand(world, state, player, command.id, command.action);
       updateChokepoints(world, state);
+      return state;
+    case 'proposeDeal': {
+      if (command.deal.from !== player || command.deal.to === player) return state;
+      proposeDeal(world, state, command.deal);
+      return state;
+    }
+    case 'unPropose':
+      tableResolution(world, state, player, command.kind, command.target);
+      return state;
+    case 'unVote':
+      castPlayerVote(state, command.resolutionId, command.vote);
+      return state;
+    case 'setAid': {
+      const level = clamp(Math.round(Number.isFinite(command.level) ? command.level : 0), 0, 3);
+      if (level === 0) delete state.playerAid[command.recipient];
+      else if (command.recipient !== player && state.nations[command.recipient]?.alive) state.playerAid[command.recipient] = level;
+      return state;
+    }
+    case 'leaveBloc':
+      leaveBloc(world, state, player, command.bloc);
       return state;
     case 'nuclearStrike': {
       const why = canLaunchNuclear(state, player, command.target);
@@ -307,8 +335,11 @@ export function endTurn(world: World, state: GameState): GameState {
   // Unresolved player events pick their first option.
   for (const p of [...state.pendingEvents]) resolvePendingEvent(world, state, p.id, 0);
 
-  // 1. AI decides (budgets, production, orders, diplomacy).
+  // 1. AI decides (budgets, production, orders, diplomacy), then the strategic layer (war plans,
+  // balancing coalitions) and foreign aid (D-071, D-072).
   runAi(world, state);
+  runStrategy(world, state);
+  runAid(world, state);
   // 2. Trade network and resource market, then the economy, domestic politics and production.
   runTrade(world, state);
   runEconomy(world, state);
@@ -332,8 +363,11 @@ export function endTurn(world: World, state: GameState): GameState {
   runBlockades(world, state);
   checkCapitulations(world, state);
   updateChokepoints(world, state);
-  // 4. Diplomacy drift, escalation, events.
+  // 4. Diplomacy drift, blocs, the UN, memory decay, escalation, events.
   decayRelations(world, state);
+  runBlocs(world, state);
+  runUn(world, state);
+  decayMemories(world, state);
   updateTension(world, state);
   drawEvents(world, state);
   // 5. Advance the calendar.
@@ -414,6 +448,7 @@ export function refreshLeaders(world: World, input: GameState): GameState {
       state.chokepoints[c.id] = { status: 'open', by: null, mined: false, minedBy: null, since: 0 };
   if (typeof state.oilPrice !== 'number') state.oilPrice = 1;
   migrateEconomy(world, state);
+  migrateDiplomacy(world, state);
   for (const n of Object.values(state.nations)) {
     if (n.leaderFictional) continue;
     const l = world.leaders.get(n.iso3);
@@ -422,6 +457,26 @@ export function refreshLeaders(world: World, input: GameState): GameState {
     n.leaderTitle = l.title;
   }
   return state;
+}
+
+/** Saves from before D-071 lack memories, blocs, the UN, war plans and aid. */
+function migrateDiplomacy(world: World, state: GameState): void {
+  state.memory ??= {};
+  state.dispatches ??= [];
+  state.blocs ??= initBlocs(world);
+  state.un ??= initUn(world);
+  state.warPlans ??= {};
+  state.coalition ??= null;
+  state.basing ??= [];
+  state.aid ??= [];
+  state.aidSuspended ??= [];
+  state.playerAid ??= {};
+  for (const n of Object.values(state.nations)) {
+    if (typeof n.legitimacy !== 'number') n.legitimacy = 50;
+    if (typeof n.aidSupply !== 'number') n.aidSupply = 0;
+    if (typeof n.aidReceived !== 'number') n.aidReceived = 0;
+    if (typeof n.aidArmsBank !== 'number') n.aidArmsBank = 0;
+  }
 }
 
 /** Saves from before D-061 lack the trade network, inflation, support and elections. */
