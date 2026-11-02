@@ -15,7 +15,12 @@ function branchSlug(): string {
 }
 test.setTimeout(900_000);
 
-type Ww3Window = { ww3: { fly: (lat: number, lon: number, d: number) => void } };
+type Ww3Window = {
+  ww3: {
+    fly: (lat: number, lon: number, d: number) => void;
+    ui: { getState: () => { setSunOffset: (deg: number) => void } };
+  };
+};
 type Ww3Hook = {
   capital: (iso3: string) => number | null;
   neighbours: (id: number) => number[];
@@ -24,7 +29,12 @@ type Ww3Hook = {
   regionLatLon: (id: number) => { lat: number; lon: number } | null;
   ui: { getState: () => { select: (id: number | null) => void } };
   game: {
-    getState: () => { game: { regions: Record<number, { controller: string | null }> } | null };
+    getState: () => {
+      game: {
+        regions: Record<number, { controller: string | null }>;
+        units: Record<number, { owner: string; region: number }>;
+      } | null;
+    };
   };
 };
 async function fly(page: Page, lat: number, lon: number, d: number) {
@@ -33,20 +43,43 @@ async function fly(page: Page, lat: number, lon: number, d: number) {
     [lat, lon, d],
   );
 }
+/** Sub-solar longitude offset from the camera (D-045: 38 = afternoon; 80 = dusk; 180 = midnight). */
+async function sun(page: Page, offsetDeg: number) {
+  await page.evaluate(
+    (d) => (globalThis as unknown as Ww3Window).ww3.ui.getState().setSunOffset(d),
+    offsetDeg,
+  );
+}
 
 /** Ends `n` turns, answering any decision modal that appears while waiting for the End Turn button. */
 async function playTurns(page: Page, n: number, onEvent?: () => Promise<void>): Promise<void> {
   for (let i = 0; i < n; i++) {
     const deadline = Date.now() + 90_000;
     for (;;) {
-      if (await page.getByTestId('end-screen').isVisible().catch(() => false)) return;
-      if (await page.getByTestId('event-modal').isVisible().catch(() => false)) {
+      if (
+        await page
+          .getByTestId('end-screen')
+          .isVisible()
+          .catch(() => false)
+      )
+        return;
+      if (
+        await page
+          .getByTestId('event-modal')
+          .isVisible()
+          .catch(() => false)
+      ) {
         if (onEvent) await onEvent();
         await page.getByTestId('choice-0').click();
         await page.waitForTimeout(150);
         continue;
       }
-      if (await page.getByTestId('end-turn').isEnabled().catch(() => false)) {
+      if (
+        await page
+          .getByTestId('end-turn')
+          .isEnabled()
+          .catch(() => false)
+      ) {
         await page.getByTestId('end-turn').click();
         await page.waitForTimeout(250);
         break;
@@ -108,10 +141,18 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.waitForTimeout(4000);
   await shot(page, 'globe-usa');
 
-  // Full globe view.
+  // Full globe view (the cinematic orbit shot: limb scattering, clouds, ocean glint).
   await fly(page, 20, 30, 3.4);
   await page.waitForTimeout(3500);
   await shot(page, 'globe-full');
+  await shot(page, 'orbit');
+
+  // Terminator over Europe at dusk: the sun 80° east of the camera puts the twilight band on Germany.
+  await sun(page, 80);
+  await fly(page, 50, 10, 1.7);
+  await page.waitForTimeout(4500);
+  await shot(page, 'europe-dusk');
+  await sun(page, 38);
 
   // Zoomed Taiwan Strait.
   await fly(page, 24.5, 120.5, 1.22);
@@ -193,9 +234,15 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await expect(page.getByTestId('odds-breakdown')).toContainText('Terrain');
   await page.getByTestId('odds-breakdown').scrollIntoViewIfNeeded();
   await shot(page, 'zagros-odds');
-  await page.evaluate(() => (globalThis as unknown as { ww3: Ww3Hook }).ww3.ui.getState().select(null));
+  await page.evaluate(() =>
+    (globalThis as unknown as { ww3: Ww3Hook }).ww3.ui.getState().select(null),
+  );
   // window.ww3 keeps the renderer's hooks after the app installs its own (perf must survive).
-  expect(await page.evaluate(() => typeof (globalThis as unknown as { ww3: { perf?: unknown } }).ww3.perf)).toBe('function');
+  expect(
+    await page.evaluate(
+      () => typeof (globalThis as unknown as { ww3: { perf?: unknown } }).ww3.perf,
+    ),
+  ).toBe('function');
 
   // Fight a war: declare war on Cuba, then order the capital garrison to an adjacent region.
   await page.getByTestId('nav-diplomacy').click();
@@ -236,6 +283,13 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
 
   await page.getByTestId('nav-settings').click();
   await expect(page.getByTestId('modal-settings')).toBeVisible();
+  // Per-effect levels (D-055) and the strike cam toggle (D-056); a level change recompiles the globe.
+  await expect(page.getByTestId('effects-grid')).toBeVisible();
+  await expect(page.getByTestId('toggle-strike-cam')).toBeVisible();
+  await page.getByTestId('effect-clouds-low').click();
+  await page.waitForTimeout(800);
+  await page.getByTestId('quality-high').click();
+  await page.waitForTimeout(800);
   await page.getByTestId('modal-close').click();
 
   // Ten turns, resolving any event that pops up (screenshot the first one).
@@ -248,7 +302,12 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   });
   await expect(page.getByTestId('hud')).toContainText('November 2027', { timeout: 60_000 });
   // A decision may be waiting after the last turn; answer it before opening other screens.
-  while (await page.getByTestId('event-modal').isVisible().catch(() => false)) {
+  while (
+    await page
+      .getByTestId('event-modal')
+      .isVisible()
+      .catch(() => false)
+  ) {
     await page.getByTestId('choice-0').click();
     await page.waitForTimeout(200);
   }
@@ -258,6 +317,15 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await fly(page, 49, 32, 1.5);
   await page.waitForTimeout(4000);
   await shot(page, 'ukraine-front');
+  // The war with Cuba at midnight: city lights, dimmed where damaged, fires and smoke where the
+  // fighting is, the Florida coast glowing across the strait.
+  await sun(page, 180);
+  await fly(page, 22.5, -80, 1.35);
+  await page.waitForTimeout(4500);
+  await shot(page, 'night-war-zone');
+  await sun(page, 38);
+  await fly(page, 49, 32, 1.5);
+  await page.waitForTimeout(4000);
   await shot(page, branchSlug());
   expect(errors).toEqual([]);
 });
@@ -280,7 +348,67 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await page.getByTestId('nav-research').click();
   await page.getByTestId('tech-semi-mature-nodes').click();
   await page.getByTestId('modal-close').click();
-  await playTurns(page, 50);
+  // Open the war: declare on Taiwan, send the Fujian stack across the strait, resolve a month and
+  // catch the combat visuals (attack arrow before, strikes / flashes / smoke / front line after).
+  await page.getByTestId('nav-diplomacy').click();
+  await page.getByTestId('diplomacy-search').fill('Taiwan');
+  await page.getByTestId('dip-TWN').click();
+  await page.getByTestId('act-declareWar').click();
+  await page.getByTestId('modal-close').click();
+  await expect(page.getByTestId('alerts')).toContainText('declares war on Taiwan');
+  const taipei = await page.evaluate(() => {
+    const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
+    const game = w.game.getState().game!;
+    const twn = w.capital('TWN')!;
+    const t = w.regionLatLon(twn)!;
+    let best = -1;
+    let bd = 1e9;
+    for (const u of Object.values(game.units)) {
+      if (u.owner !== 'CHN' || !w.isLand(u.region)) continue;
+      const p = w.regionLatLon(u.region)!;
+      const d = Math.hypot(p.lat - t.lat, p.lon - t.lon);
+      if (d < bd) {
+        bd = d;
+        best = u.region;
+      }
+    }
+    w.ui.getState().select(best);
+    return twn;
+  });
+  await page.getByTestId('own-stack').first().click();
+  await expect(page.getByTestId('orders-hint')).toBeVisible();
+  await fly(page, 24.8, 119.5, 1.3);
+  await page.waitForTimeout(3500);
+  const tPos = await page.evaluate(
+    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.screenPos(id),
+    taipei,
+  );
+  expect(tPos).not.toBeNull();
+  await page.mouse.move(tPos!.x, tPos!.y);
+  await page.waitForTimeout(400);
+  await page.mouse.click(tPos!.x, tPos!.y, { button: 'right' });
+  await expect(page.getByTestId('context-panel')).toContainText('Moving to', { timeout: 10_000 });
+  await page.waitForTimeout(1200);
+  await shot(page, 'taiwan-strait-orders');
+  await playTurns(page, 1);
+  // A decision may pop up with the new month; answer it so the battle is unobstructed.
+  for (let i = 0; i < 20; i++) {
+    if (
+      await page
+        .getByTestId('event-modal')
+        .isVisible()
+        .catch(() => false)
+    ) {
+      await page.getByTestId('choice-0').click();
+      break;
+    }
+    await page.waitForTimeout(100);
+  }
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `${SHOTS}/taiwan-strait-combat.png` });
+  await page.waitForTimeout(3000);
+  await shot(page, 'taiwan-strait-aftermath');
+  await playTurns(page, 49);
   await page.waitForTimeout(1000);
   await shot(page, 'taiwan-crisis-50-turns');
   expect(errors).toEqual([]);

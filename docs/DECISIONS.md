@@ -489,3 +489,106 @@ region's terrain, relief, land cover, infrastructure, ports, supply, this month'
 year's climate, crossing features toward the other highlighted region, and chokepoint status with
 close / reopen / mine / clear buttons on the strait's sea zone. `window.ww3` is merged, not
 replaced, by the app so the renderer's `perf()` survives a game start.
+
+## D-054 — 2026-11-02 — Cinematic globe: precomputed atmosphere, living ocean, two cloud layers, terrain relief
+
+Supersedes the rim-shell and ocean parts of D-035. `src/render/atmosphere.ts` precomputes, once at
+load (≈ 100–400 ms, half-float tables, 0.6 MB GPU), a Bruneton-style transmittance table
+T(r, μ) (256 × 64) and a single-scattering table (512 × 128: view cosine by impact parameter with the
+ground-hitting half and the limb half each getting 64 rows, × sun cosine (exponential mapping over
+[−1, 1]) × 16 slices of ν = cos(view, sun); RGB Rayleigh, A Mie, phase functions applied at run
+time). Because the camera can never enter the atmosphere (`MIN_DISTANCE` 1.05 > top of atmosphere
+1.0235), every ray starts at the top boundary, so the table needs no radius dimension and no
+subtraction trick: the limb shell looks the entry ray up directly, and the surface and clouds use
+`colour × T(entry → ground) + inscatter` for aerial perspective. Heights are scaled ×2.5
+(`ATMOSPHERE_SCALE`) so the limb reads from orbit; scattering coefficients are divided by the same
+factor so vertical optical depths stay physical (zenith transmittance 0.95/0.89/0.76). Sunlight on
+the ground is tinted by the same transmittance (orange at the terminator); a warm "twilight" ambient
+band stands in for the multiple scattering a single-scattering table lacks. The in-scatter on
+ground rays is scaled to 0.22 (`uAerial`) because the physically correct blue haze washes the
+political map out from 1,400 km up.
+
+Ocean: a 256² tileable wave normal map is generated procedurally at start-up (`waves.ts`, sines
+plus hashed value noise, no asset) and sampled in one or two scrolling octaves whose strength grows
+as the camera descends; GGX glint with the atmosphere-tinted sun, Fresnel sky reflection, three-band
+depth tint from the GEBCO bathymetry and seasonal sea ice (edge broken with cloud-texture noise).
+Clouds: the same NASA cloud map drawn twice — a lower layer and a mirrored, slower upper layer at
+1.011 — for parallax; both cast shadows projected along the sun; `src/sim/storms.ts` (deterministic
+per seed/turn, tropical basins by season plus mid-latitude lows) adds up to eight spiralling storm
+systems that drift along their monthly track in real time (cosmetic; `stormAt()` is the hook for air
+operations). Terrain: `earth-height.jpg` (GEBCO_08, 2048 × 1024) displaces the sphere vertices by up
+to 0.0035 (≈ 22 km, Everest ×2.5) as the camera comes closer; borders, front lines, arrows, fires
+and unit sprites follow the same displacement through a CPU copy of the height map
+(`terrainHeight.ts`). Snow line and sea ice follow latitude, elevation and the in-game month
+(hemispheres mirrored).
+
+## D-055 — 2026-11-02 — Every effect has a Low/Medium/High level; the auto-scaler caps them
+
+Extends D-040. `src/render/quality.ts` defines five effect keys (atmosphere, ocean, clouds, terrain,
+war) with a level each; the quality preset sets all five and each can then be overridden in
+Settings (persisted in `localStorage` as `ww3.effects`). Levels are compiled into the shaders as
+`#define`s (a change recompiles the globe and cloud materials) and read by the war layers for
+particle density, glow and trail counts. `DynamicResolution` still steps the DPR down at 18 ms
+frames; when the DPR floor is reached and frames stay above 20 ms for 2.5 s it lowers a global cap
+(high → medium → low) that every level is clamped to, and it lifts the cap again only after 15 s of
+fast frames at full DPR. The cap is shown in Settings ("Auto-scaler active").
+
+## D-056 — 2026-11-02 — Cinematic camera
+
+Replaces the damped fly-to of D-036 with timed flights: duration from the angular distance and the
+zoom change (0.7–2.8 s), smoother-step easing, log-space zoom, and on flights longer than 25° a
+zoom-out bump proportional to the distance so the globe swings past instead of sliding. Drag,
+wheel and inertia keep the exponential damping. The main menu orbits slowly with a sinusoidal
+latitude drift and a breathing zoom. Strike cam: nuclear launches (the only state-recorded strikes)
+can request a chase camera that trails the missile head behind and above it, lingers on the
+impact, then flies to the target at distance 1.35. Any click, wheel or key skips it; the "Strike
+cam" toggle in Settings (`ww3.strikeCam`) disables it. The sub-solar offset of D-045 is now a
+store value (`sunOffset`, default 38°) so screenshots and future lighting modes can put the
+terminator anywhere.
+
+## D-057 — 2026-11-02 — War visuals
+
+- Front lines: TopoJSON mesh edges between regions whose controllers are at war, rebuilt when
+  control, treaties or wars change; drawn with `LineSegments2` as an animated dashed ember line
+  over a wider additive glow (bloom picks it up), width and glow scaling with zoom and fading from
+  orbit.
+- Offensive arrows: for each of the player's stacks whose path ends in an enemy-controlled land
+  region, a curved tapering ribbon with an arrow head and a scrolling stripe (one mesh, normal
+  blending with a dark outline so it reads on bright terrain).
+- Burning regions: a region attribute texture (2048 × 1: devastation, burning, at war) lets the
+  globe shader dim night lights by devastation (−85 % at full), scorch the daytime albedo and add
+  an ember glow; `Fires.tsx` scatters flickering additive point lights (count by level and
+  intensity) and slow rising smoke particles (normal blending) inside each burning region.
+  Burning = a battle or strike there last turn, else lingering fires scaled by devastation.
+- Wakes: carrier, destroyer and amphibious stacks in sea zones get a tapered foam ribbon aligned
+  with their last move (or a stable hashed heading), scrolling and following the arrival
+  animation; submarines leave none.
+- Missiles: support fire into each battle is inferred from the previous state (aircraft within
+  range, ships in adjacent zones; up to 4 arcs per battle on High) and drawn with a launch flash, a
+  bright head with a fading trail (per-vertex progress attribute) and either an impact flash or an
+  interception burst with an expanding ring mid-course. Interception chance = the target
+  controller's missile-defence modifier × 2.2 + 0.12 per air-defence unit (capped 0.8), decided
+  by a hash so it is stable per turn. Nuclear strikes fire a salvo of three.
+
+## D-058 — 2026-11-02 — Enclosed seas are their own, correctly named sea zones
+
+Resolves the naming problem noted in D-052 and refines D-021. `scripts/fix-sea-zones.ts`
+post-processes the region-ID raster: 26 enclosed and marginal seas (Persian Gulf, Gulf of Oman, Red
+Sea, Gulf of Aden, Black Sea with Azov, Caspian, Baltic with Kattegat, North Sea with Skagerrak,
+Western Mediterranean, Tyrrhenian, Adriatic, Ionian with the Gulfs of Sidra and Gabès, Aegean with
+Marmara, Levantine, Yellow Sea with Bohai, Taiwan Strait, East China Sea, Sea of Japan, Sea of
+Okhotsk, Bering Sea, Gulf of Mexico, Hudson Bay with Ungava, Gulf of California, Gulf of Thailand,
+Java Sea, Andaman Sea) are flood-filled from seed points inside a hand-drawn polygon that stops at
+the connecting strait, so a fill can never leak past a strait the raster does not resolve. Inland
+water the world ocean cannot reach (Great Lakes, Baikal, Victoria, Balkhash, the Aral…) is no longer
+sea at all: those pixels join the nearest land region, so lakeside regions are not "coastal" and
+navies cannot sit in Lake Baikal. Leftover k-means slivers under 400 pixels fold into the
+neighbouring zone with the longest shared edge; zones are renumbered compactly (land ids unchanged,
+sea ids 1013–1184; `enclosed: true` marks the carved seas); adjacency is recomputed from the raster
+plus the hand-listed straits (Skagerrak and Messina added, the Danish straits now link North Sea
+and Baltic); open-ocean names stay "basin — nearest country" with more basins (Barents, Norwegian,
+Labrador, Philippine, Coral, Tasman, Weddell…). Chokepoint zones are re-resolved from the same
+probes (Hormuz = Persian Gulf | Gulf of Oman, Turkish straits = Black Sea | Aegean, Danish straits
+= North Sea | Baltic). The Taiwan Strait Crisis scenario now places the PLA Navy in the Taiwan
+Strait zone and the US carriers in the East China Sea by name. Tests resolve zones by name instead
+of id. Named seas are labelled on the globe in every map mode.

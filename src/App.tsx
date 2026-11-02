@@ -20,7 +20,7 @@ import { useGameStore } from './state/gameStore';
 import { useUiStore } from './state/uiStore';
 import { autosave } from './state/saves';
 import { useKeyboard } from './ui/useKeyboard';
-import { loadQuality } from './render/quality';
+import { loadEffects, loadFlag, loadQuality } from './render/quality';
 import { playSound } from './ui/audio';
 
 export function App() {
@@ -33,7 +33,10 @@ export function App() {
   const dismissedEnd = useUiStore((s) => s.modal === 'end');
   useKeyboard();
   useEffect(() => {
-    useUiStore.getState().setQuality(loadQuality());
+    const q = loadQuality();
+    useUiStore.getState().setQuality(q);
+    useUiStore.getState().setEffects(loadEffects(q));
+    useUiStore.getState().setStrikeCam(loadFlag('ww3.strikeCam', true));
     // Dev/e2e hook: window.ww3.fly(lat, lon, distance), window.ww3.ui, window.ww3.game. Merged
     // into the existing object so hooks installed by the renderer (perf, screenPos, …) survive.
     const w = window as unknown as { ww3?: Record<string, unknown> };

@@ -40,7 +40,10 @@ export function ContextPanel() {
           Hover a region for details. Click to select. Select your units, then right-click a
           destination to move or attack.
         </p>
-        <p className="hint">Scroll to zoom, drag to orbit. Keys 1–7 switch map modes; C toggles the chokepoint overlay.</p>
+        <p className="hint">
+          Scroll to zoom, drag to orbit. Keys 1–7 switch map modes; C toggles the chokepoint
+          overlay.
+        </p>
       </aside>
     );
   }

@@ -12,6 +12,9 @@ import {
 } from 'three';
 import { SymbolAtlas, TILE, ATLAS_SIZE, type Affiliation } from './symbolAtlas';
 import { greatCirclePoints, latLonToVec3 } from './geo';
+import { getHeightMap, heightAt } from './terrainHeight';
+import { terrainDisplacement } from './displacement';
+import { currentLevels } from './levels';
 import { loadWorld } from '../sim/world';
 import { useGameStore } from '../state/gameStore';
 import { useUiStore } from '../state/uiStore';
@@ -160,7 +163,7 @@ export function Units() {
       const a = world.regions.get(s.from);
       const b = world.regions.get(s.region);
       if (!a || !b) continue;
-      paths.current.set(s.key, greatCirclePoints(a.lat, a.lon, b.lat, b.lon, 24, 1.004, 0.004));
+      paths.current.set(s.key, greatCirclePoints(a.lat, a.lon, b.lat, b.lon, 24, 1.006, 0.004));
     }
     animStart.current = performance.now();
   }, [game]);
@@ -183,6 +186,7 @@ export function Units() {
       (fovScale / gl.domElement.clientHeight) * (dist > 2.8 ? 30 : dist > 1.8 ? 38 : 48);
     // Far out, show only the player's forces and enemies; everyone appears when close or in military mode.
     const showAll = dist < 2.0 || ui.mapMode === 'military';
+    const displace = terrainDisplacement(dist, currentLevels().terrain);
     for (const s of stacks.current) {
       if (n >= MAX_INSTANCES) break;
       if (!showAll && s.owner !== game.player && !atWar(game, game.player, s.owner)) continue;
@@ -196,7 +200,11 @@ export function Units() {
         const i0 = Math.floor(idx);
         const i1 = Math.min(path.length - 1, i0 + 1);
         p = path[i0]!.clone().lerp(path[i1]!, idx - i0);
-      } else p = latLonToVec3(meta.lat, meta.lon, 1.004);
+      } else {
+        const hm = getHeightMap();
+        const lift = 1.004 + (hm ? heightAt(hm, meta.lat, meta.lon) * displace : 0);
+        p = latLonToVec3(meta.lat, meta.lon, lift);
+      }
       // Nudge the sprite a little toward the camera so it floats above borders/labels.
       pos.setXYZ(n, p.x, p.y, p.z);
       uv.setXY(n, tile.u, 1 - tile.v - TILE / ATLAS_SIZE);

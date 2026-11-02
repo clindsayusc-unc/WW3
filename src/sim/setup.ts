@@ -377,13 +377,21 @@ function applyTaiwanCrisis(world: World, state: GameState): void {
   for (let i = 0; i < 6; i++) addUnit(state, 'mechanized', 'CHN', fujian);
   for (let i = 0; i < 4; i++) addUnit(state, 'marines', 'CHN', fujian);
   for (let i = 0; i < 3; i++) addUnit(state, 'fighter', 'CHN', fujian);
-  const strait = world.regions.get(fujian)!.neighbours.find((n) => world.regions.get(n)?.sea);
+  // The Taiwan Strait is its own sea zone (D-058); fall back to any sea off Fujian.
+  const fujianSeas = world.regions.get(fujian)!.neighbours.filter((n) => world.regions.get(n)?.sea);
+  const strait =
+    fujianSeas.find((n) => world.regions.get(n)?.name === 'Taiwan Strait') ?? fujianSeas[0];
   if (strait) {
     for (const u of Object.values(state.units))
       if (u.owner === 'CHN' && world.regions.get(u.region)?.sea) u.region = strait;
     for (let i = 0; i < 3; i++) addUnit(state, 'amphibiousGroup', 'CHN', strait);
+    const straitSeas = world.regions
+      .get(strait)!
+      .neighbours.filter((n) => world.regions.get(n)?.sea);
     const usZone =
-      world.regions.get(strait)!.neighbours.find((n) => world.regions.get(n)?.sea) ?? strait;
+      straitSeas.find((n) => world.regions.get(n)?.name === 'East China Sea') ??
+      straitSeas[0] ??
+      strait;
     let carriers = 0;
     for (const u of Object.values(state.units))
       if (u.owner === 'USA' && u.type === 'carrierGroup' && carriers++ < 3) u.region = usZone;

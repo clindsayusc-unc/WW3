@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '../Modal';
 import { useGameStore } from '../../state/gameStore';
-import { useUiStore, type Quality } from '../../state/uiStore';
-import { saveQuality } from '../../render/quality';
+import { useUiStore } from '../../state/uiStore';
+import { GraphicsSettings } from '../GraphicsSettings';
 import {
   exportSave,
   importSave,
@@ -28,35 +28,9 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
   useEffect(() => {
     void refresh();
   }, []);
-  const setQuality = (q: Quality) => {
-    ui.setQuality(q);
-    saveQuality(q);
-    playSound('click');
-  };
   return (
     <Modal title="Settings" subtitle="Graphics, sound and saves." testId="modal-settings">
-      <div className="section-title">Quality preset</div>
-      <div className="seg">
-        {(['low', 'medium', 'high'] as Quality[]).map((q) => (
-          <button
-            key={q}
-            className={`seg-btn ${ui.quality === q ? 'active' : ''}`}
-            onClick={() => setQuality(q)}
-            data-tip={
-              q === 'low'
-                ? 'DPR 1, no post-processing, 96-segment sphere.'
-                : q === 'medium'
-                  ? 'DPR 1.5, bloom + vignette, 160 segments.'
-                  : 'DPR 2, full post-processing, 256 segments. Default on Apple M3.'
-            }
-          >
-            {q}
-          </button>
-        ))}
-      </div>
-      <p className="hint">
-        Dynamic resolution lowers render scale automatically when frames exceed 18 ms.
-      </p>
+      <GraphicsSettings />
       <div className="section-title">Display & sound</div>
       <div className="chips">
         <button className={`chip toggle ${ui.showLabels ? 'on' : ''}`} onClick={ui.toggleLabels}>

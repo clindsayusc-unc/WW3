@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import type { RegionId } from '../sim/types';
+import type { EffectKey, EffectLevels, Level } from '../render/quality';
+import { levelsForPreset } from '../render/quality';
 
 export type Screen = 'menu' | 'game';
 export type Modal =
@@ -15,13 +17,7 @@ export type Modal =
   | 'nuclear'
   | 'end';
 export type MapMode =
-  | 'political'
-  | 'blocs'
-  | 'relations'
-  | 'economy'
-  | 'military'
-  | 'tension'
-  | 'terrain';
+  'political' | 'blocs' | 'relations' | 'economy' | 'military' | 'tension' | 'terrain';
 export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: string }[] = [
   {
     id: 'political',
@@ -71,6 +67,17 @@ export interface FlyTarget {
   nonce: number;
 }
 
+/** A missile arc the strike cam should follow (D-056). */
+export interface StrikeCamRequest {
+  points: { x: number; y: number; z: number }[];
+  /** Flight time in ms. */
+  duration: number;
+  /** Where to settle afterwards. */
+  lat: number;
+  lon: number;
+  nonce: number;
+}
+
 interface UiStore {
   screen: Screen;
   modal: Modal;
@@ -81,6 +88,15 @@ interface UiStore {
   diplomacyTarget: string | null;
   flyTo: FlyTarget | null;
   quality: Quality;
+  /** Per-effect Low/Medium/High (D-055); the preset resets all of them. */
+  effects: EffectLevels;
+  /** Auto-scaler cap on every effect level: 2 none, 1 medium, 0 low. */
+  autoCap: number;
+  /** Follow missile arcs with the camera (D-056). */
+  strikeCam: boolean;
+  strikeCamRequest: StrikeCamRequest | null;
+  /** Sub-solar longitude offset from the camera longitude, degrees (D-045: 38 = afternoon). */
+  sunOffset: number;
   muted: boolean;
   showLabels: boolean;
   showClouds: boolean;
@@ -97,6 +113,12 @@ interface UiStore {
   setDiplomacyTarget: (iso: string | null) => void;
   fly: (lat: number, lon: number, distance?: number) => void;
   setQuality: (q: Quality) => void;
+  setEffect: (key: EffectKey, level: Level) => void;
+  setEffects: (effects: EffectLevels) => void;
+  setAutoCap: (cap: number) => void;
+  setStrikeCam: (on: boolean) => void;
+  requestStrikeCam: (r: Omit<StrikeCamRequest, 'nonce'> | null) => void;
+  setSunOffset: (deg: number) => void;
   toggleMute: () => void;
   toggleLabels: () => void;
   toggleClouds: () => void;
@@ -115,6 +137,11 @@ export const useUiStore = create<UiStore>((set) => ({
   diplomacyTarget: null,
   flyTo: null,
   quality: 'high',
+  effects: levelsForPreset('high'),
+  autoCap: 2,
+  strikeCam: true,
+  strikeCamRequest: null,
+  sunOffset: 38,
   muted: false,
   showLabels: true,
   showClouds: true,
@@ -130,7 +157,18 @@ export const useUiStore = create<UiStore>((set) => ({
   setDiplomacyTarget: (diplomacyTarget) => set({ diplomacyTarget }),
   fly: (lat, lon, distance = 1.7) =>
     set((s) => ({ flyTo: { lat, lon, distance, nonce: (s.flyTo?.nonce ?? 0) + 1 } })),
-  setQuality: (quality) => set({ quality }),
+  setQuality: (quality) => set({ quality, effects: levelsForPreset(quality), autoCap: 2 }),
+  setEffect: (key, level) => set((s) => ({ effects: { ...s.effects, [key]: level } })),
+  setEffects: (effects) => set({ effects }),
+  setAutoCap: (autoCap) => set((s) => (s.autoCap === autoCap ? s : { autoCap })),
+  setStrikeCam: (strikeCam) => set({ strikeCam }),
+  requestStrikeCam: (r) =>
+    set((s) =>
+      r
+        ? { strikeCamRequest: { ...r, nonce: (s.strikeCamRequest?.nonce ?? 0) + 1 } }
+        : { strikeCamRequest: null },
+    ),
+  setSunOffset: (sunOffset) => set({ sunOffset }),
   toggleMute: () => set((s) => ({ muted: !s.muted })),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
   toggleClouds: () => set((s) => ({ showClouds: !s.showClouds })),

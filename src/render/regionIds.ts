@@ -79,4 +79,9 @@ export function createCountryIndex(): { texture: DataTexture; data: Uint8Array }
   return { texture, data };
 }
 
+/** Region attribute texture: R = devastation, G = burning, B = at war, per region id (D-057). */
+export function createRegionAttr(): { texture: DataTexture; data: Uint8Array } {
+  return createCountryIndex();
+}
+
 export { LinearFilter };

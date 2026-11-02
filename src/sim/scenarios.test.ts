@@ -14,21 +14,70 @@ import { controlledRegions, unitsOf } from './query';
 import type { GameState, Iso3, RegionId, Unit } from './types';
 
 const world = loadWorld();
+/** Sea zones by name (D-058): ids are renumbered whenever the zones are regenerated. */
+const Z = (name: string): RegionId => {
+  const z = world.regionList.find((r) => r.sea && r.name === name);
+  if (!z) throw new Error(`no sea zone named ${name}`);
+  return z.id;
+};
 const R = {
-  tehran: 586, khuzestan: 571, hormozgan: 576, kermanshah: 584, isfahan: 580, fars: 581, markazi: 579,
-  kuwaitJahra: 687, gulf: 1107, innerGulf: 1065,
-  taipei: 959, taichung: 958, kaohsiung: 957, fujian: 96, taiwanZoneN: 1062, taiwanZoneS: 1103,
-  tallinn: 376, idaViru: 377, riga: 378, daugavpils: 379, vilnius: 302, kaunas: 301, tver: 353, vitebsk: 255, minsk: 256,
-  seoul: 209, gyeonggi: 199, gangwon: 198, southHamgyong: 217, pyongyang: 218,
-  heilongjiang: 90, jilin: 91, khabarovsk: 335, zabaykalsky: 334,
-  ladakh: 58, himachal: 68, uttarakhand: 62, arunachal: 59, tibet: 86, xinjiang: 85,
-  california: 836, washington: 830, calZone: 1080, mexZone: 1113,
+  tehran: 586,
+  khuzestan: 571,
+  hormozgan: 576,
+  kermanshah: 584,
+  isfahan: 580,
+  fars: 581,
+  markazi: 579,
+  kuwaitJahra: 687,
+  gulf: Z('Persian Gulf'),
+  taipei: 959,
+  taichung: 958,
+  kaohsiung: 957,
+  fujian: 96,
+  taiwanZoneN: Z('Taiwan Strait'),
+  taiwanZoneS: Z('East China Sea'),
+  tallinn: 376,
+  idaViru: 377,
+  riga: 378,
+  daugavpils: 379,
+  vilnius: 302,
+  kaunas: 301,
+  tver: 353,
+  vitebsk: 255,
+  minsk: 256,
+  seoul: 209,
+  gyeonggi: 199,
+  gangwon: 198,
+  southHamgyong: 217,
+  pyongyang: 218,
+  heilongjiang: 90,
+  jilin: 91,
+  khabarovsk: 335,
+  zabaykalsky: 334,
+  ladakh: 58,
+  himachal: 68,
+  uttarakhand: 62,
+  arunachal: 59,
+  tibet: 86,
+  xinjiang: 85,
+  california: 836,
+  washington: 830,
+  calZone: Z('North Pacific — United States III'),
+  mexZone: Z('North Pacific — Mexico II'),
 } as const;
 
 function addUnits(state: GameState, type: string, owner: Iso3, region: RegionId, n: number): void {
   for (let i = 0; i < n; i++) {
     const u: Unit = {
-      id: state.nextId++, type, owner, region, strength: 100, morale: 85, path: [], prevRegion: region, moveProgress: 0,
+      id: state.nextId++,
+      type,
+      owner,
+      region,
+      strength: 100,
+      morale: 85,
+      path: [],
+      prevRegion: region,
+      moveProgress: 0,
     };
     state.units[u.id] = u;
   }
@@ -49,14 +98,24 @@ function moveAll(state: GameState, pred: (u: Unit) => boolean, region: RegionId)
 
 /** War without alliance obligations (the pact variant uses the real declareWar command). */
 function rawWar(state: GameState, a: Iso3, b: Iso3): void {
-  state.wars.push({ id: state.nextId++, attackers: [a], defenders: [b], since: state.turn, score: 0 });
+  state.wars.push({
+    id: state.nextId++,
+    attackers: [a],
+    defenders: [b],
+    since: state.turn,
+    score: 0,
+  });
   state.relations[a < b ? `${a}|${b}` : `${b}|${a}`] = -100;
   state.diplomacyVersion++;
   state.nations[a]!.mobilization = Math.max(state.nations[a]!.mobilization, 1) as 1 | 2;
   state.nations[b]!.mobilization = 2;
 }
 
-function newGame(player: Iso3, seed = 7, scenario: 'world-2027' | 'taiwan-crisis' = 'world-2027'): GameState {
+function newGame(
+  player: Iso3,
+  seed = 7,
+  scenario: 'world-2027' | 'taiwan-crisis' = 'world-2027',
+): GameState {
   return createGame({ seed, player, scenario }, world);
 }
 
@@ -103,9 +162,16 @@ function campaign(
   let state = state0;
   const threshold = opts.threshold ?? 0.8;
   const log: CampaignLog = {
-    turns: 0, captured: new Map(), attackerLossTotal: 0, defenderLossTotal: 0,
-    attackerStart: landStrength(state, attacker), defenderStart: landStrength(state, defender),
-    attackerEnd: 0, defenderEnd: 0, battles: 0, history: [],
+    turns: 0,
+    captured: new Map(),
+    attackerLossTotal: 0,
+    defenderLossTotal: 0,
+    attackerStart: landStrength(state, attacker),
+    defenderStart: landStrength(state, defender),
+    attackerEnd: 0,
+    defenderEnd: 0,
+    battles: 0,
+    history: [],
   };
   const seen = new Set<RegionId>();
   for (let m = 0; m < months; m++) {
@@ -113,7 +179,12 @@ function campaign(
     const stacks = new Map<RegionId, Unit[]>();
     for (const u of unitsOf(state, attacker)) {
       if (world.unitTypes.get(u.type)?.domain !== 'land') continue;
-      if (opts.onlyFrom && !opts.onlyFrom.has(u.region) && state.regions[u.region]?.controller !== attacker) continue;
+      if (
+        opts.onlyFrom &&
+        !opts.onlyFrom.has(u.region) &&
+        state.regions[u.region]?.controller !== attacker
+      )
+        continue;
       stacks.set(u.region, [...(stacks.get(u.region) ?? []), u]);
     }
     for (const [region, stack] of stacks) {
@@ -122,27 +193,55 @@ function campaign(
       if (!path || path.length === 0) continue;
       const next = path[0]!;
       const ctrl = state.regions[next]?.controller;
-      const hostile = ctrl !== null && ctrl !== undefined && ctrl !== attacker && !state.wars.every((w) => !(w.attackers.includes(attacker) && w.defenders.includes(ctrl)) && !(w.defenders.includes(attacker) && w.attackers.includes(ctrl)));
+      const hostile =
+        ctrl !== null &&
+        ctrl !== undefined &&
+        ctrl !== attacker &&
+        !state.wars.every(
+          (w) =>
+            !(w.attackers.includes(attacker) && w.defenders.includes(ctrl)) &&
+            !(w.defenders.includes(attacker) && w.attackers.includes(ctrl)),
+        );
       // A corps attacks with a front-width-sized wave (the rest follow as the front moves).
       const wave = hostile ? stack.slice(0, 8) : stack;
       if (hostile) {
-        const odds = estimateOdds(world, state, wave.map((u) => u.id), next);
+        const odds = estimateOdds(
+          world,
+          state,
+          wave.map((u) => u.id),
+          next,
+        );
         if (odds.ratio < threshold) continue;
       }
-      state = applyCommand(world, state, { type: 'moveUnits', unitIds: wave.map((u) => u.id), target: next });
+      state = applyCommand(world, state, {
+        type: 'moveUnits',
+        unitIds: wave.map((u) => u.id),
+        target: next,
+      });
     }
     const before = { a: landStrength(state, attacker), d: landStrength(state, defender) };
     state = applyCommand(world, state, { type: 'endTurn' });
     log.turns++;
-    for (const b of state.log.filter((l) => l.turn === state.turn - 1 && l.kind === 'battle' && (l.nations?.includes(attacker) ?? false))) {
+    for (const b of state.log.filter(
+      (l) =>
+        l.turn === state.turn - 1 &&
+        l.kind === 'battle' &&
+        (l.nations?.includes(attacker) ?? false),
+    )) {
       log.battles++;
       void b;
     }
-    for (const r of heldOf(state, attacker, defender)) if (!seen.has(r)) { seen.add(r); log.captured.set(r, log.turns); }
+    for (const r of heldOf(state, attacker, defender))
+      if (!seen.has(r)) {
+        seen.add(r);
+        log.captured.set(r, log.turns);
+      }
     const after = { a: landStrength(state, attacker), d: landStrength(state, defender) };
     log.attackerLossTotal += Math.max(0, before.a - after.a);
     log.defenderLossTotal += Math.max(0, before.d - after.d);
-    log.history.push(`m${log.turns} ${state.isoDate}: att ${after.a.toFixed(0)} def ${after.d.toFixed(0)} held ${heldOf(state, attacker, defender).length} ${state.regions[objective]!.controller === attacker ? 'OBJECTIVE TAKEN' : ''}`);
+    log.history.push(
+      `m${log.turns} ${state.isoDate}: att ${after.a.toFixed(0)} def ${after.d.toFixed(0)} held ${heldOf(state, attacker, defender).length} ${state.regions[objective]!.controller === attacker ? 'OBJECTIVE TAKEN' : ''}`,
+    );
     if (opts.stopWhenCaptured && state.regions[objective]!.controller === attacker) break;
     if (!state.nations[defender]!.alive) break;
   }
@@ -152,8 +251,12 @@ function campaign(
 }
 
 const report = (name: string, log: CampaignLog) => {
-  console.log(`\n[${name}] ${log.turns} months, ${log.battles} battles, attacker ${log.attackerStart.toFixed(0)}→${log.attackerEnd.toFixed(0)} (lost ${log.attackerLossTotal.toFixed(0)}), defender ${log.defenderStart.toFixed(0)}→${log.defenderEnd.toFixed(0)} (lost ${log.defenderLossTotal.toFixed(0)})`);
-  console.log(`  captured: ${[...log.captured.entries()].map(([r, t]) => `${world.regions.get(r)!.name}@m${t}`).join(', ') || 'none'}`);
+  console.log(
+    `\n[${name}] ${log.turns} months, ${log.battles} battles, attacker ${log.attackerStart.toFixed(0)}→${log.attackerEnd.toFixed(0)} (lost ${log.attackerLossTotal.toFixed(0)}), defender ${log.defenderStart.toFixed(0)}→${log.defenderEnd.toFixed(0)} (lost ${log.defenderLossTotal.toFixed(0)})`,
+  );
+  console.log(
+    `  captured: ${[...log.captured.entries()].map(([r, t]) => `${world.regions.get(r)!.name}@m${t}`).join(', ') || 'none'}`,
+  );
   console.log('  ' + log.history.slice(-4).join('\n  '));
 };
 
@@ -162,14 +265,27 @@ describe('calibration: US-led invasion of Iran via the Gulf', () => {
     const g = newGame('USA');
     rawWar(g, 'USA', 'IRN');
     // Build-up: carriers, escorts and amphibious groups in the Gulf; a corps staged in Kuwait.
-    moveAll(g, (u) => u.owner === 'USA' && (u.type === 'carrierGroup' || u.type === 'destroyerGroup' || u.type === 'amphibiousGroup' || u.type === 'attackSub'), R.gulf);
+    moveAll(
+      g,
+      (u) =>
+        u.owner === 'USA' &&
+        (u.type === 'carrierGroup' ||
+          u.type === 'destroyerGroup' ||
+          u.type === 'amphibiousGroup' ||
+          u.type === 'attackSub'),
+      R.gulf,
+    );
     removeUnits(g, (u) => u.owner === 'USA' && world.unitTypes.get(u.type)?.domain === 'land');
     addUnits(g, 'marines', 'USA', R.kuwaitJahra, 6);
     addUnits(g, 'mechanized', 'USA', R.kuwaitJahra, 6);
     addUnits(g, 'armored', 'USA', R.kuwaitJahra, 3);
     addUnits(g, 'infantry', 'USA', R.kuwaitJahra, 6);
     addUnits(g, 'artillery', 'USA', R.kuwaitJahra, 3);
-    moveAll(g, (u) => u.owner === 'USA' && (u.type === 'fighter' || u.type === 'bomber'), R.kuwaitJahra);
+    moveAll(
+      g,
+      (u) => u.owner === 'USA' && (u.type === 'fighter' || u.type === 'bomber'),
+      R.kuwaitJahra,
+    );
     // Iran mobilises toward its real order of battle (≈ 600 k regulars and IRGC, plus Basij):
     // the starting economy cap under-counts it. Deployed on the Zagros, the interior and Tehran.
     addUnits(g, 'infantry', 'IRN', R.kermanshah, 6);
@@ -184,13 +300,23 @@ describe('calibration: US-led invasion of Iran via the Gulf', () => {
     expect(hasSeaControl(world, g, R.gulf, 'USA')).toBe(true);
     const { state, log } = campaign(g, 'USA', 'IRN', R.tehran, 18, { threshold: 0.7 });
     report('Iran', log);
-    const coastTurn = Math.min(log.captured.get(R.khuzestan) ?? 99, log.captured.get(R.hormozgan) ?? 99);
+    const coastTurn = Math.min(
+      log.captured.get(R.khuzestan) ?? 99,
+      log.captured.get(R.hormozgan) ?? 99,
+    );
     expect(coastTurn).toBeLessThanOrEqual(6);
     const tehranTurn = log.captured.get(R.tehran) ?? 99;
     expect(tehranTurn).toBeGreaterThanOrEqual(9);
     expect(log.attackerLossTotal).toBeGreaterThan(250);
     // The Zagros itself: Kermanshah is mountains with a ×2.5 defence and the attack crosses a mountain border.
-    const zagros = estimateOdds(world, state, unitsOf(state, 'USA').filter((u) => u.region === R.khuzestan).map((u) => u.id), R.kermanshah);
+    const zagros = estimateOdds(
+      world,
+      state,
+      unitsOf(state, 'USA')
+        .filter((u) => u.region === R.khuzestan)
+        .map((u) => u.id),
+      R.kermanshah,
+    );
     void zagros;
     expect(world.regions.get(R.kermanshah)!.terrain).toBe('mountains');
   }, 120_000);
@@ -203,26 +329,44 @@ describe('calibration: invading the continental United States', () => {
     // Nothing reaches the US coast: the Pacific is more than three zones wide and the US Navy holds it.
     const route = seaRoute(world, g, [R.taiwanZoneN, R.taiwanZoneS], [R.calZone], 'CHN', 20);
     expect(route).toBeNull();
-    const routeUncontested = seaRoute(world, g, [R.taiwanZoneN, R.taiwanZoneS], [R.calZone], 'CHN', 20, false);
+    const routeUncontested = seaRoute(
+      world,
+      g,
+      [R.taiwanZoneN, R.taiwanZoneS],
+      [R.calZone],
+      'CHN',
+      20,
+      false,
+    );
     expect(routeUncontested).not.toBeNull();
     expect(routeUncontested!.length).toBeGreaterThan(3);
     for (const u of unitsOf(g, 'CHN'))
       if (world.unitTypes.get(u.type)?.domain === 'land')
-        expect(amphibiousTargets(world, g, u.region, 'CHN', u.type).some((t) => world.regions.get(t)?.iso3 === 'USA')).toBe(false);
+        expect(
+          amphibiousTargets(world, g, u.region, 'CHN', u.type).some(
+            (t) => world.regions.get(t)?.iso3 === 'USA',
+          ),
+        ).toBe(false);
 
     // Even granted total naval dominance off California (every US ship removed, a Chinese fleet
     // parked offshore) and a landing force on the beach, the beachhead starves and dies.
     const h = newGame('CHN', 11);
     rawWar(h, 'CHN', 'USA');
     removeUnits(h, (u) => u.owner === 'USA' && world.unitTypes.get(u.type)?.domain === 'sea');
-    moveAll(h, (u) => u.owner === 'CHN' && world.unitTypes.get(u.type)?.domain === 'sea', R.calZone);
+    moveAll(
+      h,
+      (u) => u.owner === 'CHN' && world.unitTypes.get(u.type)?.domain === 'sea',
+      R.calZone,
+    );
     expect(liftCapacity(world, h, 'CHN')).toBeLessThanOrEqual(8);
     addUnits(h, 'marines', 'CHN', R.california, 6);
     addUnits(h, 'mechanized', 'CHN', R.california, 2);
     for (const u of unitsOf(h, 'CHN')) if (u.region === R.california) u.prevRegion = R.fujian; // landed this month
     const supply = supplyFor(world, h, 'CHN', R.california, true);
     expect(supply).toBeLessThan(0.6);
-    const { state, log } = campaign(h, 'CHN', 'USA', world.capitalRegion.get('USA')!, 12, { threshold: 0.5 });
+    const { state, log } = campaign(h, 'CHN', 'USA', world.capitalRegion.get('USA')!, 12, {
+      threshold: 0.5,
+    });
     report('CONUS', log);
     expect(heldOf(state, 'CHN', 'USA').length).toBeLessThanOrEqual(1);
     const landed = unitsOf(state, 'CHN').filter((u) => world.regions.get(u.region)?.iso3 === 'USA');
@@ -238,7 +382,11 @@ describe('calibration: Russia and the Baltic states', () => {
     moveAll(g, (u) => u.owner === 'RUS' && ['armored', 'mechanized'].includes(u.type), R.tver);
     addUnits(g, 'infantry', 'RUS', R.tver, 6);
     let state = g;
-    const objectives: [RegionId, Iso3][] = [[R.tallinn, 'EST'], [R.riga, 'LVA'], [R.vilnius, 'LTU']];
+    const objectives: [RegionId, Iso3][] = [
+      [R.tallinn, 'EST'],
+      [R.riga, 'LVA'],
+      [R.vilnius, 'LTU'],
+    ];
     const fell: Record<string, number> = {};
     for (let m = 1; m <= 6; m++) {
       for (const [obj, iso] of objectives) {
@@ -266,9 +414,13 @@ describe('calibration: Russia and the Baltic states', () => {
     expect(war.defenders).toContain('POL');
     const { state, log } = campaign(g, 'RUS', 'EST', R.tallinn, 6, { threshold: 0.7 });
     report('Baltics with NATO', log);
-    const lostHome = world.regionsByNation.get('RUS')!.filter((r) => state.regions[r]!.controller !== 'RUS').length;
+    const lostHome = world.regionsByNation
+      .get('RUS')!
+      .filter((r) => state.regions[r]!.controller !== 'RUS').length;
     const tallinnTaken = state.regions[R.tallinn]!.controller === 'RUS';
-    console.log(`  Tallinn taken: ${tallinnTaken}; Russian home regions lost: ${lostHome}; Russian strength ${log.attackerEnd.toFixed(0)}`);
+    console.log(
+      `  Tallinn taken: ${tallinnTaken}; Russian home regions lost: ${lostHome}; Russian strength ${log.attackerEnd.toFixed(0)}`,
+    );
     // Contested: either Tallinn holds, or Russia pays for it with its own territory / a shattered army.
     expect(!tallinnTaken || lostHome >= 1 || log.attackerEnd < log.attackerStart * 0.7).toBe(true);
     expect(log.attackerLossTotal).toBeGreaterThan(150);
@@ -280,16 +432,38 @@ describe('calibration: China and Taiwan', () => {
     const g = newGame('CHN', 5, 'taiwan-crisis');
     rawWar(g, 'CHN', 'TWN');
     rawWar(g, 'CHN', 'USA');
-    moveAll(g, (u) => u.owner === 'USA' && (u.type === 'carrierGroup' || u.type === 'destroyerGroup' || u.type === 'attackSub'), R.taiwanZoneN);
+    moveAll(
+      g,
+      (u) =>
+        u.owner === 'USA' &&
+        (u.type === 'carrierGroup' || u.type === 'destroyerGroup' || u.type === 'attackSub'),
+      R.taiwanZoneN,
+    );
+    // The PLA Navy sorties into the strait too; the East China Sea (which also touches Taipei) is left empty.
+    moveAll(
+      g,
+      (u) => u.owner === 'CHN' && world.unitTypes.get(u.type)?.domain === 'sea',
+      R.taiwanZoneN,
+    );
     // The US Pacific Fleet sits in the strait: no Chinese sea control, so no landing is possible.
     expect(hasSeaControl(world, g, R.taiwanZoneN, 'CHN')).toBe(false);
+    expect(hasSeaControl(world, g, R.taiwanZoneS, 'CHN')).toBe(false);
     expect(amphibiousTargets(world, g, R.fujian, 'CHN', 'marines')).not.toContain(R.taipei);
     // Washington stays out: the carriers withdraw and the PLA Navy owns the strait.
     const h = newGame('CHN', 5, 'taiwan-crisis');
     rawWar(h, 'CHN', 'TWN');
     removeUnits(h, (u) => u.owner === 'USA' && world.unitTypes.get(u.type)?.domain === 'sea');
-    moveAll(h, (u) => u.owner === 'TWN' && world.unitTypes.get(u.type)?.domain === 'sea', R.taiwanZoneS);
+    moveAll(
+      h,
+      (u) => u.owner === 'TWN' && world.unitTypes.get(u.type)?.domain === 'sea',
+      R.taiwanZoneS,
+    );
     removeUnits(h, (u) => u.owner === 'TWN' && world.unitTypes.get(u.type)?.domain === 'sea');
+    moveAll(
+      h,
+      (u) => u.owner === 'CHN' && world.unitTypes.get(u.type)?.domain === 'sea',
+      R.taiwanZoneN,
+    );
     expect(hasSeaControl(world, h, R.taiwanZoneN, 'CHN')).toBe(true);
     expect(amphibiousTargets(world, h, R.fujian, 'CHN', 'marines')).toContain(R.taipei);
     // Beijing orders the landing regardless of the odds.
@@ -311,8 +485,17 @@ describe('calibration: ground offensive across the Korean DMZ', () => {
     addUnits(g, 'infantry', 'PRK', R.southHamgyong, 24);
     addUnits(g, 'artillery', 'PRK', R.southHamgyong, 8);
     addUnits(g, 'armored', 'PRK', R.southHamgyong, 4);
-    moveAll(g, (u) => u.owner === 'PRK' && world.unitTypes.get(u.type)?.domain === 'land', R.southHamgyong);
-    moveAll(g, (u) => u.owner === 'KOR' && ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type), R.gyeonggi);
+    moveAll(
+      g,
+      (u) => u.owner === 'PRK' && world.unitTypes.get(u.type)?.domain === 'land',
+      R.southHamgyong,
+    );
+    moveAll(
+      g,
+      (u) =>
+        u.owner === 'KOR' && ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type),
+      R.gyeonggi,
+    );
     expect(world.regions.get(R.gyeonggi)!.terrain).toBe('urban');
     expect(world.regions.get(R.seoul)!.terrain).toBe('urban');
     const { log } = campaign(g, 'PRK', 'KOR', R.seoul, 8, { threshold: 0.6 });
@@ -336,7 +519,12 @@ describe('calibration: deep winter offensive into Russia', () => {
       removeUnits(g, (u) => u.region === r);
     }
     g.regionsVersion++;
-    moveAll(g, (u) => u.owner === 'CHN' && ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type), R.zabaykalsky);
+    moveAll(
+      g,
+      (u) =>
+        u.owner === 'CHN' && ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type),
+      R.zabaykalsky,
+    );
     return campaign(g, 'CHN', 'RUS', world.capitalRegion.get('RUS')!, 4, { threshold: 0.05 }).log;
   }
   it('bleeds the attacker far more than the same offensive in summer', () => {
@@ -353,12 +541,24 @@ describe('calibration: India and China along the LAC', () => {
   it('mountains limit both sides to small gains', () => {
     const a = newGame('IND', 4);
     rawWar(a, 'IND', 'CHN');
-    moveAll(a, (u) => u.owner === 'IND' && ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type), R.ladakh);
+    moveAll(
+      a,
+      (u) =>
+        u.owner === 'IND' && ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type),
+      R.ladakh,
+    );
     const india = campaign(a, 'IND', 'CHN', R.tibet, 12, { threshold: 0.6 });
     report('LAC: India attacks', india.log);
     const b = newGame('CHN', 4);
     rawWar(b, 'CHN', 'IND');
-    moveAll(b, (u) => u.owner === 'CHN' && ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type) && u.region !== R.fujian, R.tibet);
+    moveAll(
+      b,
+      (u) =>
+        u.owner === 'CHN' &&
+        ['infantry', 'mechanized', 'armored', 'artillery'].includes(u.type) &&
+        u.region !== R.fujian,
+      R.tibet,
+    );
     const china = campaign(b, 'CHN', 'IND', R.ladakh, 12, { threshold: 0.6 });
     report('LAC: China attacks', china.log);
     expect(india.log.captured.size).toBeLessThanOrEqual(2);

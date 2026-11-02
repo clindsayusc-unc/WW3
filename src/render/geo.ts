@@ -64,9 +64,10 @@ export function sunDirection(
   seconds: number,
   cameraLon: number,
   out = new Vector3(),
+  offsetDeg = 38,
 ): Vector3 {
   // Mid-month declination (degrees), January first.
   const decl = -23.44 * Math.cos(((month - 1 + 0.5) / 12) * Math.PI * 2);
-  const lon = cameraLon + 38 + Math.sin(seconds / 60) * 12;
+  const lon = cameraLon + offsetDeg + Math.sin(seconds / 60) * 12;
   return latLonToVec3(decl, lon, 1, out);
 }

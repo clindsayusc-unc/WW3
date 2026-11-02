@@ -24,12 +24,40 @@ function assertNoNaN(value: unknown, path = 'state'): void {
 }
 
 describe('world', () => {
-  it('loads ~1,000 land regions, 150 sea zones and 196 nations', () => {
+  it('loads ~1,000 land regions, 172 sea zones and 196 nations', () => {
     expect(world.landCount).toBeGreaterThan(900);
-    expect(world.regionList.filter((r) => r.sea).length).toBe(150);
+    expect(world.regionList.filter((r) => r.sea).length).toBe(172);
     expect(world.nationList.length).toBe(196);
     expect(world.majors.length).toBe(14);
     for (const iso of world.majors) expect(world.capitalRegion.has(iso)).toBe(true);
+  });
+  it('enclosed seas are their own zones (D-058)', () => {
+    const zone = (name: string) => world.regionList.find((r) => r.sea && r.name === name);
+    for (const name of [
+      'Persian Gulf',
+      'Red Sea',
+      'Black Sea',
+      'Baltic Sea',
+      'Caspian Sea',
+      'Sea of Japan',
+      'Gulf of Mexico',
+    ])
+      expect(zone(name), name).toBeDefined();
+    // The Caspian touches no other sea; the Gulf opens only through Hormuz into the Gulf of Oman.
+    expect(zone('Caspian Sea')!.neighbours.some((n) => world.regions.get(n)?.sea)).toBe(false);
+    const gulfSeas = zone('Persian Gulf')!
+      .neighbours.filter((n) => world.regions.get(n)?.sea)
+      .map((n) => world.regions.get(n)!.name);
+    expect(gulfSeas).toEqual(['Gulf of Oman']);
+    const hormuz = world.chokepoints.find((c) => c.id === 'hormuz')!;
+    expect(hormuz.zones.map((z) => world.regions.get(z)!.name).sort()).toEqual([
+      'Gulf of Oman',
+      'Persian Gulf',
+    ]);
+    // Inland lakes are land now: no sea zone borders Lake Baikal's shore regions only.
+    for (const r of world.regionList)
+      if (!r.sea && r.coastal)
+        expect(r.neighbours.some((n) => world.regions.get(n)?.sea)).toBe(true);
   });
   it('every region has at least one neighbour and every tech prerequisite exists', () => {
     for (const r of world.regionList) expect(r.neighbours.length).toBeGreaterThan(0);
@@ -195,7 +223,9 @@ describe('escalation', () => {
       region: target,
     });
     expect(after.detonations).toBeGreaterThanOrEqual(1);
-    expect(after.nations['USA']!.warheads).toBeLessThanOrEqual(forced.nations['USA']!.warheads - 10);
+    expect(after.nations['USA']!.warheads).toBeLessThanOrEqual(
+      forced.nations['USA']!.warheads - 10,
+    );
     expect(after.nations['RUS']!.gdp).toBeLessThan(before);
     expect(after.regions[target]!.devastation).toBeGreaterThan(0.1);
     expect(after.globalTension).toBe(100);
