@@ -1,7 +1,18 @@
+import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 
 const SHOTS = 'docs/screenshots';
+
+/** docs/screenshots/<branch>.png per CLAUDE.md (slashes become dashes). */
+function branchSlug(): string {
+  if (process.env.SCREENSHOT_NAME) return process.env.SCREENSHOT_NAME;
+  try {
+    return execSync('git rev-parse --abbrev-ref HEAD').toString().trim().replace(/[/\\]/g, '-');
+  } catch {
+    return 'unknown';
+  }
+}
 test.setTimeout(900_000);
 
 type Ww3Window = { ww3: { fly: (lat: number, lon: number, d: number) => void } };
@@ -73,7 +84,22 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.getByTestId('scenario-world').click();
   await page.getByTestId('scenario-next').click();
   await expect(page.getByTestId('leader-grid')).toBeVisible();
-  await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
+  // D-049: parliamentary majors show the head of government, not the ceremonial head of state.
+  const grid = page.getByTestId('leader-grid');
+  for (const [iso, monarchOrPresident] of [
+    ['GBR', 'Charles III'],
+    ['DEU', 'Steinmeier'],
+    ['IND', 'Murmu'],
+    ['JPN', 'Naruhito'],
+    ['ISR', 'Herzog'],
+    ['PAK', 'Zardari'],
+  ] as const) {
+    await expect(grid.getByTestId(`leader-name-${iso}`)).not.toContainText(monarchOrPresident);
+  }
+  await grid.getByTestId('leader-GBR').click();
+  await expect(page.getByTestId('secondary-offices')).toContainText('Charles III');
+  await shot(page, 'leader-select-gbr');
+  await grid.getByTestId('leader-USA').click();
   await shot(page, 'leader-select');
   await page.getByTestId('start-game').click();
 
@@ -186,7 +212,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await fly(page, 49, 32, 1.5);
   await page.waitForTimeout(4000);
   await shot(page, 'ukraine-front');
-  await shot(page, 'feat-playable-v1');
+  await shot(page, branchSlug());
   expect(errors).toEqual([]);
 });
 

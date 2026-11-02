@@ -101,6 +101,42 @@ interface Props {
   onClick?: () => void;
 }
 
+/**
+ * Offices other than the effective leader's: the head of state (and head of government when it is a
+ * third person). Shown as secondary information; they do not drive the AI (D-049).
+ */
+export function SecondaryOffices({ leader }: { leader: LeaderMeta }) {
+  const hos = leader.headOfState;
+  const hog = leader.headOfGovernment;
+  const lines: { label: string; holder: string }[] = [];
+  if (hos.name !== leader.name)
+    lines.push({ label: 'Head of state', holder: `${hos.title} ${hos.name}` });
+  if (hog && hog.name !== leader.name && hog.name !== hos.name)
+    lines.push({ label: 'Head of government', holder: `${hog.title} ${hog.name}` });
+  const same = lines.length === 0;
+  return (
+    <div className="secondary-offices" data-testid="secondary-offices">
+      {same && (
+        <div
+          className="leader-title dim"
+          data-tip={`${leader.basis} ${leader.name} holds both offices.`}
+        >
+          Also head of state
+        </div>
+      )}
+      {lines.map((l) => (
+        <div
+          key={l.label}
+          className="leader-title dim"
+          data-tip={`${l.label}. ${leader.basis} The AI personality and your role follow ${leader.name}.`}
+        >
+          {l.label}: {l.holder}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function LeaderCard({
   nation,
   leader,
@@ -124,13 +160,11 @@ export function LeaderCard({
           <div className="leader-flag">
             {flagEmoji(nation.iso2)} <span className="leader-nation">{nation.name}</span>
           </div>
-          <div className="leader-name">{leader?.name ?? 'Head of state'}</div>
+          <div className="leader-name" data-testid={`leader-name-${nation.iso3}`}>
+            {leader?.name ?? 'Unknown leader'}
+          </div>
           <div className="leader-title">{leader?.title ?? 'Leader'}</div>
-          {!compact && leader?.headOfGovernment && (
-            <div className="leader-title dim">
-              {leader.headOfGovernment.title}: {leader.headOfGovernment.name}
-            </div>
-          )}
+          {!compact && leader && <SecondaryOffices leader={leader} />}
         </div>
       </div>
       {!compact && (

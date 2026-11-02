@@ -1517,6 +1517,16 @@ input[type='range'] {
 .trait .stat-value {
   font-size: 11px;
 }
+.secondary-offices {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  cursor: help;
+}
+.panel-left > .secondary-offices {
+  margin-top: -4px;
+  padding: 0 4px;
+}
 .leader-rationale {
   font-size: 12px;
   color: var(--text-dim);

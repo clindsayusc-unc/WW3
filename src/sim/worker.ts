@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import { applyCommand, createGame } from './game';
+import { applyCommand, createGame, refreshLeaders } from './game';
 import { estimateOdds } from './military';
 import { loadWorld } from './world';
 import type { GameState, WorkerRequest, WorkerResponse } from './types';
@@ -18,7 +18,7 @@ self.onmessage = (event: MessageEvent<WorkerRequest>) => {
     if (req.kind === 'new') {
       state = createGame(req.options, world);
     } else if (req.kind === 'load') {
-      state = req.state;
+      state = refreshLeaders(world, req.state);
     } else if (req.kind === 'odds') {
       if (!state) throw new Error('Simulation not initialised');
       const odds = estimateOdds(world, state, req.unitIds, req.target);

@@ -3,7 +3,7 @@ import { useUiStore } from '../state/uiStore';
 import { loadWorld } from '../sim/world';
 import { Stat } from './Stat';
 import { formatMoney, formatPct, formatPop } from './format';
-import { LeaderCard } from './LeaderCard';
+import { LeaderCard, SecondaryOffices } from './LeaderCard';
 import { nationHex } from '../render/palette';
 import { dispatch } from '../state/simBridge';
 import { unitUpkeep } from '../sim/economy';
@@ -30,6 +30,7 @@ export function NationPanel() {
   return (
     <aside className="panel panel-left" data-testid="nation-panel">
       <LeaderCard nation={meta} leader={leader} accent={nationHex(game.player)} compact />
+      {leader && <SecondaryOffices leader={leader} />}
       <div className="panel-section">
         <div className="row">
           <Stat

@@ -293,6 +293,22 @@ function defaultHeadline(world: World, state: GameState): string {
   return `Fighting continues between ${nationName(world, w.attackers[0])} and ${nationName(world, w.defenders[0])}`;
 }
 
+/**
+ * Saves made before D-049 stored the head of state as the leader. Re-derive each real leader's
+ * name and title from data; fictional successors are kept.
+ */
+export function refreshLeaders(world: World, input: GameState): GameState {
+  const state = structuredClone(input);
+  for (const n of Object.values(state.nations)) {
+    if (n.leaderFictional) continue;
+    const l = world.leaders.get(n.iso3);
+    if (!l) continue;
+    n.leaderName = l.name;
+    n.leaderTitle = l.title;
+  }
+  return state;
+}
+
 /** Convenience for tests and tooling: applies orders then ends the turn. */
 export function advanceTurn(world: World, state: GameState, orders: readonly Command[]): GameState {
   let s = state;
