@@ -3,6 +3,7 @@ import { advanceTurn, applyCommand, createGame, dateForTurn } from './game';
 import { loadWorld } from './world';
 import { stepKind, runCombat } from './military';
 import { runAi } from './ai';
+import { makeUnit } from './query';
 import type { GameState } from './types';
 
 const world = loadWorld();
@@ -139,31 +140,8 @@ describe('combat', () => {
     g.wars = [{ id: 9000, attackers: ['POL'], defenders: ['BLR'], since: 0, score: 0 }];
     g.relations['BLR|POL'] = -100;
     const target = world.capitalRegion.get('BLR')!;
-    const defender = {
-      id: 1,
-      type: 'infantry',
-      owner: 'BLR',
-      region: target,
-      strength: 100,
-      morale: 80,
-      path: [],
-      prevRegion: target,
-      moveProgress: 0,
-    };
-    g.units[1] = defender;
-    for (let i = 0; i < attackerCount; i++) {
-      g.units[10 + i] = {
-        id: 10 + i,
-        type: 'armored',
-        owner: 'POL',
-        region: target,
-        strength: 100,
-        morale: 80,
-        path: [],
-        prevRegion: target,
-        moveProgress: 0,
-      };
-    }
+    g.units[1] = makeUnit(1, 'infantry', 'BLR', target);
+    for (let i = 0; i < attackerCount; i++) g.units[10 + i] = makeUnit(10 + i, 'armored', 'POL', target);
     const results = runCombat(world, g);
     const r = results[0]!;
     return { defLoss: r.defenderLoss, attLoss: r.attackerLoss };

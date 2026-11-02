@@ -14,6 +14,7 @@ import {
   roll,
   adjustRelation,
   alliesOf,
+  makeUnit,
 } from './query';
 import { declareWar, imposeSanction, liftSanction, makePeace } from './diplomacy';
 
@@ -183,17 +184,9 @@ export function applyEffect(world: World, state: GameState, ctx: EventContext, e
         region = zone;
       }
       for (let i = 0; i < e.count; i++) {
-        state.units[state.nextId] = {
-          id: state.nextId,
-          type: e.unitType,
-          owner: n,
-          region,
-          strength: 100,
-          morale: 80,
-          path: [],
-          prevRegion: region,
-          moveProgress: 0,
-        };
+        state.units[state.nextId] = makeUnit(state.nextId, e.unitType, n, region, {
+          mission: t.domain === 'air' ? 'superiority' : null,
+        });
         state.nextId++;
       }
       break;

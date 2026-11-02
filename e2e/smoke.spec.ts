@@ -51,6 +51,42 @@ async function sun(page: Page, offsetDeg: number) {
   );
 }
 
+/**
+ * Screen position of a region once the camera has settled (software GL renders a frame a second,
+ * so a timed flight can still be moving when a fixed wait ends).
+ */
+async function settledPos(page: Page, id: number): Promise<{ x: number; y: number }> {
+  let last: { x: number; y: number } | null = null;
+  for (let i = 0; i < 40; i++) {
+    const p = await page.evaluate(
+      (r) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.screenPos(r),
+      id,
+    );
+    if (p && last && Math.hypot(p.x - last.x, p.y - last.y) < 1) return p;
+    last = p ? { x: p.x, y: p.y } : null;
+    await page.waitForTimeout(500);
+  }
+  if (!last) throw new Error(`region ${id} never came on screen`);
+  return last;
+}
+
+/** Right-clicks a region to order the selected units there, retrying until the order registers. */
+async function orderTo(page: Page, id: number): Promise<void> {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const pos = await settledPos(page, id);
+    await page.mouse.move(pos.x, pos.y);
+    await page.waitForTimeout(600);
+    await page.mouse.click(pos.x, pos.y, { button: 'right' });
+    try {
+      await expect(page.getByTestId('context-panel')).toContainText('Moving to', { timeout: 6_000 });
+      return;
+    } catch {
+      await page.waitForTimeout(800);
+    }
+  }
+  throw new Error(`order to region ${id} never registered`);
+}
+
 /** Ends `n` turns, answering any decision modal that appears while waiting for the End Turn button. */
 async function playTurns(page: Page, n: number, onEvent?: () => Promise<void>): Promise<void> {
   for (let i = 0; i < n; i++) {
@@ -168,6 +204,11 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await fly(page, 26.5, 56.3, 1.5);
   await page.waitForTimeout(3500);
   await shot(page, 'chokepoints');
+  // Supply map mode (key 8, D-059): depots bright, sea zones in their controlling fleet's colour.
+  await fly(page, 50, 30, 1.7);
+  await page.getByTestId('mode-supply').click();
+  await page.waitForTimeout(3500);
+  await shot(page, 'supply-mode');
   await page.getByTestId('mode-political').click();
 
   // Screens.
@@ -200,7 +241,16 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
 
   await page.getByTestId('nav-military').click();
   await expect(page.getByTestId('modal-military')).toBeVisible();
+  await expect(page.getByTestId('domain-bars')).toBeVisible();
   await shot(page, 'military');
+  await page.getByTestId('mil-tab-air').click();
+  await expect(page.getByTestId('air-list')).toBeVisible();
+  await shot(page, 'military-air');
+  await page.getByTestId('mil-tab-operations').click();
+  await expect(page.getByTestId('ops-panel')).toBeVisible();
+  await page.getByTestId('launch-satellite').click();
+  await shot(page, 'military-operations');
+  await page.getByTestId('mil-tab-intel').click();
   await page.getByTestId('modal-close').click();
 
   // Battle odds in the Zagros: declare war on Iran, select the capital garrison and hover
@@ -234,6 +284,16 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await expect(page.getByTestId('odds-breakdown')).toContainText('Terrain');
   await page.getByTestId('odds-breakdown').scrollIntoViewIfNeeded();
   await shot(page, 'zagros-odds');
+  // Fog of war: Kermanshah's garrison is shown as an estimate (intel chip) and a missile strike
+  // on it is available from the region panel (D-059).
+  await page.evaluate(
+    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.ui.getState().select(id),
+    kermanshah,
+  );
+  await expect(page.getByTestId('strike-section')).toBeVisible();
+  await page.getByTestId('strike-military').click();
+  await expect(page.getByTestId('alerts')).toContainText('cruise missiles', { timeout: 10_000 });
+  await shot(page, 'missile-strike');
   await page.evaluate(() =>
     (globalThis as unknown as { ww3: Ww3Hook }).ww3.ui.getState().select(null),
   );
@@ -270,15 +330,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.waitForTimeout(3500);
   await page.getByTestId('own-stack').first().click();
   await expect(page.getByTestId('orders-hint')).toBeVisible();
-  const pos = await page.evaluate(
-    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.screenPos(id),
-    move.target,
-  );
-  expect(pos).not.toBeNull();
-  await page.mouse.move(pos!.x, pos!.y);
-  await page.waitForTimeout(500);
-  await page.mouse.click(pos!.x, pos!.y, { button: 'right' });
-  await expect(page.getByTestId('context-panel')).toContainText('Moving to', { timeout: 10_000 });
+  await orderTo(page, move.target);
   await shot(page, 'orders');
 
   await page.getByTestId('nav-settings').click();
@@ -313,6 +365,13 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   }
   await page.getByTestId('nav-summary').click();
   await shot(page, 'summary');
+  // Battle report (D-059): open the first battle of last month if there was one.
+  if (await page.getByTestId('summary-battle').first().isVisible().catch(() => false)) {
+    await page.getByTestId('summary-battle').first().click();
+    await expect(page.getByTestId('modal-battle')).toBeVisible();
+    await expect(page.getByTestId('battle-summary')).toBeVisible();
+    await shot(page, 'battle-report');
+  }
   await page.getByTestId('modal-close').click();
   await fly(page, 49, 32, 1.5);
   await page.waitForTimeout(4000);
@@ -379,15 +438,7 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await expect(page.getByTestId('orders-hint')).toBeVisible();
   await fly(page, 24.8, 119.5, 1.3);
   await page.waitForTimeout(3500);
-  const tPos = await page.evaluate(
-    (id) => (globalThis as unknown as { ww3: Ww3Hook }).ww3.screenPos(id),
-    taipei,
-  );
-  expect(tPos).not.toBeNull();
-  await page.mouse.move(tPos!.x, tPos!.y);
-  await page.waitForTimeout(400);
-  await page.mouse.click(tPos!.x, tPos!.y, { button: 'right' });
-  await expect(page.getByTestId('context-panel')).toContainText('Moving to', { timeout: 10_000 });
+  await orderTo(page, taipei);
   await page.waitForTimeout(1200);
   await shot(page, 'taiwan-strait-orders');
   await playTurns(page, 1);
@@ -408,7 +459,47 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await page.screenshot({ path: `${SHOTS}/taiwan-strait-combat.png` });
   await page.waitForTimeout(3000);
   await shot(page, 'taiwan-strait-aftermath');
-  await playTurns(page, 49);
+  // The landing takes a month of preparation (D-059) and the first fight follows: open the first
+  // battle report of the month that has one.
+  let reported = false;
+  for (let i = 0; i < 4 && !reported; i++) {
+    await playTurns(page, 1);
+    // Wait for the month to resolve and answer any decision it raises before opening the summary.
+    const deadline = Date.now() + 90_000;
+    for (;;) {
+      if (
+        await page
+          .getByTestId('event-modal')
+          .isVisible()
+          .catch(() => false)
+      ) {
+        await page.getByTestId('choice-0').click();
+        await page.waitForTimeout(200);
+        continue;
+      }
+      if (
+        await page
+          .getByTestId('end-turn')
+          .isEnabled()
+          .catch(() => false)
+      )
+        break;
+      if (Date.now() > deadline) throw new Error('month never resolved');
+      await page.waitForTimeout(200);
+    }
+    await page.getByTestId('nav-summary').click();
+    await expect(page.getByTestId('modal-summary')).toBeVisible();
+    if (await page.getByTestId('summary-battle').first().isVisible().catch(() => false)) {
+      await page.getByTestId('summary-battle').first().click();
+      await expect(page.getByTestId('modal-battle')).toBeVisible();
+      await expect(page.getByTestId('battle-summary')).toBeVisible();
+      await shot(page, 'battle-report');
+      reported = true;
+    }
+    await page.getByTestId('modal-close').click();
+  }
+  expect(reported).toBe(true);
+  await playTurns(page, 45);
   await page.waitForTimeout(1000);
   await shot(page, 'taiwan-crisis-50-turns');
   expect(errors).toEqual([]);

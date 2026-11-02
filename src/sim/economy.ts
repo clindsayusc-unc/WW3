@@ -7,12 +7,14 @@ import {
   costFactor,
   isAtWar,
   log,
+  makeUnit,
   rawUpkeepByNation,
   sanctionersOf,
   worldGdp,
 } from './query';
 import { GOV_REVENUE_SHARE } from './setup';
 import { chokepointGrowthEffect, semiconductorDisruption } from './geography';
+import { maybeCommander } from './commanders';
 
 export const MOBILIZATION_GROWTH_DRAG = [0, 0.6, 1.8]; // pp of annual growth
 export const MOBILIZATION_PRODUCTION = [1, 1.25, 1.6];
@@ -178,7 +180,7 @@ export function unitCost(world: World, state: GameState, iso: Iso3, type: string
   return (
     (t.costBn *
       costFactor(n.quality) *
-      (1 + (n.modifiers.productionCost ?? 0) + semiconductorDisruption(world, state, iso))) /
+      (1 + (n.modifiers.productionCost ?? 0) + semiconductorDisruption(world, state, iso) + (n.blockaded ? 0.1 : 0))) /
     MOBILIZATION_PRODUCTION[n.mobilization]!
   );
 }
@@ -200,6 +202,11 @@ export function runProduction(world: World, state: GameState): void {
   for (const n of Object.values(state.nations)) {
     if (!n.alive || n.production.length === 0) continue;
     const done: number[] = [];
+    // Cyber sabotage of the industrial base (D-059): the queue stalls for a month.
+    if (n.productionDelay > 0) {
+      n.productionDelay -= 1;
+      continue;
+    }
     for (const p of n.production) {
       p.monthsLeft -= 1;
       if (p.monthsLeft <= 0) done.push(p.id);
@@ -216,17 +223,11 @@ export function runProduction(world: World, state: GameState): void {
         const zone = meta?.neighbours.find((z) => world.regions.get(z)?.sea);
         if (zone) region = zone;
       }
-      state.units[state.nextId] = {
-        id: state.nextId,
-        type: p.type,
-        owner: n.iso3,
-        region,
-        strength: 100,
+      state.units[state.nextId] = makeUnit(state.nextId, p.type, n.iso3, region, {
         morale: 85,
-        path: [],
-        prevRegion: region,
-        moveProgress: 0,
-      };
+        mission: t?.domain === 'air' ? 'superiority' : null,
+        commander: t?.domain === 'land' ? maybeCommander(world, state, n.iso3) : null,
+      });
       state.nextId++;
       if (n.iso3 === state.player) {
         log(state, {

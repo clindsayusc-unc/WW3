@@ -1,6 +1,7 @@
 /** Movement, supply, combat, attrition, captures and capitulation (D-025, D-029, D-050–D-052). */
 import { nationName, type World } from './world';
 import type {
+  BattleSide,
   GameState,
   Iso3,
   Modifier,
@@ -9,6 +10,14 @@ import type {
   RegionId,
   Unit,
 } from './types';
+import {
+  commanderAttackModifier,
+  commanderDefenceModifier,
+  commanderLossFactor,
+  commanderSupplyBonus,
+} from './commanders';
+import { interdictionAttrition, interdictionFactor, invalidateAirCache } from './air';
+import { intelLevel } from './intel';
 import {
   alliesOf,
   atWar,
@@ -66,6 +75,26 @@ export const AMPHIBIOUS_ASSAULT_DOMINANT = 0.7;
 export const COASTAL_DEFENCE = 1.3;
 /** Supply level reaching a beachhead with no port. */
 export const BEACHHEAD_SUPPLY = 0.35;
+/** Home regions connected to the capital never fall below this (local stocks, civilian economy). */
+export const HOME_SUPPLY_FLOOR = 0.55;
+/** A region whose share of the nation's population is at least this is an industrial depot. */
+export const INDUSTRIAL_SHARE = 0.05;
+/** Months of preparation before a formation can embark on an amphibious hop. */
+export const AMPHIB_PREP_MONTHS = { marine: 1, other: 2 } as const;
+
+/** Veterans fight better: ×0.95 at zero experience, ×1.2 at 100. */
+export function experienceFactor(xp: number): number {
+  return 0.95 + 0.25 * clamp(xp, 0, 100) / 100;
+}
+/** Visible air-superiority multiplier for a side holding share `share` of the air (0..1). */
+export function airSuperiorityFactor(share: number): number {
+  return 0.85 + 0.3 * clamp(share, 0, 1);
+}
+/** Preparation months a unit type needs before embarking. */
+export function prepNeeded(world: World, type: string): number {
+  const t = world.unitTypes.get(type);
+  return t?.amphibious ? AMPHIB_PREP_MONTHS.marine : AMPHIB_PREP_MONTHS.other;
+}
 
 export function isFriendly(world: World, state: GameState, iso: Iso3, other: Iso3 | null): boolean {
   if (other === null) return true;
@@ -158,12 +187,14 @@ export function unitStepCost(world: World, state: GameState, unit: Unit, from: R
   const t = world.unitTypes.get(unit.type);
   if (!t || t.domain !== 'land') return 1;
   const fromMeta = world.regions.get(from);
-  if (fromMeta && !fromMeta.neighbours.includes(to)) return 1.5; // embark, cross, land
+  // Embark, cross, land: the delay is the preparation timer (D-059), the hop itself costs a month.
+  if (fromMeta && !fromMeta.neighbours.includes(to)) return 1;
   return stepCost(world, from, to, state.date.month);
 }
 
 export function runMovement(world: World, state: GameState): void {
   invalidateGeoCache(state);
+  invalidateAirCache(state);
   const liftLeft = new Map<Iso3, number>();
   for (const u of Object.values(state.units)) {
     u.prevRegion = u.region;
@@ -184,6 +215,14 @@ export function runMovement(world: World, state: GameState): void {
       }
       const amphibious =
         t.domain === 'land' && !(world.regions.get(u.region)?.neighbours.includes(next) ?? false);
+      if (amphibious) {
+        // Prep timer (D-059): a landing force loads, rehearses and waits for shipping first.
+        const need = prepNeeded(world, u.type);
+        if (u.prep < need) {
+          u.prep += 1;
+          break;
+        }
+      }
       if (amphibious && !t.amphibious) {
         // Everyone except marines and special forces needs amphibious lift this month.
         if (!liftLeft.has(u.owner)) liftLeft.set(u.owner, liftCapacity(world, state, u.owner));
@@ -199,6 +238,7 @@ export function runMovement(world: World, state: GameState): void {
       points -= cost;
       u.region = next;
       u.path.shift();
+      u.prep = 0;
       invalidateGeoCache(state);
       if (kind === 'attack') {
         const defenders = unitsIn(state, next).filter(
@@ -269,12 +309,21 @@ function supportFor(
       const dist = u.region === region ? 0 : meta.neighbours.includes(u.region) ? 1 : 2;
       if (dist > t.range) continue;
       if (friendly) {
-        strike += unitPower(world, state, u, 'attack');
-        air += (u.strength / 100) * t.antiAir * (state.nations[u.owner]?.quality ?? 1);
+        // Missions (D-059): CAS puts everything into the ground battle, superiority into the air
+        // war; interdiction, bombing and recon wings fly elsewhere and only defend themselves.
+        const m = u.mission ?? 'superiority';
+        const strikeW = m === 'cas' ? 1.5 : m === 'superiority' ? 1 : 0;
+        const airW = m === 'superiority' ? 1 : m === 'cas' ? 0.4 : 0.3;
+        strike += unitPower(world, state, u, 'attack') * strikeW;
+        air += (u.strength / 100) * t.antiAir * (state.nations[u.owner]?.quality ?? 1) * airW;
       }
-    } else if (t.domain === 'sea' && friendly && meta.neighbours.includes(u.region)) {
-      strike += (u.strength / 100) * t.strike * (state.nations[u.owner]?.quality ?? 1);
-      air += (u.strength / 100) * t.antiAir * 0.5;
+    } else if (t.domain === 'sea' && friendly) {
+      const adjacent = meta.neighbours.includes(u.region);
+      // Carrier groups project air power one zone further out, at half weight.
+      const reach = adjacent ? 1 : u.type === 'carrierGroup' ? 0.5 : 0;
+      if (reach === 0) continue;
+      strike += (u.strength / 100) * t.strike * (state.nations[u.owner]?.quality ?? 1) * reach;
+      air += (u.strength / 100) * t.antiAir * 0.5 * reach;
     }
   }
   return { strike, air };
@@ -355,11 +404,11 @@ export function attackerFactors(
       factor: wf,
       detail: `${describeWeather(w)} (${w.tempC.toFixed(0)} °C, ${w.precipMm} mm this month) slows the attack.`,
     });
-  const supply = supplyFor(world, state, u.owner, target, opts.amphibious);
+  const supply = Math.min(1, supplyFor(world, state, u.owner, target, opts.amphibious) + commanderSupplyBonus(u.commander));
   mods.push({
     label: 'Supply',
     factor: 0.5 + 0.5 * supply,
-    detail: `Supply ${Math.round(supply * 100)} % reaching the attack: fuel, shells and spares decay with every region, sea zone and mountain between here and a depot or port.`,
+    detail: `Supply ${Math.round(supply * 100)} % reaching the attack: fuel, shells and spares decay with every region, sea zone and mountain between here and a depot or port.${u.commander?.trait === 'logistician' ? ` ${u.commander.name} keeps the formation fed (+15).` : ''}`,
   });
   if (n && n.mobilization > 0)
     mods.push({ label: 'Mobilisation', factor: 1 + 0.05 * n.mobilization, detail: 'War economy: reinforced formations.' });
@@ -368,6 +417,13 @@ export function attackerFactors(
     const tech = 1 + (n.modifiers.landAttack ?? 0);
     if (tech > 1.001) mods.push({ label: 'Technology', factor: tech, detail: 'Researched land-attack bonuses.' });
   }
+  mods.push({
+    label: 'Experience',
+    factor: Math.round(experienceFactor(u.experience) * 100) / 100,
+    detail: `Experience ${Math.round(u.experience)}/100: green formations fight at ×0.95, veterans at up to ×1.20. Each battle survived adds experience.`,
+  });
+  const cm = commanderAttackModifier(u.commander);
+  if (cm) mods.push(cm);
   return { factor: mods.reduce((f, m) => f * m.factor, 1), mods };
 }
 
@@ -404,7 +460,7 @@ export function defenderFactors(
   const wf = 1 - 0.1 * w.winter - 0.1 * w.monsoon;
   if (wf < 0.999)
     mods.push({ label: 'Weather', factor: wf, detail: `${describeWeather(w)}: even dug-in troops suffer.` });
-  const supply = supplyFor(world, state, u.owner, region);
+  const supply = Math.min(1, supplyFor(world, state, u.owner, region) + commanderSupplyBonus(u.commander));
   mods.push({
     label: 'Supply',
     factor: 0.5 + 0.5 * supply,
@@ -415,6 +471,13 @@ export function defenderFactors(
     const tech = 1 + (n.modifiers.landDefence ?? 0);
     if (tech > 1.001) mods.push({ label: 'Technology', factor: tech, detail: 'Researched land-defence bonuses.' });
   }
+  mods.push({
+    label: 'Experience',
+    factor: Math.round(experienceFactor(u.experience) * 100) / 100,
+    detail: `Experience ${Math.round(u.experience)}/100: green formations fight at ×0.95, veterans at up to ×1.20.`,
+  });
+  const cm = commanderDefenceModifier(u.commander);
+  if (cm) mods.push(cm);
   return { factor: mods.reduce((f, m) => f * m.factor, 1), mods };
 }
 
@@ -446,8 +509,42 @@ function airSuperiority(world: World, state: GameState, region: RegionId, attack
   return { attSup, attStrike: attSupport.strike * airFactor, defStrike: defSupport.strike * airFactor, airFactor };
 }
 
+/** Air-superiority modifiers for both sides of a battle, from the attacker's share. */
+function superiorityMods(attSup: number): { att: Modifier; def: Modifier } {
+  const a = airSuperiorityFactor(attSup);
+  const d = airSuperiorityFactor(1 - attSup);
+  const pctA = Math.round(attSup * 100);
+  return {
+    att: {
+      label: 'Air superiority',
+      factor: Math.round(a * 100) / 100,
+      detail: `Attackers hold ${pctA} % of the air over the battle (fighters and drones on superiority, carriers, air-defence brigades, cut by terrain and weather): ×0.85 with none, ×1.15 with all.`,
+    },
+    def: {
+      label: 'Air superiority',
+      factor: Math.round(d * 100) / 100,
+      detail: `Defenders hold ${100 - pctA} % of the air over the battle: ×0.85 with none, ×1.15 with all.`,
+    },
+  };
+}
+
+function sideSummary(set: Set<Iso3>, before: Map<number, number>, units: Unit[], state: GameState, region: RegionId): BattleSide[] {
+  return [...set].map((nation) => {
+    const mine = units.filter((u) => u.owner === nation);
+    const counts = new Map<string, number>();
+    for (const u of mine) counts.set(u.type, (counts.get(u.type) ?? 0) + 1);
+    return {
+      nation,
+      units: [...counts].map(([type, count]) => ({ type, count })),
+      strengthBefore: mine.reduce((s, u) => s + (before.get(u.id) ?? 0), 0),
+      strengthAfter: mine.reduce((s, u) => s + (state.units[u.id] && u.region === region ? u.strength : 0), 0),
+    };
+  });
+}
+
 export function runCombat(world: World, state: GameState): BattleResult[] {
   const results: BattleResult[] = [];
+  invalidateAirCache(state);
   const byRegion = new Map<RegionId, Unit[]>();
   for (const u of Object.values(state.units)) {
     if (!isLand(world, u.region)) continue;
@@ -476,30 +573,56 @@ export function runCombat(world: World, state: GameState): BattleResult[] {
     const { attSup, attStrike, defStrike } = airSuperiority(world, state, region, attackers, defenders);
     const fromSea = attackers.map((u) => landedFromSea(world, u));
     const onlyFromSea = fromSea.every(Boolean);
+    const sup = superiorityMods(attSup);
+    const attLists: { weight: number; mods: Modifier[] }[] = [];
+    const defLists: { weight: number; mods: Modifier[] }[] = [];
     const fAttUnits = attackers.reduce((s, u, i) => {
       const dominant =
         attSup >= 0.6 &&
         meta.neighbours.some((z) => world.regions.get(z)?.sea && hasSeaDominance(world, state, z, u.owner));
       const f = attackerFactors(world, state, u, region, u.prevRegion, { amphibious: fromSea[i]!, dominant });
-      return s + rawPower(world, state, u, 'attack') * f.factor;
-    }, 0);
-    const fDefUnits = defenders.reduce(
-      (s, u) => s + rawPower(world, state, u, 'defence') * defenderFactors(world, state, u, region, { onlyFromSea }).factor,
-      0,
-    );
+      const raw = rawPower(world, state, u, 'attack');
+      attLists.push({ weight: raw, mods: f.mods });
+      return s + raw * f.factor;
+    }, 0) * sup.att.factor;
+    const fDefUnits = defenders.reduce((s, u) => {
+      const f = defenderFactors(world, state, u, region, { onlyFromSea });
+      const raw = rawPower(world, state, u, 'defence');
+      defLists.push({ weight: raw, mods: f.mods });
+      return s + raw * f.factor;
+    }, 0) * sup.def.factor;
     const congestion = attackers.length > FRONT_WIDTH ? (FRONT_WIDTH / attackers.length) ** 0.7 : 1;
-    const fAtt = fAttUnits * congestion + attStrike * clamp(attSup * 1.6, 0.2, 1);
-    const fDef = fDefUnits + defStrike * clamp((1 - attSup) * 1.6, 0.2, 1);
+    const attSupport = attStrike * clamp(attSup * 1.6, 0.2, 1);
+    const defSupport = defStrike * clamp((1 - attSup) * 1.6, 0.2, 1);
+    const fAtt = fAttUnits * congestion + attSupport;
+    const fDef = fDefUnits + defSupport;
     const dmgToDef = LANCHESTER_K * fAtt;
     const dmgToAtt = LANCHESTER_K * fDef;
+    const before = new Map<number, number>();
+    for (const u of [...attackers, ...defenders]) before.set(u.id, u.strength);
     const attackerLoss = applyDamage(state, attackers, dmgToAtt);
     const defenderLoss = applyDamage(state, defenders, dmgToDef);
     r.devastation = clamp(r.devastation + 0.04, 0, 0.7);
+    // Experience: survivors learn; the winning side learns more.
+    for (const u of [...attackers, ...defenders]) {
+      if (!state.units[u.id]) continue;
+      u.experience = clamp(u.experience + 6, 0, 100);
+    }
     // Retreats.
     for (const u of [...attackers, ...defenders]) {
       if (!state.units[u.id]) continue;
       if (u.strength < 20) retreat(world, state, u);
     }
+    const attackerMods = mergeModifiers(attLists);
+    attackerMods.push(sup.att);
+    if (congestion < 1)
+      attackerMods.push({ label: 'Front width', factor: Math.round(congestion * 100) / 100, detail: `Only ${FRONT_WIDTH} formations can engage at once; ${attackers.length} were stacked here.` });
+    if (attSupport > 0 && fAttUnits > 0)
+      attackerMods.push({ label: 'Air & naval support', factor: Math.round(((fAttUnits * congestion + attSupport) / (fAttUnits * congestion)) * 100) / 100, detail: `Strikes from aircraft and ships within range, weighted by ${Math.round(attSup * 100)} % air superiority.` });
+    const defenderMods = mergeModifiers(defLists);
+    defenderMods.push(sup.def);
+    if (defSupport > 0 && fDefUnits > 0)
+      defenderMods.push({ label: 'Air & naval support', factor: Math.round(((fDefUnits + defSupport) / fDefUnits) * 100) / 100, detail: `Defending strikes from aircraft and ships within range, weighted by ${Math.round((1 - attSup) * 100)} % air superiority.` });
     const remainingDef = unitsIn(state, region).filter(
       (u) => defSide.has(u.owner) && world.unitTypes.get(u.type)?.domain === 'land',
     );
@@ -525,6 +648,23 @@ export function runCombat(world: World, state: GameState): BattleResult[] {
       captured,
     };
     results.push(res);
+    state.battleReports.push({
+      id: state.nextId++,
+      turn: state.turn,
+      region,
+      domain: 'land',
+      attackers: sideSummary(attSide, before, attackers, state, region),
+      defenders: sideSummary(defSide, before, defenders, state, region),
+      attackerMods,
+      defenderMods,
+      airSuperiority: Math.round(attSup * 100) / 100,
+      attackPower: Math.round(fAtt * 10) / 10,
+      defencePower: Math.round(fDef * 10) / 10,
+      attackerLoss: Math.round(attackerLoss),
+      defenderLoss: Math.round(defenderLoss),
+      captured,
+      outcome: captured ? 'attackerWins' : remainingAtt.length === 0 ? 'defenderHolds' : 'stalemate',
+    });
     const involvesPlayer = attSide.has(state.player) || defSide.has(state.player);
     log(state, {
       kind: 'battle',
@@ -553,7 +693,7 @@ function applyDamage(state: GameState, units: Unit[], total: number): number {
   if (sum <= 0) return 0;
   let applied = 0;
   for (const u of units) {
-    const d = (total * u.strength) / sum;
+    const d = ((total * u.strength) / sum) * commanderLossFactor(u.commander);
     const real = Math.min(u.strength, d);
     u.strength -= real;
     applied += real;
@@ -587,7 +727,9 @@ function retreat(world: World, state: GameState, u: Unit): void {
 function supplyLoss(world: World, state: GameState, iso: Iso3, from: RegionId, to: RegionId): number {
   const meta = world.regions.get(to)!;
   const rule = terrainRule(world, to);
-  let loss = rule.supplyLoss * (1.4 - 0.8 * meta.infrastructure);
+  // Bombed roads, rail and ports (missile strikes, strategic bombing) count as lost infrastructure.
+  const infra = meta.infrastructure * (1 - (state.regions[to]?.infraDamage ?? 0));
+  let loss = rule.supplyLoss * (1.4 - 0.8 * infra);
   const c = crossingBetween(world, from, to);
   const engineering = clamp(state.nations[iso]?.modifiers.crossing ?? 0, 0, 0.9);
   if (c) {
@@ -599,6 +741,25 @@ function supplyLoss(world: World, state: GameState, iso: Iso3, from: RegionId, t
 }
 
 const portCap = (capacity: number) => Math.min(1, BEACHHEAD_SUPPLY + 0.15 * capacity);
+
+/** Supply sources (D-059): the capital, industrial regions and major ports of a nation. */
+export function isDepot(world: World, iso: Iso3, region: RegionId): boolean {
+  const meta = world.regions.get(region);
+  if (!meta || meta.sea) return false;
+  if (world.capitalRegion.get(iso) === region) return true;
+  if (meta.majorPort) return true;
+  return meta.populationShare >= INDUSTRIAL_SHARE || (meta.infrastructure >= 0.75 && meta.populationShare >= 0.02);
+}
+
+/** Why a region is (or is not) a depot, for the UI. */
+export function depotKind(world: World, iso: Iso3, region: RegionId): 'capital' | 'port' | 'industrial' | null {
+  const meta = world.regions.get(region);
+  if (!meta || meta.sea) return null;
+  if (world.capitalRegion.get(iso) === region) return 'capital';
+  if (meta.majorPort) return 'port';
+  if (isDepot(world, iso, region)) return 'industrial';
+  return null;
+}
 
 /**
  * Supply (D-050): every region a nation owns and controls is a depot, at full strength when it
@@ -644,11 +805,15 @@ export function runSupply(world: World, state: GameState): void {
       level.set(id, v);
       heap.push({ id, v });
     };
+    // Depots (D-059): the capital, industrial regions and major ports. Other home regions draw
+    // from them along the network, never below a floor when they connect to the capital.
     for (const id of home) {
       const meta = world.regions.get(id)!;
-      const full = 0.8 + 0.2 * meta.infrastructure;
-      if (connected.has(id)) push(id, full);
-      else push(id, Math.min(full, meta.portCapacity > 0 ? portCap(meta.portCapacity) : 0.5));
+      const damage = state.regions[id]?.infraDamage ?? 0;
+      const depot = isDepot(world, iso, id);
+      const full = (0.8 + 0.2 * meta.infrastructure) * (1 - 0.5 * damage);
+      if (connected.has(id)) push(id, depot ? full : HOME_SUPPLY_FLOOR * (1 - 0.5 * damage));
+      else push(id, Math.min(depot ? full : HOME_SUPPLY_FLOOR, meta.portCapacity > 0 ? portCap(meta.portCapacity) : 0.5));
     }
     const done = new Set<RegionId>();
     while (heap.length > 0) {
@@ -677,7 +842,8 @@ export function runSupply(world: World, state: GameState): void {
           if (!isFriendly(world, state, iso, ctrl)) continue;
           if (meta.sea) {
             // Landing supply: capped by the destination port (a bare beach gets BEACHHEAD_SUPPLY).
-            push(nb, Math.min(v * 0.95, nbMeta.portCapacity > 0 ? portCap(nbMeta.portCapacity) : BEACHHEAD_SUPPLY));
+            const cap = nbMeta.portCapacity > 0 ? portCap(nbMeta.portCapacity) * (1 - 0.6 * (state.regions[nb]?.infraDamage ?? 0)) : BEACHHEAD_SUPPLY;
+            push(nb, Math.min(v * 0.95, Math.max(BEACHHEAD_SUPPLY, cap)));
           } else {
             push(nb, v * (1 - supplyLoss(world, state, iso, id, nb)));
           }
@@ -695,8 +861,12 @@ export function runSupply(world: World, state: GameState): void {
     let s = levels.get(r.controller)?.get(r.id) ?? 0;
     // Allies supplying each other's territory.
     for (const ally of alliesOf(world, state, r.controller)) s = Math.max(s, levels.get(ally)?.get(r.id) ?? 0);
+    // Enemy interdiction wings over the region (D-059).
+    s *= interdictionFactor(world, state, r.id, r.controller);
     r.supply = Math.round(s * 100) / 100;
     r.supplied = r.supply >= SUPPLY_THRESHOLD;
+    // Bombed infrastructure recovers slowly.
+    if (r.infraDamage > 0) r.infraDamage = Math.max(0, Math.round((r.infraDamage - 0.05) * 100) / 100);
   }
 }
 
@@ -721,7 +891,8 @@ export function runAttrition(world: World, state: GameState): void {
     if (!t) continue;
     const supply = unitSupply(world, state, u);
     let loss = 0;
-    if (supply < SUPPLY_THRESHOLD) loss += t.domain === 'sea' ? 3 : 4;
+    const cutOff = supply < SUPPLY_THRESHOLD;
+    if (cutOff) loss += t.domain === 'sea' ? 3 : 4;
     if (t.domain === 'land') {
       const r = state.regions[u.region];
       const foreign = r?.owner !== u.owner;
@@ -730,11 +901,15 @@ export function runAttrition(world: World, state: GameState): void {
       loss += weatherAttrition(w, foreign) * (0.6 + 0.4 * (1 - supply));
       const p = partisanAttrition(world, state, u);
       if (p) loss += p.loss;
+      // Enemy interdiction wings hit columns on the move (D-059).
+      if (u.prevRegion !== u.region) loss += interdictionAttrition(world, state, u.region, u.owner);
     }
     if (loss > 0) {
       u.strength = clamp(u.strength - loss, 5, 100);
       u.morale = clamp(u.morale - Math.min(3, loss / 2), 5, 100);
     }
+    // Out of supply, morale drains on its own: hungry troops stop believing in the plan.
+    if (cutOff) u.morale = clamp(u.morale - 4, 5, 100);
   }
 }
 
@@ -872,7 +1047,7 @@ export function estimateOdds(
   target: RegionId,
 ): OddsReport {
   const empty = (text: string, ratio = 0): OddsReport => ({
-    target, ratio, text, attacker: [], defender: [], attackPower: 0, defencePower: 0, defenders: 0, path: null, pathNote: null,
+    target, ratio, text, attacker: [], defender: [], attackPower: 0, defencePower: 0, defenders: 0, path: null, pathNote: null, intel: 4,
   });
   const movers = unitIds.map((id) => state.units[id]).filter((u): u is Unit => !!u);
   if (movers.length === 0) return empty('No units selected.');
@@ -882,13 +1057,28 @@ export function estimateOdds(
   const controller = state.regions[target]?.controller ?? null;
   const lead = movers.find((u) => world.unitTypes.get(u.type)?.domain === 'land') ?? movers[0]!;
   const path = previewPath(world, state, lead, target);
-  const pathNote = path
+  const intel = intelLevel(world, state, owner, target);
+  let pathNote = path
     ? null
     : meta.sea
       ? 'No route: ships need adjacent sea zones free of hostile closed straits.'
       : 'No route: land units need a land path or a controlled sea route with amphibious lift.';
+  if (path) {
+    // Amphibious hops need preparation months before the units embark (D-059).
+    let from = lead.region;
+    for (const step of path.regions) {
+      const bySea = !(world.regions.get(from)?.neighbours.includes(step) ?? false);
+      if (bySea) {
+        const need = Math.max(...movers.map((u) => prepNeeded(world, u.type)));
+        const done = Math.min(...movers.map((u) => u.prep));
+        pathNote = `Amphibious hop into ${world.regions.get(step)?.name}: ${need} month${need === 1 ? '' : 's'} of preparation before embarking${done > 0 ? ` (${done} done)` : ''}; the landing follows once shipping is available.`;
+        break;
+      }
+      from = step;
+    }
+  }
   if (meta.sea || isFriendly(world, state, owner, controller))
-    return { ...empty('Move (no opposition expected).', Infinity), path, pathNote };
+    return { ...empty('Move (no opposition expected).', Infinity), path, pathNote, intel };
   if (!controller || !atWar(state, owner, controller))
     return empty(`Cannot enter: not at war with ${nationName(world, controller)}.`);
   const landMovers = movers.filter((u) => world.unitTypes.get(u.type)?.domain === 'land');
@@ -922,6 +1112,9 @@ export function estimateOdds(
   }
   const congestion = attackersAll.length > FRONT_WIDTH ? (FRONT_WIDTH / attackersAll.length) ** 0.7 : 1;
   const attackerMods = mergeModifiers(attLists);
+  const sup = superiorityMods(attSup);
+  attackerMods.push(sup.att);
+  att *= sup.att.factor;
   if (congestion < 1)
     attackerMods.push({ label: 'Front width', factor: Math.round(congestion * 100) / 100, detail: `Only ${FRONT_WIDTH} formations can engage at once; ${attackersAll.length} are stacked here.` });
   att *= congestion;
@@ -940,20 +1133,39 @@ export function estimateOdds(
     defLists.push({ weight: raw, mods: f.mods });
   }
   const defenderMods = mergeModifiers(defLists);
+  if (defenders.length > 0) {
+    defenderMods.push(sup.def);
+    def *= sup.def.factor;
+  }
   const defSupport = defStrike * clamp((1 - attSup) * 1.6, 0.2, 1);
   if (defSupport > 0 && def > 0) {
     defenderMods.push({ label: 'Air & naval support', factor: Math.round(((def + defSupport) / def) * 100) / 100, detail: `Defending strikes from aircraft and ships within range, weighted by ${Math.round((1 - attSup) * 100)} % air superiority.` });
     def += defSupport;
   }
   if (def === 0)
-    return { ...empty('Undefended: the region will be captured.', Infinity), attacker: attackerMods, attackPower: att, path, pathNote };
+    return {
+      ...empty(intel <= 1 ? 'No defenders detected (intelligence is thin: there may be more).' : 'Undefended: the region will be captured.', Infinity),
+      attacker: attackerMods,
+      attackPower: att,
+      path,
+      pathNote,
+      intel,
+    };
   const ratio = att / def;
   const text =
     ratio >= 3 ? 'Overwhelming' : ratio >= 1.5 ? 'Favourable' : ratio >= 1 ? 'Even' : ratio >= 0.6 ? 'Unfavourable' : 'Hopeless';
+  // Fog of war: with a thin picture the estimate is given as a band, not a number.
+  const band =
+    intel >= 3
+      ? `${ratio.toFixed(1)}:1`
+      : intel === 2
+        ? `≈ ${(ratio * 0.7).toFixed(1)}–${(ratio * 1.4).toFixed(1)}:1, rough estimate`
+        : `≈ ${(ratio * 0.5).toFixed(1)}–${(ratio * 2).toFixed(1)}:1, little intelligence`;
+  const count = intel >= 3 ? `${defenders.length}` : intel === 2 ? `~${defenders.length}` : 'unknown';
   return {
     target,
     ratio,
-    text: `${text} (${ratio.toFixed(1)}:1, ${defenders.length} defending unit${defenders.length === 1 ? '' : 's'}, ${terrainRule(world, target).name.toLowerCase()})`,
+    text: `${text} (${band}, ${count} defending unit${defenders.length === 1 && intel >= 3 ? '' : 's'}, ${terrainRule(world, target).name.toLowerCase()})`,
     attacker: attackerMods,
     defender: defenderMods,
     attackPower: att,
@@ -961,6 +1173,7 @@ export function estimateOdds(
     defenders: defenders.length,
     path,
     pathNote,
+    intel,
   };
 }
 

@@ -81,6 +81,20 @@ export interface NationState {
   leaderName: string;
   leaderTitle: string;
   leaderFictional: boolean;
+  /** Military satellites in orbit (D-059): each one widens intelligence coverage. */
+  satellites: number;
+  /** Conventional cruise/hypersonic missile stock; a strike fires a salvo (D-059). */
+  missiles: number;
+  /** Months of human-intelligence coverage left against each nation (spy operations). */
+  intelOps: Record<Iso3, number>;
+  /** Months left of ISR blindness from an enemy cyber operation. */
+  blinded: number;
+  /** Months before the next cyber operation can be launched. */
+  cyberCooldown: number;
+  /** Months of production delay inflicted by enemy cyber operations (consumed by runProduction). */
+  productionDelay: number;
+  /** True while enemy fleets dominate the sea zones off most of the nation's ports. */
+  blockaded: boolean;
 }
 
 export interface RegionState {
@@ -95,6 +109,8 @@ export interface RegionState {
   supplied: boolean;
   /** Set when the region changed controller this turn (for the renderer). */
   flippedTurn: number;
+  /** 0..1 — bombed roads, rail and ports; cuts supply throughput, recovers slowly (D-059). */
+  infraDamage: number;
 }
 
 export interface Unit {
@@ -110,6 +126,69 @@ export interface Unit {
   prevRegion: RegionId;
   /** Movement points banked toward the next step when terrain costs more than one turn. */
   moveProgress: number;
+  /** Combat experience 0..100: veterans fight at up to ×1.2 (D-059). */
+  experience: number;
+  /** Air wings only: what the wing does this month. Null for land and sea units. */
+  mission: AirMission | null;
+  /** Optional named commander with a simple trait (generated, fictional). */
+  commander: Commander | null;
+  /** Months spent preparing an amphibious hop at the embarkation point (prep timer). */
+  prep: number;
+}
+
+export type AirMission = 'superiority' | 'cas' | 'interdiction' | 'bombing' | 'recon';
+export const AIR_MISSIONS: readonly AirMission[] = ['superiority', 'cas', 'interdiction', 'bombing', 'recon'];
+
+export type CommanderTrait = 'aggressive' | 'defensive' | 'logistician' | 'cautious';
+export interface Commander {
+  readonly name: string;
+  readonly trait: CommanderTrait;
+  /** Always true: commanders are generated, never real officers. */
+  readonly fictional: true;
+}
+
+/** Intelligence level a nation holds on a region: 0 nothing … 4 full picture (D-059). */
+export type IntelLevel = 0 | 1 | 2 | 3 | 4;
+
+/** What a viewer knows about a foreign stack, given its intel level. */
+export interface StackEstimate {
+  readonly level: IntelLevel;
+  readonly min: number;
+  readonly max: number;
+  /** Unit types, when the level allows (≥ 3). */
+  readonly types: Record<UnitTypeId, number> | null;
+  /** Average strength, when the level allows (≥ 3). */
+  readonly strength: number | null;
+}
+
+export type StrikeKind = 'infrastructure' | 'industry' | 'military';
+export type CyberKind = 'economy' | 'intel' | 'production';
+
+export interface BattleSide {
+  readonly nation: Iso3;
+  readonly units: { readonly type: UnitTypeId; readonly count: number }[];
+  readonly strengthBefore: number;
+  readonly strengthAfter: number;
+}
+
+/** Full account of one battle, shown in the battle report modal (D-059). */
+export interface BattleReport {
+  readonly id: number;
+  readonly turn: number;
+  readonly region: RegionId;
+  readonly domain: 'land' | 'sea';
+  readonly attackers: BattleSide[];
+  readonly defenders: BattleSide[];
+  readonly attackerMods: Modifier[];
+  readonly defenderMods: Modifier[];
+  /** Attacker share of air superiority over the battle, 0..1. */
+  readonly airSuperiority: number;
+  readonly attackPower: number;
+  readonly defencePower: number;
+  readonly attackerLoss: number;
+  readonly defenderLoss: number;
+  readonly captured: boolean;
+  readonly outcome: 'attackerWins' | 'defenderHolds' | 'stalemate';
 }
 
 export type ChokepointStatus = 'open' | 'contested' | 'closed';
@@ -151,6 +230,8 @@ export interface OddsReport {
   readonly defenders: number;
   readonly path: PathPreview | null;
   readonly pathNote: string | null;
+  /** Attacker's intelligence on the target: below 3 the defender estimate is uncertain. */
+  readonly intel: IntelLevel;
 }
 
 export interface War {
@@ -204,6 +285,10 @@ export type LogKind =
   | 'nuclear'
   | 'production'
   | 'capitulation'
+  | 'strike'
+  | 'cyber'
+  | 'space'
+  | 'intel'
   | 'info';
 
 export interface LogEntry {
@@ -219,6 +304,9 @@ export interface LogEntry {
 export interface Strike {
   readonly turn: number;
   readonly kind: 'missile' | 'nuclear' | 'air';
+  /** Missiles launched / intercepted (conventional strikes). */
+  readonly launched?: number;
+  readonly intercepted?: number;
   readonly from: RegionId;
   readonly to: RegionId;
   readonly attacker: Iso3;
@@ -282,6 +370,10 @@ export interface GameState {
   defeat: Defeat | null;
   /** Turn-summary numbers captured at the end of the last turn. */
   summary: TurnSummary | null;
+  /** Battle reports of the last two turns (D-059). */
+  battleReports: BattleReport[];
+  /** Orbital debris index 0..100: ASAT strikes raise it, it decays slowly and kills satellites. */
+  debris: number;
 }
 
 export interface TurnSummary {
@@ -313,7 +405,13 @@ export type Command =
       readonly type: 'chokepoint';
       readonly id: string;
       readonly action: 'close' | 'open' | 'mine' | 'clear';
-    };
+    }
+  | { readonly type: 'setAirMission'; readonly unitIds: number[]; readonly mission: AirMission }
+  | { readonly type: 'missileStrike'; readonly region: RegionId; readonly kind: StrikeKind }
+  | { readonly type: 'cyberOp'; readonly target: Iso3; readonly kind: CyberKind }
+  | { readonly type: 'spyOp'; readonly target: Iso3 }
+  | { readonly type: 'launchSatellite' }
+  | { readonly type: 'asat'; readonly target: Iso3 };
 
 export interface NewGameOptions {
   readonly seed: number;

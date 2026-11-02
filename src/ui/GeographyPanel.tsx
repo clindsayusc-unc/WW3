@@ -13,7 +13,8 @@ import {
   crossingBetween,
   shoreControllers,
 } from '../sim/geography';
-import { SUPPLY_THRESHOLD } from '../sim/military';
+import { SUPPLY_THRESHOLD, depotKind } from '../sim/military';
+import { INTEL_LABEL } from '../sim/intel';
 import type { GameState, Modifier, OddsReport, RegionState } from '../sim/types';
 import { Stat } from './Stat';
 import { formatPct } from './format';
@@ -125,7 +126,7 @@ export function TerrainSection({
         <Stat
           label="Supply"
           value={rs.controller ? formatPct(rs.supply * 100, 0) : '—'}
-          tooltip={`Supply reaching the controller here. Depots are the nation's own regions; every region, sea zone, river and mountain between cuts it. Below ${Math.round(SUPPLY_THRESHOLD * 100)} % units are cut off: they fight at half strength and lose 4 strength a month.`}
+          tooltip={`Supply reaching the controller here${rs.controller && depotKind(world, rs.controller, meta.id) ? ` — a depot (${depotKind(world, rs.controller, meta.id)})` : ''}. Depots are capitals, industrial regions and major ports; supply spreads from them through owned and allied land and controlled sea zones, losing a share at every region, sea zone, river and mountain; home regions linked to the capital never drop below 55 %. Enemy interdiction wings and bombed infrastructure${rs.infraDamage > 0 ? ` (${Math.round(rs.infraDamage * 100)} % damaged here)` : ''} cut it further. Below ${Math.round(SUPPLY_THRESHOLD * 100)} % units are cut off: they fight at half strength and lose 4 strength and 4 morale a month.`}
           accent={
             rs.supply < SUPPLY_THRESHOLD ? '#f87171' : rs.supply < 0.6 ? '#fbbf24' : undefined
           }
@@ -184,7 +185,7 @@ export function TerrainSection({
   );
 }
 
-function BreakdownRows({ title, mods }: { title: string; mods: Modifier[] }) {
+export function BreakdownRows({ title, mods }: { title: string; mods: Modifier[] }) {
   return (
     <>
       <div className="bk-head">{title}</div>
@@ -225,6 +226,14 @@ export function OddsBreakdown({ report }: { report: OddsReport }) {
       <div data-tip="Attack power ÷ defence power, with every multiplier below applied — the same numbers the battle will use.">
         Odds: <strong>{report.text}</strong>
       </div>
+      {report.intel < 4 && (
+        <div
+          className="hint"
+          data-tip="Your intelligence on the target: satellites, ISR tech, recon wings, spy networks and allied coverage raise it; distance, enemy counterspace and cyber blinding lower it. Below level 3 the defender count and the odds are estimates."
+        >
+          Intelligence: {INTEL_LABEL[report.intel]} ({report.intel}/4)
+        </div>
+      )}
       {(report.attacker.length > 0 || report.defender.length > 0) && (
         <div className="breakdown">
           {report.attacker.length > 0 && (

@@ -3,6 +3,8 @@ import forcesData from '../../data/forces.json';
 import { isoYearMonth } from './calendar';
 import { seedRng } from './rng';
 import { relationKey, type World } from './world';
+import { makeUnit } from './query';
+import { maybeCommander } from './commanders';
 import type {
   Budget,
   GameState,
@@ -49,6 +51,17 @@ export function qualityOf(spendBn: number, personnel: number): number {
   if (personnel <= 0 || spendBn <= 0) return 0.6;
   const perSoldierK = (spendBn * 1e9) / personnel / 1e3; // thousand USD per soldier per year
   return clamp(0.5 + 0.5 * Math.log10(Math.max(1, perSoldierK) / 10), 0.5, 1.5);
+}
+
+/**
+ * Abstract starting constellation and missile stock from defence spending (D-059). These are game
+ * abstractions, not counts of real satellites or missiles.
+ */
+export function startingSatellites(spendBn: number, warheads: number): number {
+  return clamp(Math.round(spendBn / 40) + (warheads > 0 ? 2 : 0), 0, 16);
+}
+export function startingMissiles(spendBn: number): number {
+  return clamp(Math.round(spendBn / 2), 0, 400);
 }
 
 function startingStability(world: World, iso3: Iso3): number {
@@ -107,6 +120,13 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       leaderName: leader?.name ?? 'Head of State',
       leaderTitle: leader?.title ?? 'Leader',
       leaderFictional: !leader,
+      satellites: startingSatellites(n.defenceSpendUsdBn, n.nuclearWarheads),
+      missiles: startingMissiles(n.defenceSpendUsdBn),
+      intelOps: {},
+      blinded: 0,
+      cyberCooldown: 0,
+      productionDelay: 0,
+      blockaded: false,
     };
   }
 
@@ -121,6 +141,7 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       supply: owner ? 1 : 0,
       supplied: owner !== null,
       flippedTurn: -1,
+      infraDamage: 0,
     };
   }
 
@@ -163,6 +184,8 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     victory: null,
     defeat: null,
     summary: null,
+    battleReports: [],
+    debris: 0,
   };
 
   for (const [key, rel] of world.relations) state.relations[key] = rel.value;
@@ -235,24 +258,26 @@ export function createGame(world: World, options: NewGameOptions): GameState {
   return state;
 }
 
+/** Armies already at war when the campaign opens start as veterans. */
+function startingExperience(state: GameState, owner: Iso3): number {
+  return state.wars.some((w) => w.attackers.includes(owner) || w.defenders.includes(owner)) ? 35 : 10;
+}
+
 function addUnit(
+  world: World,
   state: GameState,
   type: string,
   owner: Iso3,
   region: RegionId,
   strength = 100,
 ): Unit {
-  const u: Unit = {
-    id: state.nextId++,
-    type,
-    owner,
-    region,
+  const domain = world.unitTypes.get(type)?.domain;
+  const u: Unit = makeUnit(state.nextId++, type, owner, region, {
     strength,
-    morale: 80,
-    path: [],
-    prevRegion: region,
-    moveProgress: 0,
-  };
+    mission: domain === 'air' ? 'superiority' : null,
+    commander: domain === 'land' ? maybeCommander(world, state, owner) : null,
+    experience: startingExperience(state, owner),
+  });
   state.units[u.id] = u;
   return u;
 }
@@ -322,23 +347,23 @@ function placeStartingForces(world: World, state: GameState): void {
     let placed = 0;
     for (const [type, share] of mix) {
       const count = Math.round(divisions * share);
-      for (let i = 0; i < count; i++) addUnit(state, type, n.iso3, pickRegion(placed++));
+      for (let i = 0; i < count; i++) addUnit(world, state, type, n.iso3, pickRegion(placed++));
     }
     const airDef = Math.round(divisions / 10);
-    for (let i = 0; i < airDef; i++) addUnit(state, 'airDefense', n.iso3, pickRegion(placed++));
-    if (n.defenceSpendUsdBn >= 8) addUnit(state, 'specialForces', n.iso3, cap);
+    for (let i = 0; i < airDef; i++) addUnit(world, state, 'airDefense', n.iso3, pickRegion(placed++));
+    if (n.defenceSpendUsdBn >= 8) addUnit(world, state, 'specialForces', n.iso3, cap);
     // Air wings from spending.
     const fighters = Math.min(
       40,
       Math.floor(n.defenceSpendUsdBn / 25) + (n.defenceSpendUsdBn >= 5 ? 1 : 0),
     );
-    for (let i = 0; i < fighters; i++) addUnit(state, 'fighter', n.iso3, pickRegion(placed++));
+    for (let i = 0; i < fighters; i++) addUnit(world, state, 'fighter', n.iso3, pickRegion(placed++));
     const drones = Math.min(
       12,
       Math.floor(n.defenceSpendUsdBn / 40) + (n.defenceSpendUsdBn >= 2 ? 1 : 0),
     );
-    for (let i = 0; i < drones; i++) addUnit(state, 'drone', n.iso3, pickRegion(placed++));
-    for (let i = 0; i < (bombers[n.iso3] ?? 0); i++) addUnit(state, 'bomber', n.iso3, cap);
+    for (let i = 0; i < drones; i++) addUnit(world, state, 'drone', n.iso3, pickRegion(placed++));
+    for (let i = 0; i < (bombers[n.iso3] ?? 0); i++) addUnit(world, state, 'bomber', n.iso3, cap);
     // Marines for nations with amphibious groups.
     const navy = navies[n.iso3];
     const zones = homeSeaZones(world, state, n.iso3);
@@ -346,10 +371,10 @@ function placeStartingForces(world: World, state: GameState): void {
       const spec = navy ?? { destroyerGroup: n.defenceSpendUsdBn >= 4 ? 1 : 0 };
       let z = 0;
       for (const [type, count] of Object.entries(spec)) {
-        for (let i = 0; i < count; i++) addUnit(state, type, n.iso3, zones[z++ % zones.length]!);
+        for (let i = 0; i < count; i++) addUnit(world, state, type, n.iso3, zones[z++ % zones.length]!);
       }
       const marines = (spec.amphibiousGroup ?? 0) * 2;
-      for (let i = 0; i < marines; i++) addUnit(state, 'marines', n.iso3, cap);
+      for (let i = 0; i < marines; i++) addUnit(world, state, 'marines', n.iso3, cap);
     }
   }
 }
@@ -374,9 +399,9 @@ function applyTaiwanCrisis(world: World, state: GameState): void {
     if (u.owner === 'CHN' && (u.type === 'marines' || u.type === 'specialForces'))
       u.region = fujian;
   }
-  for (let i = 0; i < 6; i++) addUnit(state, 'mechanized', 'CHN', fujian);
-  for (let i = 0; i < 4; i++) addUnit(state, 'marines', 'CHN', fujian);
-  for (let i = 0; i < 3; i++) addUnit(state, 'fighter', 'CHN', fujian);
+  for (let i = 0; i < 6; i++) addUnit(world, state, 'mechanized', 'CHN', fujian);
+  for (let i = 0; i < 4; i++) addUnit(world, state, 'marines', 'CHN', fujian);
+  for (let i = 0; i < 3; i++) addUnit(world, state, 'fighter', 'CHN', fujian);
   // The Taiwan Strait is its own sea zone (D-058); fall back to any sea off Fujian.
   const fujianSeas = world.regions.get(fujian)!.neighbours.filter((n) => world.regions.get(n)?.sea);
   const strait =
@@ -384,7 +409,7 @@ function applyTaiwanCrisis(world: World, state: GameState): void {
   if (strait) {
     for (const u of Object.values(state.units))
       if (u.owner === 'CHN' && world.regions.get(u.region)?.sea) u.region = strait;
-    for (let i = 0; i < 3; i++) addUnit(state, 'amphibiousGroup', 'CHN', strait);
+    for (let i = 0; i < 3; i++) addUnit(world, state, 'amphibiousGroup', 'CHN', strait);
     const straitSeas = world.regions
       .get(strait)!
       .neighbours.filter((n) => world.regions.get(n)?.sea);

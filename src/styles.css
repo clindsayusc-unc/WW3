@@ -1700,3 +1700,98 @@ input[type='range'] {
 .hint .warn {
   color: #fbbf24;
 }
+
+/* --- military depth (D-059): domain bars, air missions, battle reports --- */
+.domain-grid {
+  display: grid;
+  grid-template-columns: 110px repeat(4, 1fr);
+  gap: 4px 10px;
+  align-items: center;
+  font-size: 12px;
+}
+.domain-head {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+.domain-name.me {
+  font-weight: 600;
+}
+.domain-name.enemy::after {
+  content: ' ⚔';
+  color: var(--bad);
+}
+.domain-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.domain-cell .power-bar {
+  flex: 1;
+}
+.domain-cell .stat-value {
+  font-size: 11px;
+  min-width: 34px;
+  text-align: right;
+}
+.mission-row {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.mission-row .seg-btn {
+  padding: 1px 6px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.wing-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  font-size: 12px;
+}
+.wing-row .link {
+  background: none;
+  border: none;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+.wing-row .link:hover {
+  color: var(--accent);
+}
+.battle-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 10px;
+}
+.battle-side {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.battle-nation {
+  margin-bottom: 6px;
+}
+.battle-nation-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.chips button.chip {
+  cursor: pointer;
+  color: var(--text);
+}
+.chips button.chip:hover {
+  border-color: var(--accent);
+}

@@ -170,7 +170,10 @@ export function Labels() {
     const capitalAlpha = dist < 2.6 ? Math.min(1, (2.6 - dist) / 0.4) : 0;
     const cityAlpha = dist < 1.9 ? Math.min(1, (1.9 - dist) / 0.3) : 0;
     const regionAlpha = dist < 1.32 ? Math.min(1, (1.32 - dist) / 0.15) : 0;
-    const seaAlpha = dist < 1.7 && ui.mapMode === 'military' ? Math.min(1, (1.7 - dist) / 0.3) : 0;
+    const seaAlpha =
+      dist < 1.7 && (ui.mapMode === 'military' || ui.mapMode === 'supply')
+        ? Math.min(1, (1.7 - dist) / 0.3)
+        : 0;
     const seaNamedAlpha = dist < 2.3 ? Math.min(0.85, (2.3 - dist) / 0.4) : 0;
     const placed: { x: number; y: number; w: number; h: number }[] = [];
     const sorted = list

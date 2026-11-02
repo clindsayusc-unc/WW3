@@ -167,6 +167,32 @@ export function sanctionersOf(state: GameState, to: Iso3): Iso3[] {
 
 // --- regions & units ---------------------------------------------------------------------------
 
+/** Builds a unit with every field defaulted; the only sanctioned way to create one (D-059). */
+export function makeUnit(
+  id: number,
+  type: string,
+  owner: Iso3,
+  region: RegionId,
+  overrides: Partial<Omit<Unit, 'id' | 'type' | 'owner'>> = {},
+): Unit {
+  return {
+    id,
+    type,
+    owner,
+    region,
+    strength: 100,
+    morale: 80,
+    path: [],
+    prevRegion: region,
+    moveProgress: 0,
+    experience: 10,
+    mission: null,
+    commander: null,
+    prep: 0,
+    ...overrides,
+  };
+}
+
 export function unitsIn(state: GameState, region: RegionId): Unit[] {
   const out: Unit[] = [];
   for (const u of Object.values(state.units)) if (u.region === region) out.push(u);

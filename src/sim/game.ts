@@ -26,6 +26,18 @@ import {
   runSupply,
 } from './military';
 import { applyChokepointCommand, updateChokepoints } from './geography';
+import { missionsFor, runAirOperations } from './air';
+import { runBlockades, runCommerceRaiding, runNavalCombat } from './naval';
+import { runIntelTick } from './intel';
+import {
+  applyAsat,
+  applyCyberOp,
+  applyLaunchSatellite,
+  applyMissileStrike,
+  applySpyOp,
+  runSpaceTick,
+} from './strikes';
+import { startingMissiles, startingSatellites } from './setup';
 import { decayRelations, executeProposal } from './diplomacy';
 import { updateTension, canLaunchNuclear, nuclearStrike } from './escalation';
 import { drawEvents, resolvePendingEvent } from './events';
@@ -103,10 +115,38 @@ export function applyCommand(world: World, input: GameState, command: Command): 
         const u = state.units[id];
         if (!u || u.owner !== player) continue;
         const path = findPath(world, state, u, command.target);
-        if (path) u.path = path;
+        if (path) {
+          // A new destination restarts amphibious preparation unless the first hop is unchanged.
+          if (u.path[0] !== path[0]) u.prep = 0;
+          u.path = path;
+        }
       }
       return state;
     }
+    case 'setAirMission': {
+      for (const id of command.unitIds) {
+        const u = state.units[id];
+        if (!u || u.owner !== player) continue;
+        if (!missionsFor(u.type).includes(command.mission)) continue;
+        u.mission = command.mission;
+      }
+      return state;
+    }
+    case 'missileStrike':
+      applyMissileStrike(world, state, player, command.region, command.kind);
+      return state;
+    case 'cyberOp':
+      applyCyberOp(world, state, player, command.target, command.kind);
+      return state;
+    case 'spyOp':
+      applySpyOp(world, state, player, command.target);
+      return state;
+    case 'launchSatellite':
+      applyLaunchSatellite(world, state, player);
+      return state;
+    case 'asat':
+      applyAsat(world, state, player, command.target);
+      return state;
     case 'disband':
       for (const id of command.unitIds)
         if (state.units[id]?.owner === player) delete state.units[id];
@@ -243,6 +283,7 @@ export function endTurn(world: World, state: GameState): GameState {
   const beforeControlled = new Set(controlledRegions(state, player));
   state.news = [];
   state.strikes = state.strikes.filter((s) => state.turn - s.turn < 2);
+  state.battleReports = state.battleReports.filter((b) => state.turn - b.turn < 1);
   // Unresolved player events pick their first option.
   for (const p of [...state.pendingEvents]) resolvePendingEvent(world, state, p.id, 0);
 
@@ -252,13 +293,21 @@ export function endTurn(world: World, state: GameState): GameState {
   runEconomy(world, state);
   runProduction(world, state);
   const techs = runResearch(world, state);
-  // 3. Military resolution: supply first (it shapes everything), then movement, combat, attrition.
+  runSpaceTick(world, state);
+  runIntelTick(world, state);
+  // 3. Military resolution: supply first (it shapes everything), then the air war, movement,
+  // fleet actions, land combat, attrition.
   runSupply(world, state);
+  runAirOperations(world, state);
   runMovement(world, state);
+  const seaBattles = runNavalCombat(world, state);
+  state.battleReports.push(...seaBattles);
   const battles = runCombat(world, state);
   runSupply(world, state);
   runAttrition(world, state);
-  runRecovery(world, state, new Set(battles.map((b) => b.region)));
+  runRecovery(world, state, new Set([...battles.map((b) => b.region), ...seaBattles.map((b) => b.region)]));
+  runCommerceRaiding(world, state);
+  runBlockades(world, state);
   checkCapitulations(world, state);
   updateChokepoints(world, state);
   // 4. Diplomacy drift, escalation, events.
@@ -281,8 +330,11 @@ export function endTurn(world: World, state: GameState): GameState {
     gdpDelta: after.gdp - beforeGdp,
     treasuryDelta: after.treasury - beforeTreasury,
     stabilityDelta: after.stability - beforeStability,
-    battles: battles.filter((b) => b.attackers.includes(player) || b.defenders.includes(player))
-      .length,
+    battles:
+      battles.filter((b) => b.attackers.includes(player) || b.defenders.includes(player)).length +
+      seaBattles.filter(
+        (b) => b.attackers.some((x) => x.nation === player) || b.defenders.some((x) => x.nation === player),
+      ).length,
     regionsGained: gained,
     regionsLost: Math.max(0, lost),
     techsCompleted: techs,
@@ -312,7 +364,27 @@ export function refreshLeaders(world: World, input: GameState): GameState {
   for (const r of Object.values(state.regions)) {
     if (typeof r.supply !== 'number') r.supply = r.supplied ? 1 : 0;
   }
-  for (const u of Object.values(state.units)) if (typeof u.moveProgress !== 'number') u.moveProgress = 0;
+  for (const u of Object.values(state.units)) {
+    if (typeof u.moveProgress !== 'number') u.moveProgress = 0;
+    // Saves from before D-059 lack experience, missions, commanders and prep timers.
+    if (typeof u.experience !== 'number') u.experience = 10;
+    if (u.mission === undefined) u.mission = world.unitTypes.get(u.type)?.domain === 'air' ? 'superiority' : null;
+    if (u.commander === undefined) u.commander = null;
+    if (typeof u.prep !== 'number') u.prep = 0;
+  }
+  for (const r of Object.values(state.regions)) if (typeof r.infraDamage !== 'number') r.infraDamage = 0;
+  if (!Array.isArray(state.battleReports)) state.battleReports = [];
+  if (typeof state.debris !== 'number') state.debris = 0;
+  for (const n of Object.values(state.nations)) {
+    const meta = world.nations.get(n.iso3);
+    if (typeof n.satellites !== 'number') n.satellites = startingSatellites(meta?.defenceSpendUsdBn ?? 0, n.warheads);
+    if (typeof n.missiles !== 'number') n.missiles = startingMissiles(meta?.defenceSpendUsdBn ?? 0);
+    if (!n.intelOps) n.intelOps = {};
+    if (typeof n.blinded !== 'number') n.blinded = 0;
+    if (typeof n.cyberCooldown !== 'number') n.cyberCooldown = 0;
+    if (typeof n.productionDelay !== 'number') n.productionDelay = 0;
+    if (typeof n.blockaded !== 'boolean') n.blockaded = false;
+  }
   if (!state.chokepoints) state.chokepoints = {};
   for (const c of world.chokepoints)
     if (!state.chokepoints[c.id])

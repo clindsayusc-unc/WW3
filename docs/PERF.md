@@ -4,8 +4,8 @@
 
 | Budget               | Limit                                            | Status (feat/playable-v1)                                                                                             |
 | -------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| Frame rate           | 60 fps sustained on the globe view               | Not yet measured on an M3 (see below); every effect has a Low/Medium/High level and the auto-scaler caps them (D-055) |
-| Process memory (RAM) | < 1.5 GB                                         | JS heap 82 MB after a 20 s sweep (headless Chrome, feat/cinematic-globe)                                              |
+| Frame rate           | 60 fps sustained on the globe view               | **59.4 fps avg on the M3 (Chrome, DPR 1.3)** after Prompt 2 — the real-hardware baseline in the log below; every effect has a Low/Medium/High level and the auto-scaler caps them (D-055) |
+| Process memory (RAM) | < 1.5 GB                                         | JS heap 179 MB after a 20 s sweep on the M3 (82 MB headless)                                                          |
 | GPU texture memory   | < 400 MB                                         | ≈ 225 MB (RGBA8 + mipmaps, computed at upload; + height map 11 MB, wave map 0.3 MB, atmosphere tables 0.6 MB)         |
 | Single texture size  | ≤ 4096 px on its longest side; prefer KTX2/Basis | All ≤ 4096×2048; JPG/PNG (no KTX2 encoder available, D-022)                                                           |
 | Main thread          | No simulation work; the sim runs in a Web Worker | Yes — `src/sim/worker.ts`; a turn takes ~150 ms in the worker                                                         |
@@ -48,6 +48,8 @@ Chrome or Safari and paste the numbers into the log below.
 
 | 2026-11-02 | feat/cinematic-globe | 20 s sweep, headless Chrome 156 + SwiftShader at 1440×900: avg 1,348 ms/frame (0.7 fps), p95 4,612 ms; 33 textures ≈ 225 MB GPU; JS heap 82 MB | **Not representative** (software rasteriser; 2.4× the previous software number). Fragment cost per globe pixel rose from ~17 to ~30 texture taps on High (height, wave ×2, two cloud-shadow taps, 2 atmosphere table taps ×2 (ν slices) + 2 transmittance taps). Low drops to ~18 taps (no aerial perspective, one cloud tap, no waves). |
 | 2026-11-02 | feat/cinematic-globe | JS bundle 3.6 MB (main) + 1.4 MB worker; textures 4.9 MB on disk (+ 73 kB height map); atmosphere tables ≈ 150–400 ms CPU once at load | `three/examples` lines (LineSegments2) and the new layers add ≈ 1 MB; code-splitting is still the next bundle win. |
+| 2026-11-02 | feat/cinematic-globe (Prompt 2) | **Real hardware baseline — Apple M3, 8 GB, Chrome, `window.ww3.perf(20)`:** 59.4 fps avg, 16.8 ms avg frame, 18.5 ms p95, 1,189 frames; DPR settled at 1.3 (native 2.0); JS heap 179 MB; textures 225 MB | Measured by the owner on the target machine. This is the number every later branch is held to: fps must not fall and the DPR must settle at 1.3 or higher. |
+| 2026-11-02 | feat/military-depth | No new textures or draw calls. Per state change: fog-of-war estimates resolved once per stack in `buildStacks` (not per frame); supply map mode is palette texels; the battle report and military tabs are plain DOM. Simulation: 120-turn soak ≈ 110 s in vitest (was ≈ 42 s before air operations, naval combat, intel caching and the AI's strategic operations were added) — still off the main thread in the worker | Hot spots added: `runAirOperations` (regionsInRange per wing), `zoneControl` per sea zone, `intelLevel` cache rebuild per state. See "Military depth pass" below. |
 
 ## Known hot spots / next steps
 
@@ -91,3 +93,21 @@ Chrome or Safari and paste the numbers into the log below.
   distance 2.4.
 - The atmosphere tables are computed on the main thread during the loading overlay; move them to
   the worker if the loading screen ever feels sluggish.
+
+## Military depth pass (D-059)
+
+- Renderer: no new meshes. Fog of war is resolved in `buildStacks` when the state changes (one
+  `intelLevel` lookup per foreign stack, cached per state); the per-frame loop only reads the
+  precomputed symbol and count. The supply map mode writes the palette texture like every other
+  mode; sea-zone control colours come from `zoneControl`, cached per state. Conventional missile
+  arcs reuse the strike layer of D-057 (≤ 3 arcs per salvo, capped at 6 × the per-battle limit).
+- Simulation (worker): the 120-turn soak rose from ≈ 42 s to ≈ 110 s in vitest. The additions per
+  turn are `runAirOperations` (one `regionsInRange` flood per wing on a non-superiority mission,
+  plus `airDefenceAt` over all units per intruded region, cached per region × intruder),
+  `runNavalCombat` and `runCommerceRaiding` (indexed by zone), `runBlockades` (`zoneControl` per
+  port zone, cached) and the AI's strategic operations (one scan of the regions per nation at war
+  with missiles). Next wins if the turn time shows in play: index units by region once per turn and
+  share it across `airDefenceAt`, `supportFor` and the AI; skip `runAirOperations` for nations with
+  no wars.
+- Rule kept: the baseline fps on the M3 (59.4 avg, DPR 1.3) must not fall. Nothing in this pass
+  touches the globe shader or adds per-frame work on the main thread beyond the DOM panels.

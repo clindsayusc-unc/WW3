@@ -57,7 +57,10 @@ original sources (Natural Earth, NASA, IMF, World Bank) is optional: `npm run bu
    leader cards.
 2. Each month: read the alerts and news ticker, set your **Budget** (B), queue **Production** (P),
    pick **Research** (R), talk to other nations in **Diplomacy** (D) and review your forces in
-   **Military** (M). Then press **End Turn** (Enter).
+   **Military** (M): strength by domain against your rivals, air-wing missions, missile strikes,
+   cyber operations, spies and satellites. Then press **End Turn** (Enter).
+   Map mode 8 shows the supply network and who controls each sea zone; enemy forces appear only as
+   far as your intelligence reaches; a battle alert opens the full battle report.
 3. **Move or attack**: click a region with your units, click the stack in the right-hand panel to
    select it, then right-click a destination. The panel shows the estimated odds before you commit.
    You can only enter regions of nations you are at war with. Marines and special forces can cross a
@@ -77,7 +80,7 @@ Every number in the interface has a tooltip explaining where it comes from.
 | Left click              | Select region or sea zone                                          |
 | Right click             | Move/attack with the selected units                                |
 | `Enter`                 | End turn                                                           |
-| `1`–`6`                 | Map modes: political, blocs, relations, economy, military, tension |
+| `1`–`8`                 | Map modes: political, blocs, relations, economy, military, tension, terrain, supply |
 | `B` `P` `R` `D` `M` `S` | Budget, Production, Research, Diplomacy, Military, Summary         |
 | `L`                     | Toggle labels                                                      |
 | `Esc`                   | Close window / clear selection                                     |

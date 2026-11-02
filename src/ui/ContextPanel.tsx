@@ -10,8 +10,15 @@ import { getRelation, unitsIn, isAtWar, atWar } from '../sim/query';
 import { relationLabel } from '../sim/diplomacy';
 import { requestOdds } from '../state/simBridge';
 import { playSound } from './audio';
-import type { OddsReport, Unit } from '../sim/types';
+import type { AirMission, OddsReport, Unit } from '../sim/types';
 import { ChokepointSection, OddsBreakdown, TerrainSection } from './GeographyPanel';
+import { estimateStack, INTEL_LABEL, intelLevel } from '../sim/intel';
+import { MISSION_INFO, missionsFor } from '../sim/air';
+import { zoneControl } from '../sim/naval';
+import { STRIKE_INFO, SALVO, canMissileStrike } from '../sim/strikes';
+import { TRAIT_INFO } from '../sim/commanders';
+import { prepNeeded } from '../sim/military';
+import { dispatch } from '../state/simBridge';
 
 const world = loadWorld();
 
@@ -41,7 +48,7 @@ export function ContextPanel() {
           destination to move or attack.
         </p>
         <p className="hint">
-          Scroll to zoom, drag to orbit. Keys 1–7 switch map modes; C toggles the chokepoint
+          Scroll to zoom, drag to orbit. Keys 1–8 switch map modes; C toggles the chokepoint
           overlay.
         </p>
       </aside>
@@ -60,6 +67,10 @@ export function ContextPanel() {
   const regionGdp = owner
     ? (game.nations[owner]?.gdp ?? 0) * meta.populationShare * (1 - rs.devastation)
     : 0;
+  const intel = intelLevel(world, game, game.player, id);
+  const zc = meta.sea ? zoneControl(world, game, id) : null;
+  const strikeWhy = !meta.sea ? canMissileStrike(world, game, game.player, id) : 'Sea zone';
+  const myMissiles = game.nations[game.player]!.missiles;
   const toggleStack = (list: Unit[]) => {
     const ids = list.map((u) => u.id);
     const all = ids.every((x) => selectedUnits.includes(x));
@@ -123,6 +134,42 @@ export function ContextPanel() {
         </div>
       )}
       {!meta.sea && <TerrainSection meta={meta} rs={rs} game={game} />}
+      {meta.sea && zc && (
+        <div className="panel-section">
+          <div className="section-title">Sea control</div>
+          <Stat
+            label="Zone"
+            value={zc.controller ? nationName(world, zc.controller) : zc.contested ? 'Contested' : 'Open water'}
+            tooltip="The fleet holding the zone with a clear margin (at least twice every fleet at war with it, allies pooled). Control gates landings, convoys and blockades; contested zones let no one's convoys through safely."
+            accent={zc.controller ? nationHex(zc.controller) : zc.contested ? '#fbbf24' : undefined}
+          />
+        </div>
+      )}
+      {!meta.sea && controller && controller !== game.player && atWar(game, game.player, controller) && (
+        <div className="panel-section" data-testid="strike-section">
+          <div className="section-title">Missile strike</div>
+          <div className="choke-actions">
+            {(Object.keys(STRIKE_INFO) as (keyof typeof STRIKE_INFO)[]).map((kind) => (
+              <button
+                key={kind}
+                className="btn small"
+                disabled={!!strikeWhy}
+                data-testid={`strike-${kind}`}
+                data-tip={
+                  strikeWhy ??
+                  `${STRIKE_INFO[kind].description} Fires ${SALVO} of your ${myMissiles} missiles; each can be intercepted by the defender's missile defence and air-defence brigades.`
+                }
+                onClick={() => {
+                  dispatch({ type: 'missileStrike', region: id, kind });
+                  playSound('order');
+                }}
+              >
+                {STRIKE_INFO[kind].label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {meta.sea &&
         (world.chokepointsByZone.get(meta.id) ?? []).map((c) => (
           <ChokepointSection key={c.id} c={c} game={game} />
@@ -182,14 +229,61 @@ export function ContextPanel() {
         </div>
       )}
       <div className="panel-section">
-        <div className="section-title">Forces present</div>
-        {units.length === 0 && <p className="hint">No units.</p>}
+        <div className="section-title">
+          Forces present{' '}
+          {intel < 4 && (
+            <span
+              className="chip tiny"
+              data-testid="intel-chip"
+              data-tip="Your intelligence level here (0–4): own or allied presence and adjacency, satellites, ISR technology, recon wings and spy networks raise it; enemy counterspace and cyber blinding lower it."
+            >
+              intel {intel}/4 · {INTEL_LABEL[intel]}
+            </span>
+          )}
+        </div>
+        {units.length === 0 && <p className="hint">{intel === 0 ? 'No intelligence coverage.' : 'No units.'}</p>}
         {[...byOwner.entries()].map(([iso, list]) => {
           const mine = iso === game.player;
+          const est = estimateStack(world, game, game.player, list);
+          if (!mine && est.level === 0) return null;
           const allSel = list.every((u) => selectedUnits.includes(u.id));
           const types = new Map<string, number>();
-          for (const u of list) types.set(u.type, (types.get(u.type) ?? 0) + 1);
+          if (mine || est.types) for (const u of list) types.set(u.type, (types.get(u.type) ?? 0) + 1);
           const avg = list.reduce((s, u) => s + u.strength, 0) / list.length;
+          if (!mine && est.level < 4) {
+            return (
+              <div key={iso} className="stack" data-testid="foreign-stack">
+                <div className="stack-head">
+                  <span style={{ color: nationHex(iso) }}>{nationName(world, iso)}</span>
+                  <Stat
+                    value={est.min === est.max ? `${est.min}` : `${est.min}–${est.max}`}
+                    tooltip={`Estimated formations (${INTEL_LABEL[est.level]}). Better intelligence narrows the band and reveals unit types and strength.`}
+                    inline
+                  />
+                </div>
+                {est.types ? (
+                  <div className="stack-types">
+                    {Object.entries(est.types).map(([t, n]) => (
+                      <span key={t} className="chip tiny" data-tip={world.unitTypes.get(t)?.description ?? t}>
+                        {n}× {world.unitTypes.get(t)?.name ?? t}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="hint">Composition unknown.</div>
+                )}
+                {est.strength !== null && (
+                  <div className="strength-bar" data-tip={`Average strength about ${est.strength}% (rounded: intelligence is incomplete).`}>
+                    <span style={{ width: `${est.strength}%` }} />
+                  </div>
+                )}
+              </div>
+            );
+          }
+          const airWings = mine ? list.filter((u) => world.unitTypes.get(u.type)?.domain === 'air') : [];
+          const commanders = mine ? list.filter((u) => u.commander) : [];
+          const xp = list.reduce((s, u) => s + u.experience, 0) / list.length;
+          const prepping = mine ? list.filter((u) => u.prep > 0) : [];
           return (
             <div
               key={iso}
@@ -227,6 +321,50 @@ export function ContextPanel() {
                 <div className="hint">
                   Moving to{' '}
                   {world.regions.get(list.find((u) => u.path.length > 0)!.path.at(-1)!)?.name}
+                </div>
+              )}
+              {prepping.length > 0 && (
+                <div className="hint" data-tip="Amphibious preparation: marines and special forces need one month, other formations two, before they embark; shipping (amphibious groups) then carries them.">
+                  Embarking: {prepping[0]!.prep}/{prepNeeded(world, prepping[0]!.type)} months prepared
+                </div>
+              )}
+              {mine && (
+                <div className="row">
+                  <Stat
+                    label="Experience"
+                    value={`${Math.round(xp)}`}
+                    tooltip="Average combat experience 0–100 of the stack. Each battle survived adds 6; green formations fight at ×0.95, veterans at up to ×1.20."
+                    inline
+                  />
+                  {commanders.length > 0 && (
+                    <span className="hint" data-tip={commanders.map((u) => `${u.commander!.name} (${TRAIT_INFO[u.commander!.trait].label}): ${TRAIT_INFO[u.commander!.trait].description}`).join(' ')}>
+                      ★ {commanders[0]!.commander!.name}
+                      {commanders.length > 1 ? ` +${commanders.length - 1}` : ''} ({TRAIT_INFO[commanders[0]!.commander!.trait].label.toLowerCase()})
+                    </span>
+                  )}
+                </div>
+              )}
+              {airWings.length > 0 && (
+                <div className="mission-row" data-testid="mission-row" onClick={(e) => e.stopPropagation()}>
+                  {(['superiority', 'cas', 'interdiction', 'bombing', 'recon'] as AirMission[]).map((m) => {
+                    const flyable = airWings.filter((u) => missionsFor(u.type).includes(m));
+                    if (flyable.length === 0) return null;
+                    const active = flyable.every((u) => u.mission === m);
+                    return (
+                      <button
+                        key={m}
+                        className={`seg-btn ${active ? 'active' : ''}`}
+                        data-testid={`mission-${m}`}
+                        data-tip={`${MISSION_INFO[m].label}: ${MISSION_INFO[m].description}`}
+                        onClick={() => {
+                          dispatch({ type: 'setAirMission', unitIds: flyable.map((u) => u.id), mission: m });
+                          playSound('order');
+                        }}
+                      >
+                        {MISSION_INFO[m].short}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>

@@ -19,6 +19,10 @@ const KIND_ICON: Record<string, string> = {
   nuclear: '☢',
   production: '🏭',
   capitulation: '🏴',
+  strike: '🚀',
+  cyber: '💻',
+  space: '🛰',
+  intel: '🕵',
   info: 'ℹ',
 };
 
@@ -49,6 +53,11 @@ export function BottomBar() {
       fly(meta.lat, meta.lon, 1.6);
       select(meta.id);
     }
+    // A battle alert opens its full report (D-059).
+    if (l.kind === 'battle' && l.region !== undefined) {
+      const report = game.battleReports.find((b) => b.region === l.region && b.turn === l.turn);
+      if (report) useUiStore.getState().openBattleReport(report.id);
+    }
     playSound('click');
   };
   return (
@@ -61,7 +70,8 @@ export function BottomBar() {
             key={`${a.turn}-${i}`}
             className={`alert alert-${a.kind}`}
             onClick={() => goTo(a)}
-            data-tip="Click to fly to the location."
+            data-tip={a.kind === 'battle' ? 'Click to open the battle report.' : 'Click to fly to the location.'}
+            data-testid={a.kind === 'battle' ? 'alert-battle' : undefined}
           >
             <span className="alert-icon">{KIND_ICON[a.kind] ?? '•'}</span>
             <span className="alert-text">{a.text}</span>
