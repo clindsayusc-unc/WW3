@@ -8,7 +8,8 @@ import { newGame, loadGame } from '../state/simBridge';
 import { useUiStore } from '../state/uiStore';
 import { loadAutosave, importSave, listSaves, loadSlot, type SaveMeta } from '../state/saves';
 import type { GameState } from '../sim/types';
-import { playSound, startDrone } from './audio';
+import { playSound } from './audio';
+import { AudioSettingsPanel } from './AudioSettings';
 import { formatMonth } from './format';
 import { dateForTurn } from '../sim/game';
 
@@ -29,13 +30,11 @@ export function MainMenu({ onStart }: { onStart: () => void }) {
     listSaves().then(setSaves);
   }, []);
   const start = () => {
-    startDrone();
     playSound('endTurn');
     newGame({ seed: (Date.now() % 100000) + 1, player: pick, scenario });
     onStart();
   };
   const resume = (s: GameState) => {
-    startDrone();
     loadGame(s);
     onStart();
   };
@@ -234,10 +233,10 @@ export function MainMenu({ onStart }: { onStart: () => void }) {
         {step === 'settings' && (
           <div className="menu-step">
             <GraphicsSettings />
+            <div style={{ marginTop: 10 }}>
+              <AudioSettingsPanel />
+            </div>
             <div className="chips" style={{ marginTop: 10 }}>
-              <button className={`chip toggle ${!ui.muted ? 'on' : ''}`} onClick={ui.toggleMute}>
-                Sound {ui.muted ? 'off' : 'on'}
-              </button>
               <button
                 className={`chip toggle ${ui.showClouds ? 'on' : ''}`}
                 onClick={ui.toggleClouds}

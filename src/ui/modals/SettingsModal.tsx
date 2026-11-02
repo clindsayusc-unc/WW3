@@ -13,7 +13,8 @@ import {
   type SaveMeta,
 } from '../../state/saves';
 import { loadGame } from '../../state/simBridge';
-import { playSound, setDroneVolume } from '../audio';
+import { playSound } from '../audio';
+import { AudioSettingsPanel } from '../AudioSettings';
 import { loadWorld } from '../../sim/world';
 
 const world = loadWorld();
@@ -29,9 +30,9 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
     void refresh();
   }, []);
   return (
-    <Modal title="Settings" subtitle="Graphics, sound and saves." testId="modal-settings">
+    <Modal title="Settings" subtitle="Graphics, audio and saves." testId="modal-settings">
       <GraphicsSettings />
-      <div className="section-title">Display & sound</div>
+      <div className="section-title">Display</div>
       <div className="chips">
         <button className={`chip toggle ${ui.showLabels ? 'on' : ''}`} onClick={ui.toggleLabels}>
           Labels (L)
@@ -46,17 +47,9 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
         >
           Chokepoints (C)
         </button>
-        <button
-          className={`chip toggle ${!ui.muted ? 'on' : ''}`}
-          onClick={() => {
-            ui.toggleMute();
-            setDroneVolume(useUiStore.getState().muted ? 0 : 0.12);
-          }}
-          data-testid="toggle-mute"
-        >
-          Sound {ui.muted ? 'off' : 'on'}
-        </button>
       </div>
+      <div className="section-title">Audio</div>
+      <AudioSettingsPanel />
       <div className="section-title">Saves</div>
       {game && (
         <div className="row">
