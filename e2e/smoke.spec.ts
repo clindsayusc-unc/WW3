@@ -394,9 +394,38 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.waitForTimeout(4500);
   await shot(page, 'night-war-zone');
   await sun(page, 38);
-  await fly(page, 49, 32, 1.5);
-  await page.waitForTimeout(4000);
+  // Economy (D-061): trade routes as flowing arcs in the economy map mode, then every tab of the
+  // economy screen after ten turns of history.
+  await page.getByTestId('mode-economy').click();
+  await fly(page, 32, 45, 2.5);
+  await page.waitForTimeout(4500);
+  await shot(page, 'trade-routes');
+  await page.keyboard.press('e');
+  await expect(page.getByTestId('modal-economy')).toBeVisible();
+  await expect(page.getByTestId('chart-gdp')).toBeVisible();
+  await expect(page.getByTestId('growth-breakdown')).toBeVisible();
+  await shot(page, 'economy-overview');
+  await page.getByTestId('econ-tab-budget').click();
+  await expect(page.getByTestId('mobilization')).toBeVisible();
+  await page.getByTestId('tax-slider').fill('30');
+  await page.getByTestId('tax-apply').click();
+  await shot(page, 'economy-budget');
+  await page.getByTestId('econ-tab-trade').click();
+  await expect(page.getByTestId('trade-partners')).toBeVisible();
+  await shot(page, 'economy-trade');
+  await page.getByTestId('econ-tab-resources').click();
+  await expect(page.getByTestId('resource-balance')).toBeVisible();
+  await shot(page, 'economy-resources');
+  await page.getByTestId('econ-tab-sanctions').click();
+  await expect(page.getByTestId('coalitions')).toBeVisible();
+  await page.getByTestId('rally-target').selectOption('RUS');
+  await shot(page, 'economy-sanctions');
+  await page.getByTestId('econ-tab-domestic').click();
+  await expect(page.getByTestId('support-breakdown')).toBeVisible();
+  await shot(page, 'economy-domestic');
+  await page.getByTestId('econ-tab-overview').click();
   await shot(page, branchSlug());
+  await page.getByTestId('modal-close').click();
   expect(errors).toEqual([]);
 });
 

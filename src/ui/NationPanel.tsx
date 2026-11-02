@@ -53,14 +53,14 @@ export function NationPanel() {
           <Stat
             label="Research"
             value={`${rp.toFixed(0)} RP`}
-            tooltip={`Research points per month: 10 × √(research spending in $bn), ×1.1 for great powers, ×0.85 under sanctions, plus tech bonuses. ${tech ? `Current: ${tech.name}, ${Math.round(me.researchPoints)}/${tech.cost}.` : 'No project selected — open Research (R).'}`}
+            tooltip={`Research points per month: 10 × √(research spending in $bn), ×1.1 for great powers, minus 30 % × the sanctioners' share of world GDP (technology export controls), slowed by shortages of the current project's inputs (chips, rare earths…), plus tech bonuses. ${tech ? `Current: ${tech.name}, ${Math.round(me.researchPoints)}/${tech.cost}.` : 'No project selected — open Research (R).'}`}
           />
         </div>
         <div className="row">
           <Stat
             label="Debt"
             value={formatPct((me.debt / me.gdp) * 100, 0)}
-            tooltip={`Public debt as a share of GDP. Interest (4%) is paid from the debt-service budget; above 120% growth suffers, above 250% you default.`}
+            tooltip={`Public debt as a share of GDP. Interest (${me.interestRate.toFixed(1)}% a year, rising with inflation and debt) is paid from the debt-service budget; above 120% (or your starting level) growth suffers, and past the default line (at least 250%) you default.`}
           />
           <Stat
             label="Weariness"
@@ -130,7 +130,7 @@ export function NationPanel() {
         <div
           className="budget-bar"
           onClick={() => setModal('budget')}
-          data-tip="Click to open the budget. Shares of government revenue (28% of GDP per year)."
+          data-tip={`Click to open the budget. Shares of government revenue (${me.taxRate}% of GDP per year).`}
         >
           {(['military', 'research', 'infrastructure', 'social', 'debt'] as const).map((k) => (
             <span key={k} className={`budget-seg ${k}`} style={{ width: `${me.budget[k]}%` }} />

@@ -141,3 +141,24 @@ standing armies, remove the unit additions in the tests.
   treasury hit, so its effect compounds slowly and is visible in the growth tooltip.
 - **Experience** ranges ×0.95..×1.20, deliberately narrower than terrain or supply so veterans
   matter but never replace numbers; commanders are ±10 % and appear on a third of formations.
+
+## Economy depth (D-061)
+
+Constants live in `src/sim/economy.ts`, `src/sim/trade.ts` and `src/sim/domestic.ts`; the full
+model is in D-061. Reference outcomes from headless runs (seed 1, player USA, passive):
+
+- A year-long China–Taiwan war in which China contests the strait costs (output gap at the
+  trough) the US ≈ 6 %, China ≈ 8 %, Japan ≈ 12 %, Taiwan ≈ 17 %, and recovers within two to three
+  years of peace. An earlier calibration (shortage weights 4–7 pp, recovery capped at +5 pp) gave
+  −16 % / −32 % for the US / Japan over a four-year war, about twice published estimates for a
+  Taiwan war (e.g. Bloomberg Economics, 2024: US ≈ −7 %, China ≈ −17 %, Taiwan ≈ −40 %).
+- A full Chinese blockade of Taiwan (all adjacent zones under Chinese control) leaves the US,
+  Japan, Germany, the UK and India with under 75 % of their advanced-chip demand; fighter lines run
+  at < 85 % speed and AI research at < 85 %; the chip price passes ×1.3 the next month.
+- A Chinese rare-earth embargo on Japan alone is absorbed (Japan buys the non-Chinese supply:
+  ≈ 89 % satisfied); an embargo on the whole G7 + Korea leaves them under 40 %.
+- China sanctioning Japan cuts ≈ 215 bn of trade: Japan loses ≈ 2.9 pp of growth, China ≈ 0.7 pp
+  (same loss, different GDP).
+- 240-turn soak (seed 3): every nation stays within 6 %/yr compound decline and 11 %/yr compound
+  growth, output within 40–130 % of potential, inflation −3…150 % (majors < 60 %), debt below the
+  default line, treasury ≥ 0, prices 0.6–5.

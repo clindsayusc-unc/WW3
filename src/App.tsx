@@ -11,6 +11,7 @@ import { ProductionModal } from './ui/modals/ProductionModal';
 import { ResearchModal } from './ui/modals/ResearchModal';
 import { DiplomacyModal } from './ui/modals/DiplomacyModal';
 import { MilitaryModal } from './ui/modals/MilitaryModal';
+import { EconomyModal } from './ui/modals/EconomyModal';
 import { SummaryModal } from './ui/modals/SummaryModal';
 import { SettingsModal } from './ui/modals/SettingsModal';
 import { EventModal } from './ui/modals/EventModal';
@@ -111,6 +112,7 @@ export function App() {
             {modal === 'research' && <ResearchModal key="research" />}
             {modal === 'diplomacy' && <DiplomacyModal key="diplomacy" />}
             {modal === 'military' && <MilitaryModal key="military" />}
+            {modal === 'economy' && <EconomyModal key="economy" />}
             {modal === 'summary' && <SummaryModal key="summary" />}
             {modal === 'settings' && <SettingsModal key="settings" onMainMenu={toMenu} />}
             {modal === 'nuclear' && <NuclearModal key="nuclear" />}

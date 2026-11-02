@@ -31,7 +31,7 @@ const KEYS: { key: keyof Budget; label: string; tip: string }[] = [
   {
     key: 'debt',
     label: 'Debt service',
-    tip: 'Pays interest (4%/yr) first, then principal. Shortfalls are borrowed.',
+    tip: 'Pays interest on the debt first (the rate rises with inflation and debt), then principal. Shortfalls are borrowed.',
   },
 ];
 
@@ -47,7 +47,7 @@ export function BudgetModal() {
   const setB = (next: Budget) => setDraft({ turn: game?.turn ?? -1, b: next });
   if (!game || !me) return null;
   const total = KEYS.reduce((s, k) => s + b[k.key], 0);
-  const revenue = me.finances.revenue || (me.gdp * 0.28) / 12;
+  const revenue = me.finances.revenue || (me.gdp * me.taxRate) / 100 / 12;
   const setKey = (key: keyof Budget, value: number) => {
     // Keep the sum at 100 by taking/giving from the other categories proportionally.
     const next = { ...b, [key]: value };
@@ -68,7 +68,7 @@ export function BudgetModal() {
   return (
     <Modal
       title="National Budget"
-      subtitle={`Monthly revenue ${formatMoney(revenue)} = 28% of GDP ÷ 12, scaled by territory you still control.`}
+      subtitle={`Monthly revenue ${formatMoney(revenue)} = ${me.taxRate}% of GDP ÷ 12 (set taxes in the Economy screen), scaled by territory you still control.`}
       testId="modal-budget"
       footer={
         <>
@@ -85,7 +85,7 @@ export function BudgetModal() {
           <Stat
             label="Interest"
             value={formatMoney(me.finances.interest)}
-            tooltip="Monthly interest on public debt at 4% per year."
+            tooltip={`Monthly interest on public debt at ${me.interestRate.toFixed(1)}% per year (base 1.5% + 0.9 × inflation + risk premiums).`}
           />
           <button className="btn primary" onClick={apply} data-testid="budget-apply">
             Apply budget
@@ -123,7 +123,7 @@ export function BudgetModal() {
             [
               'Revenue',
               me.finances.revenue,
-              'Taxes and other receipts: 28% of controlled GDP per year, divided by 12.',
+              `Taxes and other receipts: ${me.taxRate}% of controlled GDP per year, divided by 12.`,
             ],
             ['Military', me.finances.military, 'Military allocation (×1.1 while mobilised).'],
             [

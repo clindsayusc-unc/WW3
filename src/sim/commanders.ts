@@ -99,6 +99,15 @@ export function maybeCommander(world: World, state: GameState, owner: Iso3): Com
   return { name: `${given} ${family}`, trait, fictional: true };
 }
 
+/** A generated, fictional name from the nation's regional pool (successors after elections and coups). */
+export function fictionalName(world: World, state: GameState, iso: Iso3): string {
+  const region = world.nations.get(iso)?.region ?? 'Western Europe';
+  const pool = POOLS[REGION_POOL[region] ?? 'west'] ?? POOLS.west!;
+  const given = pool.given[Math.floor(roll(state) * pool.given.length)]!;
+  const family = pool.family[Math.floor(roll(state) * pool.family.length)]!;
+  return `${given} ${family}`;
+}
+
 /** Attack-side modifier contributed by a commander, if any. */
 export function commanderAttackModifier(c: Commander | null): Modifier | null {
   if (!c) return null;

@@ -5,6 +5,10 @@ import { seedRng } from './rng';
 import { relationKey, type World } from './world';
 import { makeUnit } from './query';
 import { maybeCommander } from './commanders';
+import { RESOURCE_IDS } from './types';
+import { econZero, emptyBalances, runTrade } from './trade';
+import { scheduleElections, supportBreakdown } from './domestic';
+import { recordHistory } from './economy';
 import type {
   Budget,
   GameState,
@@ -127,6 +131,22 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       cyberCooldown: 0,
       productionDelay: 0,
       blockaded: false,
+      potentialGdp: n.gdpUsdBn,
+      inflation: world.startInflation.get(n.iso3) ?? 3,
+      interestRate: startingInterest(world.startInflation.get(n.iso3) ?? 3),
+      taxRate: 28,
+      support: 50,
+      negativeMonths: 0,
+      recession: false,
+      resources: emptyBalances(),
+      resourceRef: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 1])) as NationState['resourceRef'],
+      econ: econZero(),
+      warBonds: 0,
+      warBondCooldown: 0,
+      nextElection: null,
+      coupRisk: 0,
+      protestMonths: 0,
+      monthsSinceDefault: 999,
     };
   }
 
@@ -162,6 +182,9 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     nextId: 1,
     relations: {},
     sanctions: [],
+    // Comprehensive US embargoes and US secondary sanctions in force in 2026 (D-061).
+    embargoes: ['USA>CUB', 'USA>PRK', 'USA>IRN'],
+    secondarySanctions: ['USA>IRN', 'USA>RUS'],
     treaties: [],
     wars: [],
     proposals: [],
@@ -186,6 +209,14 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     summary: null,
     battleReports: [],
     debris: 0,
+    economy: {
+      prices: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 1])) as GameState['economy']['prices'],
+      shortage: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as GameState['economy']['shortage'],
+      shortageRef: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as GameState['economy']['shortageRef'],
+      routes: [],
+      routeRef: {},
+    },
+    history: {},
   };
 
   for (const [key, rel] of world.relations) state.relations[key] = rel.value;
@@ -247,6 +278,7 @@ export function createGame(world: World, options: NewGameOptions): GameState {
   placeStartingForces(world, state);
 
   if (scenario === 'taiwan-crisis') applyTaiwanCrisis(world, state);
+  initEconomy(world, state);
 
   state.log.push({
     turn: 0,
@@ -256,6 +288,25 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     alert: true,
   });
   return state;
+}
+
+/** Average interest on public debt at start: 1.5 % plus 0.9 × inflation (D-061). */
+export function startingInterest(inflation: number): number {
+  return clamp(1.5 + 0.9 * Math.max(0, inflation), 0.5, 60);
+}
+
+/**
+ * Calibrates the economy on the starting world (D-061): the trade network, resource market and
+ * sanctions in force become the baseline penalties are measured against; elections are scheduled
+ * and approval starts at its equilibrium.
+ */
+export function initEconomy(world: World, state: GameState): void {
+  runTrade(world, state, true);
+  scheduleElections(world, state);
+  for (const n of Object.values(state.nations)) {
+    n.support = clamp(Math.round(supportBreakdown(world, state, n.iso3).target), 20, 80);
+  }
+  recordHistory(world, state);
 }
 
 /** Armies already at war when the campaign opens start as veterans. */

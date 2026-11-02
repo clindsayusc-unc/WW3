@@ -239,16 +239,17 @@ export function Globe({ textures, idMap, segments }: Props) {
   // Palette and region attributes update whenever the game state or map mode changes.
   const game = useGameStore((s) => s.game);
   const mapMode = useUiStore((s) => s.mapMode);
+  const resourceView = useUiStore((s) => s.resourceView);
   const stormsSince = useRef(0);
   useEffect(() => {
     if (!game) return;
-    fillPalette(palette.data, world, game, mapMode);
+    fillPalette(palette.data, world, game, mapMode, resourceView);
     palette.texture.needsUpdate = true;
     fillCountryIndex(countryIndex.data, world, game);
     countryIndex.texture.needsUpdate = true;
     fillRegionAttr(regionAttr.data, world, game);
     regionAttr.texture.needsUpdate = true;
-  }, [game, mapMode, palette, countryIndex, regionAttr]);
+  }, [game, mapMode, resourceView, palette, countryIndex, regionAttr]);
   const storms = useMemo(
     () => (game ? generateStorms(game.seed, game.turn, game.date.month) : generateStorms(1, 0, 1)),
     [game],

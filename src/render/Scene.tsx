@@ -12,6 +12,7 @@ import { Units } from './Units';
 import { Strikes } from './Strikes';
 import { FrontLines } from './FrontLines';
 import { Arrows } from './Arrows';
+import { TradeRoutes } from './TradeRoutes';
 import { Fires } from './Fires';
 import { Wakes } from './Wakes';
 import { loadRegionIdMap, type RegionIdMap } from './regionIds';
@@ -80,6 +81,7 @@ function Contents({ assets }: { assets: Assets }) {
       <Borders />
       <FrontLines />
       <Arrows />
+      <TradeRoutes />
       <Fires />
       <Wakes />
       <Units />

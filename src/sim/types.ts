@@ -7,6 +7,76 @@ export type UnitTypeId = string;
 export type TechId = string;
 
 export type MobilizationLevel = 0 | 1 | 2;
+
+/** Strategic resources traded on the world market (D-061, data/resources.json). */
+export type ResourceId = 'oil' | 'gas' | 'rareEarths' | 'chips' | 'food' | 'steel';
+export const RESOURCE_IDS: readonly ResourceId[] = ['oil', 'gas', 'rareEarths', 'chips', 'food', 'steel'];
+
+/** One nation's position in one resource, in shares of world output (1 = the world at start). */
+export interface ResourceBalance {
+  production: number;
+  demand: number;
+  imports: number;
+  exports: number;
+  /** (home production used + imports) ÷ demand, 0..1. */
+  satisfaction: number;
+  /** Largest suppliers of this month's imports (≤ 3), share of world output each. */
+  suppliers: Record<Iso3, number>;
+}
+
+/** Why a trade route carries less than it could (D-061). */
+export type TradeStatus = 'open' | 'rerouted' | 'contested' | 'cut' | 'sanctioned' | 'embargoed' | 'war';
+
+/** One bilateral trade relationship from data/trade.json, recomputed every month. */
+export interface TradeRoute {
+  readonly a: Iso3;
+  readonly b: Iso3;
+  /** Two-way goods trade in the data (US$ bn/yr). */
+  readonly base: number;
+  /** Current two-way volume, US$ bn/yr. */
+  volume: number;
+  /** Volume this pair would carry today under the conditions of January 2027. */
+  reference: number;
+  status: TradeStatus;
+  /** Sea zones the cargo runs through (empty when the pair trades overland). */
+  via: RegionId[];
+  land: boolean;
+  /** One-line explanation for the tooltip. */
+  note: string;
+}
+
+/** Last month's economic transmission terms for a nation (pp of annual growth unless noted). */
+export interface EconTerms {
+  /** Trade lost (+) or gained (−) against the January 2027 baseline, US$ bn/yr. */
+  tradeLost: number;
+  tradeEffect: number;
+  /** Strategic-resource export earnings, US$ bn/yr, and their baseline. */
+  exportValue: number;
+  exportRef: number;
+  exportEffect: number;
+  shortageEffect: number;
+  priceEffect: number;
+  /** Secondary-sanction penalties on this nation's trade, US$ bn/yr. */
+  secondaryLost: number;
+  /** Deficit financed by borrowing last month, % of GDP (annualised). */
+  deficitPct: number;
+  /** Share of world GDP sanctioning this nation now, and at game start. */
+  sanctionShare: number;
+  sanctionRef: number;
+}
+
+export interface EconSample {
+  readonly turn: number;
+  readonly gdp: number;
+  readonly growth: number;
+  readonly inflation: number;
+  /** Debt as % of GDP. */
+  readonly debt: number;
+  readonly support: number;
+  readonly treasury: number;
+}
+
+export type Regime = 'democracy' | 'hybrid' | 'autocracy';
 export type Defcon = 1 | 2 | 3 | 4 | 5;
 
 export interface Budget {
@@ -95,6 +165,34 @@ export interface NationState {
   productionDelay: number;
   /** True while enemy fleets dominate the sea zones off most of the nation's ports. */
   blockaded: boolean;
+  /** Potential output (US$ bn): GDP at full employment; actual GDP converges toward it (D-061). */
+  potentialGdp: number;
+  /** Consumer-price inflation, % per year. */
+  inflation: number;
+  /** Average interest rate on public debt, % per year. */
+  interestRate: number;
+  /** Government revenue as % of GDP (the tax lever). */
+  taxRate: number;
+  /** Public approval of the government, 0–100. */
+  support: number;
+  /** Consecutive months of negative growth; six or more is a recession. */
+  negativeMonths: number;
+  recession: boolean;
+  resources: Record<ResourceId, ResourceBalance>;
+  /** Satisfaction per resource at game start (the baseline shortages are measured against). */
+  resourceRef: Record<ResourceId, number>;
+  econ: EconTerms;
+  /** War bonds outstanding, US$ bn, and months before another issue. */
+  warBonds: number;
+  warBondCooldown: number;
+  /** Turn of the next national election (null: no competitive elections). */
+  nextElection: number | null;
+  /** Monthly probability of a coup, 0..1 (autocracies and hybrid regimes). */
+  coupRisk: number;
+  /** Consecutive months of mass protests. */
+  protestMonths: number;
+  /** Turns since the last sovereign default (interest premium while < 36). */
+  monthsSinceDefault: number;
 }
 
 export interface RegionState {
@@ -262,7 +360,12 @@ export type ProposalType =
   | 'declareWar'
   | 'peaceWhite'
   | 'peaceStatusQuo'
-  | 'resolution';
+  | 'resolution'
+  | 'embargo'
+  | 'liftEmbargo'
+  | 'secondarySanctions'
+  | 'liftSecondary'
+  | 'rallySanctions';
 
 export interface Proposal {
   readonly id: number;
@@ -326,7 +429,7 @@ export interface Victory {
   readonly text: string;
 }
 export interface Defeat {
-  readonly kind: 'capitulation' | 'collapse' | 'nuclearWar';
+  readonly kind: 'capitulation' | 'collapse' | 'nuclearWar' | 'election' | 'coup';
   readonly text: string;
 }
 
@@ -351,6 +454,10 @@ export interface GameState {
   nextId: number;
   relations: Record<string, number>;
   sanctions: string[];
+  /** Total trade embargoes, `from>to` (D-061). */
+  embargoes: string[];
+  /** Secondary sanctions, `from>to`: `from` penalises third parties that keep trading with `to`. */
+  secondarySanctions: string[];
   treaties: Treaty[];
   wars: War[];
   proposals: Proposal[];
@@ -374,6 +481,22 @@ export interface GameState {
   battleReports: BattleReport[];
   /** Orbital debris index 0..100: ASAT strikes raise it, it decays slowly and kills satellites. */
   debris: number;
+  /** World market and trade network (D-061). */
+  economy: WorldEconomy;
+  /** Monthly economic samples for the majors and the player (≤ 240 each). */
+  history: Record<Iso3, EconSample[]>;
+}
+
+export interface WorldEconomy {
+  /** Market price index per resource, 1 = January 2027. */
+  prices: Record<ResourceId, number>;
+  /** World shortage per resource: 1 − delivered ÷ demanded. */
+  shortage: Record<ResourceId, number>;
+  /** World shortage at game start (prices are relative to it). */
+  shortageRef: Record<ResourceId, number>;
+  routes: TradeRoute[];
+  /** Route multipliers at game start (baseline for the trade term), keyed `a|b`. */
+  routeRef: Record<string, number>;
 }
 
 export interface TurnSummary {
@@ -392,6 +515,8 @@ export type Command =
   | { readonly type: 'endTurn' }
   | { readonly type: 'setBudget'; readonly budget: Budget }
   | { readonly type: 'setMobilization'; readonly level: MobilizationLevel }
+  | { readonly type: 'setTaxRate'; readonly rate: number }
+  | { readonly type: 'issueWarBonds' }
   | { readonly type: 'queueProduction'; readonly unitType: UnitTypeId; readonly region: RegionId }
   | { readonly type: 'cancelProduction'; readonly id: number }
   | { readonly type: 'setResearch'; readonly tech: TechId }

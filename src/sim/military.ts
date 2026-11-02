@@ -981,6 +981,7 @@ export function capitulate(world: World, state: GameState, iso: Iso3, to: Iso3):
   if (victor) {
     victor.stability = clamp(victor.stability + 5, 0, 100);
     victor.gdp += n.gdp * 0.3;
+    victor.potentialGdp += n.gdp * 0.3;
   }
   state.globalTension = clamp(state.globalTension + 8, 0, 100);
   log(state, {

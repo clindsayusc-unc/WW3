@@ -6,6 +6,8 @@ import { loadWorld } from '../sim/world';
 import { growthBreakdown } from '../sim/economy';
 import { playSound } from './audio';
 import { flagEmoji } from './flags';
+import { RESOURCE_IDS } from '../sim/types';
+import { RESOURCE_COLOR } from './economyInfo';
 
 const world = loadWorld();
 
@@ -18,7 +20,9 @@ export function Hud() {
   const me = game.nations[game.player]!;
   const meta = world.nations.get(game.player)!;
   const g = growthBreakdown(world, game, game.player);
-  const growthTip = `Annualised growth. Base ${g.base.toFixed(1)}%, infrastructure ${g.infrastructure >= 0 ? '+' : ''}${g.infrastructure.toFixed(1)}, tech +${g.tech.toFixed(1)}, sanctions ${g.sanctions.toFixed(1)}, war ${g.war.toFixed(1)}, mobilisation ${g.mobilization.toFixed(1)}, debt ${g.debt.toFixed(1)}, events ${g.events >= 0 ? '+' : ''}${g.events.toFixed(1)}.`;
+  const pp = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}`;
+  const growthTip = `Annualised growth. Trend ${g.base.toFixed(1)}%, infrastructure ${pp(g.infrastructure)}, tech ${pp(g.tech)}, taxes ${pp(g.tax)}, trade ${pp(g.trade)}, resources ${pp(g.resources)}, financial sanctions ${pp(g.sanctions)}, war ${pp(g.war)}, mobilisation ${pp(g.mobilization)}, debt ${pp(g.debt)}, inflation ${pp(g.inflation)}, recovery ${pp(g.recovery)}, events ${pp(g.events)}, chokepoints ${pp(g.chokepoints)}.${me.recession ? ' The economy is in recession.' : ''} Open the Economy screen (E) for the full picture.`;
+  const left = me.nextElection !== null ? me.nextElection - game.turn : null;
   const tensionClass = game.globalTension >= 80 ? 'danger' : game.globalTension >= 55 ? 'warn' : '';
   const open = (m: typeof modal) => {
     playSound('open');
@@ -54,6 +58,19 @@ export function Hud() {
           accent={me.growth < 0 ? '#f87171' : me.growth > 2.5 ? '#4ade80' : undefined}
         />
         <Stat
+          label="Inflation"
+          value={formatPct(me.inflation, 1)}
+          tooltip={`Consumer prices, % a year. Pushed up by deficits, mobilisation, import prices, shortages and sanctions; it erodes debt but drains approval. Interest on the debt ${formatPct(me.interestRate, 1)}.`}
+          accent={me.inflation > 15 ? '#f87171' : me.inflation > 6 ? '#fbbf24' : undefined}
+        />
+        <Stat
+          label="Approval"
+          value={`${Math.round(me.support)}`}
+          tooltip={`Public support for your government, 0–100: growth, prices, taxes, social spending, war weariness and shortages.${me.protestMonths > 0 ? ` Protests for ${me.protestMonths} months.` : ''}${left !== null ? ` Next election in ${left} months — losing it ends the game.` : ''}${me.coupRisk > 0.005 ? ` Coup risk ${(me.coupRisk * 100).toFixed(1)}% a month.` : ''}`}
+          accent={me.support < 35 ? '#f87171' : me.support < 45 ? '#fbbf24' : undefined}
+          className={left !== null && left <= 6 ? 'warn' : ''}
+        />
+        <Stat
           label="Stability"
           value={`${Math.round(me.stability)}`}
           tooltip={`Public order, 0–100. Rises with social spending, growth and peace; falls with war weariness, mobilisation, debt and lost territory. Below 10 for three months means regime collapse. War weariness ${Math.round(me.warWeariness)}.`}
@@ -76,6 +93,7 @@ export function Hud() {
         {(
           [
             ['budget', 'Budget', 'B'],
+            ['economy', 'Economy', 'E'],
             ['production', 'Production', 'P'],
             ['research', 'Research', 'R'],
             ['diplomacy', 'Diplomacy', 'D'],
@@ -114,8 +132,26 @@ export function Hud() {
 export function MapModeBar() {
   const mapMode = useUiStore((s) => s.mapMode);
   const setMapMode = useUiStore((s) => s.setMapMode);
+  const resourceView = useUiStore((s) => s.resourceView);
+  const setResourceView = useUiStore((s) => s.setResourceView);
   return (
     <div className="mapmodes" role="tablist" data-testid="mapmodes">
+      {mapMode === 'resources' && (
+        <div className="mapmode-sub" data-testid="resource-picker">
+          {RESOURCE_IDS.map((r) => (
+            <button
+              key={r}
+              className={`mode-btn ${resourceView === r ? 'active' : ''}`}
+              style={{ color: RESOURCE_COLOR[r] }}
+              onClick={() => setResourceView(r)}
+              data-tip={world.resourceById.get(r)?.description ?? r}
+              data-testid={`resource-${r}`}
+            >
+              {world.resourceById.get(r)?.name ?? r}
+            </button>
+          ))}
+        </div>
+      )}
       {MAP_MODES.map((m) => (
         <button
           key={m.id}

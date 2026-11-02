@@ -38,6 +38,8 @@ import {
   satelliteCost,
 } from './strikes';
 import type { AirMission, CyberKind, StrikeKind } from './types';
+import { baseVolume, coalitionReply, sanctionCoalitions, imposeEmbargo } from './trade';
+import { canIssueWarBonds, issueWarBonds } from './economy';
 
 const BRANCH_WEIGHTS: Record<string, (t: ReturnType<typeof traitsOf>) => number> = {
   ai: (t) => 1 + t.economicPriority / 100,
@@ -53,6 +55,7 @@ const BRANCH_WEIGHTS: Record<string, (t: ReturnType<typeof traitsOf>) => number>
 interface Ctx {
   byRegion: Map<RegionId, Unit[]>;
   power: Map<Iso3, number>;
+  coalitions: ReturnType<typeof sanctionCoalitions>;
 }
 
 /** Nations sharing a land border or a sea zone with `iso` (cached per turn). */
@@ -78,7 +81,7 @@ function neighboursOf(world: World, state: GameState, iso: Iso3): Set<Iso3> {
 
 export function runAi(world: World, state: GameState): void {
   invalidateGeoCache(state);
-  const ctx: Ctx = { byRegion: new Map(), power: new Map() };
+  const ctx: Ctx = { byRegion: new Map(), power: new Map(), coalitions: sanctionCoalitions(state) };
   for (const u of Object.values(state.units)) {
     const list = ctx.byRegion.get(u.region) ?? [];
     list.push(u);
@@ -445,14 +448,15 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
       );
       continue;
     }
-    // Sanctions against hostile majors.
+    // Sanctions against hostile majors — unless the trade at stake is too valuable (D-061).
     if (
       rel <= -50 &&
       world.nations.get(other)?.major &&
       !state.sanctions.includes(`${iso}>${other}`) &&
       n.gdp > on.gdp * 0.3 &&
       t.aggression >= 45 &&
-      roll(state) < 0.03
+      (baseVolume(world, iso, other) / Math.max(1, n.gdp) < 0.025 || t.aggression >= 70) &&
+      roll(state) < 0.02
     ) {
       n.aiNote = `Sanctioning ${nationName(world, other)} over hostile relations (${Math.round(rel)}).`;
       executeProposal(world, state, iso, other, 'sanction');
@@ -504,6 +508,38 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
         executeProposal(world, state, iso, other, 'declareWar');
         break;
       }
+    }
+  }
+
+  // 6b. Economic statecraft (D-061) ---------------------------------------------------------------------
+  // War bonds when fighting and short of cash.
+  if (atWarNow && n.treasury < revenue * 2 && canIssueWarBonds(state, iso) === null && roll(state) < 0.3)
+    issueWarBonds(world, state, iso);
+  // Join sanctions coalitions led by a friendly major.
+  for (const c of ctx.coalitions) {
+    if (c.target === iso || c.members.includes(iso) || !state.nations[c.target]?.alive) continue;
+    const leader = c.members.find((m) => world.nations.get(m)?.major && getRelation(world, state, iso, m) >= 40);
+    if (!leader || atWar(state, iso, c.target) || getRelation(world, state, iso, c.target) > -25) continue;
+    if (roll(state) < 0.03 && coalitionReply(world, state, leader, iso, c.target).joins) {
+      n.aiNote = `Joining ${nationName(world, leader)}'s sanctions on ${nationName(world, c.target)}.`;
+      executeProposal(world, state, iso, c.target, 'sanction');
+      break;
+    }
+  }
+  // Lift sanctions on nations it has warmed to; embargo bitter enemies.
+  for (const key of state.sanctions) {
+    if (!key.startsWith(`${iso}>`)) continue;
+    const target = key.slice(iso.length + 1);
+    const rel = getRelation(world, state, iso, target);
+    if (rel > 10 && !atWar(state, iso, target) && roll(state) < 0.04) {
+      n.aiNote = `Lifting sanctions on ${nationName(world, target)} as relations recover (${Math.round(rel)}).`;
+      executeProposal(world, state, iso, target, 'liftSanction');
+      break;
+    }
+    if (rel <= -80 && t.aggression >= 60 && !state.embargoes.includes(key) && !atWar(state, iso, target) && roll(state) < 0.01) {
+      n.aiNote = `Embargoing ${nationName(world, target)}: relations ${Math.round(rel)}.`;
+      imposeEmbargo(world, state, iso, target);
+      break;
     }
   }
 

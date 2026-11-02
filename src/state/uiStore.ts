@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { RegionId } from '../sim/types';
+import type { RegionId, ResourceId } from '../sim/types';
 import type { EffectKey, EffectLevels, Level } from '../render/quality';
 import { levelsForPreset } from '../render/quality';
 import { DEFAULT_AUDIO, type AudioSettings } from '../ui/audioSettings';
@@ -17,6 +17,7 @@ export type Modal =
   | 'load'
   | 'nuclear'
   | 'battle'
+  | 'economy'
   | 'end';
 export type MapMode =
   | 'political'
@@ -26,7 +27,8 @@ export type MapMode =
   | 'military'
   | 'tension'
   | 'terrain'
-  | 'supply';
+  | 'supply'
+  | 'resources';
 export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: string }[] = [
   {
     id: 'political',
@@ -46,7 +48,13 @@ export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: stri
     key: '3',
     tooltip: 'Each nation’s relations with you: red hostile, green friendly.',
   },
-  { id: 'economy', label: 'Economy', key: '4', tooltip: 'Regional GDP heat map (log scale).' },
+  {
+    id: 'economy',
+    label: 'Economy',
+    key: '4',
+    tooltip:
+      'Regional GDP heat map with trade routes as flowing arcs: width = trade volume; green open, amber rerouted, orange contested, red cut, pink sanctioned.',
+  },
   {
     id: 'military',
     label: 'Military',
@@ -73,6 +81,13 @@ export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: stri
     tooltip:
       'Supply network: land shaded green (full) to red (cut off) by the supply reaching its controller; depots outlined; sea zones in the colour of the fleet that controls them, amber where contested.',
   },
+  {
+    id: 'resources',
+    label: 'Resources',
+    key: '9',
+    tooltip:
+      'Strategic resources: pick oil, gas, rare earths, chips, food or steel. Green exporters (brighter = larger surplus), amber importers (deeper = more dependent), red where demand goes unmet.',
+  },
 ];
 export type Quality = 'low' | 'medium' | 'high';
 
@@ -98,6 +113,8 @@ interface UiStore {
   screen: Screen;
   modal: Modal;
   mapMode: MapMode;
+  /** Resource shown by the resources map mode. */
+  resourceView: ResourceId;
   hoverRegion: RegionId | null;
   selectedRegion: RegionId | null;
   selectedUnitIds: number[];
@@ -129,6 +146,7 @@ interface UiStore {
   setScreen: (s: Screen) => void;
   setModal: (m: Modal) => void;
   setMapMode: (m: MapMode) => void;
+  setResourceView: (r: ResourceId) => void;
   setHover: (r: RegionId | null) => void;
   select: (r: RegionId | null) => void;
   selectUnits: (ids: number[]) => void;
@@ -156,6 +174,7 @@ export const useUiStore = create<UiStore>((set) => ({
   screen: 'menu',
   modal: null,
   mapMode: 'political',
+  resourceView: 'oil',
   hoverRegion: null,
   selectedRegion: null,
   selectedUnitIds: [],
@@ -179,6 +198,7 @@ export const useUiStore = create<UiStore>((set) => ({
   setScreen: (screen) => set({ screen }),
   setModal: (modal) => set({ modal }),
   setMapMode: (mapMode) => set({ mapMode }),
+  setResourceView: (resourceView) => set({ resourceView }),
   setHover: (hoverRegion) => set((s) => (s.hoverRegion === hoverRegion ? s : { hoverRegion })),
   select: (selectedRegion) => set({ selectedRegion, selectedUnitIds: [] }),
   selectUnits: (selectedUnitIds) => set({ selectedUnitIds }),

@@ -3,19 +3,24 @@ import { nationName, type World } from './world';
 import type { GameState, Iso3 } from './types';
 import { headline, log } from './query';
 import { semiconductorDisruption } from './geography';
+import { researchThroughput, techAccess } from './trade';
 
 export function researchPointsPerMonth(world: World, state: GameState, iso: Iso3): number {
   const n = state.nations[iso]!;
   const spendBn =
-    n.finances.research > 0 ? n.finances.research : (n.gdp * 0.28 * n.budget.research) / 100 / 12;
+    n.finances.research > 0 ? n.finances.research : (((n.gdp * (n.taxRate ?? 28)) / 100) * n.budget.research) / 100 / 12;
   const base = 10 * Math.sqrt(Math.max(0, spendBn));
   const major = world.nations.get(iso)?.major ? 1.1 : 1;
-  const sanctions = state.sanctions.some((k) => k.endsWith(`>${iso}`)) ? 0.85 : 1;
+  // Technology-export controls scale with the sanctioners' share of world GDP (D-061).
+  const sanctions = techAccess(world, state, iso);
+  // Shortages of the current project's inputs (chips, rare earths, …) slow the labs (D-061).
+  const branch = n.researchCurrent ? world.techs.get(n.researchCurrent)?.branch : undefined;
+  const inputs = branch ? researchThroughput(world, state, iso, branch) : 1;
   // Closed semiconductor chokepoints (Taiwan Strait, Malacca) starve chip importers (D-052).
   const chips = 1 - semiconductorDisruption(world, state, iso);
   // A naval blockade cuts the imports research depends on (D-059).
   const blockade = n.blockaded ? 0.85 : 1;
-  return base * major * sanctions * chips * blockade * (1 + (n.modifiers.researchSpeed ?? 0));
+  return base * major * sanctions * inputs * chips * blockade * (1 + (n.modifiers.researchSpeed ?? 0));
 }
 
 export function availableTechs(world: World, state: GameState, iso: Iso3): string[] {
