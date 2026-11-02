@@ -178,8 +178,10 @@ export function secondStrike(world: World, state: GameState, iso: Iso3, adversar
   let ssbns = 0;
   if (warheads > 0) for (const u of Object.values(state.units)) if (u.owner === iso && u.type === 'missileSub') ssbns += u.strength / 100;
   const atSea = Math.min(warheads, Math.round(ssbns * SLBM_PER_SSBN));
-  const survivable = Math.round(atSea * SEA_SURVIVAL + (warheads - atSea) * LAND_SURVIVAL);
-  const md = adversary ? clamp(state.nations[adversary]?.modifiers.missileDefence ?? 0, 0, 0.8) : 0;
+  // Modern strategic forces (mobile launchers, MIRVs, glide vehicles) survive and penetrate better (D-079).
+  const det = clamp(n?.modifiers.deterrence ?? 0, 0, 0.5);
+  const survivable = Math.round(atSea * SEA_SURVIVAL + (warheads - atSea) * Math.min(0.6, LAND_SURVIVAL + det));
+  const md = adversary ? clamp(state.nations[adversary]?.modifiers.missileDefence ?? 0, 0, 0.8) * (1 - det) : 0;
   const penetrating = Math.round(survivable * (1 - md));
   const status = penetrating >= 50 ? 'assured' : penetrating >= 10 ? 'limited' : 'none';
   return { warheads, ssbns: Math.round(ssbns * 10) / 10, atSea, survivable, penetrating, status };

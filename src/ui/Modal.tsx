@@ -8,6 +8,8 @@ interface ModalProps {
   subtitle?: string;
   children: ReactNode;
   wide?: boolean;
+  /** Wider still, for the research tree. */
+  full?: boolean;
   testId?: string;
   onClose?: () => void;
   footer?: ReactNode;
@@ -18,6 +20,7 @@ export function Modal({
   subtitle,
   children,
   wide = false,
+  full = false,
   testId,
   onClose,
   footer,
@@ -36,7 +39,7 @@ export function Modal({
       onMouseDown={(e) => e.target === e.currentTarget && close()}
     >
       <motion.div
-        className={`modal ${wide ? 'modal-wide' : ''}`}
+        className={`modal ${wide ? 'modal-wide' : ''} ${full ? 'modal-full' : ''}`}
         data-testid={testId}
         initial={{ opacity: 0, y: 14, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}

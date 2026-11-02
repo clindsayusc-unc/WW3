@@ -1,7 +1,40 @@
 {
-  "source": "Original game design. Technology names and framing reflect publicly reported programmes (e.g. CSIS, IISS, RAND open publications); effects are gameplay abstractions.",
+  "source": "Original game design. Technology names, years and framing reflect publicly reported programmes: Congressional Research Service reports (Hypersonic Weapons R45811, Dark Eagle IF11991, Directed Energy R46925), CSIS Missile Threat and Space Threat Assessment, IISS Military Balance 2025, ASPI Critical Technology Tracker (2024), US Space Development Agency and DoD releases, and the press releases cited in each framing. Costs and effects are gameplay abstractions.",
   "asOf": "2026-11-02",
-  "estimate": false,
+  "estimate": true,
+  "estimateNote": "Fielding years for eras 2–5 are the authors' reading of public programme roadmaps, not official forecasts.",
+  "eras": [
+    {
+      "id": 1,
+      "name": "Fielded",
+      "years": "2027",
+      "description": "Technologies some nation already fields in January 2027."
+    },
+    {
+      "id": 2,
+      "name": "Near term",
+      "years": "2028–2030",
+      "description": "Programmes in prototype or early production in 2026; plausible to field this decade."
+    },
+    {
+      "id": 3,
+      "name": "Mid term",
+      "years": "2031–2033",
+      "description": "Announced programmes and demonstrated laboratory technology that could be fielded in the early 2030s."
+    },
+    {
+      "id": 4,
+      "name": "Long term",
+      "years": "2034–2036",
+      "description": "Roadmap targets of the leading powers for the mid-2030s."
+    },
+    {
+      "id": 5,
+      "name": "Frontier",
+      "years": "2037–2040",
+      "description": "Speculative technology at the edge of published forecasts."
+    }
+  ],
   "branches": [
     {
       "id": "ai",
@@ -31,7 +64,7 @@
     {
       "id": "space",
       "name": "Space",
-      "color": "#c084fc"
+      "color": "#e879f9"
     },
     {
       "id": "energy",
@@ -44,15 +77,44 @@
       "color": "#22d3ee"
     }
   ],
+  "abilities": [
+    {
+      "id": "aiCommand",
+      "name": "AI battle management",
+      "description": "Every land battle you fight gains an 'AI battle management' modifier of ×1.08 for both attack and defence: faster targeting and better-coordinated fires."
+    },
+    {
+      "id": "hypersonicStrike",
+      "name": "Hypersonic strike",
+      "description": "A strike option: four hypersonic glide vehicles (drawn from the missile stock as eight missiles) that defences intercept at only 35 % of the usual rate (more with the target's glide-phase and space-sensor defences); each hit counts ×1.5."
+    },
+    {
+      "id": "directedEnergy",
+      "name": "Directed-energy defence",
+      "description": "Unlocks the laser air-defence brigade: cheap per shot, deadly against drones, rockets and swarms; weaker against ballistic missiles."
+    },
+    {
+      "id": "quantumComms",
+      "name": "Quantum-secure communications",
+      "description": "Enemy cyber operations that blind your intelligence or sabotage your production succeed at half the usual rate, and foreign attempts to steal your research are 15 points less likely to succeed."
+    },
+    {
+      "id": "spaceSensors",
+      "name": "Space-based sensors",
+      "description": "Infrared tracking satellites: +1 intelligence everywhere and better tracking of hypersonic weapons, which raises your interception chance against them."
+    }
+  ],
   "techs": [
     {
       "id": "ai-decision-support",
       "branch": "ai",
+      "era": 1,
       "tier": 1,
+      "year": 2027,
       "name": "AI Decision Support",
-      "cost": 60,
+      "cost": 90,
       "requires": [],
-      "framing": "Machine-learning staff tools shorten targeting and logistics cycles.",
+      "framing": "Machine-learning staff tools that sort intelligence, draft targeting packages and plan logistics. The US Project Maven began in 2017; its Maven Smart System is now used across US combatant commands and was bought by NATO in 2025. Every major military fields some version.",
       "effects": [
         {
           "key": "landAttack",
@@ -60,20 +122,22 @@
         },
         {
           "key": "researchSpeed",
-          "value": 0.05
+          "value": 0.04
         }
       ]
     },
     {
       "id": "ai-isr-fusion",
       "branch": "ai",
-      "tier": 2,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
       "name": "ISR Fusion",
       "cost": 120,
       "requires": [
         "ai-decision-support"
       ],
-      "framing": "Automated fusion of satellite, drone and signals intelligence.",
+      "framing": "Automated fusion of satellite, drone, radar and signals intelligence into one picture. Ukraine's Delta battlefield system and the US Maven pipeline show the effect: targets found in minutes instead of days.",
       "effects": [
         {
           "key": "intel",
@@ -81,6 +145,29 @@
         },
         {
           "key": "airPower",
+          "value": 0.03
+        }
+      ]
+    },
+    {
+      "id": "ai-predictive-maintenance",
+      "branch": "ai",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Predictive Logistics",
+      "cost": 110,
+      "requires": [
+        "ai-decision-support"
+      ],
+      "framing": "Condition-based maintenance and demand forecasting from sensor data on every vehicle and aircraft. US Air Force and Army predictive-maintenance programmes report higher readiness rates at lower cost.",
+      "effects": [
+        {
+          "key": "upkeep",
+          "value": -0.05
+        },
+        {
+          "key": "supply",
           "value": 0.05
         }
       ]
@@ -88,101 +175,73 @@
     {
       "id": "ai-autonomous-logistics",
       "branch": "ai",
-      "tier": 3,
+      "era": 2,
+      "tier": 2,
+      "year": 2028,
       "name": "Autonomous Logistics",
-      "cost": 200,
+      "cost": 260,
       "requires": [
-        "ai-isr-fusion"
+        "ai-predictive-maintenance"
       ],
-      "framing": "Self-driving convoys and predictive maintenance cut upkeep.",
+      "framing": "Leader-follower and fully driverless supply convoys, robotic resupply of the front line and automated depots. The US Army's leader-follower programme and Ukraine's logistics UGVs are early steps; at scale they keep supply moving under drone-saturated skies.",
       "effects": [
         {
           "key": "upkeep",
-          "value": -0.1
+          "value": -0.08
         },
         {
           "key": "supply",
-          "value": 0.15
+          "value": 0.1
         }
       ]
+    },
+    {
+      "id": "ai-command-systems",
+      "branch": "ai",
+      "era": 2,
+      "tier": 2,
+      "year": 2030,
+      "name": "AI Battle Management",
+      "cost": 320,
+      "requires": [
+        "ai-isr-fusion",
+        "semi-ai-accelerators"
+      ],
+      "framing": "AI command systems that match every sensor to the best shooter across land, sea, air, space and cyber: the US CJADC2 concept, China's 'intelligentized warfare' doctrine. The sensor-to-shooter loop shrinks from hours to minutes; commanders still decide, but faster than the enemy can react.",
+      "effects": [
+        {
+          "key": "landAttack",
+          "value": 0.03
+        },
+        {
+          "key": "landDefence",
+          "value": 0.03
+        }
+      ],
+      "unlocks": {
+        "units": [],
+        "abilities": [
+          "aiCommand"
+        ]
+      }
     },
     {
       "id": "ai-swarm-command",
       "branch": "ai",
-      "tier": 4,
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
       "name": "Swarm Command",
-      "cost": 320,
+      "cost": 480,
       "requires": [
-        "ai-autonomous-logistics",
+        "ai-command-systems",
         "drones-loitering-munitions"
       ],
-      "framing": "Human-on-the-loop control of hundreds of autonomous systems.",
+      "framing": "Human-on-the-loop control of hundreds of autonomous systems by a single operator. The US Replicator initiative (2023) aims at thousands of attritable systems; Chinese universities have demonstrated swarms of 200 drones.",
       "effects": [
         {
           "key": "droneStrength",
-          "value": 0.3
-        },
-        {
-          "key": "landAttack",
-          "value": 0.05
-        }
-      ]
-    },
-    {
-      "id": "ai-strategic-ai",
-      "branch": "ai",
-      "tier": 5,
-      "name": "Strategic AI",
-      "cost": 520,
-      "requires": [
-        "ai-swarm-command",
-        "semi-advanced-nodes"
-      ],
-      "framing": "Frontier models in the war room: faster, colder decisions.",
-      "effects": [
-        {
-          "key": "researchSpeed",
-          "value": 0.15
-        },
-        {
-          "key": "landAttack",
-          "value": 0.05
-        },
-        {
-          "key": "airPower",
-          "value": 0.05
-        }
-      ]
-    },
-    {
-      "id": "drones-tactical-isr",
-      "branch": "drones",
-      "tier": 1,
-      "name": "Tactical ISR Drones",
-      "cost": 50,
-      "requires": [],
-      "framing": "Cheap quadcopters give every battalion eyes above the trees.",
-      "effects": [
-        {
-          "key": "landDefence",
-          "value": 0.04
-        }
-      ]
-    },
-    {
-      "id": "drones-loitering-munitions",
-      "branch": "drones",
-      "tier": 2,
-      "name": "Loitering Munitions",
-      "cost": 110,
-      "requires": [
-        "drones-tactical-isr"
-      ],
-      "framing": "One-way attack drones built by the tens of thousands.",
-      "effects": [
-        {
-          "key": "droneStrength",
-          "value": 0.25
+          "value": 0.2
         },
         {
           "key": "landAttack",
@@ -191,101 +250,385 @@
       ]
     },
     {
+      "id": "ai-pilot",
+      "branch": "ai",
+      "era": 3,
+      "tier": 3,
+      "year": 2032,
+      "name": "AI Combat Pilot",
+      "cost": 460,
+      "requires": [
+        "ai-command-systems"
+      ],
+      "framing": "Autonomy that flies and fights an aircraft. DARPA's ACE programme flew the X-62A VISTA in AI-controlled dogfights against human pilots in 2023; the US Air Force Secretary rode along in 2024. Combat-certified AI pilots underpin crewed-uncrewed teaming.",
+      "effects": [
+        {
+          "key": "airPower",
+          "value": 0.06
+        }
+      ]
+    },
+    {
+      "id": "ai-sixth-gen",
+      "branch": "ai",
+      "era": 4,
+      "tier": 4,
+      "year": 2035,
+      "name": "Sixth-Generation Air Dominance",
+      "cost": 900,
+      "requires": [
+        "ai-pilot",
+        "energy-adaptive-engines",
+        "drones-collaborative-combat"
+      ],
+      "framing": "A tailless, very-low-observable fighter with adaptive-cycle engines that commands its own drone escorts. The US chose Boeing's F-47 in March 2025 (first flight targeted for 2028); China's J-36 and J-50 prototypes have flown since December 2024; GCAP (UK, Japan, Italy) aims for 2035 and FCAS (France, Germany, Spain) for the 2040s.",
+      "effects": [
+        {
+          "key": "airPower",
+          "value": 0.05
+        }
+      ],
+      "unlocks": {
+        "units": [
+          "fighter6"
+        ],
+        "abilities": []
+      }
+    },
+    {
+      "id": "ai-predictive-intelligence",
+      "branch": "ai",
+      "era": 4,
+      "tier": 4,
+      "year": 2034,
+      "name": "Predictive Intelligence",
+      "cost": 820,
+      "requires": [
+        "ai-command-systems",
+        "semi-quantum-computing"
+      ],
+      "framing": "Models that forecast an adversary's mobilisation, logistics and political decisions from open and secret data. Intelligence agencies already use AI to triage intercepts at scale; the frontier is anticipating moves before they are made.",
+      "effects": [
+        {
+          "key": "intel",
+          "value": 1
+        },
+        {
+          "key": "espionage",
+          "value": 0.1
+        },
+        {
+          "key": "counterIntel",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "ai-strategic-ai",
+      "branch": "ai",
+      "era": 5,
+      "tier": 5,
+      "year": 2038,
+      "name": "Strategic AI",
+      "cost": 1500,
+      "requires": [
+        "ai-predictive-intelligence",
+        "semi-angstrom-nodes"
+      ],
+      "framing": "General-purpose AI systems accelerating science, industry and military planning across the whole state. Whoever leads in frontier compute and models compounds that lead in every other branch; this is the race US and Chinese strategy documents both describe.",
+      "effects": [
+        {
+          "key": "researchSpeed",
+          "value": 0.12
+        },
+        {
+          "key": "landAttack",
+          "value": 0.04
+        },
+        {
+          "key": "airPower",
+          "value": 0.04
+        },
+        {
+          "key": "gdpGrowth",
+          "value": 0.3
+        }
+      ]
+    },
+    {
+      "id": "drones-tactical-isr",
+      "branch": "drones",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Tactical ISR Drones",
+      "cost": 70,
+      "requires": [],
+      "framing": "Small fixed-wing and quadcopter reconnaissance drones at platoon and battalion level, such as the RQ-11 Raven and Russia's Orlan-10. Since 2022 no unit on the Ukrainian front moves unseen.",
+      "effects": [
+        {
+          "key": "landDefence",
+          "value": 0.03
+        }
+      ]
+    },
+    {
+      "id": "drones-loitering-munitions",
+      "branch": "drones",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Loitering Munitions",
+      "cost": 120,
+      "requires": [
+        "drones-tactical-isr"
+      ],
+      "framing": "Drones that circle until a target appears and then dive onto it: the US Switchblade, Russia's Lancet, Israel's Harop and the Iranian Shahed-136 one-way attack drone, mass-produced in Russia as the Geran-2.",
+      "effects": [
+        {
+          "key": "droneStrength",
+          "value": 0.15
+        },
+        {
+          "key": "landAttack",
+          "value": 0.03
+        }
+      ]
+    },
+    {
+      "id": "drones-fpv-mass",
+      "branch": "drones",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Mass FPV Production",
+      "cost": 110,
+      "requires": [
+        "drones-tactical-isr"
+      ],
+      "framing": "Millions of cheap first-person-view kamikaze drones from distributed workshops. Ukraine reported producing over two million drones in 2024; FPVs, now including fibre-optic models immune to jamming, cause most casualties on both sides of that front.",
+      "effects": [
+        {
+          "key": "droneStrength",
+          "value": 0.1
+        },
+        {
+          "key": "buildSpeed",
+          "value": 0.05
+        }
+      ]
+    },
+    {
       "id": "drones-naval-usv",
       "branch": "drones",
-      "tier": 3,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
       "name": "Uncrewed Surface Vessels",
-      "cost": 180,
+      "cost": 140,
       "requires": [
         "drones-loitering-munitions"
       ],
-      "framing": "Explosive sea drones that threaten capital ships in confined waters.",
+      "framing": "Explosive and missile-armed sea drones. Ukraine's Magura and Sea Baby boats sank or damaged a large part of Russia's Black Sea Fleet in 2024 and pushed it out of Sevastopol; the US Navy, China and Turkey are building their own.",
       "effects": [
         {
           "key": "navalPower",
           "value": 0.08
-        },
-        {
-          "key": "amphibiousLift",
-          "value": 0.5
         }
       ]
     },
     {
       "id": "drones-collaborative-combat",
       "branch": "drones",
-      "tier": 4,
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
       "name": "Collaborative Combat Aircraft",
-      "cost": 300,
+      "cost": 340,
       "requires": [
-        "drones-naval-usv"
+        "drones-loitering-munitions",
+        "ai-isr-fusion"
       ],
-      "framing": "Loyal-wingman jets flying alongside crewed fighters.",
+      "framing": "Jet-powered 'loyal wingman' drones that fly with crewed fighters as sensors, decoys and missile carriers. The US Air Force flew its YFQ-42A (August 2025) and YFQ-44A (October 2025) CCA prototypes; Australia's MQ-28 Ghost Bat, China's FH-97A and Turkey's Kizilelma follow the same idea.",
       "effects": [
         {
           "key": "airPower",
-          "value": 0.12
-        },
-        {
-          "key": "droneStrength",
-          "value": 0.2
+          "value": 0.05
         }
-      ]
+      ],
+      "unlocks": {
+        "units": [
+          "loyalWingman"
+        ],
+        "abilities": []
+      }
     },
     {
       "id": "drones-ground-robotics",
       "branch": "drones",
-      "tier": 5,
-      "name": "Ground Combat Robotics",
-      "cost": 480,
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Robotic Combat Vehicles",
+      "cost": 320,
       "requires": [
-        "drones-collaborative-combat",
-        "ai-swarm-command"
+        "drones-fpv-mass",
+        "ai-autonomous-logistics"
       ],
-      "framing": "Robotic assault vehicles absorb losses that would break human units.",
+      "framing": "Remote-controlled and semi-autonomous ground robots that carry supplies, evacuate wounded, lay mines and assault positions. Ukraine planned to field around 15,000 ground robots in 2025; armed robotic vehicles take the most dangerous jobs from infantry.",
       "effects": [
         {
           "key": "landAttack",
-          "value": 0.1
+          "value": 0.05
         },
         {
           "key": "landDefence",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "drones-swarms",
+      "branch": "drones",
+      "era": 3,
+      "tier": 3,
+      "year": 2033,
+      "name": "Autonomous Drone Swarms",
+      "cost": 520,
+      "requires": [
+        "ai-swarm-command",
+        "drones-fpv-mass"
+      ],
+      "framing": "Hundreds of drones that coordinate among themselves, overwhelm air defences and pick their own targets inside a commander's limits. Replicator, China's drone-swarm launchers and 'mothership' concepts point to swarms as a new combat arm.",
+      "effects": [
+        {
+          "key": "droneStrength",
+          "value": 0.1
+        }
+      ],
+      "unlocks": {
+        "units": [
+          "droneSwarm"
+        ],
+        "abilities": []
+      }
+    },
+    {
+      "id": "drones-undersea",
+      "branch": "drones",
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
+      "name": "Extra-Large Undersea Drones",
+      "cost": 480,
+      "requires": [
+        "drones-naval-usv",
+        "ai-autonomous-logistics"
+      ],
+      "framing": "Autonomous submarines that patrol, lay mines and track enemy boats for months. Australia ordered Anduril's Ghost Shark into production in 2025; the US Navy's Orca and China's large UUVs shown in 2025 compete for the same role.",
+      "effects": [
+        {
+          "key": "navalPower",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "drones-motherships",
+      "branch": "drones",
+      "era": 4,
+      "tier": 4,
+      "year": 2035,
+      "name": "Drone Motherships",
+      "cost": 880,
+      "requires": [
+        "drones-swarms",
+        "drones-undersea"
+      ],
+      "framing": "Ships, aircraft and trucks whose main armament is the drones they launch. Turkey's TCG Anadolu was converted into a drone carrier; China unveiled a jet-powered drone mothership in 2025. At scale a single platform fields a whole air wing of expendable aircraft.",
+      "effects": [
+        {
+          "key": "droneStrength",
+          "value": 0.1
+        },
+        {
+          "key": "airPower",
+          "value": 0.04
+        },
+        {
+          "key": "navalPower",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "drones-autonomous-brigades",
+      "branch": "drones",
+      "era": 5,
+      "tier": 5,
+      "year": 2039,
+      "name": "Autonomous Brigades",
+      "cost": 1400,
+      "requires": [
+        "drones-motherships",
+        "drones-ground-robotics"
+      ],
+      "framing": "Formations in which robots outnumber soldiers: ground, air and sea drones under a thin layer of human commanders. Speculative, but the logical end point of the trends visible on the Ukrainian front since 2023.",
+      "effects": [
+        {
+          "key": "landAttack",
           "value": 0.08
+        },
+        {
+          "key": "landDefence",
+          "value": 0.06
+        },
+        {
+          "key": "upkeep",
+          "value": -0.08
         }
       ]
     },
     {
       "id": "missiles-precision-strike",
       "branch": "missiles",
+      "era": 1,
       "tier": 1,
-      "name": "Precision Strike Complex",
-      "cost": 70,
+      "year": 2027,
+      "name": "Precision Strike",
+      "cost": 80,
       "requires": [],
-      "framing": "Networked sensors and GPS-guided rockets at scale.",
+      "framing": "GPS- and seeker-guided rockets, glide bombs and short-range missiles: GMLRS, ATACMS, Storm Shadow, Russia's Iskander and UMPK glide-bomb kits. One precise munition replaces dozens of unguided shells.",
       "effects": [
         {
           "key": "landAttack",
-          "value": 0.06
+          "value": 0.04
         }
       ]
     },
     {
       "id": "missiles-cruise-mass",
       "branch": "missiles",
-      "tier": 2,
-      "name": "Cruise Missile Mass Production",
-      "cost": 140,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Long-Range Cruise Missiles",
+      "cost": 130,
       "requires": [
         "missiles-precision-strike"
       ],
-      "framing": "Long-range cruise missiles become an expendable commodity.",
+      "framing": "Land-attack and anti-ship cruise missiles with ranges of 1,000–2,500 km: Tomahawk, Kalibr, China's CJ-10, India's BrahMos. Arsenals in the thousands make every port, airbase and factory a target.",
       "effects": [
         {
-          "key": "navalPower",
-          "value": 0.05
+          "key": "strikePower",
+          "value": 0.1
         },
         {
-          "key": "strikePower",
+          "key": "navalPower",
+          "value": 0.03
+        },
+        {
+          "key": "missileRate",
           "value": 0.2
         }
       ]
@@ -293,71 +636,205 @@
     {
       "id": "missiles-hypersonic-glide",
       "branch": "missiles",
-      "tier": 3,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
       "name": "Hypersonic Glide Vehicles",
-      "cost": 260,
+      "cost": 240,
       "requires": [
         "missiles-cruise-mass"
       ],
-      "framing": "Manoeuvring warheads that outrun current interceptors.",
+      "framing": "Warheads that glide at Mach 5+ on unpredictable paths, defeating most interceptors. China fielded the DF-17 around 2020 and Russia the Avangard in 2019; the US Army's Dark Eagle battery reached the field after delays in 2025–26 (CRS IF11991).",
       "effects": [
         {
           "key": "strikePower",
-          "value": 0.3
+          "value": 0.1
         },
         {
           "key": "deterrence",
-          "value": 0.1
+          "value": 0.05
         }
-      ]
+      ],
+      "unlocks": {
+        "units": [],
+        "abilities": [
+          "hypersonicStrike"
+        ]
+      }
     },
     {
       "id": "missiles-anti-ship-ballistic",
       "branch": "missiles",
-      "tier": 4,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
       "name": "Anti-Ship Ballistic Missiles",
-      "cost": 360,
+      "cost": 240,
       "requires": [
-        "missiles-hypersonic-glide",
+        "missiles-precision-strike",
         "space-isr-constellation"
       ],
-      "framing": "Carrier-killer missiles cued by satellites.",
+      "framing": "Ballistic missiles with manoeuvring warheads that hunt carriers at sea. China's DF-21D and DF-26 'carrier killers' rely on satellite and over-the-horizon radar targeting; they are why US carriers plan to operate far from China's coast.",
       "effects": [
         {
           "key": "navalPower",
-          "value": 0.15
+          "value": 0.08
+        }
+      ]
+    },
+    {
+      "id": "missiles-long-range-fires",
+      "branch": "missiles",
+      "era": 2,
+      "tier": 2,
+      "year": 2028,
+      "name": "Long-Range Precision Fires",
+      "cost": 260,
+      "requires": [
+        "missiles-precision-strike"
+      ],
+      "framing": "Ground-launched missiles reaching 500–2,000 km: the US Precision Strike Missile and Typhon launcher (deployed to the Philippines in 2024), Japan's upgraded Type-12 and South Korea's Hyunmoo series. They let armies sink ships and strike deep without air superiority.",
+      "effects": [
+        {
+          "key": "landAttack",
+          "value": 0.04
+        },
+        {
+          "key": "strikePower",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "missiles-scramjet",
+      "branch": "missiles",
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Hypersonic Cruise Missiles",
+      "cost": 340,
+      "requires": [
+        "missiles-hypersonic-glide"
+      ],
+      "framing": "Air-breathing scramjet missiles that cruise at Mach 5–8. Russia's 3M22 Zircon was first used in combat in 2024; the US HACM and Japan's HCM are due late this decade, India's BrahMos-II later.",
+      "effects": [
+        {
+          "key": "strikePower",
+          "value": 0.1
+        },
+        {
+          "key": "navalPower",
+          "value": 0.04
+        }
+      ]
+    },
+    {
+      "id": "missiles-mass-production",
+      "branch": "missiles",
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
+      "name": "Low-Cost Cruise Missiles",
+      "cost": 480,
+      "requires": [
+        "missiles-cruise-mass",
+        "energy-war-economy"
+      ],
+      "framing": "Cruise missiles built like cars: simple airframes, commercial engines and production lines measured in thousands a year. Ukraine's Flamingo and US 'affordable mass' programmes such as ERAM target a fraction of the cost of a Tomahawk.",
+      "effects": [
+        {
+          "key": "missileRate",
+          "value": 0.4
+        },
+        {
+          "key": "productionCost",
+          "value": -0.03
         }
       ]
     },
     {
       "id": "missiles-mirv-modernisation",
       "branch": "missiles",
-      "tier": 5,
-      "name": "Strategic Force Modernisation",
+      "era": 3,
+      "tier": 3,
+      "year": 2032,
+      "name": "Strategic Forces Modernisation",
       "cost": 560,
       "requires": [
-        "missiles-anti-ship-ballistic"
+        "missiles-cruise-mass",
+        "space-resilient-pnt"
       ],
-      "framing": "New delivery systems make the arsenal survivable and credible.",
+      "framing": "New ICBMs, missile submarines and multiple-warhead missiles: the US Sentinel and Columbia class, Russia's Sarmat, China's DF-41 silo fields, the UK Dreadnought, India's MIRV-tested Agni-V (2024). A survivable, modern force keeps the second strike credible.",
       "effects": [
         {
           "key": "deterrence",
-          "value": 0.25
+          "value": 0.15
+        }
+      ]
+    },
+    {
+      "id": "missiles-fobs",
+      "branch": "missiles",
+      "era": 4,
+      "tier": 4,
+      "year": 2034,
+      "name": "Orbital Glide Bombardment",
+      "cost": 860,
+      "requires": [
+        "missiles-hypersonic-glide",
+        "space-heavy-lift"
+      ],
+      "framing": "A hypersonic glider launched into a partial orbit, arriving from any direction. China tested such a system in 2021, circling the globe before gliding to a target; it outflanks every early-warning radar that faces north.",
+      "effects": [
+        {
+          "key": "deterrence",
+          "value": 0.1
+        },
+        {
+          "key": "strikePower",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "missiles-manoeuvring-hgv",
+      "branch": "missiles",
+      "era": 5,
+      "tier": 5,
+      "year": 2038,
+      "name": "Hypersonic Swarm Salvos",
+      "cost": 1400,
+      "requires": [
+        "missiles-scramjet",
+        "missiles-mass-production",
+        "ai-swarm-command"
+      ],
+      "framing": "Cheap hypersonic missiles that share targeting data in flight and re-plan their attack as a pack. A speculative pairing of the two trends — hypersonics and autonomy — that defence planners warn could make large surface ships untenable.",
+      "effects": [
+        {
+          "key": "strikePower",
+          "value": 0.15
+        },
+        {
+          "key": "navalPower",
+          "value": 0.05
         }
       ]
     },
     {
       "id": "md-point-defence",
       "branch": "missileDefense",
+      "era": 1,
       "tier": 1,
-      "name": "Layered Point Defence",
-      "cost": 60,
+      "year": 2027,
+      "name": "Point Defence",
+      "cost": 80,
       "requires": [],
-      "framing": "Short-range interceptors protect bases and cities.",
+      "framing": "Short-range interceptors and guns around bases and cities: Israel's Iron Dome, the US C-RAM, Russia's Pantsir, Germany's Skynex. They save lives against rockets and drones at a high cost per interception.",
       "effects": [
         {
           "key": "landDefence",
-          "value": 0.03
+          "value": 0.02
         },
         {
           "key": "missileDefence",
@@ -368,60 +845,205 @@
     {
       "id": "md-theatre-interceptors",
       "branch": "missileDefense",
-      "tier": 2,
-      "name": "Theatre Interceptors",
-      "cost": 130,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Theatre Missile Defence",
+      "cost": 140,
       "requires": [
         "md-point-defence"
       ],
-      "framing": "Exo-atmospheric interceptors for the regional threat.",
+      "framing": "Long-range interceptors against aircraft and ballistic missiles: Patriot PAC-3 MSE, THAAD, Europe's SAMP/T, Israel's David's Sling and Arrow, Russia's S-400 and China's HQ-9. Patriot batteries intercepted Russian Kinzhal missiles over Kyiv in 2023.",
       "effects": [
         {
           "key": "missileDefence",
-          "value": 0.1
+          "value": 0.08
         },
         {
           "key": "antiAir",
-          "value": 0.1
+          "value": 0.08
+        }
+      ]
+    },
+    {
+      "id": "md-counter-uas",
+      "branch": "missileDefense",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Counter-Drone Systems",
+      "cost": 110,
+      "requires": [
+        "md-point-defence"
+      ],
+      "framing": "Interceptor drones, smart guns and jammers that kill drones for less than the drones cost. Ukraine began mass-producing interceptor drones against Shaheds in 2025; the US Coyote and Merops systems serve the same purpose.",
+      "effects": [
+        {
+          "key": "droneResistance",
+          "value": 0.15
+        },
+        {
+          "key": "landDefence",
+          "value": 0.02
         }
       ]
     },
     {
       "id": "md-directed-energy",
       "branch": "missileDefense",
-      "tier": 3,
-      "name": "Directed-Energy Defence",
-      "cost": 240,
+      "era": 2,
+      "tier": 2,
+      "year": 2028,
+      "name": "Directed-Energy Air Defence",
+      "cost": 300,
       "requires": [
-        "md-theatre-interceptors",
+        "md-counter-uas",
         "energy-grid-storage"
       ],
-      "framing": "Lasers and microwaves kill drones for the price of electricity.",
+      "framing": "High-energy lasers that burn drones, rockets and mortars out of the sky for a few dollars a shot. Israel's Iron Beam became the first operational high-power laser interceptor in December 2025; the UK's DragonFire goes to sea on Type 45 destroyers from 2027 and the US Navy's HELIOS has sailed since 2022.",
       "effects": [
         {
           "key": "antiAir",
-          "value": 0.2
+          "value": 0.05
         },
         {
           "key": "droneResistance",
-          "value": 0.3
+          "value": 0.15
+        }
+      ],
+      "unlocks": {
+        "units": [
+          "laserAD"
+        ],
+        "abilities": [
+          "directedEnergy"
+        ]
+      }
+    },
+    {
+      "id": "md-glide-phase",
+      "branch": "missileDefense",
+      "era": 2,
+      "tier": 2,
+      "year": 2030,
+      "name": "Glide-Phase Interceptors",
+      "cost": 360,
+      "requires": [
+        "md-theatre-interceptors"
+      ],
+      "framing": "Interceptors designed to catch hypersonic gliders in mid-flight. The SM-6 intercepted a manoeuvring target in its terminal phase in 2023; the US Missile Defense Agency's Glide Phase Interceptor and Israel's Arrow 4 target the 2030s.",
+      "effects": [
+        {
+          "key": "missileDefence",
+          "value": 0.06
+        },
+        {
+          "key": "hypersonicDefence",
+          "value": 0.25
         }
       ]
     },
     {
       "id": "md-space-sensor-layer",
       "branch": "missileDefense",
-      "tier": 4,
-      "name": "Space Sensor Layer",
-      "cost": 340,
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
+      "name": "Space-Based Sensor Layer",
+      "cost": 520,
       "requires": [
-        "md-directed-energy",
+        "md-theatre-interceptors",
         "space-isr-constellation"
       ],
-      "framing": "Hypersonic-tracking satellites close the detection gap.",
+      "framing": "Hundreds of infrared satellites in low orbit that track hypersonic and ballistic missiles from launch to impact and pass fire-control data to interceptors. The US Space Development Agency's Tranche 1 Tracking Layer (28 satellites) began launching in 2026 and is the backbone of the Golden Dome plan.",
       "effects": [
         {
           "key": "missileDefence",
+          "value": 0.08
+        },
+        {
+          "key": "intel",
+          "value": 1
+        },
+        {
+          "key": "hypersonicDefence",
+          "value": 0.2
+        }
+      ],
+      "unlocks": {
+        "units": [],
+        "abilities": [
+          "spaceSensors"
+        ]
+      }
+    },
+    {
+      "id": "md-high-power-microwave",
+      "branch": "missileDefense",
+      "era": 3,
+      "tier": 3,
+      "year": 2032,
+      "name": "High-Power Microwave Defence",
+      "cost": 480,
+      "requires": [
+        "md-directed-energy"
+      ],
+      "framing": "Microwave weapons that fry the electronics of whole drone swarms in one pulse. The US Army bought Epirus's Leonidas system in 2024 and the Air Force tested THOR against swarms; it is the natural counter to massed drones.",
+      "effects": [
+        {
+          "key": "droneResistance",
+          "value": 0.25
+        },
+        {
+          "key": "antiAir",
+          "value": 0.04
+        }
+      ]
+    },
+    {
+      "id": "md-integrated-air-missile",
+      "branch": "missileDefense",
+      "era": 4,
+      "tier": 4,
+      "year": 2034,
+      "name": "Integrated Air & Missile Defence",
+      "cost": 860,
+      "requires": [
+        "md-space-sensor-layer",
+        "ai-command-systems"
+      ],
+      "framing": "Any sensor, best shooter: one AI-managed network fusing every radar, satellite and interceptor of a nation and its allies. The US IBCS and NATO's integrated air and missile defence are first steps toward it.",
+      "effects": [
+        {
+          "key": "missileDefence",
+          "value": 0.1
+        },
+        {
+          "key": "antiAir",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "md-space-interceptors",
+      "branch": "missileDefense",
+      "era": 4,
+      "tier": 4,
+      "year": 2036,
+      "name": "Space-Based Interceptors",
+      "cost": 1000,
+      "requires": [
+        "md-integrated-air-missile",
+        "space-heavy-lift"
+      ],
+      "framing": "Interceptors stationed in orbit to destroy missiles in their boost phase. The US Golden Dome executive order of January 2025 revived the 1980s 'Brilliant Pebbles' idea; cheap heavy launch makes it affordable for the first time, at the risk of a new arms race.",
+      "effects": [
+        {
+          "key": "missileDefence",
+          "value": 0.12
+        },
+        {
+          "key": "hypersonicDefence",
           "value": 0.15
         }
       ]
@@ -429,17 +1051,20 @@
     {
       "id": "md-homeland-shield",
       "branch": "missileDefense",
+      "era": 5,
       "tier": 5,
+      "year": 2039,
       "name": "Homeland Shield",
-      "cost": 600,
+      "cost": 1600,
       "requires": [
-        "md-space-sensor-layer"
+        "md-space-interceptors",
+        "md-high-power-microwave"
       ],
-      "framing": "A national shield that blunts, but cannot stop, a full exchange.",
+      "framing": "A layered defence able to blunt a limited nuclear strike on the homeland. Strategic stability since 1972 has rested on its absence; a nation that builds it changes every adversary's deterrence calculus.",
       "effects": [
         {
           "key": "missileDefence",
-          "value": 0.25
+          "value": 0.15
         },
         {
           "key": "stability",
@@ -450,96 +1075,243 @@
     {
       "id": "cyber-national-cert",
       "branch": "cyber",
+      "era": 1,
       "tier": 1,
+      "year": 2027,
       "name": "National Cyber Defence",
-      "cost": 50,
+      "cost": 70,
       "requires": [],
-      "framing": "Hardened grids and a national incident-response capability.",
+      "framing": "National cyber agencies, emergency response teams and defended critical infrastructure — CISA in the US, the UK's NCSC, Ukraine's SSSCIP, which has kept the country's grid and banks running through years of Russian attacks.",
       "effects": [
         {
           "key": "cyberDefence",
-          "value": 0.2
+          "value": 0.15
         },
         {
           "key": "stability",
-          "value": 2
+          "value": 1
         }
       ]
     },
     {
       "id": "cyber-offensive-ops",
       "branch": "cyber",
-      "tier": 2,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
       "name": "Offensive Cyber Operations",
-      "cost": 120,
+      "cost": 130,
       "requires": [
         "cyber-national-cert"
       ],
-      "framing": "Persistent access to adversary networks.",
+      "framing": "State hacking units able to disable infrastructure: Stuxnet against Iran's centrifuges (2010), Russia's attacks on Ukraine's grid (2015–16) and NotPetya (2017), China's Volt Typhoon pre-positioned in US utilities (disclosed 2024).",
       "effects": [
         {
           "key": "cyberAttack",
-          "value": 0.3
+          "value": 0.2
+        },
+        {
+          "key": "espionage",
+          "value": 0.05
         }
       ]
     },
     {
       "id": "cyber-ew-dominance",
       "branch": "cyber",
-      "tier": 3,
-      "name": "Electronic Warfare Dominance",
-      "cost": 210,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Electronic Warfare",
+      "cost": 150,
       "requires": [
-        "cyber-offensive-ops"
+        "cyber-national-cert"
       ],
-      "framing": "Jamming and spoofing degrade enemy drones and precision weapons.",
+      "framing": "Jamming, spoofing and direction-finding against drones, GPS and radios. Russia's Krasukha and Pole-21 systems and Ukraine's own EW have made jamming-resistant drones a necessity; Excalibur shells and JDAMs lost much of their accuracy over Ukraine.",
       "effects": [
         {
           "key": "droneResistance",
-          "value": 0.3
+          "value": 0.15
         },
         {
           "key": "landDefence",
-          "value": 0.05
+          "value": 0.03
         }
       ]
     },
     {
       "id": "cyber-infowar",
       "branch": "cyber",
-      "tier": 4,
-      "name": "Information Operations",
-      "cost": 300,
+      "era": 2,
+      "tier": 2,
+      "year": 2028,
+      "name": "AI Influence Operations",
+      "cost": 260,
       "requires": [
-        "cyber-ew-dominance"
+        "cyber-offensive-ops"
       ],
-      "framing": "Shaping foreign publics and steadying your own.",
+      "framing": "Generative-AI propaganda at industrial scale and the tools to resist it. Campaigns such as Russia's Doppelganger and China's Spamouflage were exposed by Western governments and platforms in 2023–24; a nation that controls its narrative keeps its public behind the war.",
       "effects": [
         {
           "key": "stability",
-          "value": 3
+          "value": 2
         },
         {
           "key": "cyberAttack",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "cyber-pqc",
+      "branch": "cyber",
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Post-Quantum Cryptography",
+      "cost": 280,
+      "requires": [
+        "cyber-national-cert"
+      ],
+      "framing": "Encryption that a quantum computer cannot break. NIST published the first post-quantum standards (FIPS 203–205) in August 2024 and the NSA's CNSA 2.0 requires national-security systems to migrate by 2030–35, before intercepted traffic can be decrypted.",
+      "effects": [
+        {
+          "key": "cyberDefence",
+          "value": 0.15
+        },
+        {
+          "key": "counterIntel",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "cyber-ai-cyber",
+      "branch": "cyber",
+      "era": 2,
+      "tier": 2,
+      "year": 2030,
+      "name": "Autonomous Cyber Operations",
+      "cost": 340,
+      "requires": [
+        "cyber-offensive-ops",
+        "ai-decision-support"
+      ],
+      "framing": "AI agents that find, exploit and patch vulnerabilities faster than human teams. DARPA's AI Cyber Challenge (2024–25) showed automated systems repairing real open-source software; in 2025 AI firms reported state-linked hackers already using AI agents in intrusion campaigns.",
+      "effects": [
+        {
+          "key": "cyberAttack",
+          "value": 0.15
+        },
+        {
+          "key": "cyberDefence",
+          "value": 0.1
+        },
+        {
+          "key": "espionage",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "cyber-quantum-secure-comms",
+      "branch": "cyber",
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
+      "name": "Quantum-Secure Communications",
+      "cost": 520,
+      "requires": [
+        "cyber-pqc",
+        "space-isr-constellation"
+      ],
+      "framing": "Quantum key distribution by fibre and satellite, combined with post-quantum encryption, making military networks immune to interception. China launched the Micius quantum satellite in 2016 and runs a 2,000 km Beijing–Shanghai QKD backbone; the EU's EuroQCI and Eagle-1 satellite follow.",
+      "effects": [
+        {
+          "key": "cyberDefence",
           "value": 0.2
+        }
+      ],
+      "unlocks": {
+        "units": [],
+        "abilities": [
+          "quantumComms"
+        ]
+      }
+    },
+    {
+      "id": "cyber-ew-cognitive",
+      "branch": "cyber",
+      "era": 3,
+      "tier": 3,
+      "year": 2032,
+      "name": "Cognitive Electronic Warfare",
+      "cost": 480,
+      "requires": [
+        "cyber-ew-dominance",
+        "ai-command-systems"
+      ],
+      "framing": "AI-driven jammers that learn an enemy's signals in real time and invent new countermeasures in seconds. DARPA and US Navy programmes have pursued adaptive EW for a decade; on the Ukrainian front jammers and drone links already change frequencies weekly.",
+      "effects": [
+        {
+          "key": "droneResistance",
+          "value": 0.15
+        },
+        {
+          "key": "airPower",
+          "value": 0.03
+        },
+        {
+          "key": "landDefence",
+          "value": 0.03
+        }
+      ]
+    },
+    {
+      "id": "cyber-strategic",
+      "branch": "cyber",
+      "era": 4,
+      "tier": 4,
+      "year": 2035,
+      "name": "Strategic Cyber Deterrence",
+      "cost": 880,
+      "requires": [
+        "cyber-ai-cyber",
+        "cyber-infowar"
+      ],
+      "framing": "A demonstrated ability to switch off an adversary's grid, finance and logistics at once, held in reserve as a deterrent. US 'defend forward' and China's pre-positioning in foreign infrastructure point to cyber becoming a strategic weapon in its own right.",
+      "effects": [
+        {
+          "key": "cyberAttack",
+          "value": 0.2
+        },
+        {
+          "key": "deterrence",
+          "value": 0.05
         }
       ]
     },
     {
       "id": "cyber-quantum-crypto",
       "branch": "cyber",
+      "era": 5,
       "tier": 5,
-      "name": "Quantum-Safe Networks",
-      "cost": 450,
+      "year": 2038,
+      "name": "Quantum Codebreaking",
+      "cost": 1500,
       "requires": [
-        "cyber-infowar",
-        "semi-quantum-computing"
+        "cyber-strategic",
+        "semi-fault-tolerant-quantum"
       ],
-      "framing": "Post-quantum cryptography and quantum key distribution.",
+      "framing": "'Q-Day': a quantum computer large enough to break today's public-key encryption, opening every secret harvested and stored over decades. Intelligence agencies assume adversaries are collecting encrypted traffic now to decrypt later.",
       "effects": [
         {
-          "key": "cyberDefence",
-          "value": 0.5
+          "key": "cyberAttack",
+          "value": 0.25
+        },
+        {
+          "key": "espionage",
+          "value": 0.25
         },
         {
           "key": "intel",
@@ -550,74 +1322,78 @@
     {
       "id": "space-launch-cadence",
       "branch": "space",
+      "era": 1,
       "tier": 1,
-      "name": "Reusable Launch Cadence",
-      "cost": 80,
+      "year": 2027,
+      "name": "Reusable Launch",
+      "cost": 120,
       "requires": [],
-      "framing": "Weekly launches make satellites cheap and replaceable.",
+      "framing": "Reusable rockets launching every few days. SpaceX's Falcon 9 flew more than 160 missions in 2025 and cut launch costs several-fold; China launched record numbers and tested reusable boosters. Satellite launches cost 40 % less with this technology.",
       "effects": [
         {
           "key": "productionCost",
-          "value": -0.03
+          "value": -0.02
         },
         {
           "key": "researchSpeed",
-          "value": 0.03
+          "value": 0.02
         }
       ]
     },
     {
       "id": "space-isr-constellation",
       "branch": "space",
-      "tier": 2,
-      "name": "Proliferated ISR Constellation",
-      "cost": 160,
-      "requires": [
-        "space-launch-cadence"
-      ],
-      "framing": "Hundreds of small satellites watch every theatre, all the time.",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "ISR Satellite Constellations",
+      "cost": 140,
+      "requires": [],
+      "framing": "Imaging and radar satellites revisiting every point on Earth several times a day: the NRO's proliferated constellation, China's Yaogan and Jilin-1 fleets, commercial providers such as Maxar and ICEYE that fed Ukraine's targeting.",
       "effects": [
         {
           "key": "intel",
-          "value": 2
+          "value": 1
         },
         {
           "key": "airPower",
-          "value": 0.05
+          "value": 0.03
         }
       ]
     },
     {
       "id": "space-resilient-pnt",
       "branch": "space",
-      "tier": 3,
-      "name": "Resilient Positioning & Timing",
-      "cost": 240,
-      "requires": [
-        "space-isr-constellation"
-      ],
-      "framing": "Jam-resistant navigation keeps precision weapons precise.",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Resilient Navigation & Timing",
+      "cost": 130,
+      "requires": [],
+      "framing": "Jam-resistant satellite navigation and backup timing: GPS III with M-code, China's BeiDou-3 (complete 2020), Russia's GLONASS, Europe's encrypted Galileo PRS. Precision weapons are only as good as the signal guiding them.",
       "effects": [
         {
           "key": "landAttack",
-          "value": 0.05
+          "value": 0.03
         },
         {
           "key": "navalPower",
-          "value": 0.05
+          "value": 0.03
         }
       ]
     },
     {
       "id": "space-counterspace",
       "branch": "space",
-      "tier": 4,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
       "name": "Counterspace Capabilities",
-      "cost": 360,
+      "cost": 200,
       "requires": [
-        "space-resilient-pnt"
+        "space-isr-constellation"
       ],
-      "framing": "ASAT weapons and co-orbital inspectors threaten enemy constellations.",
+      "framing": "Direct-ascent anti-satellite missiles, jammers and lasers that blind an enemy's satellites. China (2007), the US (2008), India (2019) and Russia (2021) have each destroyed a satellite in a test; the debris from such tests still threatens every orbit. Unlocks the ASAT strike.",
       "effects": [
         {
           "key": "enemyIntel",
@@ -630,16 +1406,150 @@
       ]
     },
     {
+      "id": "space-proliferated-leo",
+      "branch": "space",
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Proliferated LEO Networks",
+      "cost": 320,
+      "requires": [
+        "space-launch-cadence"
+      ],
+      "framing": "Thousands of small satellites providing military broadband and data links that cannot be shot down one at a time. Starlink kept Ukraine's army connected; the US Space Development Agency launched its first Transport Layer satellites in September 2025 and China is building Guowang and Qianfan.",
+      "effects": [
+        {
+          "key": "airPower",
+          "value": 0.03
+        },
+        {
+          "key": "navalPower",
+          "value": 0.03
+        },
+        {
+          "key": "supply",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "space-domain-awareness",
+      "branch": "space",
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Space Domain Awareness",
+      "cost": 300,
+      "requires": [
+        "space-counterspace"
+      ],
+      "framing": "Tracking every object in orbit and inspector satellites that shadow an adversary's spacecraft: the US GSSAP, Russia's Cosmos 'nesting doll' inspectors, China's Shijian-21 satellite tug (2022). Knowing what is up there is the first step to protecting it.",
+      "effects": [
+        {
+          "key": "counterIntel",
+          "value": 0.1
+        },
+        {
+          "key": "missileDefence",
+          "value": 0.03
+        },
+        {
+          "key": "satelliteSurvival",
+          "value": 0.15
+        }
+      ]
+    },
+    {
+      "id": "space-heavy-lift",
+      "branch": "space",
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
+      "name": "Super-Heavy Launch",
+      "cost": 480,
+      "requires": [
+        "space-proliferated-leo"
+      ],
+      "framing": "Fully reusable super-heavy rockets that put a hundred tonnes in orbit at a time: SpaceX Starship, China's Long March 9 and 10. Cheap mass to orbit makes space stations, orbital interceptors and lunar bases affordable.",
+      "effects": [
+        {
+          "key": "productionCost",
+          "value": -0.03
+        },
+        {
+          "key": "gdpGrowth",
+          "value": 0.1
+        },
+        {
+          "key": "researchSpeed",
+          "value": 0.03
+        }
+      ]
+    },
+    {
+      "id": "space-manoeuvrable-sats",
+      "branch": "space",
+      "era": 3,
+      "tier": 3,
+      "year": 2033,
+      "name": "Manoeuvrable Satellites",
+      "cost": 520,
+      "requires": [
+        "space-domain-awareness",
+        "space-heavy-lift"
+      ],
+      "framing": "Military satellites with fuel to dodge attacks, refuel in orbit and reposition over a crisis. The US Space Force calls it 'dynamic space operations'; China's Shenlong spaceplane and the US X-37B have demonstrated long manoeuvring missions.",
+      "effects": [
+        {
+          "key": "satelliteSurvival",
+          "value": 0.3
+        },
+        {
+          "key": "enemyIntel",
+          "value": -1
+        }
+      ]
+    },
+    {
+      "id": "space-cislunar",
+      "branch": "space",
+      "era": 4,
+      "tier": 4,
+      "year": 2035,
+      "name": "Cislunar Operations",
+      "cost": 900,
+      "requires": [
+        "space-heavy-lift"
+      ],
+      "framing": "Bases, relays and surveillance between the Earth and the Moon. NASA's Artemis programme and China's planned crewed landing before 2030 and International Lunar Research Station race for the same south-pole sites.",
+      "effects": [
+        {
+          "key": "intel",
+          "value": 1
+        },
+        {
+          "key": "researchSpeed",
+          "value": 0.04
+        },
+        {
+          "key": "deterrence",
+          "value": 0.03
+        }
+      ]
+    },
+    {
       "id": "space-orbital-industry",
       "branch": "space",
+      "era": 5,
       "tier": 5,
+      "year": 2039,
       "name": "Orbital Industry",
-      "cost": 560,
+      "cost": 1500,
       "requires": [
-        "space-counterspace",
-        "energy-fusion-pilot"
+        "space-cislunar",
+        "energy-autonomous-factories"
       ],
-      "framing": "Manufacturing and power beaming from orbit.",
+      "framing": "Manufacturing, power and mining in space as an economic sector. Speculative for 2040, but the falling cost of launch since 2015 has already made in-orbit manufacturing start-ups viable.",
       "effects": [
         {
           "key": "gdpGrowth",
@@ -647,25 +1557,69 @@
         },
         {
           "key": "researchSpeed",
-          "value": 0.1
+          "value": 0.08
         }
       ]
     },
     {
       "id": "energy-grid-storage",
       "branch": "energy",
+      "era": 1,
       "tier": 1,
+      "year": 2027,
       "name": "Grid-Scale Storage",
-      "cost": 60,
+      "cost": 90,
       "requires": [],
-      "framing": "Batteries and pumped hydro decouple the economy from fuel imports.",
+      "framing": "Battery farms that firm up renewable power and keep grids alive under attack. China installed more new grid storage than the rest of the world combined in 2024–25; Ukraine rebuilt part of its bombed grid around batteries and distributed generation.",
       "effects": [
         {
           "key": "gdpGrowth",
-          "value": 0.2
+          "value": 0.1
         },
         {
           "key": "sanctionResistance",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "energy-combat-engineering",
+      "branch": "energy",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Combat Engineering & Bridging",
+      "cost": 100,
+      "requires": [],
+      "framing": "Pontoon bridges, gap-crossing vehicles and rapid runway repair that carry an army over rivers and mountain passes. Recovers up to half of the river and mountain crossing penalty.",
+      "effects": [
+        {
+          "key": "crossing",
+          "value": 0.5
+        },
+        {
+          "key": "supply",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "energy-war-economy",
+      "branch": "energy",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Defence-Industrial Surge",
+      "cost": 150,
+      "requires": [],
+      "framing": "Multi-year munitions contracts, second shifts and new plants. Russia roughly tripled its artillery-shell output after 2022; the US set out to raise 155 mm production from 14,000 to 100,000 a month and the EU passed its ASAP munitions act in 2023.",
+      "effects": [
+        {
+          "key": "productionCost",
+          "value": -0.05
+        },
+        {
+          "key": "buildSpeed",
           "value": 0.1
         }
       ]
@@ -673,100 +1627,46 @@
     {
       "id": "energy-smr",
       "branch": "energy",
+      "era": 2,
       "tier": 2,
+      "year": 2029,
       "name": "Small Modular Reactors",
-      "cost": 140,
+      "cost": 300,
       "requires": [
         "energy-grid-storage"
       ],
-      "framing": "Factory-built reactors for bases, cities and data centres.",
+      "framing": "Factory-built nuclear reactors of 50–300 MW. Russia's floating Akademik Lomonosov has run since 2020, China's Linglong One is due on the grid in 2026 and Ontario began building the first North American BWRX-300 in 2025.",
       "effects": [
         {
           "key": "gdpGrowth",
-          "value": 0.2
+          "value": 0.15
         },
         {
           "key": "stability",
-          "value": 2
-        }
-      ]
-    },
-    {
-      "id": "energy-war-economy",
-      "branch": "energy",
-      "tier": 3,
-      "name": "Industrial Mobilisation",
-      "cost": 200,
-      "requires": [
-        "energy-smr"
-      ],
-      "framing": "Munitions plants and shipyards on a wartime footing.",
-      "effects": [
-        {
-          "key": "productionCost",
-          "value": -0.12
+          "value": 1
         },
         {
-          "key": "buildSpeed",
-          "value": 0.2
+          "key": "sanctionResistance",
+          "value": 0.05
         }
       ]
     },
     {
       "id": "energy-critical-minerals",
       "branch": "energy",
-      "tier": 4,
-      "name": "Critical Minerals Independence",
-      "cost": 300,
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Critical-Mineral Independence",
+      "cost": 320,
       "requires": [
         "energy-war-economy"
       ],
-      "framing": "Domestic refining of rare earths, lithium and gallium.",
+      "framing": "Domestic mining, refining and magnet production for rare earths, gallium, graphite and lithium. China refines about 90 % of the world's rare earths and restricted exports in 2023–25; the US took a stake in MP Materials in 2025 and the EU passed its Critical Raw Materials Act in 2024.",
       "effects": [
         {
           "key": "sanctionResistance",
-          "value": 0.3
-        },
-        {
-          "key": "productionCost",
-          "value": -0.05
-        }
-      ]
-    },
-    {
-      "id": "energy-fusion-pilot",
-      "branch": "energy",
-      "tier": 5,
-      "name": "Fusion Pilot Plant",
-      "cost": 650,
-      "requires": [
-        "energy-critical-minerals",
-        "semi-advanced-nodes"
-      ],
-      "framing": "The first grid-connected fusion plant changes the energy map.",
-      "effects": [
-        {
-          "key": "gdpGrowth",
-          "value": 0.6
-        },
-        {
-          "key": "stability",
-          "value": 3
-        }
-      ]
-    },
-    {
-      "id": "semi-mature-nodes",
-      "branch": "semiconductors",
-      "tier": 1,
-      "name": "Mature-Node Self-Sufficiency",
-      "cost": 70,
-      "requires": [],
-      "framing": "Domestic fabs for the chips in every vehicle and missile.",
-      "effects": [
-        {
-          "key": "sanctionResistance",
-          "value": 0.15
+          "value": 0.2
         },
         {
           "key": "productionCost",
@@ -775,19 +1675,191 @@
       ]
     },
     {
+      "id": "energy-adaptive-engines",
+      "branch": "energy",
+      "era": 2,
+      "tier": 2,
+      "year": 2030,
+      "name": "Adaptive-Cycle Engines",
+      "cost": 340,
+      "requires": [
+        "energy-war-economy"
+      ],
+      "framing": "Jet engines that switch between fuel-efficient cruise and high thrust, giving 25–30 % more range. GE's XA100 and Pratt & Whitney's XA101 came out of the US AETP programme; the F-47 and GCAP depend on such engines.",
+      "effects": [
+        {
+          "key": "airPower",
+          "value": 0.04
+        }
+      ]
+    },
+    {
+      "id": "energy-microreactors",
+      "branch": "energy",
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
+      "name": "Mobile Microreactors",
+      "cost": 480,
+      "requires": [
+        "energy-smr"
+      ],
+      "framing": "Truck-transportable reactors of a few megawatts that power bases without fuel convoys. The US Department of Defense's Project Pele prototype is due to run around 2028 and the Army's Janus programme (2025) plans reactors on its installations.",
+      "effects": [
+        {
+          "key": "supply",
+          "value": 0.08
+        },
+        {
+          "key": "gdpGrowth",
+          "value": 0.1
+        },
+        {
+          "key": "upkeep",
+          "value": -0.03
+        }
+      ]
+    },
+    {
+      "id": "energy-solid-state",
+      "branch": "energy",
+      "era": 3,
+      "tier": 3,
+      "year": 2032,
+      "name": "Solid-State Batteries",
+      "cost": 480,
+      "requires": [
+        "energy-grid-storage",
+        "energy-critical-minerals"
+      ],
+      "framing": "Batteries with nearly twice the energy density of today's lithium-ion cells: drones that fly twice as long, electric vehicles that charge in minutes. Toyota, CATL and Samsung SDI target the late 2020s for mass production.",
+      "effects": [
+        {
+          "key": "gdpGrowth",
+          "value": 0.1
+        },
+        {
+          "key": "droneStrength",
+          "value": 0.05
+        },
+        {
+          "key": "supply",
+          "value": 0.03
+        }
+      ]
+    },
+    {
+      "id": "energy-autonomous-factories",
+      "branch": "energy",
+      "era": 4,
+      "tier": 4,
+      "year": 2035,
+      "name": "Lights-Out Factories",
+      "cost": 900,
+      "requires": [
+        "energy-war-economy",
+        "ai-autonomous-logistics"
+      ],
+      "framing": "Fully robotic factories that run day and night with a skeleton crew. China already leads the world in industrial robots installed (over half the global total in 2023) and showcases 'dark factories' for phones and cars.",
+      "effects": [
+        {
+          "key": "productionCost",
+          "value": -0.08
+        },
+        {
+          "key": "buildSpeed",
+          "value": 0.15
+        }
+      ]
+    },
+    {
+      "id": "energy-fusion-pilot",
+      "branch": "energy",
+      "era": 5,
+      "tier": 5,
+      "year": 2039,
+      "name": "Fusion Pilot Plant",
+      "cost": 1700,
+      "requires": [
+        "energy-microreactors",
+        "semi-fault-tolerant-quantum"
+      ],
+      "framing": "The first fusion plant delivering power to a grid. The US National Ignition Facility achieved fusion ignition in December 2022; Commonwealth Fusion's SPARC and China's BEST tokamak aim for net energy around 2027 and pilot plants in the 2030s.",
+      "effects": [
+        {
+          "key": "gdpGrowth",
+          "value": 0.5
+        },
+        {
+          "key": "stability",
+          "value": 3
+        },
+        {
+          "key": "sanctionResistance",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "semi-mature-nodes",
+      "branch": "semiconductors",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Mature-Node Fabs",
+      "cost": 90,
+      "requires": [],
+      "framing": "28 nm and older chips for cars, weapons and appliances. They are cheap but indispensable: every missile and drone needs them. China is building most of the world's new mature-node capacity.",
+      "effects": [
+        {
+          "key": "sanctionResistance",
+          "value": 0.1
+        },
+        {
+          "key": "productionCost",
+          "value": -0.02
+        }
+      ]
+    },
+    {
       "id": "semi-advanced-packaging",
       "branch": "semiconductors",
-      "tier": 2,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
       "name": "Advanced Packaging",
-      "cost": 150,
+      "cost": 140,
       "requires": [
         "semi-mature-nodes"
       ],
-      "framing": "Chiplets and 3D stacking stretch existing lithography.",
+      "framing": "Stacking and stitching chiplets and high-bandwidth memory into one package — TSMC's CoWoS, SK Hynix and Samsung HBM — the bottleneck of the AI boom in 2023–25.",
       "effects": [
         {
           "key": "researchSpeed",
-          "value": 0.08
+          "value": 0.04
+        },
+        {
+          "key": "gdpGrowth",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "semi-advanced-nodes",
+      "branch": "semiconductors",
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "Leading-Edge Logic (≤ 3 nm)",
+      "cost": 260,
+      "requires": [
+        "semi-advanced-packaging"
+      ],
+      "framing": "The most advanced transistors, built only with Dutch EUV lithography: TSMC's N3 and N2 (volume from late 2025), Samsung's 3 nm GAA and Intel's 18A. China's SMIC reached 7 nm without EUV (Huawei Kirin 9000S, 2023) but is held back by export controls.",
+      "effects": [
+        {
+          "key": "researchSpeed",
+          "value": 0.06
         },
         {
           "key": "gdpGrowth",
@@ -796,43 +1868,116 @@
       ]
     },
     {
-      "id": "semi-advanced-nodes",
+      "id": "semi-ai-accelerators",
       "branch": "semiconductors",
-      "tier": 3,
-      "name": "Leading-Edge Nodes",
-      "cost": 280,
+      "era": 1,
+      "tier": 1,
+      "year": 2027,
+      "name": "AI Accelerators",
+      "cost": 220,
       "requires": [
         "semi-advanced-packaging"
       ],
-      "framing": "Sub-2 nm production at home.",
+      "framing": "Data-centre AI chips such as NVIDIA's Blackwell and Huawei's Ascend 910C. US export controls since October 2022 restrict their sale to China, making them the most contested product in the technology war.",
       "effects": [
         {
           "key": "researchSpeed",
-          "value": 0.12
+          "value": 0.05
+        },
+        {
+          "key": "cyberAttack",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "id": "semi-angstrom-nodes",
+      "branch": "semiconductors",
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Ångström-Era Logic",
+      "cost": 360,
+      "requires": [
+        "semi-advanced-nodes"
+      ],
+      "framing": "Transistors below 2 nm with backside power delivery: TSMC's A16 (from late 2026) and A14 (2028), Intel's 14A. Only fabs already at the leading edge can make the jump.",
+      "effects": [
+        {
+          "key": "researchSpeed",
+          "value": 0.06
         },
         {
           "key": "gdpGrowth",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "semi-euv",
+      "branch": "semiconductors",
+      "era": 2,
+      "tier": 2,
+      "year": 2030,
+      "name": "Sovereign EUV Lithography",
+      "cost": 380,
+      "requires": [
+        "semi-mature-nodes"
+      ],
+      "framing": "Building extreme-ultraviolet lithography machines at home. ASML in the Netherlands is the only maker in the world; China is racing to build its own, and Reuters reported a prototype in 2025. Owning EUV ends dependence on others' export licences.",
+      "effects": [
+        {
+          "key": "sanctionResistance",
           "value": 0.2
+        },
+        {
+          "key": "researchSpeed",
+          "value": 0.03
+        }
+      ]
+    },
+    {
+      "id": "semi-quantum-sensing",
+      "branch": "semiconductors",
+      "era": 2,
+      "tier": 2,
+      "year": 2029,
+      "name": "Quantum Sensing",
+      "cost": 300,
+      "requires": [
+        "semi-advanced-packaging"
+      ],
+      "framing": "Quantum magnetometers, gravimeters and atomic clocks for navigation without GPS and the detection of submarines. The UK and US tested quantum navigation on ships and aircraft in 2024; DARPA's RoQS programme aims to field it.",
+      "effects": [
+        {
+          "key": "navalPower",
+          "value": 0.04
+        },
+        {
+          "key": "landAttack",
+          "value": 0.02
         }
       ]
     },
     {
       "id": "semi-quantum-computing",
       "branch": "semiconductors",
-      "tier": 4,
-      "name": "Fault-Tolerant Quantum Computing",
-      "cost": 420,
+      "era": 3,
+      "tier": 3,
+      "year": 2031,
+      "name": "Quantum Advantage",
+      "cost": 540,
       "requires": [
-        "semi-advanced-nodes"
+        "semi-ai-accelerators"
       ],
-      "framing": "Error-corrected qubits threaten today's encryption.",
+      "framing": "Quantum computers that beat classical machines on useful problems such as chemistry and logistics. Google's Willow chip (December 2024) and China's Zuchongzhi 3.0 (2025) showed error correction improving with scale; IBM targets a fault-tolerant machine in 2029.",
       "effects": [
         {
-          "key": "cyberAttack",
-          "value": 0.4
+          "key": "researchSpeed",
+          "value": 0.06
         },
         {
-          "key": "researchSpeed",
+          "key": "cyberAttack",
           "value": 0.1
         }
       ]
@@ -840,47 +1985,82 @@
     {
       "id": "semi-neuromorphic",
       "branch": "semiconductors",
-      "tier": 5,
-      "name": "Neuromorphic Edge Compute",
+      "era": 3,
+      "tier": 3,
+      "year": 2033,
+      "name": "Neuromorphic & Photonic Chips",
       "cost": 520,
       "requires": [
-        "semi-quantum-computing",
-        "ai-strategic-ai"
+        "semi-angstrom-nodes"
       ],
-      "framing": "Brain-like chips put frontier AI inside every weapon.",
+      "framing": "Brain-inspired and light-based processors that run AI on a few watts — at the edge, inside drones and missiles that must think without a datalink. Intel's Loihi and photonic AI start-ups are the early research.",
       "effects": [
         {
           "key": "droneStrength",
-          "value": 0.3
-        },
-        {
-          "key": "airPower",
           "value": 0.1
         },
         {
-          "key": "landAttack",
-          "value": 0.05
+          "key": "airPower",
+          "value": 0.04
+        },
+        {
+          "key": "researchSpeed",
+          "value": 0.03
         }
       ]
     },
     {
-      "id": "energy-combat-engineering",
-      "branch": "energy",
-      "tier": 2,
-      "name": "Combat Engineering & Bridging",
-      "cost": 120,
+      "id": "semi-fault-tolerant-quantum",
+      "branch": "semiconductors",
+      "era": 4,
+      "tier": 4,
+      "year": 2035,
+      "name": "Fault-Tolerant Quantum Computers",
+      "cost": 950,
       "requires": [
-        "energy-grid-storage"
+        "semi-quantum-computing"
       ],
-      "framing": "Modular bridging, gap-crossing vehicles and rapid road construction: the engineering corps that turned the Rhine and Dnipro crossings from set-piece battles into logistics problems.",
+      "framing": "Quantum computers with thousands of error-corrected logical qubits — the machines that could break public-key encryption and design new materials. IBM, Google and Chinese labs publish roadmaps converging on the early-to-mid 2030s.",
       "effects": [
         {
-          "key": "crossing",
-          "value": 0.5
+          "key": "researchSpeed",
+          "value": 0.08
         },
         {
-          "key": "supply",
+          "key": "cyberAttack",
           "value": 0.1
+        },
+        {
+          "key": "gdpGrowth",
+          "value": 0.1
+        }
+      ]
+    },
+    {
+      "id": "semi-post-silicon",
+      "branch": "semiconductors",
+      "era": 5,
+      "tier": 5,
+      "year": 2038,
+      "name": "Post-Silicon Electronics",
+      "cost": 1400,
+      "requires": [
+        "semi-neuromorphic",
+        "semi-euv"
+      ],
+      "framing": "Transistors built from 2D materials and carbon nanotubes once silicon scaling ends. Speculative for 2040; laboratories in the US, China, Belgium (imec) and Taiwan have built working prototypes.",
+      "effects": [
+        {
+          "key": "researchSpeed",
+          "value": 0.1
+        },
+        {
+          "key": "gdpGrowth",
+          "value": 0.3
+        },
+        {
+          "key": "productionCost",
+          "value": -0.04
         }
       ]
     }

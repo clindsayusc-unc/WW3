@@ -229,10 +229,29 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await shot(page, 'production');
   await page.getByTestId('modal-close').click();
 
+  // Research (D-079): the US starts with its January 2027 technology; clicking a distant tech
+  // queues its whole path; the hover card explains it; espionage and sharing tabs.
   await page.getByTestId('nav-research').click();
   await expect(page.getByTestId('modal-research')).toBeVisible();
-  await page.getByTestId('tech-ai-decision-support').click();
+  await expect(page.getByTestId('tech-ai-decision-support')).toHaveClass(/done/);
+  // The sixth-generation fighter sits off-screen in era IV: dispatch the click rather than let
+  // Playwright scroll the clipped viewport.
+  await page.getByTestId('tech-ai-sixth-gen').dispatchEvent('click');
+  await expect(page.getByTestId('queue-item-ai-sixth-gen')).toBeVisible();
+  await expect(page.getByTestId('research-queue')).toContainText('AI Battle Management');
+  await page.getByTestId('tech-md-directed-energy').hover();
+  await expect(page.getByTestId('tech-card')).toContainText('Iron Beam');
+  await shot(page, branchSlug());
+  await page.getByTestId('tech-zoom-in').click();
+  await page.getByTestId('tech-zoom-out').click();
+  await page.getByTestId('tech-fit').click();
+  await page.mouse.move(720, 120);
   await shot(page, 'research-tree');
+  await page.getByTestId('research-tab-espionage').click();
+  await expect(page.getByTestId('research-espionage')).toBeVisible();
+  await shot(page, 'research-espionage');
+  await page.getByTestId('research-tab-sharing').click();
+  await expect(page.getByTestId('research-sharing')).toBeVisible();
   await page.getByTestId('modal-close').click();
 
   await page.getByTestId('nav-diplomacy').click();
@@ -458,7 +477,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await expect(page.getByTestId('modal-escalation')).toBeVisible();
   await expect(page.getByTestId('escalation-ladder')).toBeVisible();
   await expect(page.getByTestId('defcon-table')).toBeVisible();
-  await shot(page, branchSlug());
+  await shot(page, 'escalation-ladder');
   await page.getByTestId('modal-close').click();
   await page.keyboard.press('n');
   await expect(page.getByTestId('modal-news')).toBeVisible();
@@ -487,7 +506,8 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
   // Set a research project and a budget so the economy loop is exercised.
   await page.getByTestId('nav-research').click();
-  await page.getByTestId('tech-semi-mature-nodes').click();
+  await page.getByTestId('tech-semi-angstrom-nodes').dispatchEvent('click');
+  await expect(page.getByTestId('research-queue')).toContainText('Leading-Edge Logic');
   await page.getByTestId('modal-close').click();
   // Open the war: declare on Taiwan, send the Fujian stack across the strait, resolve a month and
   // catch the combat visuals (attack arrow before, strikes / flashes / smoke / front line after).
@@ -622,7 +642,7 @@ test('nuclear aftermath: fallout on the map and the nobody-wins ending', async (
   await expect(page.getByTestId('leader-traits')).toBeVisible();
   await expect(page.getByTestId('modal-diplomacy')).toContainText('Andrei Sadovsky');
   await expect(page.getByTestId('modal-diplomacy')).toContainText('Siloviki');
-  await shot(page, branchSlug());
+  await shot(page, 'diplomacy-successor');
   await page.getByTestId('modal-close').click();
   // A crafted aftermath (D-076): fallout over Moscow, St Petersburg's region and two US regions.
   const craft = (defeat: boolean) =>

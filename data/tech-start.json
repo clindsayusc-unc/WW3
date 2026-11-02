@@ -1,0 +1,523 @@
+{
+  "source": "Authors' assessment of fielded capability from public sources: IISS The Military Balance 2025, CSIS Missile Threat (missilethreat.csis.org) and Space Threat Assessment 2025, Congressional Research Service reports R45811 (hypersonic weapons), IF11991 (Dark Eagle) and R46925 (directed energy), ASPI Critical Technology Tracker (2024), Israel Ministry of Defense (Iron Beam, 28 December 2025), US Air Force (YFQ-42A/YFQ-44A first flights, 2025), Ukraine Ministry of Defence production figures, company reports (TSMC, Samsung, ASML, SMIC). The 'basis' line of each nation lists the programmes counted.",
+  "asOf": "2026-11-02",
+  "estimate": true,
+  "estimateNote": "Mapping real programmes onto the game's technologies is a judgement call; the whole file is an estimate. Contested claims (Iran's Fattah) are excluded, North Korea's glider is counted.",
+  "defaultRule": {
+    "description": "Nations not listed below start with tactical ISR drones, precision strike and national cyber defence if their defence budget is at least US$ 5 bn, and with tactical ISR drones only if it is at least US$ 1 bn.",
+    "minor": [
+      "drones-tactical-isr",
+      "missiles-precision-strike",
+      "cyber-national-cert"
+    ],
+    "minorThresholdBn": 5,
+    "small": [
+      "drones-tactical-isr"
+    ],
+    "smallThresholdBn": 1
+  },
+  "nations": {
+    "USA": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "ai-predictive-maintenance",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "drones-naval-usv",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "missiles-hypersonic-glide",
+        "missiles-long-range-fires",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "cyber-ew-dominance",
+        "space-launch-cadence",
+        "space-isr-constellation",
+        "space-resilient-pnt",
+        "space-counterspace",
+        "space-proliferated-leo",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "energy-war-economy",
+        "semi-mature-nodes",
+        "semi-advanced-packaging",
+        "semi-advanced-nodes",
+        "semi-ai-accelerators"
+      ],
+      "basis": "Maven Smart System and CJADC2 experiments; Replicator drones but no mass FPV base; Dark Eagle hypersonic battery (CRS IF11991), PrSM and Typhon; Patriot/THAAD/SM-3; NSA/Cyber Command; Falcon 9, NRO proliferated constellation, GPS III, 2008 ASAT test, Starshield and SDA Transport Layer; Intel 18A, TSMC Arizona, NVIDIA."
+    },
+    "CHN": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "ai-predictive-maintenance",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "drones-fpv-mass",
+        "drones-naval-usv",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "missiles-hypersonic-glide",
+        "missiles-anti-ship-ballistic",
+        "missiles-long-range-fires",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "cyber-ew-dominance",
+        "cyber-pqc",
+        "cyber-quantum-secure-comms",
+        "space-launch-cadence",
+        "space-isr-constellation",
+        "space-resilient-pnt",
+        "space-counterspace",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "energy-war-economy",
+        "energy-critical-minerals",
+        "energy-smr",
+        "semi-mature-nodes",
+        "semi-advanced-packaging",
+        "semi-ai-accelerators"
+      ],
+      "basis": "Intelligentized-warfare doctrine; DJI-based drone industry and USVs; DF-17 HGV, DF-21D/DF-26 ASBMs, PCH-191 long-range rockets (CSIS Missile Threat); HQ-9; Volt Typhoon; ~90 launches in 2025, Yaogan, BeiDou-3, 2007 ASAT test; world-leading grid storage and rare-earth refining, Linglong One SMR; SMIC 7 nm without EUV, Huawei Ascend; Micius satellite and Beijing–Shanghai QKD backbone; PQC standardisation effort (2025)."
+    },
+    "RUS": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "drones-fpv-mass",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "missiles-hypersonic-glide",
+        "missiles-scramjet",
+        "missiles-long-range-fires",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "cyber-ew-dominance",
+        "cyber-infowar",
+        "space-isr-constellation",
+        "space-resilient-pnt",
+        "space-counterspace",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "energy-war-economy",
+        "energy-smr",
+        "semi-mature-nodes"
+      ],
+      "basis": "Lancet/Geran and mass FPV production; Iskander, Kalibr, Kinzhal and Avangard, Zircon used in 2024 (CRS R45811); S-400; GRU cyber units and Doppelganger; Krasukha/Pole-21 EW; GLONASS, Persona imaging satellites, 2021 ASAT test; shell production surge; Akademik Lomonosov floating reactor; mature-node chips only."
+    },
+    "UKR": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "ai-predictive-maintenance",
+        "ai-autonomous-logistics",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "drones-fpv-mass",
+        "drones-naval-usv",
+        "drones-ground-robotics",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "cyber-ew-dominance",
+        "energy-combat-engineering",
+        "energy-war-economy"
+      ],
+      "basis": "Delta battlefield system; >2 million drones produced in 2024, Magura sea drones, ~15,000 ground robots planned for 2025, robotic logistics; Neptune and Flamingo missiles; interceptor drones against Shaheds; SSSCIP cyber defence and HUR operations; wartime defence-industrial surge."
+    },
+    "GBR": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "cyber-ew-dominance",
+        "space-isr-constellation",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "semi-mature-nodes"
+      ],
+      "basis": "Maven-type tools; Storm Shadow; Sea Viper/Aster and Sky Sabre; DragonFire laser due on Type 45 in 2027 (not yet fielded); NCSC and National Cyber Force; Skynet and imaging satellites; mature compound-semiconductor fabs."
+    },
+    "FRA": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "space-isr-constellation",
+        "space-resilient-pnt",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "semi-mature-nodes"
+      ],
+      "basis": "SCALP, SAMP/T and Aster; ComCyber; CSO imaging satellites and Galileo; STMicroelectronics fabs."
+    },
+    "DEU": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "space-isr-constellation",
+        "space-resilient-pnt",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "energy-war-economy",
+        "semi-mature-nodes"
+      ],
+      "basis": "Helsing HX-2 loitering munitions (2025); Taurus; IRIS-T SLM, Patriot, Skynex; Arrow 3 (operational December 2025) treated as theatre defence; SARah satellites and Galileo; Rheinmetall production surge; Infineon fabs."
+    },
+    "JPN": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "missiles-long-range-fires",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "space-isr-constellation",
+        "space-resilient-pnt",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "semi-mature-nodes",
+        "semi-advanced-packaging"
+      ],
+      "basis": "Upgraded Type-12 missiles deploying from 2025 and Tomahawk purchase; PAC-3, SM-3 Block IIA (co-developed); IGS satellites and QZSS; Kioxia/Renesas fabs and packaging, Rapidus 2 nm pilot line (not yet in volume)."
+    },
+    "KOR": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "missiles-long-range-fires",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "cyber-national-cert",
+        "space-isr-constellation",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "energy-war-economy",
+        "semi-mature-nodes",
+        "semi-advanced-packaging",
+        "semi-advanced-nodes"
+      ],
+      "basis": "Hyunmoo-3 cruise and Hyunmoo-4/5 ballistic missiles; L-SAM and Cheongung; 425 Project reconnaissance satellites (2023–25); large defence industry (K2, K9); Samsung 3 nm GAA and SK Hynix HBM."
+    },
+    "IND": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "space-isr-constellation",
+        "space-resilient-pnt",
+        "space-counterspace",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "semi-mature-nodes"
+      ],
+      "basis": "BrahMos; LRAShM hypersonic test (November 2024) not yet fielded; S-400, Akash and two-tier BMD; RISAT and NavIC; Mission Shakti ASAT test (2019); first commercial fab (Tata–PSMC) starting 2026."
+    },
+    "ISR": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "ai-predictive-maintenance",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "missiles-long-range-fires",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "md-counter-uas",
+        "md-directed-energy",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "cyber-ew-dominance",
+        "space-isr-constellation",
+        "energy-grid-storage",
+        "semi-mature-nodes",
+        "semi-advanced-packaging"
+      ],
+      "basis": "AI targeting tools, Harop/Harpy; Iron Dome, David's Sling, Arrow; Iron Beam laser delivered to the IDF in December 2025 (Israel MOD); Unit 8200; Ofek satellites; Intel Kiryat Gat fab."
+    },
+    "TUR": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "drones-naval-usv",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "energy-combat-engineering",
+        "energy-war-economy"
+      ],
+      "basis": "Bayraktar TB2/Akinci, Kargu loitering munitions, Marlin USV; SOM and Atmaca; Hisar and Siper air defence; expanding defence industry."
+    },
+    "IRN": {
+      "techs": [
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "space-isr-constellation",
+        "energy-combat-engineering"
+      ],
+      "basis": "Shahed one-way attack drones; large ballistic and cruise missile force; claimed Fattah hypersonic missile not counted (unverified); Bavar-373; offensive cyber groups; Noor satellites."
+    },
+    "PRK": {
+      "techs": [
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "missiles-hypersonic-glide",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "energy-combat-engineering",
+        "energy-war-economy"
+      ],
+      "basis": "Hwasong series; claimed Hwasong-16B hypersonic glider tests (2024) counted as fielded (estimate); Lazarus Group cyber operations; munitions exports to Russia."
+    },
+    "PAK": {
+      "techs": [
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "cyber-national-cert",
+        "energy-combat-engineering"
+      ],
+      "basis": "Babur cruise missiles; Chinese-supplied HQ-9 and drones."
+    },
+    "TWN": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "semi-mature-nodes",
+        "semi-advanced-packaging",
+        "semi-advanced-nodes",
+        "semi-ai-accelerators",
+        "semi-angstrom-nodes"
+      ],
+      "basis": "Chien Hsiang loitering munitions; Hsiung Feng IIE; Tien Kung and Patriot; TSMC N3/N2 in volume and A16 from late 2026, CoWoS packaging, manufactures most of the world's AI accelerators."
+    },
+    "AUS": {
+      "techs": [
+        "ai-decision-support",
+        "ai-isr-fusion",
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "drones-collaborative-combat",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "space-isr-constellation",
+        "energy-grid-storage",
+        "energy-combat-engineering"
+      ],
+      "basis": "MQ-28 Ghost Bat (Block 2 production 2025); Tomahawk and NSM; ASD offensive cyber; AUKUS partner."
+    },
+    "ITA": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "space-isr-constellation",
+        "energy-grid-storage",
+        "energy-combat-engineering",
+        "semi-mature-nodes"
+      ],
+      "basis": "Storm Shadow; SAMP/T; COSMO-SkyMed; GCAP partner."
+    },
+    "NLD": {
+      "techs": [
+        "ai-decision-support",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "energy-grid-storage",
+        "semi-mature-nodes",
+        "semi-advanced-packaging",
+        "semi-euv"
+      ],
+      "basis": "Patriot; Defence Cyber Command; ASML, the world's only EUV lithography maker; NXP fabs."
+    },
+    "POL": {
+      "techs": [
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "energy-combat-engineering",
+        "energy-war-economy"
+      ],
+      "basis": "Warmate loitering munitions; Patriot and NAREW; fast-growing defence industry."
+    },
+    "SWE": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "energy-grid-storage",
+        "energy-combat-engineering"
+      ],
+      "basis": "Saab industry; RBS 70 and Patriot."
+    },
+    "NOR": {
+      "techs": [
+        "ai-decision-support",
+        "missiles-precision-strike",
+        "missiles-cruise-mass",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "energy-grid-storage"
+      ],
+      "basis": "NSM/JSM cruise missiles (Kongsberg); NASAMS."
+    },
+    "CAN": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "md-point-defence",
+        "cyber-national-cert",
+        "cyber-offensive-ops",
+        "space-isr-constellation",
+        "energy-grid-storage",
+        "energy-combat-engineering"
+      ],
+      "basis": "RADARSAT Constellation; Communications Security Establishment."
+    },
+    "ESP": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "energy-grid-storage",
+        "energy-combat-engineering"
+      ],
+      "basis": "FCAS partner; NASAMS and Patriot."
+    },
+    "SAU": {
+      "techs": [
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "energy-grid-storage"
+      ],
+      "basis": "Patriot and THAAD (first battery 2025)."
+    },
+    "ARE": {
+      "techs": [
+        "drones-tactical-isr",
+        "drones-loitering-munitions",
+        "missiles-precision-strike",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "energy-grid-storage"
+      ],
+      "basis": "EDGE Group loitering munitions; THAAD and Patriot."
+    },
+    "SGP": {
+      "techs": [
+        "ai-decision-support",
+        "drones-tactical-isr",
+        "md-point-defence",
+        "md-theatre-interceptors",
+        "cyber-national-cert",
+        "semi-mature-nodes",
+        "semi-advanced-packaging"
+      ],
+      "basis": "Aster 30; Cyber Security Agency; GlobalFoundries and Micron fabs and packaging."
+    },
+    "BRA": {
+      "techs": [
+        "drones-tactical-isr",
+        "missiles-precision-strike",
+        "cyber-national-cert",
+        "energy-grid-storage",
+        "energy-combat-engineering"
+      ],
+      "basis": "Small drone and missile programmes."
+    }
+  }
+}

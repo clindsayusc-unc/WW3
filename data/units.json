@@ -131,7 +131,8 @@
       "costBn": 15.0,
       "buildMonths": 10,
       "upkeepBn": 0.35,
-      "description": "Long-range strike aircraft. Devastating against ground forces when air superiority is held."
+      "description": "Long-range strike aircraft. Devastating against ground forces when air superiority is held.",
+      "signature": 0.8
     },
     {
       "id": "drone",
@@ -146,7 +147,9 @@
       "costBn": 2.0,
       "buildMonths": 2,
       "upkeepBn": 0.05,
-      "description": "Cheap uncrewed strike and reconnaissance systems; scale with drone technology."
+      "description": "Cheap uncrewed strike and reconnaissance systems; scale with drone technology.",
+      "signature": 1.2,
+      "uncrewed": true
     },
     {
       "id": "carrierGroup",
@@ -222,6 +225,75 @@
       "upkeepBn": 0.2,
       "transport": 2,
       "description": "Carries up to two marine or special-operations units for landings on enemy coasts."
+    },
+    {
+      "id": "fighter6",
+      "name": "Sixth-Generation Fighter Wing",
+      "domain": "air",
+      "sidc": "SFAPMFF----",
+      "attack": 5,
+      "defence": 5,
+      "antiAir": 13,
+      "speed": 0,
+      "range": 2,
+      "costBn": 22.0,
+      "buildMonths": 10,
+      "upkeepBn": 0.5,
+      "signature": 0.55,
+      "requiresTech": "ai-sixth-gen",
+      "description": "Very-low-observable, long-range air-dominance fighters that command their own drone escorts (F-47, J-36, GCAP class). Hard to intercept; expensive to lose."
+    },
+    {
+      "id": "loyalWingman",
+      "name": "Loyal-Wingman Wing (CCA)",
+      "domain": "air",
+      "sidc": "SFAPMFQ----",
+      "attack": 5,
+      "defence": 2,
+      "antiAir": 6,
+      "speed": 0,
+      "range": 2,
+      "costBn": 4.0,
+      "buildMonths": 3,
+      "upkeepBn": 0.08,
+      "signature": 0.9,
+      "uncrewed": true,
+      "requiresTech": "drones-collaborative-combat",
+      "description": "Jet-powered collaborative combat aircraft flying beside crewed fighters as sensors, decoys and missile carriers. A third of a fighter's punch at a fifth of the price."
+    },
+    {
+      "id": "droneSwarm",
+      "name": "Drone Swarm Group",
+      "domain": "air",
+      "sidc": "SFAPMFQ----",
+      "attack": 7,
+      "defence": 1,
+      "antiAir": 2,
+      "speed": 0,
+      "range": 1,
+      "costBn": 2.5,
+      "buildMonths": 1,
+      "upkeepBn": 0.05,
+      "signature": 1.4,
+      "uncrewed": true,
+      "requiresTech": "drones-swarms",
+      "description": "Hundreds of cheap autonomous drones that saturate defences and strike as one. Built in a month; vulnerable to electronic warfare and microwave weapons."
+    },
+    {
+      "id": "laserAD",
+      "name": "Laser Air Defence Brigade",
+      "domain": "land",
+      "sidc": "SFGPUCD----",
+      "attack": 1,
+      "defence": 3,
+      "antiAir": 11,
+      "speed": 1,
+      "costBn": 4.0,
+      "buildMonths": 4,
+      "upkeepBn": 0.06,
+      "counterDrone": 2,
+      "requiresTech": "md-directed-energy",
+      "description": "High-energy lasers (Iron Beam, DragonFire class) that destroy drones, rockets and mortars for a few dollars a shot. Twice as deadly against uncrewed aircraft; weaker against ballistic missiles."
     }
   ]
 }

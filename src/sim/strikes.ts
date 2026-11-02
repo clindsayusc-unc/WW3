@@ -7,16 +7,23 @@ import { nationName, type World } from './world';
 import type { CyberKind, GameState, Iso3, RegionId, StrikeKind } from './types';
 import { adjustRelation, atWar, clamp, headline, isLand, log, roll, unitsIn } from './query';
 import { distanceKm, invalidateGeoCache } from './geography';
+import { hasAbility } from './research';
 import { ASAT_DEBRIS, SATELLITE_COST_BN, SPY_OP_COST_PCT_GDP, SPY_OP_MONTHS } from './intel';
 
 /** Missiles fired per strike. */
 export const SALVO = 8;
+/** A hypersonic salvo: four glide vehicles, each drawing two missiles' worth of stock (D-079). */
+export const HYPERSONIC_SALVO = 4;
+/** Interception chance against a glide vehicle, as a share of the usual chance (before the defender's counters). */
+export const HYPERSONIC_INTERCEPT = 0.35;
+/** Effect of each hypersonic hit relative to a cruise missile. */
+export const HYPERSONIC_HIT = 1.5;
 /** Monthly missile production: spend ÷ 50 (at least one), more with strike tech. */
 export function missileProduction(world: World, state: GameState, iso: Iso3): number {
   const meta = world.nations.get(iso);
   const n = state.nations[iso];
   if (!meta || !n) return 0;
-  return Math.max(1, Math.round((meta.defenceSpendUsdBn / 50) * (1 + (n.modifiers.strikePower ?? 0)) * (n.mobilization > 0 ? 1.3 : 1)));
+  return Math.max(1, Math.round((meta.defenceSpendUsdBn / 50) * (1 + (n.modifiers.strikePower ?? 0) + (n.modifiers.missileRate ?? 0)) * (n.mobilization > 0 ? 1.3 : 1)));
 }
 
 export const STRIKE_INFO: Record<StrikeKind, { label: string; description: string }> = {
@@ -35,21 +42,33 @@ export const STRIKE_INFO: Record<StrikeKind, { label: string; description: strin
 };
 
 /** Interception chance per missile at `region` for a strike by `attacker` (same formula as the renderer). */
-export function interceptionChance(world: World, state: GameState, region: RegionId, attacker: Iso3): number {
+export function interceptionChance(world: World, state: GameState, region: RegionId, attacker: Iso3, hypersonic = false): number {
   const ctrl = state.regions[region]?.controller;
   const tech = ctrl ? (state.nations[ctrl]?.modifiers.missileDefence ?? 0) : 0;
   let aa = 0;
-  for (const u of unitsIn(state, region)) if (u.type === 'airDefense' && (u.owner === ctrl || (ctrl && !atWar(state, u.owner, ctrl)))) aa += u.strength / 100;
+  for (const u of unitsIn(state, region)) {
+    if (!(u.owner === ctrl || (ctrl && !atWar(state, u.owner, ctrl)))) continue;
+    if (u.type === 'airDefense') aa += u.strength / 100;
+    // Lasers kill cruise missiles but struggle against ballistic and hypersonic threats.
+    else if (u.type === 'laserAD') aa += (hypersonic ? 0.1 : 0.5) * (u.strength / 100);
+  }
   const base = Math.min(0.8, tech * 2.2 + aa * 0.12 + (tech > 0 ? 0.1 : 0));
   // Hypersonic and precision tech of the attacker degrades the defence.
   const penetration = clamp(state.nations[attacker]?.modifiers.strikePower ?? 0, 0, 0.6);
+  let p = base * (1 - penetration);
+  if (hypersonic) {
+    // Glide-phase interceptors and space sensors win part of it back (D-079).
+    const counter = ctrl ? clamp(state.nations[ctrl]?.modifiers.hypersonicDefence ?? 0, 0, 0.6) : 0;
+    p *= HYPERSONIC_INTERCEPT + counter;
+  }
   void world;
-  return clamp(base * (1 - penetration), 0, 0.85);
+  return clamp(p, 0, 0.85);
 }
 
-export function canMissileStrike(world: World, state: GameState, iso: Iso3, region: RegionId): string | null {
+export function canMissileStrike(world: World, state: GameState, iso: Iso3, region: RegionId, hypersonic = false): string | null {
   const n = state.nations[iso];
   if (!n) return 'Unknown nation.';
+  if (hypersonic && !hasAbility(world, state, iso, 'hypersonicStrike')) return 'Requires the Hypersonic Glide Vehicles technology.';
   if (!isLand(world, region)) return 'Missile strikes target land regions.';
   const ctrl = state.regions[region]?.controller;
   if (!ctrl) return 'No one controls that region.';
@@ -73,18 +92,19 @@ function launchRegion(world: World, state: GameState, iso: Iso3, target: RegionI
   return best ?? world.capitalRegion.get(iso) ?? target;
 }
 
-export function applyMissileStrike(world: World, state: GameState, iso: Iso3, region: RegionId, kind: StrikeKind): void {
-  const why = canMissileStrike(world, state, iso, region);
+export function applyMissileStrike(world: World, state: GameState, iso: Iso3, region: RegionId, kind: StrikeKind, hypersonic = false): void {
+  const why = canMissileStrike(world, state, iso, region, hypersonic);
   if (why) throw new Error(why);
   const n = state.nations[iso]!;
   const r = state.regions[region]!;
   const target = r.controller!;
   const meta = world.regions.get(region)!;
   n.missiles -= SALVO;
-  const p = interceptionChance(world, state, region, iso);
+  const p = interceptionChance(world, state, region, iso, hypersonic);
+  const fired = hypersonic ? HYPERSONIC_SALVO : SALVO;
   let intercepted = 0;
-  for (let i = 0; i < SALVO; i++) if (roll(state) < p) intercepted++;
-  const hits = SALVO - intercepted;
+  for (let i = 0; i < fired; i++) if (roll(state) < p) intercepted++;
+  const hits = (fired - intercepted) * (hypersonic ? HYPERSONIC_HIT : 1);
   const quality = 1 + (n.modifiers.strikePower ?? 0);
   let effect: string;
   if (kind === 'infrastructure') {
@@ -110,18 +130,18 @@ export function applyMissileStrike(world: World, state: GameState, iso: Iso3, re
     invalidateGeoCache(state);
     effect = `${Math.round(dealt)} strength destroyed across ${units.length} formation${units.length === 1 ? '' : 's'}`;
   }
-  state.strikes.push({ turn: state.turn, kind: 'missile', from: launchRegion(world, state, iso, region), to: region, attacker: iso, launched: SALVO, intercepted });
+  state.strikes.push({ turn: state.turn, kind: 'missile', from: launchRegion(world, state, iso, region), to: region, attacker: iso, launched: fired, intercepted });
   state.globalTension = clamp(state.globalTension + 2, 0, 100);
   adjustRelation(world, state, iso, target, -6);
   const involvesPlayer = iso === state.player || target === state.player;
   log(state, {
     kind: 'strike',
-    text: `${nationName(world, iso)} fires ${SALVO} cruise missiles at ${meta.name} (${STRIKE_INFO[kind].label.toLowerCase()}): ${intercepted} intercepted, ${hits} hit — ${effect}.`,
+    text: `${nationName(world, iso)} fires ${fired} ${hypersonic ? 'hypersonic glide vehicles' : 'cruise missiles'} at ${meta.name} (${STRIKE_INFO[kind].label.toLowerCase()}): ${intercepted} intercepted, ${fired - intercepted} hit — ${effect}.`,
     nations: [iso, target],
     region,
     alert: involvesPlayer,
   });
-  if (involvesPlayer || meta.capital) headline(state, `Missile strike on ${meta.name}; ${intercepted} of ${SALVO} shot down`);
+  if (involvesPlayer || meta.capital) headline(state, `${hypersonic ? 'Hypersonic' : 'Missile'} strike on ${meta.name}; ${intercepted} of ${fired} shot down`);
 }
 
 // --- cyber -----------------------------------------------------------------------------------------
@@ -142,10 +162,13 @@ export const CYBER_INFO: Record<CyberKind, { label: string; description: string 
   },
 };
 
-export function cyberSuccessChance(state: GameState, iso: Iso3, target: Iso3): number {
+export function cyberSuccessChance(state: GameState, iso: Iso3, target: Iso3, kind?: CyberKind, world?: World): number {
   const a = state.nations[iso]?.modifiers.cyberAttack ?? 0;
   const d = state.nations[target]?.modifiers.cyberDefence ?? 0;
-  return clamp(0.4 + a - d, 0.05, 0.9);
+  const p = clamp(0.4 + a - d, 0.05, 0.9);
+  // Quantum-secure networks halve the odds of blinding or sabotage (D-079).
+  if (world && kind && kind !== 'economy' && hasAbility(world, state, target, 'quantumComms')) return p / 2;
+  return p;
 }
 
 export function canCyberOp(world: World, state: GameState, iso: Iso3, target: Iso3): string | null {
@@ -164,7 +187,7 @@ export function applyCyberOp(world: World, state: GameState, iso: Iso3, target: 
   const n = state.nations[iso]!;
   const t = state.nations[target]!;
   n.cyberCooldown = CYBER_COOLDOWN;
-  const p = cyberSuccessChance(state, iso, target);
+  const p = cyberSuccessChance(state, iso, target, kind, world);
   const success = roll(state) < p;
   // Attribution: good tradecraft hides the hand behind the attack.
   const attributed = roll(state) < 0.6 - (n.modifiers.cyberAttack ?? 0) * 0.5;
@@ -232,7 +255,9 @@ export function applyAsat(world: World, state: GameState, iso: Iso3, target: Iso
   const why = canAsat(world, state, iso, target);
   if (why) throw new Error(why);
   const t = state.nations[target]!;
-  const killed = Math.min(t.satellites, Math.max(1, Math.ceil(t.satellites * 0.3)), 4);
+  // Manoeuvrable satellites and space domain awareness dodge part of the attack (D-079).
+  const dodge = clamp(t.modifiers.satelliteSurvival ?? 0, 0, 0.7);
+  const killed = Math.min(t.satellites, Math.max(1, Math.round(Math.ceil(t.satellites * 0.3) * (1 - dodge))), 4);
   t.satellites -= killed;
   state.debris = clamp(state.debris + ASAT_DEBRIS * killed, 0, 100);
   state.globalTension = clamp(state.globalTension + 5, 0, 100);
@@ -255,7 +280,7 @@ export function runSpaceTick(world: World, state: GameState): void {
     if (!n.alive) continue;
     n.missiles = Math.min(600, n.missiles + missileProduction(world, state, n.iso3));
     if (state.debris > 0 && n.satellites > 0) {
-      const p = (state.debris / 400) * n.satellites;
+      const p = (state.debris / 400) * n.satellites * (1 - clamp(n.modifiers.satelliteSurvival ?? 0, 0, 0.7));
       if (roll(state) < p) {
         n.satellites -= 1;
         if (n.iso3 === state.player)

@@ -24,6 +24,7 @@ import agendasData from '../../data/agendas.json';
 import unscData from '../../data/unsc.json';
 import chainsData from '../../data/chains.json';
 import factionsData from '../../data/factions.json';
+import techStartData from '../../data/tech-start.json';
 import type { AgendaId, GameState, Iso3, RegionId, Regime, ResourceId, TechId, UnitTypeId } from './types';
 
 /** A party or power faction with a trait profile from its public positions (data/factions.json, D-078). */
@@ -300,6 +301,14 @@ export interface UnitTypeMeta {
   readonly transport: number;
   readonly deterrent: boolean;
   readonly description: string;
+  /** Interception multiplier for air wings (1 = a fourth/fifth-generation fighter; lower is stealthier). */
+  readonly signature: number;
+  /** Drone-class aircraft: drone technology strengthens them, electronic warfare hunts them. */
+  readonly uncrewed: boolean;
+  /** Technology that must be researched before the unit can be built (D-079). */
+  readonly requiresTech: TechId | null;
+  /** Extra anti-air weight against uncrewed aircraft, × antiAir (laser air defence). */
+  readonly counterDrone: number;
 }
 
 export interface TechMeta {
@@ -311,6 +320,25 @@ export interface TechMeta {
   readonly requires: readonly TechId[];
   readonly framing: string;
   readonly effects: readonly { key: string; value: number }[];
+  /** Era column 1–5 (Fielded 2027 … Frontier 2037–40) and the earliest plausible fielding year. */
+  readonly era: number;
+  readonly year: number;
+  readonly unlocks: { readonly units: readonly UnitTypeId[]; readonly abilities: readonly string[] };
+}
+
+export interface EraMeta {
+  readonly id: number;
+  readonly name: string;
+  readonly years: string;
+  readonly description: string;
+}
+
+export interface AbilityMeta {
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  /** The technology that grants it. */
+  readonly tech: TechId;
 }
 
 export type Effect =
@@ -429,6 +457,12 @@ export interface World {
   readonly techs: ReadonlyMap<TechId, TechMeta>;
   readonly techList: readonly TechMeta[];
   readonly branches: readonly { id: string; name: string; color: string }[];
+  readonly eras: readonly EraMeta[];
+  readonly abilities: ReadonlyMap<string, AbilityMeta>;
+  /** Technologies each nation fields in January 2027 (data/tech-start.json, D-079). */
+  readonly startingTechs: ReadonlyMap<Iso3, readonly TechId[]>;
+  /** Why each listed nation starts with what it has (the programmes counted). */
+  readonly techBasis: ReadonlyMap<Iso3, string>;
   readonly cities: readonly CityMeta[];
   /** Regions owned by each nation at start. */
   readonly regionsByNation: ReadonlyMap<Iso3, readonly RegionId[]>;
@@ -672,12 +706,36 @@ export function loadWorld(): World {
       transport: x.transport ?? 0,
       deterrent: x.deterrent ?? false,
       description: x.description ?? '',
+      signature: x.signature ?? 1,
+      uncrewed: x.uncrewed ?? false,
+      requiresTech: x.requiresTech ?? null,
+      counterDrone: x.counterDrone ?? 0,
     };
   });
   const unitTypes = new Map(unitTypeList.map((u) => [u.id, u]));
 
-  const techList: TechMeta[] = techsData.techs.map((t) => ({ ...t }));
+  const techList: TechMeta[] = techsData.techs.map((t) => {
+    const u = (t as { unlocks?: { units?: string[]; abilities?: string[] } }).unlocks;
+    return { ...t, unlocks: { units: u?.units ?? [], abilities: u?.abilities ?? [] } };
+  });
   const techs = new Map(techList.map((t) => [t.id, t]));
+  const abilities = new Map<string, AbilityMeta>();
+  for (const a of techsData.abilities) {
+    const tech = techList.find((t) => t.unlocks.abilities.includes(a.id));
+    if (tech) abilities.set(a.id, { ...a, tech: tech.id });
+  }
+  const startingTechs = new Map<Iso3, TechId[]>();
+  const techBasis = new Map<Iso3, string>();
+  const listed = techStartData.nations as Record<string, { techs: string[]; basis: string }>;
+  const rule = techStartData.defaultRule;
+  for (const n of nationList) {
+    const row = listed[n.iso3];
+    if (row) {
+      startingTechs.set(n.iso3, row.techs.filter((id) => techs.has(id)));
+      techBasis.set(n.iso3, row.basis);
+    } else if (n.defenceSpendUsdBn >= rule.minorThresholdBn) startingTechs.set(n.iso3, rule.minor);
+    else if (n.defenceSpendUsdBn >= rule.smallThresholdBn) startingTechs.set(n.iso3, rule.small);
+  }
 
   const cities: CityMeta[] = citiesData.cities;
 
@@ -850,6 +908,10 @@ export function loadWorld(): World {
     techs,
     techList,
     branches: techsData.branches,
+    eras: techsData.eras,
+    abilities,
+    startingTechs,
+    techBasis,
     cities,
     regionsByNation,
     capitalRegion,

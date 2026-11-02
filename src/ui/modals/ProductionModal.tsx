@@ -5,6 +5,7 @@ import { useUiStore } from '../../state/uiStore';
 import { dispatch } from '../../state/simBridge';
 import { loadWorld } from '../../sim/world';
 import { unitCost, buildMonths, unitUpkeep } from '../../sim/economy';
+import { unitLockReason } from '../../sim/research';
 import { Stat } from '../Stat';
 import { formatMoney } from '../format';
 import { playSound } from '../audio';
@@ -101,12 +102,21 @@ export function ProductionModal() {
             const cost = unitCost(world, game, game.player, t.id);
             const months = buildMonths(world, game, game.player, t.id);
             const navalOk = t.domain !== 'sea' || (targetMeta?.coastal ?? false);
-            const canAfford = me.treasury >= cost && navalOk;
+            const locked = unitLockReason(world, game, game.player, t.id);
+            const canAfford = me.treasury >= cost && navalOk && !locked;
             return (
-              <div key={t.id} className={`unit-card ${t.domain}`}>
+              <div key={t.id} className={`unit-card ${t.domain} ${locked ? 'locked' : ''}`} data-testid={`unit-card-${t.id}`}>
                 <div className="unit-card-head">
                   <span className="unit-name">{t.name}</span>
                   <span className="chip tiny">{t.domain}</span>
+                  {t.requiresTech && (
+                    <span
+                      className={`chip tiny ${locked ? '' : 'ok'}`}
+                      data-tip={locked ?? `Unlocked by ${world.techs.get(t.requiresTech)?.name ?? t.requiresTech}.`}
+                    >
+                      {locked ? '🔒 tech' : 'new tech'}
+                    </span>
+                  )}
                 </div>
                 <p className="unit-desc">{t.description}</p>
                 <div className="unit-stats">
@@ -152,7 +162,9 @@ export function ProductionModal() {
                     disabled={!canAfford}
                     onClick={() => queue(t.id)}
                     data-tip={
-                      !navalOk
+                      locked
+                        ? locked
+                        : !navalOk
                         ? 'Choose a coastal region for naval units.'
                         : me.treasury < cost
                           ? 'Insufficient treasury.'

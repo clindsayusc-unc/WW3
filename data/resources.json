@@ -136,7 +136,11 @@
       "destroyerGroup": { "steel": 0.45, "chips": 0.3, "rareEarths": 0.15, "oil": 0.1 },
       "attackSub": { "steel": 0.45, "chips": 0.3, "rareEarths": 0.15, "oil": 0.1 },
       "missileSub": { "steel": 0.4, "chips": 0.35, "rareEarths": 0.15, "oil": 0.1 },
-      "amphibiousGroup": { "steel": 0.6, "oil": 0.25, "chips": 0.15 }
+      "amphibiousGroup": { "steel": 0.6, "oil": 0.25, "chips": 0.15 },
+      "fighter6": { "chips": 0.5, "rareEarths": 0.3, "oil": 0.15, "steel": 0.05 },
+      "loyalWingman": { "chips": 0.55, "rareEarths": 0.25, "oil": 0.15, "steel": 0.05 },
+      "droneSwarm": { "chips": 0.65, "rareEarths": 0.3, "oil": 0.05 },
+      "laserAD": { "chips": 0.45, "rareEarths": 0.25, "steel": 0.2, "gas": 0.1 }
     },
     "branches": {
       "ai": { "chips": 1 },

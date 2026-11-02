@@ -17,13 +17,13 @@ import {
   roll,
   unitPower,
 } from './query';
-import { availableTechs } from './research';
+import { availableTechs, hasAbility, techCost, unitAvailable } from './research';
 import { unitCost, unitUpkeep, buildMonths, monthlyRevenue } from './economy';
 import { estimateOdds, findPath, isFriendly, stepKind } from './military';
 import { amphibiousTargets, invalidateGeoCache } from './geography';
 import { evaluateProposal, executeProposal, PROPOSAL_LABELS } from './diplomacy';
 import { AI_LAUNCH_CHANCE, nuclearDecision, nuclearStrike, pickStrikeTarget } from './escalation';
-import { missionsFor, regionsInRange } from './air';
+import { airClass, missionsFor, regionsInRange } from './air';
 import {
   SALVO,
   applyAsat,
@@ -36,6 +36,7 @@ import {
   canLaunchSatellite,
   canMissileStrike,
   canSpyOp,
+  interceptionChance,
   satelliteCost,
 } from './strikes';
 import type { AirMission, CyberKind, StrikeKind } from './types';
@@ -170,7 +171,10 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
     let bestScore = -1;
     for (const id of avail) {
       const tech = world.techs.get(id)!;
-      const w = (BRANCH_WEIGHTS[tech.branch]?.(t) ?? 1) / tech.tier;
+      // Weighted by the leader's priorities, cheaper first (allies' and stolen work lower the cost),
+      // with a premium for technologies that unlock new units or abilities.
+      const unlocks = tech.unlocks.units.length + tech.unlocks.abilities.length > 0 ? 1.25 : 1;
+      const w = ((BRANCH_WEIGHTS[tech.branch]?.(t) ?? 1) * unlocks * 100) / Math.max(40, techCost(world, state, iso, id));
       if (w > bestScore) {
         bestScore = w;
         best = id;
@@ -222,6 +226,14 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
     else if (airUnits < landUnits / 5 && r < 0.45) type = r < 0.35 ? 'fighter' : 'drone';
     else if (atWarNow) type = r < 0.6 ? 'mechanized' : r < 0.8 ? 'armored' : 'artillery';
     else type = r < 0.5 ? 'infantry' : r < 0.8 ? 'mechanized' : 'airDefense';
+    // Researched successors replace the older types part of the time (D-079); the sub-choice
+    // reuses the same draw so nations without the technology see an unchanged random stream.
+    const sub = (r * 7.31) % 1;
+    if (type === 'fighter' && sub < 0.55 && unitAvailable(world, state, iso, 'fighter6')) type = 'fighter6';
+    else if (type === 'fighter' && sub < 0.8 && unitAvailable(world, state, iso, 'loyalWingman')) type = 'loyalWingman';
+    else if (type === 'drone' && sub < 0.5 && unitAvailable(world, state, iso, 'droneSwarm')) type = 'droneSwarm';
+    else if (type === 'drone' && sub < 0.8 && unitAvailable(world, state, iso, 'loyalWingman')) type = 'loyalWingman';
+    else if (type === 'airDefense' && sub < 0.4 && unitAvailable(world, state, iso, 'laserAD')) type = 'laserAD';
     const cost = unitCost(world, state, iso, type);
     const up = world.unitTypes.get(type)?.upkeepBn ?? 0.1;
     if (cost > budgetLeft || up > upkeepLeft) break;
@@ -662,10 +674,11 @@ function pickMission(world: World, state: GameState, u: Unit, atWarNow: boolean)
       })
     : false;
   const r = roll(state);
+  const cls = airClass(u.type);
   let m: AirMission;
-  if (!atWarNow || !enemyInRange) m = u.type === 'drone' && r < 0.5 ? 'recon' : u.type === 'bomber' ? 'bombing' : 'superiority';
-  else if (u.type === 'fighter') m = r < 0.55 ? 'superiority' : r < 0.85 ? 'cas' : 'interdiction';
-  else if (u.type === 'bomber') m = r < 0.6 ? 'bombing' : r < 0.85 ? 'interdiction' : 'cas';
+  if (!atWarNow || !enemyInRange) m = cls === 'drone' && r < 0.5 ? 'recon' : cls === 'bomber' ? 'bombing' : 'superiority';
+  else if (cls === 'fighter') m = r < 0.55 ? 'superiority' : r < 0.85 ? 'cas' : 'interdiction';
+  else if (cls === 'bomber') m = r < 0.6 ? 'bombing' : r < 0.85 ? 'interdiction' : 'cas';
   else m = r < 0.35 ? 'recon' : r < 0.75 ? 'cas' : 'interdiction';
   return allowed.includes(m) ? m : allowed[0]!;
 }
@@ -699,8 +712,10 @@ function strategicOperations(
     if (best !== null && canMissileStrike(world, state, iso, best) === null) {
       const troops = (ctx.byRegion.get(best) ?? []).length;
       const kind: StrikeKind = troops >= 3 ? 'military' : roll(state) < 0.5 ? 'infrastructure' : 'industry';
-      applyMissileStrike(world, state, iso, best, kind);
-      n.aiNote = `Striking ${world.regions.get(best)!.name} with cruise missiles (${kind}).`;
+      // Hypersonic salvos against defended targets once the technology is fielded (D-079).
+      const hyper = hasAbility(world, state, iso, 'hypersonicStrike') && interceptionChance(world, state, best, iso) > 0.3;
+      applyMissileStrike(world, state, iso, best, kind, hyper);
+      n.aiNote = `Striking ${world.regions.get(best)!.name} with ${hyper ? 'hypersonic glide vehicles' : 'cruise missiles'} (${kind}).`;
     }
   }
   // Cyber operations against enemies and hostile majors.

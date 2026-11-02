@@ -332,7 +332,7 @@ export function unitPower(
     mult *= 1 + (mods[mode === 'attack' ? 'landAttack' : 'landDefence'] ?? 0);
   if (t.domain === 'air') mult *= 1 + (mods.airPower ?? 0);
   if (t.domain === 'sea') mult *= 1 + (mods.navalPower ?? 0);
-  if (u.type === 'drone') mult *= 1 + (mods.droneStrength ?? 0);
+  if (t.uncrewed) mult *= 1 + (mods.droneStrength ?? 0);
   return (u.strength / 100) * base * mult * (0.6 + 0.4 * (u.morale / 100));
 }
 
