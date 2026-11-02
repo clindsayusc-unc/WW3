@@ -109,12 +109,21 @@ export function SecondaryOffices({ leader }: { leader: LeaderMeta }) {
   const hos = leader.headOfState;
   const hog = leader.headOfGovernment;
   const lines: { label: string; holder: string }[] = [];
-  if (hos.name !== leader.name) lines.push({ label: 'Head of state', holder: `${hos.title} ${hos.name}` });
+  if (hos.name !== leader.name)
+    lines.push({ label: 'Head of state', holder: `${hos.title} ${hos.name}` });
   if (hog && hog.name !== leader.name && hog.name !== hos.name)
     lines.push({ label: 'Head of government', holder: `${hog.title} ${hog.name}` });
-  if (lines.length === 0) lines.push({ label: 'Head of state', holder: `Also head of state (${hos.title})` });
+  const same = lines.length === 0;
   return (
     <div className="secondary-offices" data-testid="secondary-offices">
+      {same && (
+        <div
+          className="leader-title dim"
+          data-tip={`${leader.basis} ${leader.name} holds both offices.`}
+        >
+          Also head of state
+        </div>
+      )}
       {lines.map((l) => (
         <div
           key={l.label}

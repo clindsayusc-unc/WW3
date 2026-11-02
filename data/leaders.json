@@ -1,10 +1,18 @@
 {
-  "source": "Public record: official government websites and Wikipedia office-holder pages, verified by web search on 2026-11-02; trait scores are the authors' editorial estimates derived from public statements and policy record",
+  "source": "Public record: official government websites, Wikipedia office-holder pages and recent news reports. The playable leader and AI personality for each nation is its effective foreign-and-defence-policy leader (head of government in parliamentary systems, president in presidential systems, paramount/supreme leader in one-party states and Iran), not necessarily the ceremonial head of state. Office-holders were re-verified by web search on 2026-11-02; trait scores are the authors' editorial estimates derived from each effective leader's public statements and policy record",
   "asOf": "2026-11-02",
   "estimate": true,
   "leaders": [
     {
       "iso3": "USA",
+      "effectiveLeader": {
+        "name": "Donald Trump",
+        "title": "President",
+        "party": "Republican Party",
+        "since": "2025-01-20",
+        "role": "headOfState",
+        "basis": "Presidential system: the President is head of state, head of government and commander-in-chief and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Donald Trump",
         "title": "President",
@@ -25,10 +33,19 @@
       },
       "rationale": "Second-term record of tariff-driven economic nationalism, transactional treatment of NATO and other allies, and willingness to use force unilaterally (2025 Iran strikes, 2026 Venezuela operation) alongside deal-seeking with adversaries; midterm elections fall on 2026-11-03.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "CHN",
+      "effectiveLeader": {
+        "name": "Xi Jinping",
+        "title": "General Secretary of the CCP, Chairman of the Central Military Commission and President",
+        "party": "Chinese Communist Party",
+        "since": "2012-11-15",
+        "role": "partyLeader",
+        "basis": "One-party state: the CCP General Secretary and CMC Chairman is the paramount leader; the Premier runs the State Council's economic administration."
+      },
       "headOfState": {
         "name": "Xi Jinping",
         "title": "President and General Secretary of the CCP",
@@ -54,10 +71,19 @@
       },
       "rationale": "Long-horizon, risk-averse but assertive posture (Taiwan pressure, South China Sea, military modernisation) paired with a declared no-first-use doctrine and heavy emphasis on economic security; no competitive national elections are scheduled in the one-party system.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "RUS",
+      "effectiveLeader": {
+        "name": "Vladimir Putin",
+        "title": "President",
+        "party": "Independent (backed by United Russia)",
+        "since": "2012-05-07",
+        "role": "headOfState",
+        "basis": "Semi-presidential system in which the President directs foreign, defence and security policy and commands the armed forces; the Prime Minister manages the economy."
+      },
       "headOfState": {
         "name": "Vladimir Putin",
         "title": "President",
@@ -83,10 +109,19 @@
       },
       "rationale": "Full-scale invasion of Ukraine since 2022, repeated nuclear signalling and a 2024 lowering of the declared nuclear doctrine threshold, and a securitised worldview expressed in official speeches; the economy has been subordinated to the war effort.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "IND",
+      "effectiveLeader": {
+        "name": "Narendra Modi",
+        "title": "Prime Minister",
+        "party": "Bharatiya Janata Party",
+        "since": "2014-05-26",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary republic: the Prime Minister and Cabinet direct foreign and defence policy; the President acts on ministerial advice."
+      },
       "headOfState": {
         "name": "Droupadi Murmu",
         "title": "President",
@@ -105,17 +140,26 @@
         "riskTolerance": 50,
         "pragmatism": 70,
         "nationalism": 85,
-        "economicPriority": 75,
         "paranoia": 55,
+        "economicPriority": 75,
         "allianceLoyalty": 40,
         "nuclearThreshold": 80
       },
       "rationale": "Strategic autonomy and multi-alignment (Quad, BRICS, Russian energy purchases), assertive retaliation against Pakistan in 2019 and 2025, a declared no-first-use doctrine, and a governing agenda centred on growth and Hindu-nationalist identity.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "GBR",
+      "effectiveLeader": {
+        "name": "Andy Burnham",
+        "title": "Prime Minister",
+        "party": "Labour Party",
+        "since": "2026-07-20",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary monarchy: the Prime Minister directs foreign and defence policy; the monarch is ceremonial. Burnham succeeded Keir Starmer on 20 July 2026."
+      },
       "headOfState": {
         "name": "Charles III",
         "title": "King",
@@ -141,10 +185,19 @@
       },
       "rationale": "Burnham became PM in July 2026 after Keir Starmer's resignation, inheriting Labour's commitments to NATO, Ukraine support and the Trident deterrent while campaigning on a domestic, soft-left economic agenda; UK nuclear policy retains deliberate ambiguity but a very high bar.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://www.opb.org/article/2026/07/20/andy-burnham-succeeds-keir-starmer-as-the-u-k-s-7th-prime-minister-in-10-years/",
       "fictional": false
     },
     {
       "iso3": "FRA",
+      "effectiveLeader": {
+        "name": "Emmanuel Macron",
+        "title": "President",
+        "party": "Renaissance",
+        "since": "2017-05-14",
+        "role": "headOfState",
+        "basis": "Semi-presidential system: by constitutional practice the President leads foreign and defence policy (the domaine réservé) and controls the nuclear deterrent; the Prime Minister runs domestic government."
+      },
       "headOfState": {
         "name": "Emmanuel Macron",
         "title": "President",
@@ -170,10 +223,19 @@
       },
       "rationale": "Macron's advocacy of European strategic autonomy, offers to extend France's nuclear umbrella to European partners, forward-leaning Ukraine proposals, and a fragile domestic position after repeated government collapses; the presidential election is due April 2027.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "DEU",
+      "effectiveLeader": {
+        "name": "Friedrich Merz",
+        "title": "Federal Chancellor",
+        "party": "Christian Democratic Union",
+        "since": "2025-05-06",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary republic: the Federal Chancellor sets policy guidelines including foreign and defence policy (and commands the armed forces in wartime); the Federal President is largely ceremonial."
+      },
       "headOfState": {
         "name": "Frank-Walter Steinmeier",
         "title": "Federal President",
@@ -197,12 +259,21 @@
         "allianceLoyalty": 80,
         "nuclearThreshold": 92
       },
-      "rationale": "Merz lifted the debt brake for defence, backs Ukraine strongly and has floated European nuclear-sharing talks with France and the UK, while Germany remains a non-nuclear state with a strong Atlanticist and export-economy orientation; Steinmeier's term ends March 2027.",
+      "rationale": "Merz lifted the debt brake for defence, backs Ukraine strongly and has floated European nuclear-sharing talks with France and the UK, while Germany remains a non-nuclear state with a strong Atlanticist and export-economy orientation.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "JPN",
+      "effectiveLeader": {
+        "name": "Sanae Takaichi",
+        "title": "Prime Minister",
+        "party": "Liberal Democratic Party",
+        "since": "2025-10-21",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary constitutional monarchy: the Prime Minister directs foreign and defence policy and commands the Self-Defense Forces; the Emperor is a symbol of the state with no governmental powers. Re-elected by the Diet on 18 February 2026 after the 8 February snap election."
+      },
       "headOfState": {
         "name": "Naruhito",
         "title": "Emperor",
@@ -226,12 +297,21 @@
         "allianceLoyalty": 80,
         "nuclearThreshold": 92
       },
-      "rationale": "Takaichi, re-elected after a February 2026 snap-election landslide, is a conservative who favours faster defence build-up and a firm line on China and Taiwan while anchoring policy in the US alliance; Japan's three non-nuclear principles imply a very high nuclear bar.",
+      "rationale": "Takaichi, re-elected after the February 2026 snap-election landslide, is a conservative who favours a faster defence build-up and a firm line on China and Taiwan while anchoring policy in the US alliance; Japan's three non-nuclear principles imply a very high nuclear bar.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://english.adnkronos.com/2026/02/18/takaichi-re-elected-japans-prime-minister/",
       "fictional": false
     },
     {
       "iso3": "KOR",
+      "effectiveLeader": {
+        "name": "Lee Jae-myung",
+        "title": "President",
+        "party": "Democratic Party of Korea",
+        "since": "2025-06-04",
+        "role": "headOfState",
+        "basis": "Presidential system: the President directs foreign and defence policy and commands the armed forces; the Prime Minister is an appointed deputy."
+      },
       "headOfState": {
         "name": "Lee Jae-myung",
         "title": "President",
@@ -255,12 +335,21 @@
         "allianceLoyalty": 70,
         "nuclearThreshold": 90
       },
-      "rationale": "Lee has pursued tension reduction with Pyongyang and pragmatic balancing between Washington and Beijing while keeping the US alliance; Han Seong-sook, a technocrat and former Naver CEO, was confirmed in June 2026 with an economy-first brief.",
+      "rationale": "Lee Jae-myung has pursued tension reduction with Pyongyang and pragmatic balancing between Washington and Beijing while keeping the US alliance and an economy-first agenda; South Korea is a non-nuclear NPT state under the US extended-deterrence umbrella.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "IRN",
+      "effectiveLeader": {
+        "name": "Mojtaba Khamenei",
+        "title": "Supreme Leader",
+        "party": null,
+        "since": "2026-03-08",
+        "role": "supremeLeader",
+        "basis": "Islamic Republic: the Supreme Leader is head of state and commander-in-chief with final say on foreign, defence and nuclear policy; the elected President heads the executive under him. Mojtaba Khamenei was chosen by the Assembly of Experts on 8 March 2026 after Ali Khamenei was killed on 28 February 2026."
+      },
       "headOfState": {
         "name": "Mojtaba Khamenei",
         "title": "Supreme Leader",
@@ -277,19 +366,28 @@
       "traits": {
         "aggression": 70,
         "riskTolerance": 60,
-        "pragmatism": 40,
+        "pragmatism": 35,
         "nationalism": 85,
         "paranoia": 90,
-        "economicPriority": 40,
+        "economicPriority": 35,
         "allianceLoyalty": 55,
         "nuclearThreshold": 55
       },
-      "rationale": "Mojtaba Khamenei was chosen by the Assembly of Experts after his father was killed in the February 2026 strikes that opened the 2026 Iran war; the post-war system is widely reported as IRGC-dominated, with President Pezeshkian publicly denying repeated resignation reports, and nuclear-threshold debates are now open in Tehran.",
+      "rationale": "Mojtaba Khamenei, long described as his father's gatekeeper with close ties to the IRGC, took office in wartime in March 2026 and is widely reported to preside over an IRGC-dominated system in which elected President Pezeshkian has been sidelined; nuclear-threshold debates are now open in Tehran.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/Supreme_Leader_of_Iran",
       "fictional": false
     },
     {
       "iso3": "ISR",
+      "effectiveLeader": {
+        "name": "Benjamin Netanyahu",
+        "title": "Prime Minister (caretaker)",
+        "party": "Likud",
+        "since": "2022-12-29",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary republic: the Prime Minister and security cabinet direct foreign and defence policy; the President is ceremonial. Netanyahu remains caretaker PM after the 27 October 2026 election pending coalition formation (results due to President Herzog on 4 November)."
+      },
       "headOfState": {
         "name": "Isaac Herzog",
         "title": "President",
@@ -313,12 +411,21 @@
         "allianceLoyalty": 55,
         "nuclearThreshold": 60
       },
-      "rationale": "Netanyahu has led multi-front wars in Gaza, Lebanon and against Iran (2025 and 2026); after the 27 October 2026 Knesset election left his bloc at 53 seats and the Eisenkot-led opposition at 48, he remains caretaker PM while coalition talks continue, so a repeat election remains possible.",
+      "rationale": "Netanyahu has led multi-front wars in Gaza, Lebanon and against Iran (2025 and 2026) and resisted a Palestinian state; after the 27 October 2026 Knesset election left his bloc short of a majority he remains caretaker PM while coalition talks continue.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://www.cnbc.com/2026/10/30/israel-election-netanyahu-eisenkot-coalition-talks-.html",
       "fictional": false
     },
     {
       "iso3": "TUR",
+      "effectiveLeader": {
+        "name": "Recep Tayyip Erdoğan",
+        "title": "President",
+        "party": "Justice and Development Party",
+        "since": "2014-08-28",
+        "role": "headOfState",
+        "basis": "Executive presidential system since 2018: the President is head of state and government and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Recep Tayyip Erdoğan",
         "title": "President",
@@ -339,10 +446,19 @@
       },
       "rationale": "Cross-border operations in Syria and Iraq, S-400 purchase despite NATO membership, mediation between Russia and Ukraine, and a record of pressure on domestic opponents; allies have floated an early 2028 vote that would allow him to run again.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "PAK",
+      "effectiveLeader": {
+        "name": "Shehbaz Sharif",
+        "title": "Prime Minister",
+        "party": "Pakistan Muslim League (N)",
+        "since": "2024-03-04",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary republic: constitutionally the Prime Minister and cabinet direct foreign and defence policy and the President acts on advice; in practice Field Marshal Asim Munir, army chief and since December 2025 Chief of Defence Forces, exerts major influence over security policy."
+      },
       "headOfState": {
         "name": "Asif Ali Zardari",
         "title": "President",
@@ -357,21 +473,30 @@
       },
       "nextElection": "2029-02",
       "traits": {
-        "aggression": 55,
-        "riskTolerance": 55,
-        "pragmatism": 55,
-        "nationalism": 80,
+        "aggression": 50,
+        "riskTolerance": 50,
+        "pragmatism": 65,
+        "nationalism": 75,
         "paranoia": 75,
-        "economicPriority": 50,
-        "allianceLoyalty": 55,
+        "economicPriority": 70,
+        "allianceLoyalty": 60,
         "nuclearThreshold": 50
       },
-      "rationale": "A civilian government operating under heavy military influence (Field Marshal Asim Munir's elevation), the May 2025 clash with India, IMF-dependent economy and a nuclear doctrine that explicitly rejects no-first-use to offset conventional inferiority.",
+      "rationale": "Shehbaz Sharif has prioritised IMF-backed economic stabilisation and close ties with China and Saudi Arabia while governing alongside a powerful military led by Field Marshal Asim Munir, under whom Pakistan fought the May 2025 clash with India; Pakistan's doctrine rejects no-first-use to offset conventional inferiority.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "BRA",
+      "effectiveLeader": {
+        "name": "Luiz Inácio Lula da Silva",
+        "title": "President",
+        "party": "Workers' Party",
+        "since": "2023-01-01",
+        "role": "headOfState",
+        "basis": "Presidential system: the President directs foreign and defence policy. Lula won the 25 October 2026 runoff and begins a new term on 5 January 2027 (his opponent has sought to annul the result)."
+      },
       "headOfState": {
         "name": "Luiz Inácio Lula da Silva",
         "title": "President",
@@ -390,12 +515,21 @@
         "allianceLoyalty": 45,
         "nuclearThreshold": 96
       },
-      "rationale": "Lula won the 25 October 2026 runoff against Flávio Bolsonaro (about 51.7%) and begins a new term on 5 January 2027; his record is non-aligned diplomacy, BRICS engagement, mediation offers on Ukraine and social spending, with Brazil a constitutional non-nuclear-weapon state.",
+      "rationale": "Lula narrowly won the 25 October 2026 runoff against Flávio Bolsonaro; his record is non-aligned diplomacy, BRICS engagement, mediation offers on Ukraine and social spending, with Brazil a constitutional non-nuclear-weapon state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "UKR",
+      "effectiveLeader": {
+        "name": "Volodymyr Zelensky",
+        "title": "President",
+        "party": "Servant of the People",
+        "since": "2019-05-20",
+        "role": "headOfState",
+        "basis": "Semi-presidential system under martial law: the President is commander-in-chief, chairs the National Security and Defence Council and leads foreign policy; the Prime Minister runs the cabinet."
+      },
       "headOfState": {
         "name": "Volodymyr Zelensky",
         "title": "President",
@@ -419,12 +553,21 @@
         "allianceLoyalty": 75,
         "nuclearThreshold": 90
       },
-      "rationale": "Wartime leadership resisting Russia's invasion with deep-strike campaigns and dependence on Western support; Koretskyi, formerly Naftogaz chief, replaced Yulia Svyrydenko in July 2026; national elections remain suspended under martial law with no date set.",
+      "rationale": "Zelensky has led wartime resistance to Russia's invasion with deep-strike campaigns, close dependence on Western support and repeated diplomatic outreach on ceasefire terms; national elections remain suspended under martial law and Ukraine is a non-nuclear state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "TWN",
+      "effectiveLeader": {
+        "name": "Lai Ching-te",
+        "title": "President",
+        "party": "Democratic Progressive Party",
+        "since": "2024-05-20",
+        "role": "headOfState",
+        "basis": "Semi-presidential system: the President directs foreign, cross-Strait and defence policy and commands the armed forces; the Premier heads the Executive Yuan."
+      },
       "headOfState": {
         "name": "Lai Ching-te",
         "title": "President",
@@ -450,10 +593,19 @@
       },
       "rationale": "Lai's firm sovereignty rhetoric, increased defence spending and civil-defence drills in the face of PLA pressure, constrained by an opposition-controlled legislature that has stalled budgets; Taiwan renounced nuclear weapons programmes in the 1980s.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/Cho_Jung-tai",
       "fictional": false
     },
     {
       "iso3": "PRK",
+      "effectiveLeader": {
+        "name": "Kim Jong Un",
+        "title": "President of the State Affairs Commission and General Secretary of the WPK",
+        "party": "Workers' Party of Korea",
+        "since": "2011-12-17",
+        "role": "partyLeader",
+        "basis": "One-party state: Kim Jong Un, as WPK General Secretary, President of the State Affairs Commission and supreme commander, is the paramount leader; the Premier handles economic administration."
+      },
       "headOfState": {
         "name": "Kim Jong Un",
         "title": "President of the State Affairs Commission and General Secretary of the WPK",
@@ -479,10 +631,19 @@
       },
       "rationale": "A 2022 law enshrining pre-emptive nuclear use, continuous missile testing, troops and munitions supplied to Russia under the 2024 treaty, and the constitutional designation of South Korea as a hostile state; no competitive elections exist.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "SAU",
+      "effectiveLeader": {
+        "name": "Mohammed bin Salman Al Saud",
+        "title": "Crown Prince and Prime Minister",
+        "party": null,
+        "since": "2022-09-27",
+        "role": "headOfGovernment",
+        "basis": "Absolute monarchy in which the Crown Prince, also Prime Minister since 2022, runs day-to-day government including foreign and defence policy on behalf of the elderly King Salman."
+      },
       "headOfState": {
         "name": "Salman bin Abdulaziz Al Saud",
         "title": "King",
@@ -508,10 +669,19 @@
       },
       "rationale": "The Crown Prince runs day-to-day government around Vision 2030 diversification, the 2023 China-brokered détente with Iran and hedging between Washington and Beijing, after the costly Yemen intervention; MBS has stated Saudi Arabia would seek a bomb if Iran acquired one; the absolute monarchy holds no national elections.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "ARE",
+      "effectiveLeader": {
+        "name": "Mohamed bin Zayed Al Nahyan",
+        "title": "President",
+        "party": null,
+        "since": "2022-05-14",
+        "role": "headOfState",
+        "basis": "Federal monarchy: the President (ruler of Abu Dhabi) directs foreign and defence policy and commands the armed forces; the Prime Minister (ruler of Dubai) runs the federal cabinet."
+      },
       "headOfState": {
         "name": "Mohamed bin Zayed Al Nahyan",
         "title": "President",
@@ -537,10 +707,19 @@
       },
       "rationale": "Abraham Accords normalisation with Israel, active proxy involvement in Libya, Yemen and Sudan, deep investment diplomacy with both the US and China, and a civil nuclear programme under IAEA safeguards; the federation of hereditary rulers holds no competitive national elections.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "EGY",
+      "effectiveLeader": {
+        "name": "Abdel Fattah el-Sisi",
+        "title": "President",
+        "party": "Independent",
+        "since": "2014-06-08",
+        "role": "headOfState",
+        "basis": "Presidential system: the President directs foreign and defence policy and commands the armed forces; the Prime Minister manages the cabinet and economy."
+      },
       "headOfState": {
         "name": "Abdel Fattah el-Sisi",
         "title": "President",
@@ -564,12 +743,21 @@
         "allianceLoyalty": 55,
         "nuclearThreshold": 90
       },
-      "rationale": "Military-backed presidency focused on regime security, mediation on Gaza, firm red lines on Rafah and Nile water (GERD), and reliance on Gulf, IMF and US financing; Madbouly has headed government since 2018 and survived a February 2026 reshuffle.",
+      "rationale": "Sisi's military-backed presidency is focused on regime security, mediation on Gaza, firm red lines on Rafah and Nile water (GERD), and reliance on Gulf, IMF and US financing; Egypt is a non-nuclear NPT state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "POL",
+      "effectiveLeader": {
+        "name": "Donald Tusk",
+        "title": "Prime Minister",
+        "party": "Civic Platform",
+        "since": "2023-12-13",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary republic: the Prime Minister and Council of Ministers conduct foreign and defence policy; the President is commander-in-chief with a veto and a role in foreign representation, producing cohabitation friction."
+      },
       "headOfState": {
         "name": "Karol Nawrocki",
         "title": "President",
@@ -584,21 +772,30 @@
       },
       "nextElection": "2027-11",
       "traits": {
-        "aggression": 50,
-        "riskTolerance": 50,
-        "pragmatism": 55,
-        "nationalism": 75,
-        "paranoia": 75,
+        "aggression": 45,
+        "riskTolerance": 45,
+        "pragmatism": 65,
+        "nationalism": 60,
+        "paranoia": 70,
         "economicPriority": 60,
         "allianceLoyalty": 85,
-        "nuclearThreshold": 90
+        "nuclearThreshold": 92
       },
-      "rationale": "Europe's highest defence spending share of GDP, hard line on Russia and Belarus, and strong NATO/US alignment, amid cohabitation friction between Tusk's coalition and President Nawrocki, who has vetoed legislation including EU defence-loan access.",
+      "rationale": "Tusk, a former European Council president, has driven Europe's highest defence spending share of GDP, a hard line on Russia and Belarus and strong EU and NATO alignment, while facing cohabitation vetoes from President Nawrocki; Poland is a non-nuclear state seeking closer nuclear-sharing arrangements.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "ITA",
+      "effectiveLeader": {
+        "name": "Giorgia Meloni",
+        "title": "Prime Minister",
+        "party": "Brothers of Italy",
+        "since": "2022-10-22",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary republic: the Prime Minister directs government policy including foreign and defence policy; the President is a largely ceremonial guarantor."
+      },
       "headOfState": {
         "name": "Sergio Mattarella",
         "title": "President",
@@ -624,11 +821,25 @@
       },
       "rationale": "Meloni combines national-conservative domestic politics with reliable Atlanticism, support for Ukraine and a bridging role with the Trump administration, while cautious on fiscal commitments; Italy is a non-nuclear NATO host state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "ESP",
-      "headOfState": { "name": "Felipe VI", "title": "King", "party": null, "since": "2014-06-19" },
+      "effectiveLeader": {
+        "name": "Pedro Sánchez",
+        "title": "Prime Minister",
+        "party": "Spanish Socialist Workers' Party",
+        "since": "2018-06-02",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary monarchy: the Prime Minister directs foreign and defence policy; the King is ceremonial. A snap general election is set for 29 November 2026."
+      },
+      "headOfState": {
+        "name": "Felipe VI",
+        "title": "King",
+        "party": null,
+        "since": "2014-06-19"
+      },
       "headOfGovernment": {
         "name": "Pedro Sánchez",
         "title": "Prime Minister",
@@ -648,10 +859,19 @@
       },
       "rationale": "Sánchez has resisted NATO's 5% spending target, recognised Palestine and opposed Israel's Gaza campaign, and governs by minority coalition; after Congress rejected his housing decrees he called a snap general election for 29 November 2026.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://www.aljazeera.com/amp/news/2026/10/5/spanish-prime-minister-pedro-sanchez-announces-snap-election",
       "fictional": false
     },
     {
       "iso3": "CAN",
+      "effectiveLeader": {
+        "name": "Mark Carney",
+        "title": "Prime Minister",
+        "party": "Liberal Party",
+        "since": "2025-03-14",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary monarchy: the Prime Minister directs foreign and defence policy; the King and Governor General are ceremonial."
+      },
       "headOfState": {
         "name": "Charles III",
         "title": "King",
@@ -677,10 +897,19 @@
       },
       "rationale": "Former central banker who won a majority via 2026 by-elections, prioritising trade diversification and a US tariff deal, defence spending increases and sovereignty rhetoric in response to US pressure; Canada is a non-nuclear NATO member.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "AUS",
+      "effectiveLeader": {
+        "name": "Anthony Albanese",
+        "title": "Prime Minister",
+        "party": "Australian Labor Party",
+        "since": "2022-05-23",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary monarchy: the Prime Minister and cabinet direct foreign and defence policy; the King and Governor-General are ceremonial."
+      },
       "headOfState": {
         "name": "Charles III",
         "title": "King",
@@ -706,10 +935,19 @@
       },
       "rationale": "Second-term Labor government continuing AUKUS submarines and US alliance while stabilising trade with China, and a 2026 budget centred on fuel security; Australia is a non-nuclear state under the US umbrella.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "MEX",
+      "effectiveLeader": {
+        "name": "Claudia Sheinbaum",
+        "title": "President",
+        "party": "Morena",
+        "since": "2024-10-01",
+        "role": "headOfState",
+        "basis": "Presidential system: the President is head of state and government and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Claudia Sheinbaum",
         "title": "President",
@@ -730,10 +968,19 @@
       },
       "rationale": "Sovereignty-first but cooperative handling of US tariff and cartel pressure, judicial reform and continuity of social programmes with a congressional supermajority; Mexico is a Treaty of Tlatelolco non-nuclear state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "IDN",
+      "effectiveLeader": {
+        "name": "Prabowo Subianto",
+        "title": "President",
+        "party": "Gerindra Party",
+        "since": "2024-10-20",
+        "role": "headOfState",
+        "basis": "Presidential system: the President is head of state and government and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Prabowo Subianto",
         "title": "President",
@@ -754,10 +1001,19 @@
       },
       "rationale": "Former general pursuing free-and-active non-alignment (BRICS membership, balanced US-China ties), expanded military role in government and large state-led spending programmes; Indonesia is a non-nuclear NPT state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "VNM",
+      "effectiveLeader": {
+        "name": "Tô Lâm",
+        "title": "General Secretary of the CPV and President",
+        "party": "Communist Party of Vietnam",
+        "since": "2024-08-03",
+        "role": "partyLeader",
+        "basis": "One-party state: the CPV General Secretary is the paramount leader; Tô Lâm has held that post since August 2024 and was also elected State President on 7 April 2026."
+      },
       "headOfState": {
         "name": "Tô Lâm",
         "title": "President and General Secretary of the CPV",
@@ -783,10 +1039,19 @@
       },
       "rationale": "Tô Lâm consolidated party and state leadership in April 2026 after the 14th Party Congress, with former central-bank governor Lê Minh Hưng as PM, continuing bamboo diplomacy between China and the US and export-led growth; National Assembly elections are single-party and not competitive.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://vietnamnews.vn/politics-laws/1778909/party-general-secretary-to-lam-elected-state-president.html",
       "fictional": false
     },
     {
       "iso3": "PHL",
+      "effectiveLeader": {
+        "name": "Ferdinand Marcos Jr.",
+        "title": "President",
+        "party": "Partido Federal ng Pilipinas",
+        "since": "2022-06-30",
+        "role": "headOfState",
+        "basis": "Presidential system: the President is head of state and government and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Ferdinand Marcos Jr.",
         "title": "President",
@@ -807,10 +1072,19 @@
       },
       "rationale": "Expanded US basing access and assertive publicising of South China Sea confrontations with China, a bitter feud with the Duterte camp, and impeachment complaints dismissed by the House in February 2026; the Philippines is constitutionally nuclear-free.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "THA",
+      "effectiveLeader": {
+        "name": "Anutin Charnvirakul",
+        "title": "Prime Minister",
+        "party": "Bhumjaithai Party",
+        "since": "2025-09-07",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary constitutional monarchy: the Prime Minister directs government policy, though the monarchy and military retain significant informal influence. Anutin was re-elected PM by the new House on 19 March 2026."
+      },
       "headOfState": {
         "name": "Vajiralongkorn",
         "title": "King",
@@ -836,10 +1110,19 @@
       },
       "rationale": "Conservative coalition leader re-elected PM in March 2026 after Bhumjaithai topped the February election, following the 2025 border clashes with Cambodia; Thailand hedges between the US treaty alliance and China and is a non-nuclear state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://washingtondc.thaiembassy.org/en/content/anutin-pm32",
       "fictional": false
     },
     {
       "iso3": "NGA",
+      "effectiveLeader": {
+        "name": "Bola Tinubu",
+        "title": "President",
+        "party": "All Progressives Congress",
+        "since": "2023-05-29",
+        "role": "headOfState",
+        "basis": "Presidential system: the President is head of state and government and commander-in-chief and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Bola Tinubu",
         "title": "President",
@@ -860,10 +1143,19 @@
       },
       "rationale": "Market-oriented shock reforms (fuel subsidy removal, naira float), ECOWAS leadership during the Sahel coups, and an APC ticket secured for the January 2027 election amid security crises; Nigeria is a non-nuclear state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "ZAF",
+      "effectiveLeader": {
+        "name": "Cyril Ramaphosa",
+        "title": "President",
+        "party": "African National Congress",
+        "since": "2018-02-15",
+        "role": "headOfState",
+        "basis": "Parliamentary-elected executive presidency: the President is head of state and government and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Cyril Ramaphosa",
         "title": "President",
@@ -884,10 +1176,19 @@
       },
       "rationale": "Leads a Government of National Unity with the DA, pursues non-aligned BRICS diplomacy and brought the ICJ genocide case against Israel while weathering US aid and trade pressure; South Africa dismantled its nuclear arsenal in 1990.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "ETH",
+      "effectiveLeader": {
+        "name": "Abiy Ahmed",
+        "title": "Prime Minister",
+        "party": "Prosperity Party",
+        "since": "2018-04-02",
+        "role": "headOfGovernment",
+        "basis": "Federal parliamentary republic: the Prime Minister is chief executive and commander-in-chief; the President is ceremonial. Abiy was sworn in for a new five-year term on 5 October 2026."
+      },
       "headOfState": {
         "name": "Taye Atske Selassie",
         "title": "President",
@@ -913,10 +1214,19 @@
       },
       "rationale": "Abiy was sworn in for a new term in October 2026 after the Prosperity Party's June landslide; his record includes the Tigray war, ongoing Amhara and Oromia insurgencies, the GERD completion and public insistence on Red Sea access that has strained ties with Eritrea and Somalia.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://www.theeastafrican.co.ke/tea/news/eastern-africa/abiy-starts-new-term-pushes-red-sea-tensions-5623026",
       "fictional": false
     },
     {
       "iso3": "ARG",
+      "effectiveLeader": {
+        "name": "Javier Milei",
+        "title": "President",
+        "party": "La Libertad Avanza",
+        "since": "2023-12-10",
+        "role": "headOfState",
+        "basis": "Presidential system: the President is head of state and government and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Javier Milei",
         "title": "President",
@@ -937,10 +1247,19 @@
       },
       "rationale": "Radical libertarian austerity and deregulation strengthened by the October 2025 midterm win, close alignment with the US and Israel and withdrawal from multilateral forums; Argentina is a Tlatelolco non-nuclear state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "SWE",
+      "effectiveLeader": {
+        "name": "Ulf Kristersson",
+        "title": "Prime Minister (caretaker)",
+        "party": "Moderate Party",
+        "since": "2022-10-18",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary monarchy: the Prime Minister directs foreign and defence policy; the King is ceremonial. Kristersson continues as caretaker PM after the Riksdag rejected Magdalena Andersson on 15 October 2026; Elisabeth Thand Ringqvist (Centre) received the exploratory mandate on 19 October."
+      },
       "headOfState": {
         "name": "Carl XVI Gustaf",
         "title": "King",
@@ -964,12 +1283,21 @@
         "allianceLoyalty": 80,
         "nuclearThreshold": 95
       },
-      "rationale": "Kristersson, who took Sweden into NATO and raised defence spending, resigned after the centre-left bloc won 176-173 seats on 13 September 2026 and serves as caretaker while the Riksdag, which voted down Magdalena Andersson's first candidacy, continues government formation.",
+      "rationale": "Kristersson took Sweden into NATO and raised defence spending, and now serves as caretaker PM after the centre-left bloc won a narrow majority on 13 September 2026 while the Riksdag continues government formation; Sweden is a non-nuclear state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/2026_Swedish_government_formation",
       "fictional": false
     },
     {
       "iso3": "FIN",
+      "effectiveLeader": {
+        "name": "Alexander Stubb",
+        "title": "President",
+        "party": "National Coalition Party (membership suspended in office)",
+        "since": "2024-03-01",
+        "role": "headOfState",
+        "basis": "Semi-presidential system: the constitution gives the President leadership of foreign policy (in cooperation with the government) and supreme command of the Defence Forces; the Prime Minister leads domestic and EU policy."
+      },
       "headOfState": {
         "name": "Alexander Stubb",
         "title": "President",
@@ -993,12 +1321,21 @@
         "allianceLoyalty": 85,
         "nuclearThreshold": 94
       },
-      "rationale": "New NATO member with a closed Russian border, Stubb's active values-based diplomacy on Ukraine and Orpo's fiscally conservative coalition with the Finns Party; Finland is a non-nuclear state with strong total-defence traditions.",
+      "rationale": "Stubb, a former prime minister, leads Finland's foreign policy as a new NATO member with a closed Russian border, practising active values-based diplomacy on Ukraine and close engagement with Washington; Finland is a non-nuclear state with strong total-defence traditions.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "NLD",
+      "effectiveLeader": {
+        "name": "Rob Jetten",
+        "title": "Prime Minister",
+        "party": "Democrats 66",
+        "since": "2026-02-23",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary monarchy: the Prime Minister and cabinet direct foreign and defence policy; the King is ceremonial. Jetten was sworn in on 23 February 2026."
+      },
       "headOfState": {
         "name": "Willem-Alexander",
         "title": "King",
@@ -1024,10 +1361,19 @@
       },
       "rationale": "Jetten leads a D66-CDA-VVD minority cabinet sworn in February 2026 after D66 narrowly beat the PVV, continuing strong Ukraine and NATO commitments and a pro-EU, centrist economic line; the Netherlands hosts US nuclear-sharing but has no weapons of its own.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://www.irishtimes.com/world/europe/2026/02/23/rob-jetten-becomes-youngest-dutch-prime-minister/",
       "fictional": false
     },
     {
       "iso3": "BLR",
+      "effectiveLeader": {
+        "name": "Alexander Lukashenko",
+        "title": "President",
+        "party": "Independent",
+        "since": "1994-07-20",
+        "role": "headOfState",
+        "basis": "Authoritarian presidential system: the President controls foreign, defence and security policy; the Prime Minister manages the economy."
+      },
       "headOfState": {
         "name": "Alexander Lukashenko",
         "title": "President",
@@ -1053,10 +1399,19 @@
       },
       "rationale": "Hosts Russian tactical nuclear weapons and Oreshnik missiles under the Union State, served as a staging ground for the 2022 invasion while avoiding direct troop commitment, and maintains tight domestic control; elections are held but not judged competitive by observers.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "KAZ",
+      "effectiveLeader": {
+        "name": "Kassym-Jomart Tokayev",
+        "title": "President",
+        "party": "Independent",
+        "since": "2019-03-20",
+        "role": "headOfState",
+        "basis": "Presidential system (new constitution in force from 1 July 2026): the President directs foreign and defence policy; the Prime Minister, reappointed with Kurultai consent on 31 August 2026, runs the cabinet."
+      },
       "headOfState": {
         "name": "Kassym-Jomart Tokayev",
         "title": "President",
@@ -1082,10 +1437,19 @@
       },
       "rationale": "Multi-vector foreign policy balancing Russia, China and the West, public refusal to recognise Russian annexations in Ukraine, and a 2026 constitutional overhaul creating a unicameral Kurultai and vice presidency; Kazakhstan gave up Soviet nuclear weapons in the 1990s.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.fergana.news/news/149016/?country=kz",
       "fictional": false
     },
     {
       "iso3": "QAT",
+      "effectiveLeader": {
+        "name": "Tamim bin Hamad Al Thani",
+        "title": "Emir",
+        "party": null,
+        "since": "2013-06-25",
+        "role": "headOfState",
+        "basis": "Semi-absolute monarchy: the Emir holds executive authority and directs foreign and defence policy; the Prime Minister and Foreign Minister serves at his pleasure."
+      },
       "headOfState": {
         "name": "Tamim bin Hamad Al Thani",
         "title": "Emir",
@@ -1109,12 +1473,21 @@
         "allianceLoyalty": 60,
         "nuclearThreshold": 95
       },
-      "rationale": "Mediator in Gaza, Afghanistan and Iran-US channels, host of Al Udeid air base and a 2025 Iranian missile strike, and LNG-driven investment diplomacy; the absolute monarchy holds no competitive national elections.",
+      "rationale": "Emir Tamim has positioned Qatar as a mediator in Gaza, Afghanistan and Iran-US channels, hosts the US Al Udeid air base and uses LNG wealth for investment diplomacy; Qatar is a non-nuclear state.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     },
     {
       "iso3": "IRQ",
+      "effectiveLeader": {
+        "name": "Ali al-Zaidi",
+        "title": "Prime Minister",
+        "party": null,
+        "since": "2026-05-14",
+        "role": "headOfGovernment",
+        "basis": "Federal parliamentary republic: the Prime Minister is chief executive and commander-in-chief; the President is largely ceremonial. Al-Zaidi's partial cabinet was approved on 14 May 2026."
+      },
       "headOfState": {
         "name": "Nizar Amedi",
         "title": "President",
@@ -1138,12 +1511,21 @@
         "allianceLoyalty": 45,
         "nuclearThreshold": 95
       },
-      "rationale": "After a five-month deadlock following the November 2025 election, parliament elected Amedi president in April and approved al-Zaidi's partial cabinet in May 2026 as he pledged a state monopoly on arms amid US pressure over Iran-aligned militias and fallout from the 2026 Iran war.",
+      "rationale": "Al-Zaidi, a businessman relatively new to politics, emerged as a compromise PM in April 2026 after US objections to Nouri al-Maliki, pledging a state monopoly on arms while balancing US pressure over Iran-aligned militias against the influence of Tehran after the 2026 Iran war.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://www.aljazeera.com/news/2026/5/14/iraqs-parliament-approves-new-ali-al-zaidi-government",
       "fictional": false
     },
     {
       "iso3": "SYR",
+      "effectiveLeader": {
+        "name": "Ahmed al-Sharaa",
+        "title": "President (transitional)",
+        "party": null,
+        "since": "2025-01-29",
+        "role": "headOfState",
+        "basis": "Transitional presidential system under the March 2025 constitutional declaration: the President holds executive power with no prime minister and directs foreign and defence policy."
+      },
       "headOfState": {
         "name": "Ahmed al-Sharaa",
         "title": "President (transitional)",
@@ -1164,10 +1546,19 @@
       },
       "rationale": "Former HTS leader governing under a March 2025 interim constitution with no prime minister, pursuing sanctions relief and reconstruction ties with Gulf states, Turkey and the West while managing sectarian violence and Israeli strikes; no national election date has been set in the transition.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/Ahmed_al-Sharaa",
       "fictional": false
     },
     {
       "iso3": "VEN",
+      "effectiveLeader": {
+        "name": "Delcy Rodríguez",
+        "title": "Acting President",
+        "party": "United Socialist Party of Venezuela",
+        "since": "2026-01-05",
+        "role": "headOfState",
+        "basis": "Presidential system: the Acting President exercises executive power, including foreign and defence policy, since Nicolás Maduro was seized by US forces on 3 January 2026."
+      },
       "headOfState": {
         "name": "Delcy Rodríguez",
         "title": "Acting President",
@@ -1188,10 +1579,19 @@
       },
       "rationale": "Became acting president after US forces detained Nicolás Maduro in January 2026; she has engaged in US-backed transition talks and oil deals, promised elections under a renewed electoral authority without setting a date, and faces a returned opposition led by María Corina Machado.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/Delcy_Rodr%C3%ADguez",
       "fictional": false
     },
     {
       "iso3": "NZL",
+      "effectiveLeader": {
+        "name": "Christopher Luxon",
+        "title": "Prime Minister",
+        "party": "New Zealand National Party",
+        "since": "2023-11-27",
+        "role": "headOfGovernment",
+        "basis": "Parliamentary monarchy: the Prime Minister and cabinet direct foreign and defence policy; the King and Governor-General are ceremonial. A general election is due on 7 November 2026."
+      },
       "headOfState": {
         "name": "Charles III",
         "title": "King",
@@ -1217,6 +1617,7 @@
       },
       "rationale": "Business-oriented coalition leader facing a general election on 7 November 2026 after surviving an April caucus leadership vote; New Zealand maintains its nuclear-free legislation and a modest, Five Eyes-aligned defence posture.",
       "verifiedAsOf": "2026-11-02",
+      "verificationUrl": "https://en.wikipedia.org/wiki/List_of_current_heads_of_state_and_government",
       "fictional": false
     }
   ]
