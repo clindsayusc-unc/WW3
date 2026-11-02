@@ -333,7 +333,10 @@ count badge into a 2048² canvas atlas on demand. Stacks that moved animate alon
 strikes draw a high arc with a large flash. Far from the globe, only the player's units show unless
 the military map mode is active.
 
-## D-039 — 2026-11-02 — Audio synthesised, no files
+## D-039 — 2026-11-02 — Audio synthesised, no files — PARTLY SUPERSEDED
+
+> **Drone and noise sources superseded by D-060.** Sounds are still synthesised with no files, but
+> only from sine and triangle tones; the ambient drone is gone.
 
 UI clicks, order/accept/reject tones, end-turn, alert stingers, battle noise and a nuclear rumble
 are synthesised with WebAudio oscillators and filtered noise; a four-oscillator ambient drone starts
@@ -683,3 +686,30 @@ capitulations → chokepoints → diplomacy → tension → events.
   (liberated regions, peace deals) before planning, which `sim.test.ts` requires.
 - **Saves** from before this entry are migrated in `refreshLeaders` (experience 10, superiority
   missions, no commanders, satellites and missiles from spending, empty reports).
+
+## D-060 — 2026-11-02 — Ambient music bed and clean-tone sound effects
+
+Supersedes the drone and the noise buffers of D-039. The four-oscillator drone read as hiss and is
+removed. Audio is one WebAudio graph (`src/ui/audio.ts`): Master → Music bus and Effects bus, with
+three volumes and a music switch persisted in `localStorage` (`ww3.audio`, D-040 style) and shown as
+sliders in Settings and on the main menu; the mute toggle zeroes the master without losing the
+values; slider positions are squared into gains so they feel linear.
+
+- **Music** (`src/ui/music.ts`) is composed procedurally from clean tones only (no noise sources, no
+  samples, no square or sawtooth waves): four pad voices (sine + detuned sine + soft triangle
+  octave) swelling over 3.5 s through a slow chord progression in D minor (Dm add9, B♭maj7, Fmaj7,
+  Cmaj7, Am7, Dm), a sub-bass on the root, and sparse piano-like notes (triangle with a sine octave,
+  3 s decay) from a seeded generator, all through a 1.4 kHz low-pass and a clean feedback delay
+  (0.42 s, 35 %). Chords change every 12 s (±2 s), 9 s at DEFCON 2 and 7 s at DEFCON 1, when a slow
+  pulsing fifth joins and level, brightness and echo rise slightly (`setMusicIntensity`, driven from
+  the player's DEFCON in `App.tsx`). Start and stop fade over about 2.5 s. **Off by default**; a
+  one-time dismissible hint in game points to Settings (`ww3.musicHint`). Royalty-free tracks were
+  considered and rejected for now: the procedural bed needs no download, no licence row and no
+  bundle weight; `docs/DATA_SOURCES.md` records that no audio files ship.
+- **Effects audit.** Every noise buffer is gone (battle and nuclear used filtered white noise):
+  battle is now a pitch-dropping sine thump, nuclear a long swell of two detuned sub sines with a
+  falling fifth. Square and sawtooth waves (click, alert, end turn, reject) became sine or triangle
+  at lower gains. Stingers sit in A minor so they do not clash with the bed.
+- The audio module tests (`src/ui/audio.test.ts`) cover the pure parts: settings parsing and
+  clamping, the music-off default and the DEFCON → intensity mapping; the graph itself needs a
+  browser and is exercised by the e2e settings step.

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { RegionId } from '../sim/types';
 import type { EffectKey, EffectLevels, Level } from '../render/quality';
 import { levelsForPreset } from '../render/quality';
+import { DEFAULT_AUDIO, type AudioSettings } from '../ui/audioSettings';
 
 export type Screen = 'menu' | 'game';
 export type Modal =
@@ -115,6 +116,10 @@ interface UiStore {
   /** Sub-solar longitude offset from the camera longitude, degrees (D-045: 38 = afternoon). */
   sunOffset: number;
   muted: boolean;
+  /** Master, effects and music volumes and the music switch (D-060); persisted in localStorage. */
+  audio: AudioSettings;
+  /** The one-time "music is off" hint has been shown. */
+  musicHintShown: boolean;
   showLabels: boolean;
   showClouds: boolean;
   /** Chokepoint overlay: icons with open / contested / closed status (key C). */
@@ -138,6 +143,8 @@ interface UiStore {
   requestStrikeCam: (r: Omit<StrikeCamRequest, 'nonce'> | null) => void;
   setSunOffset: (deg: number) => void;
   toggleMute: () => void;
+  setAudio: (patch: Partial<AudioSettings>) => void;
+  setMusicHintShown: (shown: boolean) => void;
   toggleLabels: () => void;
   toggleClouds: () => void;
   toggleChokepoints: () => void;
@@ -162,6 +169,8 @@ export const useUiStore = create<UiStore>((set) => ({
   strikeCamRequest: null,
   sunOffset: 38,
   muted: false,
+  audio: { ...DEFAULT_AUDIO },
+  musicHintShown: true,
   showLabels: true,
   showClouds: true,
   showChokepoints: true,
@@ -190,6 +199,8 @@ export const useUiStore = create<UiStore>((set) => ({
     ),
   setSunOffset: (sunOffset) => set({ sunOffset }),
   toggleMute: () => set((s) => ({ muted: !s.muted })),
+  setAudio: (patch) => set((s) => ({ audio: { ...s.audio, ...patch } })),
+  setMusicHintShown: (musicHintShown) => set({ musicHintShown }),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
   toggleClouds: () => set((s) => ({ showClouds: !s.showClouds })),
   toggleChokepoints: () => set((s) => ({ showChokepoints: !s.showChokepoints })),

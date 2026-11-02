@@ -1795,3 +1795,36 @@ input[type='range'] {
 .chips button.chip:hover {
   border-color: var(--accent);
 }
+
+/* --- audio settings and the one-time music hint (D-060) --- */
+.audio-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.audio-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 48px;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+.audio-label {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+.audio-row .stat-value {
+  text-align: right;
+}
+.toast.hint-toast {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: default;
+  background: rgba(12, 18, 30, 0.92);
+  border-color: var(--line-strong);
+  color: var(--text);
+}

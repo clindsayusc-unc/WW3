@@ -174,6 +174,10 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
 
   await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
   await expect(page.getByTestId('hud')).toContainText('January 2027');
+  // First launch: the one-time hint that music is off (D-060).
+  await expect(page.getByTestId('music-hint')).toBeVisible();
+  await page.getByTestId('music-hint-dismiss').click();
+  await expect(page.getByTestId('music-hint')).toBeHidden();
   await page.waitForTimeout(4000);
   await shot(page, 'globe-usa');
 
@@ -338,6 +342,13 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   // Per-effect levels (D-055) and the strike cam toggle (D-056); a level change recompiles the globe.
   await expect(page.getByTestId('effects-grid')).toBeVisible();
   await expect(page.getByTestId('toggle-strike-cam')).toBeVisible();
+  // Audio (D-060): three sliders, music off by default, switching it on starts the bed.
+  await expect(page.getByTestId('audio-settings')).toBeVisible();
+  await expect(page.getByTestId('toggle-music')).toContainText('off');
+  await page.getByTestId('volume-music').fill('60');
+  await page.getByTestId('toggle-music').click();
+  await expect(page.getByTestId('toggle-music')).toContainText('on');
+  await shot(page, 'settings-audio');
   await page.getByTestId('effect-clouds-low').click();
   await page.waitForTimeout(800);
   await page.getByTestId('quality-high').click();

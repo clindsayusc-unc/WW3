@@ -70,7 +70,9 @@ original sources (Natural Earth, NASA, IMF, World Bank) is optional: `npm run bu
    as the top power without a nuclear war). Lose by capitulation, regime collapse or a full nuclear
    exchange, which nobody wins.
 
-Every number in the interface has a tooltip explaining where it comes from.
+Every number in the interface has a tooltip explaining where it comes from. Settings (⚙) has
+Master, Effects and Music volume sliders; the ambient music bed is off by default and fades in when
+you switch it on.
 
 ### Controls
 
