@@ -19,6 +19,7 @@ import { loadWorld } from '../sim/world';
 import { useGameStore } from '../state/gameStore';
 import { useUiStore } from '../state/uiStore';
 import { alliesOf, atWar } from '../sim/query';
+import { estimateStack } from '../sim/intel';
 import type { GameState, Unit } from '../sim/types';
 
 const world = loadWorld();
@@ -73,6 +74,8 @@ interface Stack {
   owner: string;
   units: Unit[];
   from: number | null; // previous region if the stack moved as one
+  /** Symbol and count as the player is allowed to see them (fog of war, D-059); null = unseen. */
+  shown: { sidc: string; count: number; affiliation: Affiliation } | null;
 }
 
 function affiliationFor(game: GameState, owner: string): Affiliation {
@@ -81,6 +84,13 @@ function affiliationFor(game: GameState, owner: string): Affiliation {
   if (alliesOf(world, game, game.player).includes(owner)) return 'F';
   return 'N';
 }
+
+/** Generic symbol per domain for stacks whose composition is unknown (fog of war, D-059). */
+const UNKNOWN_SIDC: Record<string, string> = {
+  land: 'SFGPU------',
+  air: 'SFAP-------',
+  sea: 'SFSP-------',
+};
 
 function dominantSidc(units: Unit[]): string {
   const counts = new Map<string, number>();
@@ -102,10 +112,27 @@ export function buildStacks(game: GameState): Stack[] {
         owner: u.owner,
         units: [],
         from: u.prevRegion !== u.region ? u.prevRegion : null,
+        shown: null,
       };
       map.set(key, s);
     } else if (s.from !== null && u.prevRegion !== s.from) s.from = null;
     s.units.push(u);
+  }
+  // Resolve the fog of war once per state, not per frame.
+  for (const s of map.values()) {
+    const affiliation = affiliationFor(game, s.owner);
+    let sidc = dominantSidc(s.units);
+    let count = s.units.length;
+    if (affiliation !== 'F') {
+      const est = estimateStack(world, game, game.player, s.units);
+      if (est.level === 0) continue;
+      if (est.level < 3) {
+        const domain = world.unitTypes.get(s.units[0]!.type)?.domain ?? 'land';
+        sidc = UNKNOWN_SIDC[domain] ?? UNKNOWN_SIDC.land!;
+        count = est.level === 1 ? 1 : Math.round((est.min + est.max) / 2);
+      }
+    }
+    s.shown = { sidc, count, affiliation };
   }
   return [...map.values()];
 }
@@ -190,9 +217,10 @@ export function Units() {
     for (const s of stacks.current) {
       if (n >= MAX_INSTANCES) break;
       if (!showAll && s.owner !== game.player && !atWar(game, game.player, s.owner)) continue;
+      if (!s.shown) continue; // fog of war: no intelligence on this stack
       const meta = world.regions.get(s.region);
       if (!meta) continue;
-      const tile = atlas.get(dominantSidc(s.units), affiliationFor(game, s.owner), s.units.length);
+      const tile = atlas.get(s.shown.sidc, s.shown.affiliation, s.shown.count);
       const path = paths.current.get(s.key);
       let p: Vector3;
       if (path && t < 1) {

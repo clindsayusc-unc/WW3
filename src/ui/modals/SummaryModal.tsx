@@ -3,6 +3,11 @@ import { useGameStore } from '../../state/gameStore';
 import { Stat } from '../Stat';
 import { formatMoney, formatMonth, formatDelta } from '../format';
 import { dateForTurn } from '../../sim/game';
+import { useUiStore } from '../../state/uiStore';
+import { loadWorld } from '../../sim/world';
+import { playSound } from '../audio';
+
+const world = loadWorld();
 
 export function SummaryModal() {
   const game = useGameStore((s) => s.game);
@@ -58,6 +63,29 @@ export function SummaryModal() {
         ))}
         {(s?.headlines.length ?? 0) === 0 && <li className="hint">A quiet month.</li>}
       </ul>
+      {game.battleReports.length > 0 && (
+        <>
+          <div className="section-title" style={{ marginTop: 12 }}>
+            Battle reports
+          </div>
+          <div className="chips">
+            {game.battleReports.map((b) => (
+              <button
+                key={b.id}
+                className="chip"
+                data-testid="summary-battle"
+                data-tip="Open the full battle report: forces, losses and every modifier."
+                onClick={() => {
+                  useUiStore.getState().openBattleReport(b.id);
+                  playSound('open');
+                }}
+              >
+                {b.domain === 'sea' ? '⚓' : '⚔'} {world.regions.get(b.region)?.name}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
       <div className="section-title" style={{ marginTop: 12 }}>
         Full log
       </div>

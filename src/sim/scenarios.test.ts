@@ -10,7 +10,7 @@ import { isoYearMonth } from './calendar';
 import { loadWorld } from './world';
 import { estimateOdds, findPath, supplyFor } from './military';
 import { amphibiousTargets, hasSeaControl, liftCapacity, seaRoute } from './geography';
-import { controlledRegions, unitsOf } from './query';
+import { controlledRegions, makeUnit, unitsOf } from './query';
 import type { GameState, Iso3, RegionId, Unit } from './types';
 
 const world = loadWorld();
@@ -68,17 +68,10 @@ const R = {
 
 function addUnits(state: GameState, type: string, owner: Iso3, region: RegionId, n: number): void {
   for (let i = 0; i < n; i++) {
-    const u: Unit = {
-      id: state.nextId++,
-      type,
-      owner,
-      region,
-      strength: 100,
+    const u: Unit = makeUnit(state.nextId++, type, owner, region, {
       morale: 85,
-      path: [],
-      prevRegion: region,
-      moveProgress: 0,
-    };
+      mission: world.unitTypes.get(type)?.domain === 'air' ? 'superiority' : null,
+    });
     state.units[u.id] = u;
   }
 }
@@ -485,6 +478,8 @@ describe('calibration: ground offensive across the Korean DMZ', () => {
     addUnits(g, 'infantry', 'PRK', R.southHamgyong, 24);
     addUnits(g, 'artillery', 'PRK', R.southHamgyong, 8);
     addUnits(g, 'armored', 'PRK', R.southHamgyong, 4);
+    // The KPA's dense SAM belt (D-059: air superiority is now a visible battle modifier).
+    addUnits(g, 'airDefense', 'PRK', R.southHamgyong, 4);
     moveAll(
       g,
       (u) => u.owner === 'PRK' && world.unitTypes.get(u.type)?.domain === 'land',
@@ -502,8 +497,12 @@ describe('calibration: ground offensive across the Korean DMZ', () => {
     report('Korea', log);
     const seoulTurn = log.captured.get(R.seoul) ?? 99;
     expect(seoulTurn).toBeGreaterThanOrEqual(4);
-    expect(log.attackerLossTotal).toBeGreaterThan(500);
-    expect(log.defenderLossTotal).toBeGreaterThan(300);
+    // D-059: the ROK corps now needs two months to embark for its Yellow Sea counter-landing, so
+    // the fighting over Gyeonggi comes later and the bill is shared differently (docs/BALANCE.md).
+    expect(log.captured.get(R.gyeonggi) ?? 99).toBeGreaterThanOrEqual(3);
+    expect(log.attackerLossTotal + log.defenderLossTotal).toBeGreaterThan(500);
+    expect(log.defenderLossTotal).toBeGreaterThan(200);
+    expect(log.battles).toBeGreaterThanOrEqual(10);
   }, 120_000);
 });
 

@@ -15,9 +15,17 @@ export type Modal =
   | 'settings'
   | 'load'
   | 'nuclear'
+  | 'battle'
   | 'end';
 export type MapMode =
-  'political' | 'blocs' | 'relations' | 'economy' | 'military' | 'tension' | 'terrain';
+  | 'political'
+  | 'blocs'
+  | 'relations'
+  | 'economy'
+  | 'military'
+  | 'tension'
+  | 'terrain'
+  | 'supply';
 export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: string }[] = [
   {
     id: 'political',
@@ -57,6 +65,13 @@ export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: stri
     tooltip:
       'Real terrain: land-cover tint (forest, jungle, desert, plains, marsh, tundra, cities) shaded by elevation (ETOPO 2022, MODIS).',
   },
+  {
+    id: 'supply',
+    label: 'Supply',
+    key: '8',
+    tooltip:
+      'Supply network: land shaded green (full) to red (cut off) by the supply reaching its controller; depots outlined; sea zones in the colour of the fleet that controls them, amber where contested.',
+  },
 ];
 export type Quality = 'low' | 'medium' | 'high';
 
@@ -86,6 +101,8 @@ interface UiStore {
   selectedRegion: RegionId | null;
   selectedUnitIds: number[];
   diplomacyTarget: string | null;
+  /** Battle report shown by the battle modal (D-059). */
+  battleReportId: number | null;
   flyTo: FlyTarget | null;
   quality: Quality;
   /** Per-effect Low/Medium/High (D-055); the preset resets all of them. */
@@ -111,6 +128,7 @@ interface UiStore {
   select: (r: RegionId | null) => void;
   selectUnits: (ids: number[]) => void;
   setDiplomacyTarget: (iso: string | null) => void;
+  openBattleReport: (id: number) => void;
   fly: (lat: number, lon: number, distance?: number) => void;
   setQuality: (q: Quality) => void;
   setEffect: (key: EffectKey, level: Level) => void;
@@ -135,6 +153,7 @@ export const useUiStore = create<UiStore>((set) => ({
   selectedRegion: null,
   selectedUnitIds: [],
   diplomacyTarget: null,
+  battleReportId: null,
   flyTo: null,
   quality: 'high',
   effects: levelsForPreset('high'),
@@ -155,6 +174,7 @@ export const useUiStore = create<UiStore>((set) => ({
   select: (selectedRegion) => set({ selectedRegion, selectedUnitIds: [] }),
   selectUnits: (selectedUnitIds) => set({ selectedUnitIds }),
   setDiplomacyTarget: (diplomacyTarget) => set({ diplomacyTarget }),
+  openBattleReport: (battleReportId) => set({ battleReportId, modal: 'battle' }),
   fly: (lat, lon, distance = 1.7) =>
     set((s) => ({ flyTo: { lat, lon, distance, nonce: (s.flyTo?.nonce ?? 0) + 1 } })),
   setQuality: (quality) => set({ quality, effects: levelsForPreset(quality), autoCap: 2 }),

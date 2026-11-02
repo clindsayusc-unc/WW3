@@ -592,3 +592,94 @@ probes (Hormuz = Persian Gulf | Gulf of Oman, Turkish straits = Black Sea | Aege
 = North Sea | Baltic). The Taiwan Strait Crisis scenario now places the PLA Navy in the Taiwan
 Strait zone and the US carriers in the East China Sea by name. Tests resolve zones by name instead
 of id. Named seas are labelled on the globe in every map mode.
+
+## D-059 — 2026-11-02 — Military depth: supply network, fog of war, air, naval, strategic operations
+
+The warfare layer gains depth without new data files; every rule is read back to the player through
+battle odds, battle reports and tooltips. Modules: `src/sim/intel.ts`, `air.ts`, `naval.ts`,
+`strikes.ts`, `commanders.ts`; `military.ts` and `game.ts` extended. Turn order is now AI → economy →
+production → research → space/missile tick → intel tick → supply → air operations → movement →
+naval combat → land combat → supply → attrition → recovery → commerce raiding → blockades →
+capitulations → chokepoints → diplomacy → tension → events.
+
+- **Supply network.** Depots are no longer every owned region but the capital, industrial regions
+  (≥ 5 % of the nation's population, or infrastructure ≥ 0.75 with ≥ 2 %) and major ports
+  (`isDepot`). Supply spreads from them along owned and allied land and controlled sea zones as
+  before (D-050); home regions linked to the capital never drop below `HOME_SUPPLY_FLOOR` 0.55.
+  Bombed infrastructure (`RegionState.infraDamage`, from missile strikes and strategic bombing,
+  −5 %/month recovery) raises the per-hop loss and caps port landings; enemy interdiction wings
+  multiply the final level by 1 − 0.15/wing (floor 0.55). Out-of-supply units lose 4 strength and an
+  extra 4 morale a month. Map mode 8 "Supply" shades land by level with depots brightened and sea
+  zones by the controlling fleet (amber = contested).
+- **Fog of war.** `intelLevel(viewer, region)` ∈ 0..4: own/allied territory or units 4; adjacent
+  2; plus a global bonus from satellites (+1 at ≥ 1.5 effective, +2 at ≥ 5), ISR techs (`intel`
+  modifier, up to +2), recon wings over the region (+2), a spy network on the controller (+1); minus
+  the controller's `enemyIntel` (counterspace), −1 when at war with the controller, −2 while
+  cyber-blinded. Allies share coverage. Foreign stacks render only above level 0, as a generic
+  domain symbol with an estimated count below level 3; the context panel shows count bands, and
+  `estimateOdds` reports a band and "little intelligence" below level 3. The AI is omniscient: it
+  reads the full state, as before. Spy operations cost 0.04 % of GDP for 6 months of coverage.
+- **Air war.** `Unit.mission` for wings: superiority (full air-to-air, normal strike weight), cas
+  (×1.5 strike, ×0.4 air), interdiction (supply −15 %/wing, +2 attrition on enemy movers in range),
+  bombing (the most valuable enemy region in range: +0.02 devastation and +0.04 infrastructure
+  damage per wing-sortie), recon (intel +2). `missionsFor(type)` restricts them (bombers cannot
+  sweep, fighters cannot bomb). Any wing flying over the enemy is intercepted: loss = 5 × air
+  defence (air-defence brigades in the target, superiority fighters within one step, ships
+  alongside) ÷ (air-power tech × (1 + 0.6 × escorts)), bombers ×0.8, drones ×1.2, CAS ×1.2, recon
+  ×0.6, capped at 25. Air superiority is a visible modifier on both sides of every land battle:
+  ×(0.85 + 0.3 × share). Carrier groups project strike and air weight one zone beyond their own at
+  half weight.
+- **Naval war.** `zoneControl`: the strongest allied fleet controls a zone when it has at least
+  twice the power of every fleet at war with it, otherwise the zone is contested. Hostile fleets in
+  one zone fight (`runNavalCombat`, K = 2; submarines hit surface groups at ×1.3 and are hit at
+  ×0.5 except by destroyer groups; ships below 25 % withdraw) and write a sea battle report.
+  Submarines in a zone raid the trade of enemies whose ports open on it (−0.25 pp growth per
+  sub-month per victim, capped 1.5, unless escorts are present, which instead cost the sub 4
+  strength each). A nation whose ports (≥ 50 % of capacity) all face enemy-controlled zones is
+  blockaded: growth −2 × share, research ×0.85, production cost +10 %. Amphibious hops now carry a
+  preparation timer (`Unit.prep`: 1 month for marines and special forces, 2 for others) instead of
+  the 1.5-point hop cost; the route preview says so.
+- **Strategic strikes.** `NationState.missiles` starts at defence spending ÷ 2 (cap 400) and grows
+  by spending ÷ 50 a month (more with strike tech and mobilisation). A strike fires a salvo of 8 at
+  a region of a nation at war; each missile is intercepted with probability
+  min(0.8, 2.2 × missileDefence + 0.12 per air-defence brigade + 0.1 if any defence) × (1 −
+  strikePower), the same formula the renderer used for its arcs (D-057), which now draw the
+  state's real launched/intercepted counts. Hits: infrastructure +6 % damage each; industry +3 %
+  devastation each and a one-month production stall at ≥ 4 hits; military 3 strength per hit over
+  the units present. Tension +2, relations −6.
+- **Cyber and space.** Cyber operations (3-month cooldown): success 0.4 + cyberAttack −
+  cyberDefence; economy −1.5 pp for 3 months, intel blinds for 2 months, production +1 month on
+  every queued item; attribution 60 % (less with attack tech) costs 12 relations. Satellites
+  (`NationState.satellites`, start = spending ÷ 40 + 2 if nuclear, cap 16; launches $2.5 bn, ×0.6
+  with Reusable Launch Cadence, cap 24) drive the global intel bonus. ASAT needs Counterspace
+  Capabilities and a war, destroys up to 30 % (max 4) of the target's satellites, costs 30
+  relations with the target and 8 with everyone else, and adds 12 debris per satellite to
+  `GameState.debris`, which decays 1/month, degrades every constellation's sensors (−40 % at 60)
+  and destroys a satellite with probability debris ÷ 400 per satellite per month — the shooter's
+  included.
+- **Experience and commanders.** `Unit.experience` 0..100 (10 at start, 35 for armies already at
+  war, +6 per battle survived, +5 per fleet action) gives ×(0.95 + 0.25 × xp/100). 35 % of new land
+  formations get a generated commander (`maybeCommander`, names from region-keyed syllable pools,
+  always `fictional: true`): aggressive +10 % attack / −5 % defence, defensive +10 % defence,
+  logistician +15 supply points, cautious −12 % losses / −5 % attack.
+- **Battle reports.** Every land and sea battle writes a `BattleReport` (sides with unit types and
+  strength before/after, strength-weighted modifier lists, air superiority share, firepower,
+  losses, outcome) kept for the last turn; the battle alert and the monthly summary open the
+  battle modal. The military screen gains Overview (strength by domain vs every major: land, air,
+  sea, strategic = warheads/10 + missiles/20 + 2 × satellites), Air wings (mission per wing),
+  Operations (target, missiles, cyber, spies, ASAT, satellite launches) and Intelligence tabs.
+- **AI.** Wings pick missions by type and whether the enemy is in range; missile strikes at
+  15 % + aggression/400 per month on the enemy region with the most troops (military) or value
+  (infrastructure/industry); cyber operations at 8 % + paranoia/1000 against enemies and hostile
+  majors; satellites are replaced while the treasury allows; ASAT at 6 % + risk/1000 with the
+  tech; spies on the main threat.
+- **Calibration.** The Korean DMZ scenario adds four KPA air-defence brigades (the SAM belt) and
+  pins combined losses (> 500), Gyeonggi falling no earlier than month 3 and at least ten
+  battles instead of the attacker's losses alone: the ROK corps used to hop across the Yellow Sea
+  the month the war began, emptying Gyeonggi for the KPA to walk into and counter-attack; with
+  the two-month preparation timer it leaves later and the bill is shared differently (23 battles,
+  attacker −367, defender −284; Seoul still holds). The other eight scenarios kept their ranges
+  unchanged. The AI also drops orders whose first step became impossible since they were given
+  (liberated regions, peace deals) before planning, which `sim.test.ts` requires.
+- **Saves** from before this entry are migrated in `refreshLeaders` (experience 10, superiority
+  missions, no commanders, satellites and missiles from spending, empty reports).

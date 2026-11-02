@@ -15,6 +15,7 @@ import { SummaryModal } from './ui/modals/SummaryModal';
 import { SettingsModal } from './ui/modals/SettingsModal';
 import { EventModal } from './ui/modals/EventModal';
 import { NuclearModal } from './ui/modals/NuclearModal';
+import { BattleReportModal } from './ui/modals/BattleReportModal';
 import { EndScreen } from './ui/modals/EndScreen';
 import { useGameStore } from './state/gameStore';
 import { useUiStore } from './state/uiStore';
@@ -93,6 +94,7 @@ export function App() {
             {modal === 'summary' && <SummaryModal key="summary" />}
             {modal === 'settings' && <SettingsModal key="settings" onMainMenu={toMenu} />}
             {modal === 'nuclear' && <NuclearModal key="nuclear" />}
+            {modal === 'battle' && <BattleReportModal key="battle" />}
           </AnimatePresence>
           {game.pendingEvents.length > 0 && !modal && <EventModal />}
           {ended && <EndScreen onMainMenu={toMenu} onContinue={() => setModal('end')} />}

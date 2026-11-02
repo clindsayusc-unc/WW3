@@ -187,6 +187,17 @@ export function strikesForTurn(
       seed: s.to,
     });
   }
+  // Conventional missile strikes and bombing raids recorded by the simulation (D-059): the
+  // interception share drawn matches what the state rolled.
+  let k = 0;
+  for (const s of game.strikes.filter((x) => x.turn === lastTurn && x.kind !== 'nuclear')) {
+    if (k++ >= maxPerBattle * 6) break;
+    const launched = s.launched ?? 1;
+    const defence = s.kind === 'missile' ? (s.intercepted ?? 0) / Math.max(1, launched) : 0;
+    const arcs = s.kind === 'missile' ? Math.min(3, launched) : 1;
+    for (let i = 0; i < arcs; i++)
+      out.push({ from: s.from, to: s.to, nuclear: false, defence, seed: s.to * 131 + s.from * 17 + i });
+  }
   return out;
 }
 

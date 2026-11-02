@@ -3,6 +3,8 @@ import { Color } from 'three';
 import type { GameState } from '../sim/types';
 import type { World } from '../sim/world';
 import { getRelation, isAtWar } from '../sim/query';
+import { zoneControl } from '../sim/naval';
+import { isDepot } from '../sim/military';
 import type { MapMode } from '../state/uiStore';
 import type { TerrainClass } from '../sim/world';
 
@@ -182,6 +184,23 @@ export function fillPalette(data: Uint8Array, world: World, state: GameState, mo
         tint.lerp(new Color('#6b6560'), rug * 0.35);
         if (r.cover.urban > 0.1) tint.lerp(new Color('#e8e4f0'), Math.min(0.6, r.cover.urban));
         write(data, r.id, tint, 0.78);
+        break;
+      }
+      case 'supply': {
+        if (r.sea) {
+          // Sea control (D-059): the controlling fleet's colour, amber when contested.
+          const zc = zoneControl(world, state, r.id);
+          if (zc.controller) write(data, r.id, nationColor(zc.controller), 0.5);
+          else if (zc.contested) write(data, r.id, tmp.set('#f59e0b'), 0.55);
+          break;
+        }
+        if (!controller) break;
+        const s = rs.supply;
+        // red (0) → amber (0.5) → green (1); depots brighter and whiter.
+        if (s < 0.5) tmp.setRGB(0.9, 0.2 + s * 1.3, 0.15);
+        else tmp.setRGB(0.9 - (s - 0.5) * 1.5, 0.85, 0.2);
+        if (isDepot(world, controller, r.id)) tmp.lerp(new Color('#ffffff'), 0.35);
+        write(data, r.id, tmp, 0.7);
         break;
       }
       case 'tension': {

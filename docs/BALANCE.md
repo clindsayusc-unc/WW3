@@ -100,7 +100,7 @@ built-in AI. Numbers from the run on 2026-11-02 (seeded, deterministic).
 | Russia vs Estonia with NATO pact               | 30 NATO members enter; Tallinn falls in month 2 but Russia loses 8 home regions to NATO counter-attacks within 4 months.                       | Tallinn holds, or Russia loses home regions, or its army shrinks 30 %           |
 | China vs Taiwan (US fleet in the strait)       | No sea control, no landing possible.                                                                                                         | `hasSeaControl` false; Taipei not a landing target                              |
 | China vs Taiwan (US stays out, PLAN controls strait) | Taipei falls in month 3 after 8 battles; 2,700 strength (≈ 27 formations) lost in 9 months.                                                   | losses > 1,500; Taipei ≥ 3 months                                               |
-| KPA (≈ 44 formations) across the DMZ           | Gyeonggi (urban) in month 5; Seoul still South Korean after 8 months; attacker −574, defender −859.                                            | Seoul ≥ 4 months; attacker losses > 500; defender losses > 300                  |
+| KPA (≈ 48 formations incl. 4 SAM brigades) across the DMZ | Gyeonggi (urban) in month 5 once the ROK corps has embarked for its Yellow Sea counter-landing (two months of preparation under D-059); Seoul still South Korean after 8 months; 23 battles, attacker −367, defender −284. | Seoul ≥ 4 months; Gyeonggi ≥ 3 months; combined losses > 500; defender losses > 200; ≥ 10 battles |
 | Chinese army group two regions deep in Russia  | Winter (Dec–Mar): −2,257 strength in 4 months with one battle. Summer: −1,335 with four battles.                                              | winter losses > 1.5 × summer and > 1,200                                        |
 | India vs China on the LAC / China vs India     | India never finds 0.6:1 odds against Tibet; China takes Ladakh in month 6 for 1,600 strength and nothing more.                                | each side ≤ 2 regions                                                           |
 
@@ -116,3 +116,28 @@ Tuning notes: the attacker in the Iran run never attacks because the driver's 0.
 conservative; a human would probe at worse odds and lose faster. Partisan attrition is deliberately
 mild per month and brutal over a year. If a future force-size pass raises Iran's and North Korea's
 standing armies, remove the unit additions in the tests.
+
+## Military depth (D-059)
+
+- **Supply** now flows from depots (capital, industrial regions, major ports) instead of every
+  owned region; home regions linked to the capital keep a floor of 55 %. Bombed infrastructure
+  (`infraDamage`) adds to the per-hop loss, and enemy interdiction wings multiply the final level by
+  0.85 per wing (floor 0.55). The calibration scenarios were unaffected because every battle region
+  in them is a depot or one hop from one.
+- **Air superiority** multiplies each side's firepower by 0.85 + 0.3 × its share of the air. Shares
+  come from superiority wings (full weight), CAS wings (×0.4), other missions (×0.3), carriers
+  (×0.5 one zone out) and ground anti-air (×0.5), cut by the terrain's `air` factor and the weather.
+  The Korea scenario gained four KPA air-defence brigades so the SAM belt is represented; the KPA
+  still never finds better than 0.2:1 against the ROK corps in urban Gyeonggi, and the fighting
+  there now starts when that corps leaves for its counter-landing (two months of amphibious
+  preparation instead of an instant hop), so the scenario pins combined losses (> 500), the
+  month Gyeonggi falls (≥ 3) and the number of battles (≥ 10) rather than the attacker's losses
+  alone.
+- **Interception** of wings over defended regions: 5 × air-defence weight ÷ (air-power tech ×
+  (1 + 0.6 × escorts)), capped at 25 strength a month; of missiles: 2.2 × missile-defence tech +
+  0.12 per air-defence brigade (+0.1 with any tech), capped at 0.8, × (1 − strike tech).
+- **Naval combat** uses K = 2 (land uses 3): fleets grind rather than annihilate, and withdrawing
+  below 25 % keeps most groups alive to fight again. Commerce raiding is a growth drag, not a
+  treasury hit, so its effect compounds slowly and is visible in the growth tooltip.
+- **Experience** ranges ×0.95..×1.20, deliberately narrower than terrain or supply so veterans
+  matter but never replace numbers; commanders are ±10 % and appear on a third of formations.

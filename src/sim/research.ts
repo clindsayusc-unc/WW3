@@ -13,7 +13,9 @@ export function researchPointsPerMonth(world: World, state: GameState, iso: Iso3
   const sanctions = state.sanctions.some((k) => k.endsWith(`>${iso}`)) ? 0.85 : 1;
   // Closed semiconductor chokepoints (Taiwan Strait, Malacca) starve chip importers (D-052).
   const chips = 1 - semiconductorDisruption(world, state, iso);
-  return base * major * sanctions * chips * (1 + (n.modifiers.researchSpeed ?? 0));
+  // A naval blockade cuts the imports research depends on (D-059).
+  const blockade = n.blockaded ? 0.85 : 1;
+  return base * major * sanctions * chips * blockade * (1 + (n.modifiers.researchSpeed ?? 0));
 }
 
 export function availableTechs(world: World, state: GameState, iso: Iso3): string[] {

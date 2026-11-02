@@ -22,6 +22,22 @@ import { estimateOdds, findPath, isFriendly, stepKind } from './military';
 import { amphibiousTargets, invalidateGeoCache } from './geography';
 import { evaluateProposal, executeProposal, PROPOSAL_LABELS } from './diplomacy';
 import { canLaunchNuclear, nuclearStrike, pickStrikeTarget } from './escalation';
+import { missionsFor, regionsInRange } from './air';
+import {
+  SALVO,
+  applyAsat,
+  applyCyberOp,
+  applyLaunchSatellite,
+  applyMissileStrike,
+  applySpyOp,
+  canAsat,
+  canCyberOp,
+  canLaunchSatellite,
+  canMissileStrike,
+  canSpyOp,
+  satelliteCost,
+} from './strikes';
+import type { AirMission, CyberKind, StrikeKind } from './types';
 
 const BRANCH_WEIGHTS: Record<string, (t: ReturnType<typeof traitsOf>) => number> = {
   ai: (t) => 1 + t.economicPriority / 100,
@@ -216,6 +232,13 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
 
   // 5. Military orders -------------------------------------------------------------------------------------
   const myUnits = Object.values(state.units).filter((u) => u.owner === iso);
+  // Orders from earlier months whose next step is no longer possible (a region changed hands, a
+  // peace was signed, a strait closed) are dropped so the stack is re-planned below.
+  for (const u of myUnits)
+    if (u.path.length > 0 && !stepKind(world, state, u, u.region, u.path[0]!)) {
+      u.path = [];
+      u.prep = 0;
+    }
   const stacks = new Map<RegionId, Unit[]>();
   for (const u of myUnits) {
     if (u.path.length > 0) continue;
@@ -345,7 +368,11 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
         const path = findPath(world, state, air[0]!, target, 10);
         if (path) for (const u of air) u.path = [...path];
       }
-    } else if (mainThreat && land.length > 2 && roll(state) < 0.15) {
+      for (const u of air) u.mission = pickMission(world, state, u, true);
+    } else if (air.length > 0) {
+      for (const u of air) u.mission = pickMission(world, state, u, false);
+    }
+    if (!atWarNow && mainThreat && land.length > 2 && roll(state) < 0.15) {
       // Peacetime: garrison the border with the main threat.
       const border = Object.values(state.regions).filter(
         (r) =>
@@ -365,6 +392,9 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
       }
     }
   }
+
+  // 5b. Strategic operations (D-059) -------------------------------------------------------------------------
+  strategicOperations(world, state, ctx, iso, enemies, mainThreat);
 
   // 6. Diplomacy -------------------------------------------------------------------------------------------
   const candidates = new Set<Iso3>([
@@ -500,6 +530,92 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
         ? `Watching ${nationName(world, mainThreat)} (threat ${threat.toFixed(1)}×); military budget ${n.budget.military}%.`
         : `Focused on the economy (growth ${n.growth.toFixed(1)}%); military budget ${n.budget.military}%.`;
   }
+}
+
+/** Mission for an air wing: fighters sweep or support, bombers bomb, drones watch (D-059). */
+function pickMission(world: World, state: GameState, u: Unit, atWarNow: boolean): AirMission {
+  const allowed = missionsFor(u.type);
+  if (allowed.length === 0) return 'superiority';
+  const t = world.unitTypes.get(u.type)!;
+  const enemyInRange = atWarNow
+    ? regionsInRange(world, u.region, Math.max(1, t.range)).some((r) => {
+        const c = state.regions[r]?.controller;
+        return !!c && atWar(state, u.owner, c);
+      })
+    : false;
+  const r = roll(state);
+  let m: AirMission;
+  if (!atWarNow || !enemyInRange) m = u.type === 'drone' && r < 0.5 ? 'recon' : u.type === 'bomber' ? 'bombing' : 'superiority';
+  else if (u.type === 'fighter') m = r < 0.55 ? 'superiority' : r < 0.85 ? 'cas' : 'interdiction';
+  else if (u.type === 'bomber') m = r < 0.6 ? 'bombing' : r < 0.85 ? 'interdiction' : 'cas';
+  else m = r < 0.35 ? 'recon' : r < 0.75 ? 'cas' : 'interdiction';
+  return allowed.includes(m) ? m : allowed[0]!;
+}
+
+/** Missile strikes, cyber operations, satellites, ASAT and spies, weighted by traits. */
+function strategicOperations(
+  world: World,
+  state: GameState,
+  ctx: Ctx,
+  iso: Iso3,
+  enemies: Iso3[],
+  mainThreat: Iso3 | null,
+): void {
+  const n = state.nations[iso]!;
+  const t = traitsOf(world, iso);
+  const meta = world.nations.get(iso)!;
+  // Missile strikes on the enemy region with the most troops next to our lines, or its industry.
+  if (enemies.length > 0 && n.missiles >= SALVO && roll(state) < 0.15 + t.aggression / 400) {
+    let best: RegionId | null = null;
+    let bestScore = 0;
+    for (const r of Object.values(state.regions)) {
+      if (!r.controller || !enemies.includes(r.controller) || !isLand(world, r.id)) continue;
+      const troops = (ctx.byRegion.get(r.id) ?? []).filter((u) => u.owner === r.controller).length;
+      const share = world.regions.get(r.id)!.populationShare;
+      const score = troops * 2 + share * 40 - r.devastation * 10;
+      if (score > bestScore) {
+        bestScore = score;
+        best = r.id;
+      }
+    }
+    if (best !== null && canMissileStrike(world, state, iso, best) === null) {
+      const troops = (ctx.byRegion.get(best) ?? []).length;
+      const kind: StrikeKind = troops >= 3 ? 'military' : roll(state) < 0.5 ? 'infrastructure' : 'industry';
+      applyMissileStrike(world, state, iso, best, kind);
+      n.aiNote = `Striking ${world.regions.get(best)!.name} with cruise missiles (${kind}).`;
+    }
+  }
+  // Cyber operations against enemies and hostile majors.
+  if (n.cyberCooldown === 0 && (meta.major || (n.modifiers.cyberAttack ?? 0) > 0)) {
+    const targets = [...enemies, ...(mainThreat ? [mainThreat] : [])].filter(
+      (x) => state.nations[x]?.alive && (atWar(state, iso, x) || getRelation(world, state, iso, x) <= -60),
+    );
+    const target = targets[Math.floor(roll(state) * Math.max(1, targets.length))];
+    if (target && roll(state) < 0.08 + t.paranoia / 1000 && canCyberOp(world, state, iso, target) === null) {
+      const r = roll(state);
+      const kind: CyberKind = r < 0.4 ? 'economy' : r < 0.7 ? 'intel' : 'production';
+      applyCyberOp(world, state, iso, target, kind);
+    }
+  }
+  // Satellites: great powers keep a constellation; everyone replaces losses when rich.
+  if (
+    n.satellites < (meta.major ? 10 : 3) &&
+    n.treasury > satelliteCost(state, iso) * 6 &&
+    roll(state) < (meta.major ? 0.08 : 0.02) &&
+    canLaunchSatellite(state, iso) === null
+  )
+    applyLaunchSatellite(world, state, iso);
+  // ASAT: only with the tech, only at war, only against a real constellation.
+  if (enemies.length > 0 && n.techs.includes('space-counterspace') && roll(state) < 0.06 + t.riskTolerance / 1000) {
+    const target = enemies.find((e) => (state.nations[e]?.satellites ?? 0) >= 3 && canAsat(world, state, iso, e) === null);
+    if (target) {
+      applyAsat(world, state, iso, target);
+      n.aiNote = `Blinding ${nationName(world, target)} from orbit.`;
+    }
+  }
+  // Spies on the main threat.
+  if (mainThreat && meta.major && !(n.intelOps[mainThreat] ?? 0) && roll(state) < 0.04 && canSpyOp(world, state, iso, mainThreat) === null)
+    applySpyOp(world, state, iso, mainThreat);
 }
 
 /** Enemy coastal regions the stack could land in under the amphibious rules (D-051). */
