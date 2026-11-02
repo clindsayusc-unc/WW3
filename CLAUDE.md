@@ -1,6 +1,6 @@
 # CLAUDE.md — World War 3
 
-A turn-based grand strategy game set in a near-future global war (Civilization meets
+A turn-based grand strategy game (1 turn = 1 month, starting January 2027) set in a near-future global war (Civilization meets
 Hearts of Iron), rendered on a photoreal 3D globe. Built with Vite + React 18 + TypeScript
 (strict), three / @react-three/fiber / drei / postprocessing, and zustand.
 
@@ -9,7 +9,7 @@ Hearts of Iron), rendered on a photoreal 3D globe. Built with Vite + React 18 + 
 1. **Read `docs/DESIGN.md` and `docs/DECISIONS.md` before starting any task.** Record new
    non-obvious decisions in `docs/DECISIONS.md`.
 2. **Task workflow.** For every task:
-   - Create a branch named `feat/<topic>` or `fix/<topic>`.
+   - Create a branch named `feat/<topic>` or `fix/<topic>` (`docs/<topic>` for documentation-only work).
    - Finish with `npm run check` green.
    - Run `npm run e2e` to save a Playwright screenshot of the game to
      `docs/screenshots/<branch>.png` (slashes become dashes). **Open the screenshot and look at it.**
@@ -46,4 +46,5 @@ Hearts of Iron), rendered on a photoreal 3D globe. Built with Vite + React 18 + 
 - `npm run typecheck` / `lint` / `test`
 - `npm run e2e` — Playwright smoke test + screenshot. If the bundled browser version doesn't
   match, set `PW_CHROMIUM_PATH=/path/to/chrome`.
-- `npm run check` = typecheck + lint + test + build (also runs in CI on every push).
+- `npm run check` = typecheck + lint + test + build (runs in CI on every push; a
+  separate CI job then runs `npm run e2e`).

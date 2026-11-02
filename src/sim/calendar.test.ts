@@ -1,18 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { civilFromDays, daysFromCivil, isoDate } from './calendar';
+import { addMonths, isoYearMonth } from './calendar';
 
 describe('calendar', () => {
-  it('matches the Unix epoch', () => {
-    expect(daysFromCivil(1970, 1, 1)).toBe(0);
-    expect(isoDate(0)).toBe('1970-01-01');
+  it('adds months within a year', () => {
+    expect(addMonths({ year: 2027, month: 1 }, 0)).toEqual({ year: 2027, month: 1 });
+    expect(addMonths({ year: 2027, month: 1 }, 11)).toEqual({ year: 2027, month: 12 });
   });
 
-  it('round-trips across leap years and centuries', () => {
-    for (let z = daysFromCivil(1999, 1, 1); z < daysFromCivil(2101, 1, 1); z += 13) {
-      const { y, m, d } = civilFromDays(z);
-      expect(daysFromCivil(y, m, d)).toBe(z);
-    }
-    expect(isoDate(daysFromCivil(2028, 2, 28) + 1)).toBe('2028-02-29');
-    expect(isoDate(daysFromCivil(2100, 2, 28) + 1)).toBe('2100-03-01');
+  it('rolls over year boundaries in both directions', () => {
+    expect(addMonths({ year: 2027, month: 12 }, 1)).toEqual({ year: 2028, month: 1 });
+    expect(addMonths({ year: 2027, month: 1 }, 156)).toEqual({ year: 2040, month: 1 });
+    expect(addMonths({ year: 2027, month: 1 }, -1)).toEqual({ year: 2026, month: 12 });
+    expect(addMonths({ year: 2027, month: 3 }, -27)).toEqual({ year: 2024, month: 12 });
+  });
+
+  it('formats ISO year-month', () => {
+    expect(isoYearMonth({ year: 2027, month: 1 })).toBe('2027-01');
+    expect(isoYearMonth({ year: 2040, month: 12 })).toBe('2040-12');
   });
 });
