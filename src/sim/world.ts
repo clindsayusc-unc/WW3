@@ -16,7 +16,52 @@ import climateData from '../../data/climate.json';
 import crossingsData from '../../data/crossings.json';
 import infrastructureData from '../../data/infrastructure.json';
 import chokepointsData from '../../data/chokepoints.json';
-import type { Iso3, RegionId, TechId, UnitTypeId } from './types';
+import resourcesData from '../../data/resources.json';
+import tradeData from '../../data/trade.json';
+import politicsData from '../../data/politics.json';
+import economyData from '../../data/economy.json';
+import type { Iso3, RegionId, Regime, ResourceId, TechId, UnitTypeId } from './types';
+
+/** A strategic resource from data/resources.json (D-061). */
+export interface ResourceMeta {
+  readonly id: ResourceId;
+  readonly name: string;
+  readonly unit: string;
+  /** World output in `unit` at start (1.0 share = this much). */
+  readonly worldOutput: number;
+  /** Approximate value of a year's world output, US$ bn. */
+  readonly worldValueUsdBn: number;
+  /** Percentage points of annual growth lost at a 100 % shortage. */
+  readonly gdpWeight: number;
+  /** Share of demand that scales with GDP (the rest with population). */
+  readonly demandGdpWeight: number;
+  /** Extra demand per mobilisation level (fraction). */
+  readonly warDemand: number;
+  /** Share of a capitulated nation's capacity its conqueror can run. */
+  readonly seizedYield: number;
+  readonly description: string;
+  readonly source: string;
+  /** Share of world output by producer. */
+  readonly producers: Readonly<Record<Iso3, number>>;
+  readonly estimatedProducers: readonly Iso3[];
+  /** 1 − Σ producers: diffuse output of many small producers. */
+  readonly diffuse: number;
+}
+
+export type InputWeights = Readonly<Partial<Record<ResourceId, number>>>;
+
+export interface TradePairMeta {
+  readonly a: Iso3;
+  readonly b: Iso3;
+  /** Two-way goods trade, US$ bn/yr. */
+  readonly volume: number;
+  readonly sourced: boolean;
+}
+
+export interface PoliticsMeta {
+  readonly regime: Regime;
+  readonly termYears: number | null;
+}
 
 export type TerrainClass =
   | 'plains'
@@ -316,6 +361,17 @@ export interface World {
   readonly crossings: ReadonlyMap<number, CrossingMeta>;
   readonly chokepoints: readonly ChokepointMeta[];
   readonly chokepointsByZone: ReadonlyMap<RegionId, readonly ChokepointMeta[]>;
+  readonly resources: readonly ResourceMeta[];
+  readonly resourceById: ReadonlyMap<ResourceId, ResourceMeta>;
+  readonly unitInputs: ReadonlyMap<UnitTypeId, InputWeights>;
+  readonly branchInputs: ReadonlyMap<string, InputWeights>;
+  readonly tradePairs: readonly TradePairMeta[];
+  /** Regime and election term for nations with a researched leader (data/politics.json). */
+  readonly politics: ReadonlyMap<Iso3, PoliticsMeta>;
+  /** Inflation at start, % per year (IMF WEO, data/economy.json). */
+  readonly startInflation: ReadonlyMap<Iso3, number>;
+  /** Connected-water component of each sea zone (trade routes need a shared one). */
+  readonly seaComponent: ReadonlyMap<RegionId, number>;
 }
 
 export const crossingKey = (a: RegionId, b: RegionId): number => (a < b ? a * 4096 + b : b * 4096 + a);
@@ -571,6 +627,63 @@ export function loadWorld(): World {
   for (const c of chokepoints)
     for (const z of c.zones) chokepointsByZone.set(z, [...(chokepointsByZone.get(z) ?? []), c]);
 
+  const resources: ResourceMeta[] = resourcesData.resources.map((r) => {
+    const producers = r.producers as unknown as Record<string, number>;
+    const listed = Object.values(producers).reduce((a, b) => a + b, 0);
+    return {
+      id: r.id as ResourceId,
+      name: r.name,
+      unit: r.unit,
+      worldOutput: r.worldOutput,
+      worldValueUsdBn: r.worldValueUsdBn,
+      gdpWeight: r.gdpWeight,
+      demandGdpWeight: r.demandGdpWeight,
+      warDemand: r.warDemand,
+      seizedYield: r.seizedYield,
+      description: r.description,
+      source: r.source,
+      producers,
+      estimatedProducers: r.estimatedProducers,
+      diffuse: Math.max(0, 1 - listed),
+    };
+  });
+  const toWeights = (o: Record<string, Record<string, number>>) =>
+    new Map(Object.entries(o).map(([k, v]) => [k, v as InputWeights]));
+  const tradeSourced = new Set(
+    (tradeData.sourced as string[][]).map(([a, b]) => relationKey(a!, b!)),
+  );
+  const tradePairs: TradePairMeta[] = (tradeData.pairs as (string | number)[][])
+    .map(([a, b, v]) => ({
+      a: String(a),
+      b: String(b),
+      volume: Number(v),
+      sourced: tradeSourced.has(relationKey(String(a), String(b))),
+    }))
+    .filter((p) => nations.has(p.a) && nations.has(p.b));
+  const politics = new Map<Iso3, PoliticsMeta>(
+    politicsData.regimes.map((r) => [r.iso3, { regime: r.regime as Regime, termYears: r.termYears }]),
+  );
+  const startInflation = new Map<Iso3, number>(
+    Object.entries(economyData.inflation as Record<string, number>),
+  );
+  // Connected components of the sea-zone graph (flood fill over sea-to-sea adjacency).
+  const seaComponent = new Map<RegionId, number>();
+  let comp = 0;
+  for (const z of regionList) {
+    if (!z.sea || seaComponent.has(z.id)) continue;
+    const stack = [z.id];
+    seaComponent.set(z.id, comp);
+    while (stack.length > 0) {
+      const cur = stack.pop()!;
+      for (const nb of regions.get(cur)!.neighbours) {
+        if (!regions.get(nb)?.sea || seaComponent.has(nb)) continue;
+        seaComponent.set(nb, comp);
+        stack.push(nb);
+      }
+    }
+    comp++;
+  }
+
   cached = {
     regions,
     regionList,
@@ -593,6 +706,14 @@ export function loadWorld(): World {
     crossings,
     chokepoints,
     chokepointsByZone,
+    resources,
+    resourceById: new Map(resources.map((r) => [r.id, r])),
+    unitInputs: toWeights(resourcesData.unitInputs.units as Record<string, Record<string, number>>),
+    branchInputs: toWeights(resourcesData.unitInputs.branches as Record<string, Record<string, number>>),
+    tradePairs,
+    politics,
+    startInflation,
+    seaComponent,
   };
   return cached;
 }

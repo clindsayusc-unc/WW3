@@ -1828,3 +1828,268 @@ input[type='range'] {
   border-color: var(--line-strong);
   color: var(--text);
 }
+
+/* ---------- economy screen (D-061) ---------- */
+.kpi-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.kpi-row .stat-value {
+  font-size: 16px;
+}
+.econ-charts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.econ-chart {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px 6px;
+  background: rgba(2, 6, 12, 0.35);
+}
+.econ-chart-head,
+.econ-chart-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.econ-chart-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+.econ-chart-foot {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+.econ-chart-foot .stat-label {
+  font-size: 9px;
+}
+.econ-chart-foot .stat-value {
+  font-size: 10px;
+}
+.econ-chart-body {
+  position: relative;
+  height: 90px;
+  margin: 4px 0;
+}
+.econ-chart-body svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.econ-zero {
+  stroke: rgba(148, 163, 184, 0.35);
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
+}
+.econ-chart-cols {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.econ-chart-cols > span {
+  flex: 1;
+  height: 100%;
+}
+.econ-chart-cols > span:hover {
+  background: rgba(148, 163, 184, 0.12);
+}
+.contrib {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.contrib-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 70px;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+.contrib-label {
+  color: var(--text-dim);
+}
+.contrib-track {
+  position: relative;
+  height: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  border-radius: 4px;
+}
+.contrib-track::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--line-strong);
+}
+.contrib-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+}
+.contrib-bar.pos {
+  background: var(--good);
+}
+.contrib-bar.neg {
+  background: var(--bad);
+}
+.econ-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 22px;
+}
+.trade-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.trade-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 80px 90px;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+.trade-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trade-track {
+  position: relative;
+  height: 10px;
+  background: rgba(148, 163, 184, 0.06);
+  border-radius: 5px;
+}
+.trade-ref,
+.trade-vol {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 5px;
+}
+.trade-ref {
+  border: 1px dashed var(--line-strong);
+}
+.trade-vol {
+  opacity: 0.85;
+}
+.res-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.res-card {
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(2, 6, 12, 0.35);
+}
+.res-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 600;
+}
+.res-rows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  font-size: 12px;
+}
+.res-rows .stat-label {
+  font-size: 9px;
+}
+.res-suppliers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 20px;
+}
+.throttle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 18px;
+  font-size: 12px;
+}
+.throttle {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-dim);
+}
+.coalitions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 440px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.coalition {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.coalition-head {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+.coalition-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.election {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-bottom: 10px;
+}
+.election .reply {
+  flex-basis: 100%;
+}
+@media (max-width: 900px) {
+  .econ-charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .res-grid,
+  .econ-two {
+    grid-template-columns: 1fr;
+  }
+}
+.mapmode-sub {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+  white-space: nowrap;
+}

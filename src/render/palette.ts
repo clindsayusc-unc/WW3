@@ -1,6 +1,6 @@
 /** Map-mode colouring: fills the palette DataTexture, one texel per region id (D-034). */
 import { Color } from 'three';
-import type { GameState } from '../sim/types';
+import type { GameState, ResourceId } from '../sim/types';
 import type { World } from '../sim/world';
 import { getRelation, isAtWar } from '../sim/query';
 import { zoneControl } from '../sim/naval';
@@ -93,7 +93,13 @@ function heat(t: number): Color {
   return tmp.setRGB(1, 0.85 - (x - 0.66) * 2.4, 0.1);
 }
 
-export function fillPalette(data: Uint8Array, world: World, state: GameState, mode: MapMode): void {
+export function fillPalette(
+  data: Uint8Array,
+  world: World,
+  state: GameState,
+  mode: MapMode,
+  resource: ResourceId = 'oil',
+): void {
   data.fill(0);
   const player = state.player;
   const unitCount = new Map<number, number>();
@@ -170,6 +176,22 @@ export function fillPalette(data: Uint8Array, world: World, state: GameState, mo
         }
         const t = Math.log(n + 1) / Math.log(maxUnits + 1);
         write(data, r.id, heat(0.3 + t * 0.7), r.sea ? 0.55 : 0.7);
+        break;
+      }
+      case 'resources': {
+        // Strategic resource position (D-061): exporters green by surplus, importers amber by
+        // dependence, red where demand goes unmet; the player's territory outlined in white.
+        if (r.sea || !controller) break;
+        const b = state.nations[controller]?.resources?.[resource];
+        if (!b || b.demand <= 0) break;
+        if (b.satisfaction < 0.9) write(data, r.id, tmp.setRGB(0.95, 0.15, 0.12), 0.55 + 0.3 * (1 - b.satisfaction));
+        else if (b.production >= b.demand) {
+          const t = Math.min(1, (b.production / b.demand - 1) / 4);
+          write(data, r.id, tmp.setRGB(0.2, 0.55 + 0.4 * t, 0.3), 0.35 + 0.4 * t);
+        } else {
+          const dep = Math.min(1, b.imports / b.demand);
+          write(data, r.id, tmp.setRGB(0.95, 0.75 - 0.35 * dep, 0.2), 0.25 + 0.4 * dep);
+        }
         break;
       }
       case 'terrain': {

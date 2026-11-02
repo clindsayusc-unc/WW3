@@ -14,7 +14,21 @@ import type {
   RegionId,
   TurnSummary,
 } from './types';
-import { runEconomy, runProduction, unitCost, buildMonths } from './economy';
+import {
+  DEFAULT_TAX_RATE,
+  TAX_MAX,
+  TAX_MIN,
+  buildMonths,
+  issueWarBonds,
+  recordHistory,
+  runEconomy,
+  runProduction,
+  unitCost,
+} from './economy';
+import { econZero, emptyBalances, runTrade } from './trade';
+import { runDomestic, scheduleElections } from './domestic';
+import { startingInterest } from './setup';
+import { RESOURCE_IDS } from './types';
 import { runResearch } from './research';
 import {
   checkCapitulations,
@@ -73,9 +87,15 @@ export function applyCommand(world: World, input: GameState, command: Command): 
       return state;
     }
     case 'setMobilization':
-      me.mobilization = command.level;
-      if (command.level > 0)
+      if (command.level > me.mobilization)
         state.globalTension = clamp(state.globalTension + (command.level === 2 ? 4 : 2), 0, 100);
+      me.mobilization = command.level;
+      return state;
+    case 'setTaxRate':
+      me.taxRate = clamp(Math.round(Number.isFinite(command.rate) ? command.rate : DEFAULT_TAX_RATE), TAX_MIN, TAX_MAX);
+      return state;
+    case 'issueWarBonds':
+      issueWarBonds(world, state, player);
       return state;
     case 'queueProduction': {
       const cost = unitCost(world, state, player, command.unitType);
@@ -289,8 +309,10 @@ export function endTurn(world: World, state: GameState): GameState {
 
   // 1. AI decides (budgets, production, orders, diplomacy).
   runAi(world, state);
-  // 2. Economy and production.
+  // 2. Trade network and resource market, then the economy, domestic politics and production.
+  runTrade(world, state);
   runEconomy(world, state);
+  runDomestic(world, state);
   runProduction(world, state);
   const techs = runResearch(world, state);
   runSpaceTick(world, state);
@@ -318,6 +340,7 @@ export function endTurn(world: World, state: GameState): GameState {
   state.turn += 1;
   state.date = dateForTurn(state.turn);
   state.isoDate = isoYearMonth(state.date);
+  recordHistory(world, state);
   checkVictory(world, state);
 
   const after = state.nations[player]!;
@@ -390,6 +413,7 @@ export function refreshLeaders(world: World, input: GameState): GameState {
     if (!state.chokepoints[c.id])
       state.chokepoints[c.id] = { status: 'open', by: null, mined: false, minedBy: null, since: 0 };
   if (typeof state.oilPrice !== 'number') state.oilPrice = 1;
+  migrateEconomy(world, state);
   for (const n of Object.values(state.nations)) {
     if (n.leaderFictional) continue;
     const l = world.leaders.get(n.iso3);
@@ -398,6 +422,44 @@ export function refreshLeaders(world: World, input: GameState): GameState {
     n.leaderTitle = l.title;
   }
   return state;
+}
+
+/** Saves from before D-061 lack the trade network, inflation, support and elections. */
+function migrateEconomy(world: World, state: GameState): void {
+  if (state.economy && state.history) return;
+  if (!Array.isArray(state.embargoes)) state.embargoes = [];
+  if (!Array.isArray(state.secondarySanctions)) state.secondarySanctions = [];
+  state.economy = {
+    prices: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 1])) as GameState['economy']['prices'],
+    shortage: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as GameState['economy']['shortage'],
+    shortageRef: Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as GameState['economy']['shortageRef'],
+    routes: [],
+    routeRef: {},
+  };
+  state.history = {};
+  for (const n of Object.values(state.nations)) {
+    const p0 = world.startInflation.get(n.iso3) ?? 3;
+    n.potentialGdp = n.gdp;
+    n.inflation = p0;
+    n.interestRate = startingInterest(p0);
+    n.taxRate = DEFAULT_TAX_RATE;
+    n.support = 50;
+    n.negativeMonths = 0;
+    n.recession = false;
+    n.resources = emptyBalances();
+    n.resourceRef = Object.fromEntries(RESOURCE_IDS.map((r) => [r, 1])) as typeof n.resourceRef;
+    n.econ = econZero();
+    n.warBonds = 0;
+    n.warBondCooldown = 0;
+    n.coupRisk = 0;
+    n.protestMonths = 0;
+    n.monthsSinceDefault = 999;
+  }
+  // The loaded world becomes the baseline; elections are counted from the current turn.
+  runTrade(world, state, true);
+  scheduleElections(world, state);
+  for (const n of Object.values(state.nations)) if (n.nextElection !== null && n.nextElection < state.turn + 6) n.nextElection = state.turn + 6;
+  recordHistory(world, state);
 }
 
 /** Convenience for tests and tooling: applies orders then ends the turn. */

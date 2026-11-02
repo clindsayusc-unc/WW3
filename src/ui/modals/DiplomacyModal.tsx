@@ -39,10 +39,27 @@ const ACTIONS: { type: ProposalType; tip: string; danger?: boolean }[] = [
   },
   {
     type: 'sanction',
-    tip: 'Cuts their growth in proportion to your share of world GDP; relations −20.',
+    tip: 'Bans strategic exports (oil, gas, chips, rare earths, steel) both ways and cuts your bilateral trade to 30 %. Both economies lose the trade; relations −20.',
     danger: true,
   },
-  { type: 'liftSanction', tip: 'Ends your sanctions; relations +10.' },
+  {
+    type: 'rallySanctions',
+    tip: 'Sanction them and call on your friends to join; nations close to you and cool toward them follow unless their trade with them is too valuable.',
+    danger: true,
+  },
+  {
+    type: 'embargo',
+    tip: 'Total embargo: every flow stops, food included. Relations −30.',
+    danger: true,
+  },
+  {
+    type: 'secondarySanctions',
+    tip: 'Third countries must choose between trading with them and with you: your partners comply, their friends defy and lose part of their trade with you.',
+    danger: true,
+  },
+  { type: 'liftEmbargo', tip: 'Ends the embargo (sanctions stay); relations +10.' },
+  { type: 'liftSecondary', tip: 'Drops your secondary sanctions on them.' },
+  { type: 'liftSanction', tip: 'Ends your sanctions, embargo and secondary sanctions; relations +10.' },
   {
     type: 'demand',
     tip: 'Demand 1% of their GDP. Only the badly outgunned comply; refusal costs relations.',
@@ -182,22 +199,32 @@ export function DiplomacyModal() {
               {hasTreaty(game, me, iso, 'alliance') && <span className="chip ally">alliance</span>}
               {isSanctioned(game, me, iso) && <span className="chip enemy">you sanction them</span>}
               {isSanctioned(game, iso, me) && <span className="chip enemy">they sanction you</span>}
+              {game.embargoes.includes(`${me}>${iso}`) && <span className="chip enemy">your embargo</span>}
+              {game.embargoes.includes(`${iso}>${me}`) && <span className="chip enemy">their embargo</span>}
+              {game.secondarySanctions.includes(`${me}>${iso}`) && <span className="chip enemy">your secondary sanctions</span>}
             </div>
             <p className="ai-note">“{n.aiNote || 'No statement.'}”</p>
             <div className="section-title">Actions</div>
             <div className="action-grid">
               {ACTIONS.filter((a) =>
                 warNow
-                  ? ['peaceWhite', 'peaceStatusQuo', 'sanction', 'liftSanction', 'demand'].includes(
+                  ? ['peaceWhite', 'peaceStatusQuo', 'sanction', 'liftSanction', 'demand', 'secondarySanctions', 'liftSecondary', 'rallySanctions'].includes(
                       a.type,
                     )
                   : !['peaceWhite', 'peaceStatusQuo'].includes(a.type),
               )
-                .filter(
-                  (a) =>
-                    !(a.type === 'liftSanction' && !isSanctioned(game, me, iso)) &&
-                    !(a.type === 'sanction' && isSanctioned(game, me, iso)),
-                )
+                .filter((a) => {
+                  const sanctioned = isSanctioned(game, me, iso);
+                  const embargoed = game.embargoes.includes(`${me}>${iso}`);
+                  const secondary = game.secondarySanctions.includes(`${me}>${iso}`);
+                  if (a.type === 'liftSanction') return sanctioned;
+                  if (a.type === 'sanction' || a.type === 'rallySanctions') return !sanctioned;
+                  if (a.type === 'embargo') return sanctioned && !embargoed;
+                  if (a.type === 'liftEmbargo') return embargoed;
+                  if (a.type === 'secondarySanctions') return sanctioned && !secondary;
+                  if (a.type === 'liftSecondary') return secondary;
+                  return true;
+                })
                 .map((a) => {
                   const v = evaluateProposal(world, game, me, iso, a.type);
                   return (

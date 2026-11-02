@@ -4,7 +4,7 @@ import { useGameStore } from '../state/gameStore';
 import { dispatch } from '../state/simBridge';
 import { playSound } from './audio';
 
-/** Global shortcuts: Enter = end turn, 1–7 map modes, B/P/R/D/M screens, Esc closes, L labels, C chokepoints. */
+/** Global shortcuts: Enter = end turn, 1–7 map modes, B/P/R/D/M/E screens, Esc closes, L labels, C chokepoints. */
 export function useKeyboard(): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -46,6 +46,7 @@ export function useKeyboard(): void {
         r: 'research',
         d: 'diplomacy',
         m: 'military',
+        e: 'economy',
         s: 'summary',
       };
       const k = e.key.toLowerCase();

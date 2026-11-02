@@ -111,3 +111,17 @@ Chrome or Safari and paste the numbers into the log below.
   no wars.
 - Rule kept: the baseline fps on the M3 (59.4 avg, DPR 1.3) must not fall. Nothing in this pass
   touches the globe shader or adds per-frame work on the main thread beyond the DOM panels.
+
+## Economy depth pass (D-061)
+
+- Simulation (worker): `runTrade` adds ≈ 35 ms per turn in Node (turn 353 → ≈ 370 ms on the
+  seed-1 USA probe). First version cost 260 ms: string-keyed per-resource access checks and a full
+  BFS per exporter–importer pair. Now pair access (policy × route) is computed once per turn into
+  a `Float64Array`, routing is skipped when neither side has hostile or contested waters, BFS runs
+  once per origin and blocked-zone signature over a prebuilt sea-only adjacency with typed arrays,
+  and the six-pass allocation works on typed arrays. `GameState.history` adds ≤ 240 × 15 small
+  samples (≈ 100 kB in a late save).
+- Renderer: the trade layer is one additive ribbon mesh (≈ 175 routes, ≈ 20–40 k vertices) built
+  only when the state or map mode changes and hidden outside map mode 4; per frame it updates one
+  uniform. The resources map mode writes the palette texture like the others.
+- The 240-turn soak in `src/sim/economy.test.ts` takes ≈ 150 s in vitest.

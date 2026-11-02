@@ -22,6 +22,7 @@ import {
   warBetween,
 } from './query';
 import { relationKey, sanctionKey } from './world';
+import { imposeEmbargo, imposeSecondary, liftEmbargo as liftEmbargoOn, liftSecondary, rallyCoalition } from './trade';
 
 export const PROPOSAL_LABELS: Record<ProposalType, string> = {
   trade: 'Trade agreement',
@@ -35,6 +36,11 @@ export const PROPOSAL_LABELS: Record<ProposalType, string> = {
   peaceWhite: 'Offer white peace',
   peaceStatusQuo: 'Offer peace (status quo)',
   resolution: 'World Order Resolution',
+  embargo: 'Impose total embargo',
+  liftEmbargo: 'Lift embargo',
+  secondarySanctions: 'Secondary sanctions',
+  liftSecondary: 'Drop secondary sanctions',
+  rallySanctions: 'Rally sanctions coalition',
 };
 
 /** Relations drift one point per month toward their structural baseline. */
@@ -367,6 +373,11 @@ export function evaluateProposal(
     case 'sanction':
     case 'liftSanction':
     case 'declareWar':
+    case 'embargo':
+    case 'liftEmbargo':
+    case 'secondarySanctions':
+    case 'liftSecondary':
+    case 'rallySanctions':
       return { accept: true, reason: 'Unilateral action.' };
     case 'resolution': {
       if (atWar(state, from, to))
@@ -414,6 +425,29 @@ export function executeProposal(
   }
   if (type === 'liftSanction') {
     liftSanction(world, state, from, to);
+    // Lifting sanctions also ends any embargo and secondary sanctions on the same target.
+    liftEmbargoOn(world, state, from, to);
+    liftSecondary(world, state, from, to);
+    return verdict;
+  }
+  if (type === 'embargo') {
+    imposeEmbargo(world, state, from, to);
+    return verdict;
+  }
+  if (type === 'liftEmbargo') {
+    liftEmbargoOn(world, state, from, to);
+    return verdict;
+  }
+  if (type === 'secondarySanctions') {
+    imposeSecondary(world, state, from, to);
+    return verdict;
+  }
+  if (type === 'liftSecondary') {
+    liftSecondary(world, state, from, to);
+    return verdict;
+  }
+  if (type === 'rallySanctions') {
+    rallyCoalition(world, state, from, to);
     return verdict;
   }
   if (type === 'resolution') return verdict;

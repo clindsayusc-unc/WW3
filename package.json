@@ -19,6 +19,7 @@
     "build:map": "node --max-old-space-size=6000 scripts/build-map.ts",
     "build:textures": "node --max-old-space-size=6000 scripts/build-textures.ts",
     "build:nations": "node scripts/build-nations.ts",
+    "build:economy": "node --import tsx scripts/build-economy.ts",
     "build:geography": "node --max-old-space-size=6000 --import tsx scripts/build-geography.ts",
     "soak": "node --import tsx scripts/soak.ts 60",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build"

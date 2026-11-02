@@ -1,0 +1,152 @@
+{
+  "source": "Producer shares per resource, each with its own source below: oil — US EIA International Energy Statistics 2025 crude + condensate (as reported by Enerdata, Shafaq/EIA and Rigzone/Energy Institute, 2026); gas — Energy Institute Statistical Review of World Energy 2025 (2024 data, world 4,124.5 bcm); rare earths — IEA Global Critical Minerals Outlook 2024 refining shares (China ≈ 90 % of separation) with USGS Mineral Commodity Summaries 2026 mine output for context; advanced semiconductors — TrendForce (May 2024) foundry capacity at 16/14 nm and below, 2024; food — FAOSTAT cereal production 2023 (rounded) ; steel — worldsteel crude steel production 2025 (world 1,848.9 Mt; China 960.8, India 164.9, Japan 80.7) via Expometals. World trade values are order-of-magnitude game estimates (volume × typical 2024–25 price). Demand weights are a game model, not data.",
+  "asOf": "2026-11-02",
+  "estimate": true,
+  "notes": "Shares are fractions of world production (1.0 = world). Entries with \"estimate\": true in a resource's estimatedProducers list are rounded approximations from the named source family or public reporting, not exact figures. The remainder (1 − Σ listed) is diffuse production by many small producers, available to every importer whose shipping is not blockaded. demandGdpWeight: share of each nation's demand that scales with its GDP (the rest scales with population). gdpWeight: percentage points of annual growth lost at a 100 % shortage. seizedYield: share of a capitulated nation's capacity its conqueror can run (fabs need foreign tools and staff, so chips are nearly worthless when seized).",
+  "resources": [
+    {
+      "id": "oil",
+      "name": "Crude oil",
+      "unit": "mb/d",
+      "worldOutput": 82,
+      "worldValueUsdBn": 2100,
+      "gdpWeight": 5,
+      "demandGdpWeight": 0.8,
+      "warDemand": 0.12,
+      "seizedYield": 0.6,
+      "description": "Fuel for economies and armies. Tanks, ships and aircraft burn it; importers pay the bill when supply tightens.",
+      "source": "US EIA 2025: United States 13.6 mb/d (16 % of world), Russia 9.9, Saudi Arabia 9.5, Canada 5.0, Iraq 4.4, China 4.3, Brazil 3.8, Iran 3.1, UAE 3.1, Kuwait 2.6; world crude + condensate ≈ 82 mb/d. Smaller producers rounded from EIA country briefs.",
+      "producers": {
+        "USA": 0.166, "RUS": 0.121, "SAU": 0.116, "CAN": 0.061, "IRQ": 0.054, "CHN": 0.052,
+        "BRA": 0.046, "IRN": 0.038, "ARE": 0.038, "KWT": 0.032, "KAZ": 0.022, "NOR": 0.022,
+        "MEX": 0.019, "NGA": 0.017, "QAT": 0.015, "LBY": 0.015, "AGO": 0.013, "DZA": 0.012,
+        "OMN": 0.012, "VEN": 0.011, "COL": 0.009, "GUY": 0.008, "AZE": 0.007, "GBR": 0.007
+      },
+      "estimatedProducers": ["KAZ", "NOR", "MEX", "NGA", "QAT", "LBY", "AGO", "DZA", "OMN", "VEN", "COL", "GUY", "AZE", "GBR"]
+    },
+    {
+      "id": "gas",
+      "name": "Natural gas",
+      "unit": "bcm/yr",
+      "worldOutput": 4124,
+      "worldValueUsdBn": 1000,
+      "gdpWeight": 3,
+      "demandGdpWeight": 0.85,
+      "warDemand": 0.05,
+      "seizedYield": 0.6,
+      "description": "Heats homes, powers grids and feeds fertiliser and chemical plants. Pipeline and LNG flows are hard to replace quickly.",
+      "source": "Energy Institute Statistical Review 2025 (2024 data): world 4,124.5 bcm; United States 1,033 bcm, Russia 629.9, Iran 262.9; Qatar ≈ 179.5; others rounded from the same review.",
+      "producers": {
+        "USA": 0.25, "RUS": 0.153, "IRN": 0.064, "CHN": 0.06, "CAN": 0.046, "QAT": 0.044,
+        "AUS": 0.036, "NOR": 0.03, "SAU": 0.029, "DZA": 0.023, "TKM": 0.019, "MYS": 0.018,
+        "ARE": 0.015, "IDN": 0.014, "ARG": 0.012, "EGY": 0.011, "UZB": 0.011, "NGA": 0.01,
+        "OMN": 0.01, "AZE": 0.009, "GBR": 0.008, "NLD": 0.004
+      },
+      "estimatedProducers": ["CHN", "CAN", "QAT", "AUS", "NOR", "SAU", "DZA", "TKM", "MYS", "ARE", "IDN", "ARG", "EGY", "UZB", "NGA", "OMN", "AZE", "GBR", "NLD"]
+    },
+    {
+      "id": "rareEarths",
+      "name": "Rare earths",
+      "unit": "kt REO/yr (refined)",
+      "worldOutput": 390,
+      "worldValueUsdBn": 15,
+      "gdpWeight": 1,
+      "demandGdpWeight": 1,
+      "warDemand": 0.25,
+      "seizedYield": 0.6,
+      "description": "Separated rare-earth oxides for permanent magnets in motors, missiles, radars and drones. Mining is spread out; refining is concentrated in China.",
+      "source": "IEA Global Critical Minerals Outlook 2024: China ≈ 90 % of rare-earth refining. USGS Mineral Commodity Summaries 2026 (mine output 2025e, world 390 kt): China 270 kt, United States 51 kt, Australia 29 kt, Burma 22 kt, Thailand 4.8 kt. Non-Chinese refining shares (Lynas in Malaysia, US, Vietnam, Estonia) are rounded estimates.",
+      "producers": {
+        "CHN": 0.9, "MYS": 0.04, "USA": 0.02, "AUS": 0.01, "VNM": 0.01, "EST": 0.01, "JPN": 0.005
+      },
+      "estimatedProducers": ["MYS", "USA", "AUS", "VNM", "EST", "JPN"]
+    },
+    {
+      "id": "chips",
+      "name": "Advanced semiconductors",
+      "unit": "share of ≤ 16 nm capacity",
+      "worldOutput": 100,
+      "worldValueUsdBn": 300,
+      "gdpWeight": 3,
+      "demandGdpWeight": 1,
+      "warDemand": 0.2,
+      "seizedYield": 0.1,
+      "description": "Leading-edge logic (16/14 nm and below) for AI, aircraft, guided weapons and data centres. Most of it is made in Taiwan.",
+      "source": "TrendForce, May 2024: share of foundry capacity at 16/14 nm and below in 2024 — Taiwan 66 %, South Korea 11 %, United States 10 %, China 9 %. The remaining ~4 % (Japan, Israel, Ireland, Singapore) is split as an estimate.",
+      "producers": {
+        "TWN": 0.66, "KOR": 0.11, "USA": 0.1, "CHN": 0.09, "JPN": 0.01, "ISR": 0.01, "IRL": 0.01, "SGP": 0.01
+      },
+      "estimatedProducers": ["JPN", "ISR", "IRL", "SGP"]
+    },
+    {
+      "id": "food",
+      "name": "Food (cereals)",
+      "unit": "Mt cereals/yr",
+      "worldOutput": 2850,
+      "worldValueUsdBn": 700,
+      "gdpWeight": 4,
+      "demandGdpWeight": 0.2,
+      "warDemand": 0.03,
+      "seizedYield": 0.6,
+      "description": "Staple grains. A shortage raises prices, cuts stability and brings people into the streets.",
+      "source": "FAOSTAT cereal production 2023 (world ≈ 2.85 Gt), rounded shares; Russia, Ukraine, the EU, Canada and Australia lead wheat exports (USDA 2024/25: Russia ≈ 44 Mt, EU ≈ 27 Mt, Canada ≈ 26 Mt, Australia ≈ 25 Mt).",
+      "producers": {
+        "CHN": 0.19, "USA": 0.16, "IND": 0.12, "BRA": 0.05, "RUS": 0.045, "IDN": 0.03,
+        "ARG": 0.03, "UKR": 0.02, "CAN": 0.022, "FRA": 0.022, "BGD": 0.02, "PAK": 0.016,
+        "VNM": 0.016, "AUS": 0.015, "DEU": 0.015, "TUR": 0.012, "MEX": 0.012, "POL": 0.012,
+        "THA": 0.012, "NGA": 0.011, "KAZ": 0.008, "EGY": 0.008, "IRN": 0.005
+      },
+      "estimatedProducers": ["CHN", "USA", "IND", "BRA", "RUS", "IDN", "ARG", "UKR", "CAN", "FRA", "BGD", "PAK", "VNM", "AUS", "DEU", "TUR", "MEX", "POL", "THA", "NGA", "KAZ", "EGY", "IRN"]
+    },
+    {
+      "id": "steel",
+      "name": "Steel",
+      "unit": "Mt crude steel/yr",
+      "worldOutput": 1849,
+      "worldValueUsdBn": 1100,
+      "gdpWeight": 2,
+      "demandGdpWeight": 0.7,
+      "warDemand": 0.15,
+      "seizedYield": 0.5,
+      "description": "Hulls, armour, shells and factories. War economies devour it.",
+      "source": "worldsteel 2025 crude steel production via Expometals: world 1,848.9 Mt; China 960.8, India 164.9, Japan 80.7. Others rounded from worldsteel's 2025 monthly releases.",
+      "producers": {
+        "CHN": 0.52, "IND": 0.089, "JPN": 0.044, "USA": 0.044, "RUS": 0.037, "KOR": 0.034,
+        "TUR": 0.02, "DEU": 0.018, "BRA": 0.018, "IRN": 0.016, "VNM": 0.012, "ITA": 0.011,
+        "TWN": 0.011, "MEX": 0.0075, "CAN": 0.006, "FRA": 0.006, "ESP": 0.006, "EGY": 0.006,
+        "SAU": 0.005, "UKR": 0.004, "POL": 0.004
+      },
+      "estimatedProducers": ["USA", "RUS", "KOR", "TUR", "DEU", "BRA", "IRN", "VNM", "ITA", "TWN", "MEX", "CAN", "FRA", "ESP", "EGY", "SAU", "UKR", "POL"]
+    }
+  ],
+  "unitInputs": {
+    "source": "Game design: which strategic inputs each unit type and research branch consumes (weights sum to 1).",
+    "units": {
+      "infantry": { "food": 0.5, "steel": 0.3, "oil": 0.2 },
+      "mechanized": { "steel": 0.5, "oil": 0.35, "chips": 0.15 },
+      "armored": { "steel": 0.55, "oil": 0.3, "chips": 0.15 },
+      "artillery": { "steel": 0.6, "oil": 0.2, "chips": 0.1, "rareEarths": 0.1 },
+      "airDefense": { "chips": 0.4, "rareEarths": 0.3, "steel": 0.3 },
+      "specialForces": { "chips": 0.3, "oil": 0.3, "food": 0.4 },
+      "marines": { "steel": 0.4, "oil": 0.3, "food": 0.3 },
+      "fighter": { "chips": 0.45, "rareEarths": 0.25, "oil": 0.2, "steel": 0.1 },
+      "bomber": { "chips": 0.35, "rareEarths": 0.2, "oil": 0.3, "steel": 0.15 },
+      "drone": { "chips": 0.6, "rareEarths": 0.3, "oil": 0.1 },
+      "carrierGroup": { "steel": 0.5, "chips": 0.25, "oil": 0.15, "rareEarths": 0.1 },
+      "destroyerGroup": { "steel": 0.45, "chips": 0.3, "rareEarths": 0.15, "oil": 0.1 },
+      "attackSub": { "steel": 0.45, "chips": 0.3, "rareEarths": 0.15, "oil": 0.1 },
+      "missileSub": { "steel": 0.4, "chips": 0.35, "rareEarths": 0.15, "oil": 0.1 },
+      "amphibiousGroup": { "steel": 0.6, "oil": 0.25, "chips": 0.15 }
+    },
+    "branches": {
+      "ai": { "chips": 1 },
+      "drones": { "chips": 0.6, "rareEarths": 0.4 },
+      "missiles": { "rareEarths": 0.5, "chips": 0.3, "steel": 0.2 },
+      "missileDefense": { "chips": 0.6, "rareEarths": 0.4 },
+      "cyber": { "chips": 1 },
+      "space": { "chips": 0.5, "rareEarths": 0.3, "steel": 0.2 },
+      "energy": { "oil": 0.4, "gas": 0.3, "steel": 0.3 },
+      "semiconductors": { "chips": 0.7, "rareEarths": 0.3 }
+    }
+  }
+}

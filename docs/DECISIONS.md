@@ -713,3 +713,111 @@ values; slider positions are squared into gains so they feel linear.
 - The audio module tests (`src/ui/audio.test.ts`) cover the pure parts: settings parsing and
   clamping, the music-off default and the DEFCON → intensity mapping; the graph itself needs a
   browser and is exercised by the e2e settings step.
+
+## D-061 — 2026-11-02 — Economy depth: resource chains, trade network, sanctions, war finance, domestic politics
+
+The economy becomes a living system the player reads like SimCity for a nation. New modules:
+`src/sim/trade.ts` (trade network, resource market, sanctions regimes), `src/sim/domestic.ts`
+(approval, protests, elections, coups); `economy.ts` gains potential output, inflation, interest,
+recessions, taxes and war bonds. Turn order: AI → **trade & market** → economy → **domestic** →
+production → research → … (rest as D-059). Every effect is measured against the world of January
+2027, so the starting state — including the sanctions already in force, which IMF growth
+forecasts already price in — carries zero penalties (`runTrade(…, calibrate = true)` in
+`initEconomy`).
+
+- **Data.** `data/resources.json`: producer shares for six resources with a source each (EIA oil,
+  Energy Institute gas, IEA refining + USGS MCS 2026 rare earths, TrendForce ≤ 16 nm chips, FAOSTAT
+  cereals, worldsteel 2025 steel); rows not read directly off a source are listed in
+  `estimatedProducers`. The remainder (1 − Σ listed) is diffuse output any non-blockaded importer
+  can buy. Unit types and research branches list weighted inputs (`unitInputs`). `data/trade.json`:
+  175 bilateral goods-trade pairs (US$ bn, ≈ 2024); only US–China (USTR 2025) is read directly, the
+  rest are rounded approximations of national customs data and the file is `estimate: true`.
+  `data/politics.json`: EIU Democracy Index 2024 regime categories and election terms for the 44
+  nations with a researched leader. `data/economy.json`: IMF WEO inflation (PCPIPCH, 2026) for every
+  nation, built by `scripts/build-economy.ts` (Node's fetch is blocked by the sandbox proxy, so the
+  IMF file was downloaded with curl into `.cache/nations/` first).
+- **Market.** Demand per resource = (w × GDP share + (1 − w) × population share) × (1 + warDemand ×
+  (mobilisation + ½ if at war)). Supply = producer share × controlled share × (1 − devastation); a
+  conqueror runs `seizedYield` of a capitulated producer's capacity (chips 10 %: fabs need foreign
+  tools). Exporters' surpluses are split among importers in six proportional passes weighted by
+  deficit × access; access = policy × route. Policy: war or embargo 0; sanctions 0 for strategic
+  goods (food exempt); complying with secondary sanctions 0.2. Satisfaction = (home use + imports)
+  ÷ demand. Prices move 40 %/month toward (demand ÷ delivered)^1.6 relative to the start (0.6–5).
+  The chokepoint oil index of D-052 is kept as a separate risk premium.
+- **Routes.** A pair trades overland when it shares a land border (or one side has no sea access
+  to the other's waters, e.g. the Caspian); otherwise along the shortest sea-zone path between
+  their coasts avoiding zones controlled by an enemy of either party and straits closed against
+  them. Contested waters carry 50 %, a detour more than two zones longer 85 %, landing in a
+  neighbour at war with neither and finishing by rail 80 % (this keeps Ukraine supplied through
+  Poland while Russia holds the Black Sea). No path: cut. BFS results are cached per origin and
+  blocked-zone signature each turn; pairs where neither side has hostile waters skip routing.
+- **Trade term.** Each listed pair's volume = data × √(GDP ratio of both vs start) × policy (war 0,
+  embargo 0, sanctions 0.3, complying with secondary sanctions 0.3) × route × treaty (+6 %, not
+  inside the EU) × relations (−15 % below −40, +5 % above 50) × 0.75 if one side defies the
+  other's secondary sanctions. Lost trade is the same number for both partners, so sanctions are
+  symmetric by construction: growth −0.6 pp per 1 % of GDP lost (clamp −8…+1.5), and the smaller
+  economy feels the same loss more. Resources add shortages (−gdpWeight × relative shortfall),
+  export earnings (½ × Δ earnings ÷ GDP) and import prices; financial sanctions add −2 pp × the
+  rise in the sanctioners' share of world GDP. Research loses 30 % × that share (replacing the flat
+  ×0.85 of D-026) and up to 60 % from shortages of the current branch's inputs; production lines
+  advance 1 − 0.75 × weighted input shortage per month (≥ 25 %) and cost +50 % × the shortage.
+- **Growth and cycles.** Potential output grows at trend (IMF rate converging to 2 % with a
+  15-year half-life) + infrastructure + tech + taxes; actual growth adds the shocks (trade,
+  resources, sanctions, war, mobilisation, debt, inflation, events, chokepoints) and a recovery
+  term of 0.3 pp per 1 % output gap (−3…+8). Persistent shocks therefore become bounded level
+  losses (gap ≈ shock ÷ 30) and recover when they end — no runaway decline. Six months of
+  contraction is a recession; it ends when growth tops 0.5 %. The old fixed debt drag above 120 %
+  now starts at max(120 %, the starting ratio) so Japan is not penalised for its baseline.
+- **Inflation, interest, debt.** Inflation moves 15 %/month toward anchor (IMF 2026 value decaying
+  to 2.5 % with a 3-year half-life) + demand pressure (40 × positive gap, 10 × negative) + real
+  deficits above 3 % of GDP (× 0.35) + mobilisation (0/1/3) + import prices + shortages + rise in
+  sanctions (× 12); clamp −3…400. It erodes debt (÷ 1 + π/1200 a month) and half as much cash.
+  The average interest rate moves 1/24 a month toward 1.5 + 0.9π + 5 × (debt ratio above
+  max(90 %, start)) + 4 for three years after a default + 4 × sanctions; it replaces D-026's fixed
+  4 %. The deficit term uses real borrowing (after erosion), which breaks the inflation → interest
+  → deficit → inflation loop that otherwise ran away. Default at max(250 %, start + 80 %).
+- **Taxes, mobilisation, war bonds.** `setTaxRate` 15–45 % (28 % neutral; −0.06 pp growth and
+  −0.6 approval per point above). Mobilisation keeps D-026's effects and adds inflation and resource
+  demand. War bonds (`issueWarBonds`): 1.5 % of GDP to treasury and debt, needs a war or
+  mobilisation, 6-month cooldown, at war +3 approval and −3 weariness; the AI issues them when at
+  war and short of cash.
+- **Sanctions regimes.** `GameState.embargoes` (total, food included) and
+  `secondarySanctions` (`from>to`) beside D-024's `sanctions`. Starting state: US embargoes on Cuba,
+  North Korea and Iran; US secondary sanctions on Iran and Russia (2025–26 measures). A third party
+  complies with secondary sanctions when it is allied with the sanctioner, or (not friendly with the
+  target) trades at least 1.5× more with the sanctioner; allies and friends (relations ≥ 40) of the
+  target defy and lose 25 % of their trade with the sanctioner — once per sanctioner. Coalitions:
+  the player can rally one (`rallySanctions`); a nation joins when relations with the leader minus
+  relations with the target, plus loyalty, outweigh its trade dependence, and it has no friendship
+  with the target. AI: joins a friendly major's coalition against nations it dislikes (≤ −25),
+  lifts sanctions once relations recover above 10, embargoes bitter enemies, and sanctions a
+  hostile major only if the trade at stake is under 2.5 % of its GDP (or it is very aggressive).
+- **Domestic politics.** Approval (0–100) moves 12 %/month toward 50 + growth + inflation + taxes
+  + social spending + weariness + rally + mobilisation + shortages + lost territory + output gap +
+  stability; it feeds stability (±0.01 per point from 50). Protests start below 30 / 26 / 22
+  (democracy / hybrid / autocracy) with stability under 55. Elections for democracies and hybrid
+  regimes come from `leaders.json` `nextElection`, then every term; the player's first election
+  never falls before turn 6 (a grace period: France votes in April 2027). Vote share = 50 + 0.7 ×
+  (approval − 50) + incumbency (1, hybrid 10) ± 3; the player is warned at 12, 6, 3 and 1 months
+  and loses the game below 50 % (`Defeat.kind = 'election'`). AI governments that lose are
+  replaced by a generated successor (`fictional`). Coup risk (autocracies; hybrids at half) sums
+  low approval, low stability, battlefield defeat, an army under 8 % of the budget, recession and
+  protests (≤ 8 %/month); a successful coup ends the player's game (`'coup'`) or installs a
+  fictional military council.
+- **UI.** Economy screen (E): Overview (KPIs, GDP/growth/inflation/debt charts from
+  `GameState.history`, growth breakdown), Budget & war finance (spending, taxes, mobilisation,
+  war bonds), Trade (top partners with status), Resources (balance per resource, suppliers,
+  prices, throttles), Sanctions (coalitions, join/embargo/secondary/lift, rally), Domestic
+  (approval breakdown, election poll, coup risk). Top bar adds Inflation and Approval. Map mode 4
+  draws trade routes as flowing arcs (`src/render/TradeRoutes.tsx`, one additive mesh, rebuilt only
+  when the state changes); map mode 9 colours nations by their position in a chosen resource. The
+  Diplomacy screen gains embargo, secondary-sanction, rally and lift actions.
+- **Tests** (`src/sim/economy.test.ts`): calibrated baseline, Taiwan blockade → global chip
+  shortage throttling fighters, AI research and costs, G7-wide rare-earth embargo, sanctions
+  symmetry, embargoes, secondary-sanction compliance and defiance, coalitions, war bonds, taxes,
+  elections, coup risk and a 240-turn soak with bounds on every value.
+- **Performance.** The trade step costs ≈ 35 ms per turn in Node (turn ≈ 370 ms vs 353 ms before):
+  pair access is cached in a typed array per turn, sea routing runs only when one side has hostile
+  waters. `GameState.history` keeps ≤ 240 samples for the 14 majors and the player.
+- **Saves** from before this entry are migrated in `refreshLeaders` → `migrateEconomy`: the loaded
+  world becomes the new baseline and elections are rescheduled at least six months out.
