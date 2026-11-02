@@ -448,10 +448,25 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.getByTestId('deal-kind-POL').selectOption('basing');
   await page.getByTestId('deal-add-POL').click();
   await expect(page.getByTestId('deal-verdict')).toBeVisible();
-  await shot(page, branchSlug());
+  await shot(page, 'diplomacy-negotiate');
   await page.getByTestId('deal-propose').click();
   await expect(page.getByTestId('deal-reply')).toBeVisible();
   await shot(page, 'diplomacy-negotiate-reply');
+  await page.getByTestId('modal-close').click();
+  // Escalation ladder and the news wire (D-076, D-077).
+  await page.getByTestId('hud-tension').click();
+  await expect(page.getByTestId('modal-escalation')).toBeVisible();
+  await expect(page.getByTestId('escalation-ladder')).toBeVisible();
+  await expect(page.getByTestId('defcon-table')).toBeVisible();
+  await shot(page, branchSlug());
+  await page.getByTestId('modal-close').click();
+  await page.keyboard.press('n');
+  await expect(page.getByTestId('modal-news')).toBeVisible();
+  await expect(page.getByTestId('wire-story').first()).toBeVisible();
+  await shot(page, 'news-wire');
+  await page.getByTestId('news-cat-war').click();
+  await page.getByTestId('news-scope-top').click();
+  await shot(page, 'news-wire-war');
   await page.getByTestId('modal-close').click();
   expect(errors).toEqual([]);
 });
@@ -569,6 +584,58 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await playTurns(page, 45);
   await page.waitForTimeout(1000);
   await shot(page, 'taiwan-crisis-50-turns');
+  expect(errors).toEqual([]);
+});
+
+test('nuclear aftermath: fallout on the map and the nobody-wins ending', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(m.text());
+  });
+  await page.goto('/');
+  await expect(page.getByTestId('loading')).toBeHidden({ timeout: 120_000 });
+  await page.getByTestId('menu-new').click();
+  await page.getByTestId('scenario-world').click();
+  await page.getByTestId('scenario-next').click();
+  await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
+  await page.getByTestId('start-game').click();
+  await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
+  // A crafted aftermath (D-076): fallout over Moscow, St Petersburg's region and two US regions.
+  const craft = (defeat: boolean) =>
+    page.evaluate((defeat) => {
+      const w = (globalThis as unknown as { ww3: Ww3Hook & { load: (s: unknown) => void } }).ww3;
+      const g = JSON.parse(JSON.stringify(w.game.getState().game)) as Record<string, unknown> & {
+        regions: Record<number, { fallout: number; devastation: number }>;
+        nuclearLog: unknown[];
+        turn: number;
+      };
+      const hits: [number, string][] = [
+        [w.capital('RUS')!, 'RUS'],
+        [w.capital('USA')!, 'USA'],
+      ];
+      for (const [id, target] of hits) {
+        g.regions[id]!.fallout = 1;
+        g.regions[id]!.devastation = 0.8;
+        for (const nb of w.neighbours(id)) if (w.isLand(nb) && g.regions[nb]) g.regions[nb]!.fallout = 0.35;
+        g.nuclearLog.push({ turn: g.turn, attacker: target === 'RUS' ? 'USA' : 'RUS', target, region: id, population: 12000000 });
+      }
+      g.detonations = defeat ? 8 : 2;
+      g.nuclearWinter = defeat ? 4.8 : 1.2;
+      if (defeat) g.defeat = { kind: 'nuclearWar', text: 'Eight nuclear detonations. The exchange has ended civilisation as it was.' };
+      w.load(g);
+    }, defeat);
+  await craft(false);
+  await fly(page, 52, 38, 1.9);
+  await page.waitForTimeout(4000);
+  await shot(page, 'fallout-map');
+  await page.getByTestId('hud-tension').click();
+  await expect(page.getByTestId('rung-tactical')).toHaveClass(/current/);
+  await shot(page, 'escalation-nuclear');
+  await page.getByTestId('modal-close').click();
+  await craft(true);
+  await expect(page.getByTestId('nobody-wins')).toBeVisible();
+  await shot(page, 'nobody-wins');
   expect(errors).toEqual([]);
 });
 

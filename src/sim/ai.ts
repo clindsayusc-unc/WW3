@@ -22,7 +22,7 @@ import { unitCost, unitUpkeep, buildMonths, monthlyRevenue } from './economy';
 import { estimateOdds, findPath, isFriendly, stepKind } from './military';
 import { amphibiousTargets, invalidateGeoCache } from './geography';
 import { evaluateProposal, executeProposal, PROPOSAL_LABELS } from './diplomacy';
-import { canLaunchNuclear, nuclearStrike, pickStrikeTarget } from './escalation';
+import { AI_LAUNCH_CHANCE, nuclearDecision, nuclearStrike, pickStrikeTarget } from './escalation';
 import { missionsFor, regionsInRange } from './air';
 import {
   SALVO,
@@ -580,18 +580,15 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
     }
   }
 
-  // 7. Nuclear use (rare) -------------------------------------------------------------------------------
+  // 7. Nuclear use (D-076): only at DEFCON 1, when desperation passes the leader's threshold
+  // (raised by an enemy's assured second strike).
   if (n.warheads > 0 && n.defcon === 1 && atWarNow) {
-    const cap = world.capitalRegion.get(iso);
-    const capLost = cap !== undefined && state.regions[cap]?.controller !== iso;
-    if ((capLost || held < 0.5) && roll(state) < ((100 - t.nuclearThreshold) / 100) * 0.12) {
-      const target = enemies.find((e) => canLaunchNuclear(state, iso, e) === null);
-      if (target) {
-        const region = pickStrikeTarget(world, state, target);
-        if (region !== null) {
-          n.aiNote = `Facing national collapse, ${nationName(world, iso)} crosses the nuclear threshold.`;
-          nuclearStrike(world, state, iso, target, region);
-        }
+    const d = nuclearDecision(world, state, iso);
+    if (d.consider && d.target && roll(state) < AI_LAUNCH_CHANCE) {
+      const region = pickStrikeTarget(world, state, d.target);
+      if (region !== null) {
+        n.aiNote = `Facing national collapse, ${nationName(world, iso)} crosses the nuclear threshold. ${d.reason}`;
+        nuclearStrike(world, state, iso, d.target, region);
       }
     }
   }

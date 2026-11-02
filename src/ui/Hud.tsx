@@ -79,12 +79,14 @@ export function Hud() {
           tooltip={`Public order, 0–100. Rises with social spending, growth and peace; falls with war weariness, mobilisation, debt and lost territory. Below 10 for three months means regime collapse. War weariness ${Math.round(me.warWeariness)}.`}
           accent={me.stability < 30 ? '#f87171' : me.stability < 50 ? '#fbbf24' : undefined}
         />
-        <Stat
-          label="Tension"
-          value={`${Math.round(game.globalTension)}`}
-          tooltip={`Global tension, 0–100: average flashpoint tension plus wars and mobilisations among the great powers. Drives DEFCON levels everywhere.`}
-          className={tensionClass}
-        />
+        <button className="stat-button" onClick={() => open('escalation')} data-testid="hud-tension">
+          <Stat
+            label="Tension"
+            value={`${Math.round(game.globalTension)}`}
+            tooltip={`Global tension, 0–100: average flashpoint tension plus wars and mobilisations among the great powers. Drives DEFCON levels everywhere. Click (or X) for the escalation ladder.`}
+            className={tensionClass}
+          />
+        </button>
         <Stat
           label="DEFCON"
           value={`${me.defcon}`}

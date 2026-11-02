@@ -237,8 +237,20 @@ export function fillPalette(
         break;
       }
     }
+    // Fallout (D-076): a muted ochre-grey wash over contaminated land in every map mode.
+    const fallout = rs.fallout ?? 0;
+    if (fallout > 0.02 && !r.sea) {
+      const i = r.id * 4;
+      const base = tmp.setRGB(data[i]! / 255, data[i + 1]! / 255, data[i + 2]! / 255);
+      const k = Math.min(0.92, 0.35 + fallout * 0.6);
+      base.lerp(FALLOUT, k);
+      write(data, r.id, base, Math.max(data[i + 3]! / 255, 0.4 + 0.5 * fallout));
+    }
   }
 }
+
+// A sickly yellow-grey, distinct from every nation's accent and from the terrain palette.
+const FALLOUT = new Color('#d4cf3a');
 
 /**
  * Region attributes for the globe shader (D-057): R = devastation (dims night lights, scorches the

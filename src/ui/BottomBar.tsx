@@ -108,7 +108,13 @@ export function BottomBar() {
           <span className="kbd">↵</span>
         </button>
       </div>
-      <div className="ticker" ref={tickerRef} data-testid="ticker">
+      <div
+        className="ticker clickable"
+        ref={tickerRef}
+        data-testid="ticker"
+        onClick={() => useUiStore.getState().setModal('news')}
+        data-tip="Headlines of the month. Click (or press N) for the WW3 Wire."
+      >
         <div className="ticker-track" key={game.turn}>
           {[...headlines, ...headlines].map((h, i) => (
             <span key={i} className="ticker-item">

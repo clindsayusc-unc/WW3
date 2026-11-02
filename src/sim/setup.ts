@@ -78,6 +78,13 @@ function startingStability(world: World, iso3: Iso3): number {
   return clamp(Math.round(s), 25, 85);
 }
 
+/** Turn on which a leader took office ("YYYY-MM-DD" → months since January 2027; negative before). */
+export function leaderSinceTurn(since: string | undefined): number {
+  const m = /^(\d{4})-(\d{2})/.exec(since ?? '');
+  if (!m) return -60;
+  return (Number(m[1]) - 2027) * 12 + (Number(m[2]) - 1);
+}
+
 export function createGame(world: World, options: NewGameOptions): GameState {
   const { seed, player, scenario } = options;
   if (!world.nations.has(player)) throw new Error(`Unknown player nation ${player}`);
@@ -153,6 +160,8 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       aidSupply: 0,
       aidReceived: 0,
       aidArmsBank: 0,
+      leaderSince: leaderSinceTurn(leader?.since),
+      leaderTermLimited: world.politics.get(n.iso3)?.incumbentEligible === false,
     };
   }
 
@@ -168,6 +177,7 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       supplied: owner !== null,
       flippedTurn: -1,
       infraDamage: 0,
+      fallout: 0,
     };
   }
 
@@ -233,6 +243,11 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     aid: [],
     aidSuspended: [],
     playerAid: {},
+    chains: [],
+    wire: [],
+    nuclearWinter: 0,
+    nuclearLog: [],
+    worldGdpStart: world.nationList.reduce((sum, n) => sum + n.gdpUsdBn, 0),
   };
 
   for (const [key, rel] of world.relations) state.relations[key] = rel.value;

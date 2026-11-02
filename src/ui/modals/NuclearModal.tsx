@@ -4,7 +4,8 @@ import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { dispatch } from '../../state/simBridge';
 import { loadWorld, nationName } from '../../sim/world';
-import { canLaunchNuclear, pickStrikeTarget } from '../../sim/escalation';
+import { canLaunchNuclear, deterrentAgainst, pickStrikeTarget, secondStrike } from '../../sim/escalation';
+import { Stat } from '../Stat';
 import { enemiesOf } from '../../sim/query';
 import { playSound } from '../audio';
 
@@ -29,10 +30,26 @@ export function NuclearModal() {
       testId="modal-nuclear"
     >
       <p className="hint">
-        A strike devastates the target's most populous region, destroys its forces there, shocks the
-        world economy and turns every nation against you. Nuclear-armed victims retaliate with high
-        probability. Eight detonations end the game for everyone.
+        A strike devastates the target's most populous region and contaminates it and its neighbours
+        with fallout; it cools the planet (0.6 °C per detonation), shocks every economy, collapses your
+        legitimacy and brings sanctions from most of the world. Victims with a surviving arsenal
+        retaliate with high probability. Eight detonations end the game for everyone.
       </p>
+      {t && (
+        <div className="row">
+          <Stat
+            label="Your second strike"
+            value={secondStrike(world, game, game.player, t).status}
+            tooltip="Warheads that would survive a disarming first strike: 90 % of those on ballistic-missile submarines at sea, 30 % of the rest. ≥ 50 getting through enemy missile defence is assured."
+          />
+          <Stat
+            label="Their retaliation"
+            value={deterrentAgainst(world, game, t, game.player).status}
+            tooltip="The target's (or its nuclear allies') surviving warheads against your missile defence. Assured: retaliation is near-certain and devastating."
+            accent={deterrentAgainst(world, game, t, game.player).status === 'assured' ? '#f87171' : undefined}
+          />
+        </div>
+      )}
       <div className="row">
         <select
           className="select"
@@ -70,7 +87,7 @@ export function NuclearModal() {
             <button
               className="btn danger pulse"
               onClick={() => {
-                if (t && region !== null) dispatch({ type: 'nuclearStrike', target: t, region });
+                if (t && region !== null) dispatch({ type: 'nuclearStrike', target: t, region, confirmations: 2 });
                 setModal(null);
               }}
               data-testid="nuclear-launch"

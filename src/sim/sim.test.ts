@@ -188,6 +188,7 @@ describe('escalation', () => {
         type: 'nuclearStrike',
         target: 'RUS',
         region: world.capitalRegion.get('RUS')!,
+        confirmations: 2,
       }),
     ).toThrow(/DEFCON 1/);
     // Force the conditions and strike.
@@ -197,6 +198,7 @@ describe('escalation', () => {
     const before = forced.nations['RUS']!.gdp;
     const after = applyCommand(world, forced, {
       type: 'nuclearStrike',
+      confirmations: 2,
       target: 'RUS',
       region: target,
     });

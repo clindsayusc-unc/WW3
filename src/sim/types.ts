@@ -203,6 +203,10 @@ export interface NationState {
   aidReceived: number;
   /** Arms aid banked toward the next delivered formation, US$ bn. */
   aidArmsBank: number;
+  /** Turn the current leader took office (negative: before January 2027) (D-075). */
+  leaderSince: number;
+  /** The current leader may not stand at the next election (term limits, D-075). */
+  leaderTermLimited: boolean;
 }
 
 // --- Diplomacy AI (D-071) ----------------------------------------------------------------------
@@ -360,6 +364,8 @@ export interface RegionState {
   flippedTurn: number;
   /** 0..1 — bombed roads, rail and ports; cuts supply throughput, recovers slowly (D-059). */
   infraDamage: number;
+  /** 0..1 — radioactive fallout after a nuclear strike; decays slowly, tints the map (D-076). */
+  fallout: number;
 }
 
 export interface Unit {
@@ -569,6 +575,39 @@ export interface Strike {
   readonly attacker: Iso3;
 }
 
+/** A follow-up step of an event chain, due on a later turn (D-074). */
+export interface ScheduledEvent {
+  readonly eventId: string;
+  readonly chain: string;
+  readonly due: number;
+  readonly target: Iso3 | null;
+}
+
+export type NewsCategory = 'war' | 'diplomacy' | 'economy' | 'politics' | 'disaster' | 'nuclear' | 'science' | 'security';
+
+/** A wire story generated from the month's events (D-077). */
+export interface WireStory {
+  readonly id: number;
+  readonly turn: number;
+  readonly category: NewsCategory;
+  /** 3 = breaking news (banner), 2 = top story, 1 = brief. */
+  readonly priority: 1 | 2 | 3;
+  readonly headline: string;
+  readonly body: string;
+  readonly dateline: string;
+  readonly nations: Iso3[];
+}
+
+/** One nuclear detonation, for the aftermath and the end-of-game statistics (D-076). */
+export interface NuclearRecord {
+  readonly turn: number;
+  readonly attacker: Iso3;
+  readonly target: Iso3;
+  readonly region: RegionId;
+  /** People living in the struck region at the time. */
+  readonly population: number;
+}
+
 export interface PendingEvent {
   readonly id: string;
   readonly eventId: string;
@@ -659,6 +698,15 @@ export interface GameState {
   aidSuspended: Iso3[];
   /** Player aid programmes: recipient → level 0–3 (each level 0.1 % of GDP a year). */
   playerAid: Record<Iso3, number>;
+  /** Scheduled follow-up steps of event chains (D-074). */
+  chains: ScheduledEvent[];
+  /** Wire stories, newest last (≤ 150) (D-077). */
+  wire: WireStory[];
+  /** Global cooling from nuclear detonations, °C (D-076). */
+  nuclearWinter: number;
+  nuclearLog: NuclearRecord[];
+  /** World GDP at the start (for the end-of-game statistics). */
+  worldGdpStart: number;
 }
 
 export interface WorldEconomy {
@@ -698,7 +746,8 @@ export type Command =
   | { readonly type: 'propose'; readonly proposal: ProposalType; readonly target: Iso3 }
   | { readonly type: 'respond'; readonly proposalId: number; readonly accept: boolean }
   | { readonly type: 'resolveEvent'; readonly pendingId: string; readonly choice: number }
-  | { readonly type: 'nuclearStrike'; readonly target: Iso3; readonly region: RegionId }
+  /** Nuclear release needs two confirmations from the UI (D-076). */
+  | { readonly type: 'nuclearStrike'; readonly target: Iso3; readonly region: RegionId; readonly confirmations: number }
   | { readonly type: 'disband'; readonly unitIds: number[] }
   | {
       readonly type: 'chokepoint';

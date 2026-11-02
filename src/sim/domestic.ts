@@ -129,14 +129,92 @@ function replaceLeader(world: World, state: GameState, n: NationState, title: st
   n.leaderName = name;
   if (title) n.leaderTitle = title;
   n.leaderFictional = true;
+  n.leaderSince = state.turn;
+  n.leaderTermLimited = false;
   return name;
+}
+
+const CAUSE_TEXT: Record<string, string> = {
+  health: 'steps down on health grounds',
+  resignation: 'resigns',
+  assassination: 'is killed',
+  impeachment: 'resigns as impeachment proceedings close in',
+  termLimit: 'leaves office at the end of the constitutional term limit',
+};
+
+/**
+ * The leader leaves office outside an election (D-075): a designated successor — always a
+ * generated, fictional person — takes over. Traits stay with the office (the party or regime line).
+ */
+export function succeedLeader(world: World, state: GameState, iso: Iso3, cause: string): string | null {
+  const n = state.nations[iso];
+  if (!n?.alive) return null;
+  const before = n.leaderName;
+  const successor = replaceLeader(world, state, n, null);
+  const name = nationName(world, iso);
+  n.stability = clamp(n.stability - (cause === 'assassination' ? 6 : 2), 0, 100);
+  log(state, {
+    kind: 'info',
+    text: `${name}: ${before} ${CAUSE_TEXT[cause] ?? 'leaves office'}. ${successor} (fictional) succeeds as ${n.leaderTitle}.`,
+    nations: [iso],
+    alert: iso === state.player || !!world.nations.get(iso)?.major,
+  });
+  if (world.nations.get(iso)?.major || iso === state.player) headline(state, `${name}: ${successor} takes over after ${before} ${CAUSE_TEXT[cause] ?? 'leaves office'}`);
+  return successor;
+}
+
+/** Monthly chance of a serious health crisis for a leader: rises with years in office (no ages are modelled). */
+export function healthRisk(state: GameState, n: NationState): number {
+  const years = Math.max(0, (state.turn - n.leaderSince) / 12);
+  return clamp(0.0006 + Math.max(0, years - 4) * 0.00015, 0, 0.004);
+}
+
+/** Health crises: the player answers an event; AI leaders recover or hand over (D-075). */
+function runHealth(world: World, state: GameState, n: NationState): void {
+  if (!world.leaders.has(n.iso3) && !n.leaderFictional) return;
+  if (roll(state) >= healthRisk(state, n)) return;
+  if (n.iso3 === state.player) {
+    if (state.pendingEvents.some((p) => p.eventId === 'leader-health')) return;
+    const ev = world.eventById.get('leader-health');
+    if (!ev) return;
+    state.pendingEvents.push({
+      id: `leader-health-${state.turn}`,
+      eventId: ev.id,
+      target: null,
+      title: ev.title,
+      text: ev.text.replaceAll('{PLAYER}', nationName(world, n.iso3)),
+      choices: ev.choices.map((c) => ({ label: c.label, tooltip: c.tooltip })),
+    });
+    return;
+  }
+  if (roll(state) < 0.5) {
+    if (world.nations.get(n.iso3)?.major)
+      log(state, { kind: 'info', text: `${nationName(world, n.iso3)}: ${n.leaderName} is treated for a serious illness and returns to work.`, nations: [n.iso3], alert: false });
+    return;
+  }
+  succeedLeader(world, state, n.iso3, 'health');
 }
 
 function holdElection(world: World, state: GameState, n: NationState): void {
   const pol = world.politics.get(n.iso3)!;
-  const share = clamp(projectedVoteShare(world, n) + (roll(state) - 0.5) * 6, 0, 100);
+  // A term-limited leader cannot stand: the party's candidate loses the incumbency bonus (D-075).
+  const limited = n.leaderTermLimited;
+  const share = clamp(projectedVoteShare(world, n) - (limited ? (pol.regime === 'hybrid' ? 10 : 1) : 0) + (roll(state) - 0.5) * 6, 0, 100);
   const name = nationName(world, n.iso3);
   n.nextElection = pol.termYears ? state.turn + pol.termYears * 12 : null;
+  if (share >= 50 && limited) {
+    const before = n.leaderName;
+    const successor = replaceLeader(world, state, n, null);
+    n.support = clamp(n.support + 3, 0, 100);
+    log(state, {
+      kind: 'info',
+      text: `${name} votes: ${before} was term-limited; the governing party's candidate ${successor} (fictional) wins with ${share.toFixed(1)} %.`,
+      nations: [n.iso3],
+      alert: n.iso3 === state.player || !!world.nations.get(n.iso3)?.major,
+    });
+    if (world.nations.get(n.iso3)?.major || n.iso3 === state.player) headline(state, `${name}: ${successor} elected to succeed term-limited ${before}`);
+    return;
+  }
   if (share >= 50) {
     n.support = clamp(n.support + 5, 0, 100);
     log(state, {
@@ -223,6 +301,9 @@ export function runDomestic(world: World, state: GameState): void {
       }
     }
 
+    // Health crises and succession (D-075).
+    if (!state.defeat) runHealth(world, state, n);
+
     // Elections.
     if (n.nextElection !== null && !state.defeat) {
       const left = n.nextElection - state.turn;
@@ -231,7 +312,7 @@ export function runDomestic(world: World, state: GameState): void {
         const chance = reelectionChance(world, n);
         log(state, {
           kind: 'info',
-          text: `Election in ${left} month${left === 1 ? '' : 's'}: polls give you ${share.toFixed(1)} % (${Math.round(chance * 100)} % chance to stay in office).${chance < 0.5 ? ' Losing ends your game.' : ''}`,
+          text: `Election in ${left} month${left === 1 ? '' : 's'}: polls give you ${share.toFixed(1)} % (${Math.round(chance * 100)} % chance to stay in office).${n.leaderTermLimited ? ` ${n.leaderName} is term-limited: your party fields a successor.` : ''}${chance < 0.5 ? ' Losing ends your game.' : ''}`,
           nations: [n.iso3],
           alert: true,
         });

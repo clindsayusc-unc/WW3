@@ -47,6 +47,73 @@ const POOLS: Record<string, NamePool> = {
   },
 };
 
+/** Country pools where the regional pool would read wrong (D-075: fictional successors). */
+const COUNTRY_POOLS: Record<string, NamePool> = {
+  anglo: {
+    given: ['James', 'Sarah', 'Michael', 'Emily', 'Daniel', 'Rachel', 'Thomas', 'Laura', 'David', 'Hannah'],
+    family: ['Carter', 'Mitchell', 'Hughes', 'Bennett', 'Foster', 'Reynolds', 'Sullivan', 'Walsh', 'Harper', 'Coleman'],
+  },
+  french: {
+    given: ['Camille', 'Julien', 'Élodie', 'Mathieu', 'Claire', 'Antoine', 'Hélène', 'Nicolas'],
+    family: ['Lefèvre', 'Girard', 'Rousseau', 'Fontaine', 'Mercier', 'Chevalier', 'Lambert', 'Faure'],
+  },
+  german: {
+    given: ['Katrin', 'Jonas', 'Sabine', 'Matthias', 'Julia', 'Stefan', 'Anke', 'Florian'],
+    family: ['Hoffmann', 'Krüger', 'Schäfer', 'Wagner', 'Lehmann', 'Becker', 'Vogel', 'Hartmann'],
+  },
+  turkish: {
+    given: ['Emre', 'Elif', 'Kemal', 'Zeynep', 'Murat', 'Ayşe', 'Burak', 'Selin'],
+    family: ['Yılmaz', 'Demir', 'Kaya', 'Şahin', 'Aydın', 'Öztürk', 'Arslan', 'Doğan'],
+  },
+  persian: {
+    given: ['Reza', 'Mahsa', 'Darius', 'Leila', 'Kaveh', 'Shirin', 'Hamid', 'Nasrin'],
+    family: ['Farahani', 'Rostami', 'Karimi', 'Tehrani', 'Moradi', 'Jafari', 'Ahmadi', 'Hosseini'],
+  },
+  hebrew: {
+    given: ['Noa', 'Yossi', 'Tamar', 'Eitan', 'Maya', 'Avi', 'Shira', 'Gideon'],
+    family: ['Levi', 'Mizrahi', 'Peretz', 'Friedman', 'Biton', 'Dahan', 'Avraham', 'Golan'],
+  },
+  arab: {
+    given: ['Omar', 'Layla', 'Hassan', 'Noor', 'Tariq', 'Samir', 'Huda', 'Khalid'],
+    family: ['Haddad', 'Nasser', 'Aziz', 'Mansour', 'Saleh', 'Barakat', 'Hamdan', 'Khoury'],
+  },
+  chinese: {
+    given: ['Wei', 'Mei', 'Hao', 'Li', 'Tao', 'Jun', 'Xin', 'Lan'],
+    family: ['Zhao', 'Lin', 'Chen', 'Xu', 'Wang', 'Liu', 'Huang', 'Zhou'],
+  },
+  japanese: {
+    given: ['Hiro', 'Yuki', 'Kenji', 'Aiko', 'Takeshi', 'Naomi', 'Daisuke', 'Emi'],
+    family: ['Tanaka', 'Ishikawa', 'Mori', 'Sato', 'Nakamura', 'Fujita', 'Ogawa', 'Kimura'],
+  },
+  korean: {
+    given: ['Min-jun', 'Seo-yeon', 'Ji-ho', 'Hye-jin', 'Sung-min', 'Eun-ji', 'Dong-hyun', 'Su-a'],
+    family: ['Park', 'Kang', 'Han', 'Yoon', 'Kim', 'Lee', 'Choi', 'Jung'],
+  },
+  filipino: {
+    given: ['Jose', 'Mariel', 'Rafael', 'Andrea', 'Paolo', 'Liza', 'Carlo', 'Bea'],
+    family: ['Reyes', 'Dela Cruz', 'Santos', 'Bautista', 'Mendoza', 'Villanueva', 'Ramos', 'Garcia'],
+  },
+  lusophone: {
+    given: ['João', 'Beatriz', 'Rafael', 'Mariana', 'Lucas', 'Fernanda', 'Tiago', 'Larissa'],
+    family: ['Carvalho', 'Pereira', 'Barros', 'Fonseca', 'Almeida', 'Ribeiro', 'Costa', 'Teixeira'],
+  },
+};
+const COUNTRY_POOL: Record<string, string> = {
+  USA: 'anglo', GBR: 'anglo', CAN: 'anglo', AUS: 'anglo', NZL: 'anglo', IRL: 'anglo',
+  FRA: 'french', BEL: 'french', DEU: 'german', AUT: 'german', CHE: 'german',
+  TUR: 'turkish', IRN: 'persian', ISR: 'hebrew',
+  SAU: 'arab', ARE: 'arab', EGY: 'arab', IRQ: 'arab', SYR: 'arab', QAT: 'arab', KWT: 'arab', JOR: 'arab', LBN: 'arab', OMN: 'arab', BHR: 'arab', YEM: 'arab',
+  CHN: 'chinese', TWN: 'chinese', SGP: 'chinese', JPN: 'japanese', KOR: 'korean', PRK: 'korean',
+  PHL: 'filipino', BRA: 'lusophone', PRT: 'lusophone', AGO: 'lusophone', MOZ: 'lusophone',
+};
+
+function poolFor(world: World, iso: Iso3): NamePool {
+  const c = COUNTRY_POOL[iso];
+  if (c && COUNTRY_POOLS[c]) return COUNTRY_POOLS[c]!;
+  const region = world.nations.get(iso)?.region ?? 'Western Europe';
+  return POOLS[REGION_POOL[region] ?? 'west'] ?? POOLS.west!;
+}
+
 const REGION_POOL: Record<string, string> = {
   'Western Europe': 'west',
   'North America': 'west',
@@ -91,8 +158,7 @@ export const COMMANDER_CHANCE = 0.35;
 /** Rolls a commander for a new land formation, or null. Deterministic through the state RNG. */
 export function maybeCommander(world: World, state: GameState, owner: Iso3): Commander | null {
   if (roll(state) >= COMMANDER_CHANCE) return null;
-  const region = world.nations.get(owner)?.region ?? 'Western Europe';
-  const pool = POOLS[REGION_POOL[region] ?? 'west'] ?? POOLS.west!;
+  const pool = poolFor(world, owner);
   const given = pool.given[Math.floor(roll(state) * pool.given.length)]!;
   const family = pool.family[Math.floor(roll(state) * pool.family.length)]!;
   const trait = TRAITS[Math.floor(roll(state) * TRAITS.length)]!;
@@ -101,8 +167,7 @@ export function maybeCommander(world: World, state: GameState, owner: Iso3): Com
 
 /** A generated, fictional name from the nation's regional pool (successors after elections and coups). */
 export function fictionalName(world: World, state: GameState, iso: Iso3): string {
-  const region = world.nations.get(iso)?.region ?? 'Western Europe';
-  const pool = POOLS[REGION_POOL[region] ?? 'west'] ?? POOLS.west!;
+  const pool = poolFor(world, iso);
   const given = pool.given[Math.floor(roll(state) * pool.given.length)]!;
   const family = pool.family[Math.floor(roll(state) * pool.family.length)]!;
   return `${given} ${family}`;

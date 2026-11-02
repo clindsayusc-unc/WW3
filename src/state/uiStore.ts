@@ -19,6 +19,8 @@ export type Modal =
   | 'nuclear'
   | 'battle'
   | 'economy'
+  | 'escalation'
+  | 'news'
   | 'end';
 export type MapMode =
   | 'political'
@@ -121,6 +123,8 @@ interface UiStore {
   selectedUnitIds: number[];
   diplomacyTarget: string | null;
   diplomacyTab: DiplomacyTab;
+  /** Id of the last breaking-news story the player dismissed (D-077). */
+  breakingSeen: number;
   /** Battle report shown by the battle modal (D-059). */
   battleReportId: number | null;
   flyTo: FlyTarget | null;
@@ -154,6 +158,7 @@ interface UiStore {
   selectUnits: (ids: number[]) => void;
   setDiplomacyTarget: (iso: string | null) => void;
   setDiplomacyTab: (tab: DiplomacyTab) => void;
+  setBreakingSeen: (id: number) => void;
   openBattleReport: (id: number) => void;
   fly: (lat: number, lon: number, distance?: number) => void;
   setQuality: (q: Quality) => void;
@@ -183,6 +188,7 @@ export const useUiStore = create<UiStore>((set) => ({
   selectedUnitIds: [],
   diplomacyTarget: null,
   diplomacyTab: 'nations',
+  breakingSeen: 0,
   battleReportId: null,
   flyTo: null,
   quality: 'high',
@@ -208,6 +214,7 @@ export const useUiStore = create<UiStore>((set) => ({
   selectUnits: (selectedUnitIds) => set({ selectedUnitIds }),
   setDiplomacyTarget: (diplomacyTarget) => set({ diplomacyTarget }),
   setDiplomacyTab: (diplomacyTab) => set({ diplomacyTab }),
+  setBreakingSeen: (breakingSeen) => set({ breakingSeen }),
   openBattleReport: (battleReportId) => set({ battleReportId, modal: 'battle' }),
   fly: (lat, lon, distance = 1.7) =>
     set((s) => ({ flyTo: { lat, lon, distance, nonce: (s.flyTo?.nonce ?? 0) + 1 } })),
