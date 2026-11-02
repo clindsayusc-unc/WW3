@@ -1,0 +1,554 @@
+/** Utility-based AI for every non-player nation, weighted by leader traits (D-032). */
+import { nationName, traitsOf, type World } from './world';
+import type { GameState, Iso3, Proposal, ProposalType, RegionId, Unit } from './types';
+import {
+  alliesOf,
+  atWar,
+  clamp,
+  controlShare,
+  enemiesOf,
+  getRelation,
+  hasTreaty,
+  isAtWar,
+  isLand,
+  log,
+  militaryPower,
+  roll,
+  unitPower,
+} from './query';
+import { availableTechs } from './research';
+import { unitCost, unitUpkeep, buildMonths, monthlyRevenue } from './economy';
+import { estimateOdds, findPath, isFriendly, stepKind } from './military';
+import { evaluateProposal, executeProposal, PROPOSAL_LABELS } from './diplomacy';
+import { canLaunchNuclear, nuclearStrike, pickStrikeTarget } from './escalation';
+
+const BRANCH_WEIGHTS: Record<string, (t: ReturnType<typeof traitsOf>) => number> = {
+  ai: (t) => 1 + t.economicPriority / 100,
+  drones: (t) => 1 + t.aggression / 100,
+  missiles: (t) => 0.8 + t.aggression / 80,
+  missileDefense: (t) => 0.8 + t.paranoia / 80,
+  cyber: (t) => 0.9 + t.paranoia / 100,
+  space: () => 0.9,
+  energy: (t) => 0.8 + t.economicPriority / 60,
+  semiconductors: (t) => 0.8 + t.economicPriority / 80,
+};
+
+interface Ctx {
+  byRegion: Map<RegionId, Unit[]>;
+  power: Map<Iso3, number>;
+}
+
+/** Nations sharing a land border or a sea zone with `iso` (cached per turn). */
+function neighboursOf(world: World, state: GameState, iso: Iso3): Set<Iso3> {
+  const set = new Set<Iso3>();
+  for (const r of Object.values(state.regions)) {
+    if (r.controller !== iso) continue;
+    for (const nb of world.regions.get(r.id)!.neighbours) {
+      const m = world.regions.get(nb)!;
+      if (m.sea) {
+        for (const nn of m.neighbours) {
+          const c = state.regions[nn]?.controller;
+          if (c && c !== iso) set.add(c);
+        }
+      } else {
+        const c = state.regions[nb]?.controller;
+        if (c && c !== iso) set.add(c);
+      }
+    }
+  }
+  return set;
+}
+
+export function runAi(world: World, state: GameState): void {
+  const ctx: Ctx = { byRegion: new Map(), power: new Map() };
+  for (const u of Object.values(state.units)) {
+    const list = ctx.byRegion.get(u.region) ?? [];
+    list.push(u);
+    ctx.byRegion.set(u.region, list);
+  }
+  for (const n of Object.values(state.nations))
+    if (n.alive) ctx.power.set(n.iso3, militaryPower(world, state, n.iso3));
+  for (const n of Object.values(state.nations)) {
+    if (!n.alive || n.iso3 === state.player) continue;
+    aiNation(world, state, ctx, n.iso3);
+  }
+  // Expire stale proposals to the player.
+  state.proposals = state.proposals.filter((p) => state.turn - p.turn < 3);
+}
+
+function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
+  const n = state.nations[iso]!;
+  const t = traitsOf(world, iso);
+  const meta = world.nations.get(iso)!;
+  const enemies = enemiesOf(state, iso);
+  const atWarNow = enemies.length > 0;
+  const myPower = ctx.power.get(iso) ?? 1;
+  const neighbours = neighboursOf(world, state, iso);
+  // Threat: hostile neighbours' power relative to mine.
+  let threat = 0;
+  let mainThreat: Iso3 | null = null;
+  for (const other of neighbours) {
+    const rel = getRelation(world, state, iso, other);
+    if (rel > -30 && !atWar(state, iso, other)) continue;
+    const th =
+      ((ctx.power.get(other) ?? 0) / Math.max(1, myPower)) * (atWar(state, iso, other) ? 1.5 : 1);
+    if (th > threat) {
+      threat = th;
+      mainThreat = other;
+    }
+  }
+  const held = controlShare(world, state, iso);
+
+  // 1. Budget -----------------------------------------------------------------------------------
+  let military =
+    10 +
+    t.aggression * 0.15 +
+    (atWarNow ? 18 : 0) +
+    Math.min(15, threat * 6) +
+    (meta.major ? 3 : 0);
+  const research = 5 + t.economicPriority * 0.08 + (meta.major ? 4 : 0);
+  let infrastructure = 16 + t.economicPriority * 0.06;
+  const debt = n.debt / Math.max(1, n.gdp) > 1 ? 10 : 6;
+  let social = 100 - military - research - infrastructure - debt;
+  if (n.stability < 40) {
+    social += 8;
+    military -= 4;
+    infrastructure -= 4;
+  }
+  if (social < 10) {
+    const over = 10 - social;
+    social = 10;
+    military -= over;
+  }
+  const sum = military + research + infrastructure + debt + social;
+  n.budget = {
+    military: Math.round((military / sum) * 100),
+    research: Math.round((research / sum) * 100),
+    infrastructure: Math.round((infrastructure / sum) * 100),
+    debt: Math.round((debt / sum) * 100),
+    social: 0,
+  };
+  n.budget.social =
+    100 - n.budget.military - n.budget.research - n.budget.infrastructure - n.budget.debt;
+
+  // 2. Mobilization ---------------------------------------------------------------------------------
+  if (atWarNow) {
+    const majorEnemy = enemies.some((e) => world.nations.get(e)?.major);
+    n.mobilization = held < 0.8 ? 2 : majorEnemy || threat > 0.8 ? 1 : n.mobilization;
+  } else if (threat > 1.5 && t.paranoia > 55) n.mobilization = 1;
+  else if (n.mobilization > 0 && n.warWeariness < 20) n.mobilization = n.mobilization === 2 ? 1 : 0;
+
+  // 3. Research ----------------------------------------------------------------------------------------
+  if (!n.researchCurrent) {
+    const avail = availableTechs(world, state, iso);
+    let best: string | null = null;
+    let bestScore = -1;
+    for (const id of avail) {
+      const tech = world.techs.get(id)!;
+      const w = (BRANCH_WEIGHTS[tech.branch]?.(t) ?? 1) / tech.tier;
+      if (w > bestScore) {
+        bestScore = w;
+        best = id;
+      }
+    }
+    n.researchCurrent = best;
+  }
+
+  // 4. Production ---------------------------------------------------------------------------------------
+  const revenue = monthlyRevenue(n, held);
+  const reserve = revenue * (atWarNow ? 0.5 : 1.5);
+  const upkeep = unitUpkeep(world, state, iso);
+  const upkeepCap = ((revenue * n.budget.military) / 100) * 0.85;
+  const queuedUpkeep = n.production.reduce(
+    (s, p) => s + (world.unitTypes.get(p.type)?.upkeepBn ?? 0),
+    0,
+  );
+  let budgetLeft = n.treasury - reserve;
+  let upkeepLeft = upkeepCap - upkeep - queuedUpkeep;
+  // Over-extended militaries shed their weakest formation each month.
+  if (upkeep > upkeepCap * 1.3 && !atWarNow) {
+    const mine = Object.values(state.units).filter((u) => u.owner === iso);
+    if (mine.length > 1) {
+      const weakest = mine.reduce((a, b) =>
+        unitPower(world, state, b, 'defence') < unitPower(world, state, a, 'defence') ? b : a,
+      );
+      delete state.units[weakest.id];
+      budgetLeft = -1; // no purchases this month
+    }
+  }
+  const cap = world.capitalRegion.get(iso);
+  const coastal = cap !== undefined && (world.regions.get(cap)?.coastal ?? false);
+  const landUnits = Object.values(state.units).filter(
+    (u) => u.owner === iso && world.unitTypes.get(u.type)?.domain === 'land',
+  ).length;
+  const airUnits = Object.values(state.units).filter(
+    (u) => u.owner === iso && world.unitTypes.get(u.type)?.domain === 'air',
+  ).length;
+  const seaUnits = Object.values(state.units).filter(
+    (u) => u.owner === iso && world.unitTypes.get(u.type)?.domain === 'sea',
+  ).length;
+  let queued = 0;
+  while (queued < 3 && n.production.length < 8 && cap !== undefined) {
+    let type: string;
+    const r = roll(state);
+    if (coastal && seaUnits < landUnits / 6 && r < 0.25)
+      type = r < 0.1 ? 'attackSub' : 'destroyerGroup';
+    else if (airUnits < landUnits / 5 && r < 0.45) type = r < 0.35 ? 'fighter' : 'drone';
+    else if (atWarNow) type = r < 0.6 ? 'mechanized' : r < 0.8 ? 'armored' : 'artillery';
+    else type = r < 0.5 ? 'infantry' : r < 0.8 ? 'mechanized' : 'airDefense';
+    const cost = unitCost(world, state, iso, type);
+    const up = world.unitTypes.get(type)?.upkeepBn ?? 0.1;
+    if (cost > budgetLeft || up > upkeepLeft) break;
+    n.treasury -= cost;
+    budgetLeft -= cost;
+    upkeepLeft -= up;
+    n.production.push({
+      id: state.nextId++,
+      type,
+      region: cap,
+      monthsLeft: buildMonths(world, state, iso, type),
+    });
+    queued++;
+  }
+
+  // 5. Military orders -------------------------------------------------------------------------------------
+  const myUnits = Object.values(state.units).filter((u) => u.owner === iso);
+  const stacks = new Map<RegionId, Unit[]>();
+  for (const u of myUnits) {
+    if (u.path.length > 0) continue;
+    const list = stacks.get(u.region) ?? [];
+    list.push(u);
+    stacks.set(u.region, list);
+  }
+  const frontier: RegionId[] = [];
+  const enemyAdjacent = new Map<RegionId, RegionId[]>();
+  if (atWarNow) {
+    for (const r of Object.values(state.regions)) {
+      if (r.controller !== iso) continue;
+      const adj = world.regions.get(r.id)!.neighbours.filter((nb) => {
+        const c = state.regions[nb]?.controller;
+        return c !== undefined && c !== null && atWar(state, iso, c) && isLand(world, nb);
+      });
+      if (adj.length > 0) {
+        frontier.push(r.id);
+        enemyAdjacent.set(r.id, adj);
+      }
+    }
+  }
+  const attackThreshold = clamp(1.6 - t.riskTolerance / 120 - t.aggression / 400, 1.05, 1.5);
+  const landTotal =
+    myUnits.filter((u) => world.unitTypes.get(u.type)?.domain === 'land').length || 1;
+  const landAtFront = myUnits.filter(
+    (u) => frontier.includes(u.region) && world.unitTypes.get(u.type)?.domain === 'land',
+  ).length;
+  const frontSaturated = landAtFront / landTotal > 0.6;
+  for (const [region, stack] of stacks) {
+    const land = stack.filter((u) => world.unitTypes.get(u.type)?.domain === 'land');
+    const sea = stack.filter((u) => world.unitTypes.get(u.type)?.domain === 'sea');
+    const air = stack.filter((u) => world.unitTypes.get(u.type)?.domain === 'air');
+    if (atWarNow) {
+      if (land.length > 0 && isLand(world, region)) {
+        // Attack an adjacent enemy region if the odds are good.
+        const targets = enemyAdjacent.get(region) ?? [];
+        const amphib = land.some((u) => world.unitTypes.get(u.type)?.amphibious)
+          ? world.regions.get(region)!.neighbours.length > 0
+            ? findAmphibTargets(world, state, region, iso)
+            : []
+          : [];
+        let best: { target: RegionId; ratio: number } | null = null;
+        const movers =
+          land.length > 1 && targets.length > 0
+            ? land.slice(0, Math.max(1, land.length - 1))
+            : land;
+        for (const target of [...targets, ...amphib]) {
+          const odds = estimateOdds(
+            world,
+            state,
+            movers.map((u) => u.id),
+            target,
+          );
+          if (odds.ratio >= attackThreshold && (!best || odds.ratio > best.ratio))
+            best = { target, ratio: odds.ratio };
+        }
+        if (best) {
+          for (const u of movers)
+            if (stepKind(world, state, u, u.region, best.target)) u.path = [best.target];
+          n.aiNote = `Attacking ${world.regions.get(best.target)!.name} at ${best.ratio === Infinity ? 'no' : best.ratio.toFixed(1) + ':1'} odds.`;
+          continue;
+        }
+        // Otherwise reinforce the weakest frontier region.
+        if (
+          frontier.length > 0 &&
+          !frontier.includes(region) &&
+          !frontSaturated &&
+          roll(state) < 0.7
+        ) {
+          let weakest: RegionId | null = null;
+          let worst = Infinity;
+          for (const f of frontier) {
+            const defenders = (ctx.byRegion.get(f) ?? []).filter((u) => u.owner === iso).length;
+            const threatN = (enemyAdjacent.get(f) ?? []).reduce(
+              (s, e) =>
+                s + (ctx.byRegion.get(e) ?? []).filter((u) => atWar(state, u.owner, iso)).length,
+              0,
+            );
+            const score = defenders - threatN * 1.5;
+            if (score < worst) {
+              worst = score;
+              weakest = f;
+            }
+          }
+          if (weakest !== null) {
+            const probe = findPath(world, state, land[0]!, weakest, 8);
+            if (probe && probe.length > 0)
+              for (const u of land)
+                if (stepKind(world, state, u, u.region, probe[0]!)) u.path = [...probe];
+          }
+        }
+      }
+      if (sea.length > 0) {
+        // Move fleets toward enemy coasts if stronger than what is there.
+        const enemyCoastZones: RegionId[] = [];
+        for (const r of Object.values(state.regions)) {
+          if (!r.controller || !atWar(state, iso, r.controller)) continue;
+          for (const nb of world.regions.get(r.id)!.neighbours)
+            if (world.regions.get(nb)?.sea && !enemyCoastZones.includes(nb))
+              enemyCoastZones.push(nb);
+        }
+        if (enemyCoastZones.length > 0 && roll(state) < 0.5) {
+          const myNaval = sea.reduce((s, u) => s + unitPower(world, state, u, 'attack'), 0);
+          let best: RegionId | null = null;
+          let bestD = Infinity;
+          for (const z of enemyCoastZones) {
+            const enemyNaval = (ctx.byRegion.get(z) ?? [])
+              .filter((u) => atWar(state, u.owner, iso))
+              .reduce((s, u) => s + unitPower(world, state, u, 'defence'), 0);
+            if (enemyNaval > myNaval * 0.8) continue;
+            const path = findPath(world, state, sea[0]!, z, 8);
+            if (path && path.length < bestD) {
+              bestD = path.length;
+              best = z;
+            }
+          }
+          if (best !== null) {
+            const path = findPath(world, state, sea[0]!, best, 8);
+            if (path) for (const u of sea) u.path = [...path];
+          }
+        }
+      }
+      if (
+        air.length > 0 &&
+        frontier.length > 0 &&
+        !frontier.includes(region) &&
+        roll(state) < 0.5
+      ) {
+        const target = frontier[Math.floor(roll(state) * frontier.length)]!;
+        const path = findPath(world, state, air[0]!, target, 10);
+        if (path) for (const u of air) u.path = [...path];
+      }
+    } else if (mainThreat && land.length > 2 && roll(state) < 0.15) {
+      // Peacetime: garrison the border with the main threat.
+      const border = Object.values(state.regions).filter(
+        (r) =>
+          r.controller === iso &&
+          world.regions
+            .get(r.id)!
+            .neighbours.some((nb) => state.regions[nb]?.controller === mainThreat),
+      );
+      if (border.length > 0) {
+        const target = border[Math.floor(roll(state) * border.length)]!.id;
+        if (target !== region) {
+          const path = findPath(world, state, land[0]!, target, 8);
+          if (path && path.length > 0)
+            for (const u of land.slice(0, Math.ceil(land.length / 2)))
+              if (stepKind(world, state, u, u.region, path[0]!)) u.path = [...path];
+        }
+      }
+    }
+  }
+
+  // 6. Diplomacy -------------------------------------------------------------------------------------------
+  const candidates = new Set<Iso3>([
+    ...neighbours,
+    ...world.majors,
+    ...alliesOf(world, state, iso),
+  ]);
+  candidates.delete(iso);
+  for (const other of candidates) {
+    const on = state.nations[other];
+    if (!on?.alive) continue;
+    const rel = getRelation(world, state, iso, other);
+    const isPlayer = other === state.player;
+    // Alliance / defence pacts.
+    if (
+      rel >= 50 &&
+      !hasTreaty(state, iso, other, 'defensive') &&
+      !hasTreaty(state, iso, other, 'alliance') &&
+      roll(state) < 0.04 + t.allianceLoyalty / 2500
+    ) {
+      const sharedThreat =
+        mainThreat !== null && getRelation(world, state, other, mainThreat) < -20;
+      if (sharedThreat || t.paranoia > 55) {
+        propose(
+          world,
+          state,
+          iso,
+          other,
+          'defensive',
+          `${nationName(world, iso)} seeks a defensive pact against ${mainThreat ? nationName(world, mainThreat) : 'rising threats'}.`,
+        );
+        continue;
+      }
+    }
+    if (
+      rel >= 20 &&
+      !hasTreaty(state, iso, other, 'trade') &&
+      !atWar(state, iso, other) &&
+      roll(state) < 0.03 + t.economicPriority / 3000
+    ) {
+      propose(
+        world,
+        state,
+        iso,
+        other,
+        'trade',
+        `${nationName(world, iso)} proposes a trade agreement to deepen economic ties.`,
+      );
+      continue;
+    }
+    // Sanctions against hostile majors.
+    if (
+      rel <= -50 &&
+      world.nations.get(other)?.major &&
+      !state.sanctions.includes(`${iso}>${other}`) &&
+      n.gdp > on.gdp * 0.3 &&
+      t.aggression >= 45 &&
+      roll(state) < 0.03
+    ) {
+      n.aiNote = `Sanctioning ${nationName(world, other)} over hostile relations (${Math.round(rel)}).`;
+      executeProposal(world, state, iso, other, 'sanction');
+      continue;
+    }
+    // Peace when weary or losing.
+    if (atWar(state, iso, other) && (n.warWeariness >= 70 || held < 0.5) && roll(state) < 0.25) {
+      const type: ProposalType =
+        held < controlShare(world, state, other) - 0.1 ? 'peaceStatusQuo' : 'peaceWhite';
+      if (isPlayer)
+        propose(
+          world,
+          state,
+          iso,
+          other,
+          type,
+          `${nationName(world, iso)} sues for peace: ${n.warWeariness >= 60 ? 'its public has tired of the war' : 'the front is collapsing'}.`,
+        );
+      else {
+        n.aiNote = `Seeking peace with ${nationName(world, other)} (weariness ${Math.round(n.warWeariness)}).`;
+        executeProposal(world, state, iso, other, type);
+      }
+      continue;
+    }
+    // War.
+    if (
+      !atWar(state, iso, other) &&
+      rel <= -60 &&
+      neighbours.has(other) &&
+      !hasTreaty(state, iso, other, 'nap')
+    ) {
+      const theirBloc = [other, ...alliesOf(world, state, other)].reduce(
+        (s, x) => s + (ctx.power.get(x) ?? 0) * (x === other ? 1 : 0.4),
+        0,
+      );
+      const ratio = myPower / Math.max(1, theirBloc);
+      const need = 1.6 - t.riskTolerance / 150;
+      const flash = Math.max(
+        0,
+        ...world.flashpoints
+          .filter((f) => f.nations.includes(iso) && f.nations.includes(other))
+          .map((f) => state.flashpoints[f.id] ?? 0),
+      );
+      let p = (t.aggression / 100) ** 2 * 0.04 * (flash >= 75 ? 4 : flash >= 60 ? 2 : 1);
+      if (on.warheads > 0) p *= n.warheads > 0 ? 0.5 : 0.15;
+      if (atWarNow) p *= 0.3;
+      if (ratio >= need && roll(state) < p) {
+        n.aiNote = `${nationName(world, iso)} judges the balance of forces (${ratio.toFixed(1)}:1) favourable and relations (${Math.round(rel)}) beyond repair.`;
+        executeProposal(world, state, iso, other, 'declareWar');
+        break;
+      }
+    }
+  }
+
+  // 7. Nuclear use (rare) -------------------------------------------------------------------------------
+  if (n.warheads > 0 && n.defcon === 1 && atWarNow) {
+    const cap = world.capitalRegion.get(iso);
+    const capLost = cap !== undefined && state.regions[cap]?.controller !== iso;
+    if ((capLost || held < 0.5) && roll(state) < ((100 - t.nuclearThreshold) / 100) * 0.12) {
+      const target = enemies.find((e) => canLaunchNuclear(state, iso, e) === null);
+      if (target) {
+        const region = pickStrikeTarget(world, state, target);
+        if (region !== null) {
+          n.aiNote = `Facing national collapse, ${nationName(world, iso)} crosses the nuclear threshold.`;
+          nuclearStrike(world, state, iso, target, region);
+        }
+      }
+    }
+  }
+
+  if (!n.aiNote || roll(state) < 0.3) {
+    n.aiNote = atWarNow
+      ? `At war with ${enemies.map((e) => nationName(world, e)).join(', ')}; holding ${Math.round(held * 100)}% of home territory.`
+      : mainThreat
+        ? `Watching ${nationName(world, mainThreat)} (threat ${threat.toFixed(1)}×); military budget ${n.budget.military}%.`
+        : `Focused on the economy (growth ${n.growth.toFixed(1)}%); military budget ${n.budget.military}%.`;
+  }
+}
+
+function findAmphibTargets(
+  world: World,
+  state: GameState,
+  region: RegionId,
+  iso: Iso3,
+): RegionId[] {
+  const out: RegionId[] = [];
+  const meta = world.regions.get(region)!;
+  for (const z of meta.neighbours) {
+    const zm = world.regions.get(z);
+    if (!zm?.sea) continue;
+    for (const t of zm.neighbours) {
+      const c = state.regions[t]?.controller;
+      if (c && atWar(state, iso, c) && isLand(world, t) && !out.includes(t)) out.push(t);
+    }
+  }
+  return out;
+}
+
+/** AI→AI proposals resolve immediately; AI→player proposals wait for the player's answer. */
+function propose(
+  world: World,
+  state: GameState,
+  from: Iso3,
+  to: Iso3,
+  type: ProposalType,
+  text: string,
+): void {
+  if (to === state.player) {
+    if (
+      state.proposals.length >= 4 ||
+      state.proposals.some((p) => p.from === from && p.type === type)
+    )
+      return;
+    const proposal: Proposal = { id: state.nextId++, from, to, type, turn: state.turn, text };
+    state.proposals.push(proposal);
+    log(state, {
+      kind: 'diplomacy',
+      text: `${nationName(world, from)} proposes: ${PROPOSAL_LABELS[type]}. ${text}`,
+      nations: [from, to],
+      alert: true,
+    });
+    return;
+  }
+  const verdict = evaluateProposal(world, state, from, to, type);
+  if (verdict.accept) executeProposal(world, state, from, to, type);
+}
+
+export { isFriendly, isAtWar };

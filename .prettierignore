@@ -3,3 +3,7 @@ coverage
 node_modules
 package-lock.json
 docs/DESIGN.md
+data/regions.topo.json
+data/regions.meta.json
+data/cities.json
+docs/perf-last-run.json

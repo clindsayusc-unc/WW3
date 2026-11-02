@@ -1,0 +1,14 @@
+{
+  "frames": 36,
+  "avgMs": 559.7388888888786,
+  "fps": 1.7865472988397697,
+  "p95Ms": 1020.5999999996275,
+  "jsHeapMB": 70.78302478790283,
+  "textures": 26,
+  "geometries": 8,
+  "textureMB": 213.33333333333331,
+  "drawCalls": 1,
+  "dpr": 1,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+  "at": "2026-11-02T02:06:26.102Z"
+}

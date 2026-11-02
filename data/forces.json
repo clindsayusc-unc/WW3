@@ -1,0 +1,365 @@
+{
+  "source": "Approximate order of battle abstracted from IISS Military Balance 2025 (via Wikipedia 'List of aircraft carriers in service', 'List of submarines by country', navy articles) and public fleet lists; counts are game formations (carrier strike groups, destroyer/frigate groups of ~6 hulls, submarine flotillas of ~6 boats, amphibious ready groups), not hull counts. Land and air formations are derived in src/sim/setup.ts from active personnel and defence spending in data/nations.json.",
+  "asOf": "2026-11-02",
+  "estimate": true,
+  "navies": {
+    "USA": {
+      "carrierGroup": 11,
+      "destroyerGroup": 12,
+      "attackSub": 8,
+      "missileSub": 4,
+      "amphibiousGroup": 4
+    },
+    "CHN": {
+      "carrierGroup": 3,
+      "destroyerGroup": 10,
+      "attackSub": 7,
+      "missileSub": 2,
+      "amphibiousGroup": 3
+    },
+    "RUS": {
+      "carrierGroup": 0,
+      "destroyerGroup": 5,
+      "attackSub": 6,
+      "missileSub": 3,
+      "amphibiousGroup": 1
+    },
+    "GBR": {
+      "carrierGroup": 2,
+      "destroyerGroup": 3,
+      "attackSub": 2,
+      "missileSub": 1,
+      "amphibiousGroup": 1
+    },
+    "FRA": {
+      "carrierGroup": 1,
+      "destroyerGroup": 3,
+      "attackSub": 2,
+      "missileSub": 1,
+      "amphibiousGroup": 1
+    },
+    "IND": {
+      "carrierGroup": 2,
+      "destroyerGroup": 4,
+      "attackSub": 3,
+      "missileSub": 1,
+      "amphibiousGroup": 1
+    },
+    "JPN": {
+      "carrierGroup": 2,
+      "destroyerGroup": 6,
+      "attackSub": 4,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "KOR": {
+      "carrierGroup": 0,
+      "destroyerGroup": 4,
+      "attackSub": 3,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "ITA": {
+      "carrierGroup": 2,
+      "destroyerGroup": 3,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "ESP": {
+      "carrierGroup": 1,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "TUR": {
+      "carrierGroup": 1,
+      "destroyerGroup": 3,
+      "attackSub": 2,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "DEU": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "AUS": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "BRA": {
+      "carrierGroup": 1,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "PAK": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "IRN": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "ISR": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "TWN": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "PRK": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 2,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "EGY": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 2
+    },
+    "IDN": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "VNM": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "THA": {
+      "carrierGroup": 1,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "CAN": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "NLD": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 1
+    },
+    "GRC": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "SAU": {
+      "carrierGroup": 0,
+      "destroyerGroup": 2,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "ARE": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "SGP": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "NOR": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "SWE": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "POL": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "CHL": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "MYS": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "PHL": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "BGD": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "DZA": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "ARG": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "MEX": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "ZAF": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "NGA": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "COL": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "PER": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 1,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "PRT": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "DNK": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "FIN": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "ROU": {
+      "carrierGroup": 0,
+      "destroyerGroup": 1,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    },
+    "UKR": {
+      "carrierGroup": 0,
+      "destroyerGroup": 0,
+      "attackSub": 0,
+      "missileSub": 0,
+      "amphibiousGroup": 0
+    }
+  },
+  "bombers": { "USA": 6, "RUS": 4, "CHN": 4 },
+  "startingWars": [["RUS", "UKR"]],
+  "startingOccupation": [
+    {
+      "region": 251,
+      "controller": "RUS",
+      "note": "Donetsk/Luhansk merged region under Russian control since 2022–2024 (approximation)"
+    }
+  ],
+  "defensiveTreaties": [
+    ["USA", "JPN"],
+    ["USA", "KOR"],
+    ["USA", "PHL"],
+    ["USA", "AUS"],
+    ["USA", "TWN"],
+    ["RUS", "PRK"],
+    ["CHN", "PRK"],
+    ["GBR", "AUS"],
+    ["IND", "BTN"],
+    ["FRA", "ARE"],
+    ["USA", "ISR"]
+  ]
+}

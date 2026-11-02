@@ -1,0 +1,1223 @@
+{
+  "source": "Public record: official government websites and Wikipedia office-holder pages, verified by web search on 2026-11-02; trait scores are the authors' editorial estimates derived from public statements and policy record",
+  "asOf": "2026-11-02",
+  "estimate": true,
+  "leaders": [
+    {
+      "iso3": "USA",
+      "headOfState": {
+        "name": "Donald Trump",
+        "title": "President",
+        "party": "Republican Party",
+        "since": "2025-01-20"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2028-11",
+      "traits": {
+        "aggression": 70,
+        "riskTolerance": 75,
+        "pragmatism": 55,
+        "nationalism": 85,
+        "paranoia": 60,
+        "economicPriority": 70,
+        "allianceLoyalty": 30,
+        "nuclearThreshold": 60
+      },
+      "rationale": "Second-term record of tariff-driven economic nationalism, transactional treatment of NATO and other allies, and willingness to use force unilaterally (2025 Iran strikes, 2026 Venezuela operation) alongside deal-seeking with adversaries; midterm elections fall on 2026-11-03.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "CHN",
+      "headOfState": {
+        "name": "Xi Jinping",
+        "title": "President and General Secretary of the CCP",
+        "party": "Chinese Communist Party",
+        "since": "2013-03-14"
+      },
+      "headOfGovernment": {
+        "name": "Li Qiang",
+        "title": "Premier of the State Council",
+        "party": "Chinese Communist Party",
+        "since": "2023-03-11"
+      },
+      "nextElection": null,
+      "traits": {
+        "aggression": 55,
+        "riskTolerance": 45,
+        "pragmatism": 65,
+        "nationalism": 85,
+        "paranoia": 70,
+        "economicPriority": 75,
+        "allianceLoyalty": 45,
+        "nuclearThreshold": 80
+      },
+      "rationale": "Long-horizon, risk-averse but assertive posture (Taiwan pressure, South China Sea, military modernisation) paired with a declared no-first-use doctrine and heavy emphasis on economic security; no competitive national elections are scheduled in the one-party system.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "RUS",
+      "headOfState": {
+        "name": "Vladimir Putin",
+        "title": "President",
+        "party": "Independent (backed by United Russia)",
+        "since": "2012-05-07"
+      },
+      "headOfGovernment": {
+        "name": "Mikhail Mishustin",
+        "title": "Prime Minister",
+        "party": "Independent",
+        "since": "2020-01-16"
+      },
+      "nextElection": "2030-03",
+      "traits": {
+        "aggression": 85,
+        "riskTolerance": 75,
+        "pragmatism": 45,
+        "nationalism": 90,
+        "paranoia": 85,
+        "economicPriority": 40,
+        "allianceLoyalty": 50,
+        "nuclearThreshold": 45
+      },
+      "rationale": "Full-scale invasion of Ukraine since 2022, repeated nuclear signalling and a 2024 lowering of the declared nuclear doctrine threshold, and a securitised worldview expressed in official speeches; the economy has been subordinated to the war effort.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "IND",
+      "headOfState": {
+        "name": "Droupadi Murmu",
+        "title": "President",
+        "party": "Bharatiya Janata Party",
+        "since": "2022-07-25"
+      },
+      "headOfGovernment": {
+        "name": "Narendra Modi",
+        "title": "Prime Minister",
+        "party": "Bharatiya Janata Party",
+        "since": "2014-05-26"
+      },
+      "nextElection": "2029-04",
+      "traits": {
+        "aggression": 50,
+        "riskTolerance": 50,
+        "pragmatism": 70,
+        "nationalism": 85,
+        "economicPriority": 75,
+        "paranoia": 55,
+        "allianceLoyalty": 40,
+        "nuclearThreshold": 80
+      },
+      "rationale": "Strategic autonomy and multi-alignment (Quad, BRICS, Russian energy purchases), assertive retaliation against Pakistan in 2019 and 2025, a declared no-first-use doctrine, and a governing agenda centred on growth and Hindu-nationalist identity.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "GBR",
+      "headOfState": {
+        "name": "Charles III",
+        "title": "King",
+        "party": null,
+        "since": "2022-09-08"
+      },
+      "headOfGovernment": {
+        "name": "Andy Burnham",
+        "title": "Prime Minister",
+        "party": "Labour Party",
+        "since": "2026-07-20"
+      },
+      "nextElection": "2029-08",
+      "traits": {
+        "aggression": 40,
+        "riskTolerance": 40,
+        "pragmatism": 70,
+        "nationalism": 45,
+        "paranoia": 40,
+        "economicPriority": 75,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 85
+      },
+      "rationale": "Burnham became PM in July 2026 after Keir Starmer's resignation, inheriting Labour's commitments to NATO, Ukraine support and the Trident deterrent while campaigning on a domestic, soft-left economic agenda; UK nuclear policy retains deliberate ambiguity but a very high bar.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "FRA",
+      "headOfState": {
+        "name": "Emmanuel Macron",
+        "title": "President",
+        "party": "Renaissance",
+        "since": "2017-05-14"
+      },
+      "headOfGovernment": {
+        "name": "Sébastien Lecornu",
+        "title": "Prime Minister",
+        "party": "Renaissance",
+        "since": "2025-09-09"
+      },
+      "nextElection": "2027-04",
+      "traits": {
+        "aggression": 50,
+        "riskTolerance": 55,
+        "pragmatism": 60,
+        "nationalism": 55,
+        "paranoia": 40,
+        "economicPriority": 60,
+        "allianceLoyalty": 70,
+        "nuclearThreshold": 80
+      },
+      "rationale": "Macron's advocacy of European strategic autonomy, offers to extend France's nuclear umbrella to European partners, forward-leaning Ukraine proposals, and a fragile domestic position after repeated government collapses; the presidential election is due April 2027.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "DEU",
+      "headOfState": {
+        "name": "Frank-Walter Steinmeier",
+        "title": "Federal President",
+        "party": "Social Democratic Party (membership suspended in office)",
+        "since": "2017-03-19"
+      },
+      "headOfGovernment": {
+        "name": "Friedrich Merz",
+        "title": "Federal Chancellor",
+        "party": "Christian Democratic Union",
+        "since": "2025-05-06"
+      },
+      "nextElection": "2029-03",
+      "traits": {
+        "aggression": 40,
+        "riskTolerance": 45,
+        "pragmatism": 70,
+        "nationalism": 45,
+        "paranoia": 45,
+        "economicPriority": 80,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 92
+      },
+      "rationale": "Merz lifted the debt brake for defence, backs Ukraine strongly and has floated European nuclear-sharing talks with France and the UK, while Germany remains a non-nuclear state with a strong Atlanticist and export-economy orientation; Steinmeier's term ends March 2027.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "JPN",
+      "headOfState": {
+        "name": "Naruhito",
+        "title": "Emperor",
+        "party": null,
+        "since": "2019-05-01"
+      },
+      "headOfGovernment": {
+        "name": "Sanae Takaichi",
+        "title": "Prime Minister",
+        "party": "Liberal Democratic Party",
+        "since": "2025-10-21"
+      },
+      "nextElection": "2030-02",
+      "traits": {
+        "aggression": 45,
+        "riskTolerance": 45,
+        "pragmatism": 60,
+        "nationalism": 75,
+        "paranoia": 55,
+        "economicPriority": 70,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 92
+      },
+      "rationale": "Takaichi, re-elected after a February 2026 snap-election landslide, is a conservative who favours faster defence build-up and a firm line on China and Taiwan while anchoring policy in the US alliance; Japan's three non-nuclear principles imply a very high nuclear bar.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "KOR",
+      "headOfState": {
+        "name": "Lee Jae-myung",
+        "title": "President",
+        "party": "Democratic Party of Korea",
+        "since": "2025-06-04"
+      },
+      "headOfGovernment": {
+        "name": "Han Seong-sook",
+        "title": "Prime Minister",
+        "party": null,
+        "since": "2026-07-01"
+      },
+      "nextElection": "2030-03",
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 45,
+        "pragmatism": 75,
+        "nationalism": 55,
+        "paranoia": 50,
+        "economicPriority": 80,
+        "allianceLoyalty": 70,
+        "nuclearThreshold": 90
+      },
+      "rationale": "Lee has pursued tension reduction with Pyongyang and pragmatic balancing between Washington and Beijing while keeping the US alliance; Han Seong-sook, a technocrat and former Naver CEO, was confirmed in June 2026 with an economy-first brief.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "IRN",
+      "headOfState": {
+        "name": "Mojtaba Khamenei",
+        "title": "Supreme Leader",
+        "party": null,
+        "since": "2026-03-08"
+      },
+      "headOfGovernment": {
+        "name": "Masoud Pezeshkian",
+        "title": "President",
+        "party": "Independent (reformist-backed)",
+        "since": "2024-07-28"
+      },
+      "nextElection": "2028-06",
+      "traits": {
+        "aggression": 70,
+        "riskTolerance": 60,
+        "pragmatism": 40,
+        "nationalism": 85,
+        "paranoia": 90,
+        "economicPriority": 40,
+        "allianceLoyalty": 55,
+        "nuclearThreshold": 55
+      },
+      "rationale": "Mojtaba Khamenei was chosen by the Assembly of Experts after his father was killed in the February 2026 strikes that opened the 2026 Iran war; the post-war system is widely reported as IRGC-dominated, with President Pezeshkian publicly denying repeated resignation reports, and nuclear-threshold debates are now open in Tehran.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "ISR",
+      "headOfState": {
+        "name": "Isaac Herzog",
+        "title": "President",
+        "party": null,
+        "since": "2021-07-07"
+      },
+      "headOfGovernment": {
+        "name": "Benjamin Netanyahu",
+        "title": "Prime Minister (caretaker)",
+        "party": "Likud",
+        "since": "2022-12-29"
+      },
+      "nextElection": "2030-10",
+      "traits": {
+        "aggression": 80,
+        "riskTolerance": 70,
+        "pragmatism": 50,
+        "nationalism": 85,
+        "paranoia": 80,
+        "economicPriority": 45,
+        "allianceLoyalty": 55,
+        "nuclearThreshold": 60
+      },
+      "rationale": "Netanyahu has led multi-front wars in Gaza, Lebanon and against Iran (2025 and 2026); after the 27 October 2026 Knesset election left his bloc at 53 seats and the Eisenkot-led opposition at 48, he remains caretaker PM while coalition talks continue, so a repeat election remains possible.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "TUR",
+      "headOfState": {
+        "name": "Recep Tayyip Erdoğan",
+        "title": "President",
+        "party": "Justice and Development Party",
+        "since": "2014-08-28"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2028-05",
+      "traits": {
+        "aggression": 60,
+        "riskTolerance": 60,
+        "pragmatism": 60,
+        "nationalism": 85,
+        "paranoia": 70,
+        "economicPriority": 55,
+        "allianceLoyalty": 40,
+        "nuclearThreshold": 85
+      },
+      "rationale": "Cross-border operations in Syria and Iraq, S-400 purchase despite NATO membership, mediation between Russia and Ukraine, and a record of pressure on domestic opponents; allies have floated an early 2028 vote that would allow him to run again.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "PAK",
+      "headOfState": {
+        "name": "Asif Ali Zardari",
+        "title": "President",
+        "party": "Pakistan Peoples Party",
+        "since": "2024-03-10"
+      },
+      "headOfGovernment": {
+        "name": "Shehbaz Sharif",
+        "title": "Prime Minister",
+        "party": "Pakistan Muslim League (N)",
+        "since": "2024-03-04"
+      },
+      "nextElection": "2029-02",
+      "traits": {
+        "aggression": 55,
+        "riskTolerance": 55,
+        "pragmatism": 55,
+        "nationalism": 80,
+        "paranoia": 75,
+        "economicPriority": 50,
+        "allianceLoyalty": 55,
+        "nuclearThreshold": 50
+      },
+      "rationale": "A civilian government operating under heavy military influence (Field Marshal Asim Munir's elevation), the May 2025 clash with India, IMF-dependent economy and a nuclear doctrine that explicitly rejects no-first-use to offset conventional inferiority.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "BRA",
+      "headOfState": {
+        "name": "Luiz Inácio Lula da Silva",
+        "title": "President",
+        "party": "Workers' Party",
+        "since": "2023-01-01"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2030-10",
+      "traits": {
+        "aggression": 25,
+        "riskTolerance": 40,
+        "pragmatism": 65,
+        "nationalism": 55,
+        "paranoia": 40,
+        "economicPriority": 80,
+        "allianceLoyalty": 45,
+        "nuclearThreshold": 96
+      },
+      "rationale": "Lula won the 25 October 2026 runoff against Flávio Bolsonaro (about 51.7%) and begins a new term on 5 January 2027; his record is non-aligned diplomacy, BRICS engagement, mediation offers on Ukraine and social spending, with Brazil a constitutional non-nuclear-weapon state.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "UKR",
+      "headOfState": {
+        "name": "Volodymyr Zelensky",
+        "title": "President",
+        "party": "Servant of the People",
+        "since": "2019-05-20"
+      },
+      "headOfGovernment": {
+        "name": "Serhii Koretskyi",
+        "title": "Prime Minister",
+        "party": null,
+        "since": "2026-07-16"
+      },
+      "nextElection": null,
+      "traits": {
+        "aggression": 60,
+        "riskTolerance": 70,
+        "pragmatism": 55,
+        "nationalism": 85,
+        "paranoia": 70,
+        "economicPriority": 45,
+        "allianceLoyalty": 75,
+        "nuclearThreshold": 90
+      },
+      "rationale": "Wartime leadership resisting Russia's invasion with deep-strike campaigns and dependence on Western support; Koretskyi, formerly Naftogaz chief, replaced Yulia Svyrydenko in July 2026; national elections remain suspended under martial law with no date set.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "TWN",
+      "headOfState": {
+        "name": "Lai Ching-te",
+        "title": "President",
+        "party": "Democratic Progressive Party",
+        "since": "2024-05-20"
+      },
+      "headOfGovernment": {
+        "name": "Cho Jung-tai",
+        "title": "Premier",
+        "party": "Democratic Progressive Party",
+        "since": "2024-05-20"
+      },
+      "nextElection": "2028-01",
+      "traits": {
+        "aggression": 40,
+        "riskTolerance": 50,
+        "pragmatism": 55,
+        "nationalism": 80,
+        "paranoia": 75,
+        "economicPriority": 70,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Lai's firm sovereignty rhetoric, increased defence spending and civil-defence drills in the face of PLA pressure, constrained by an opposition-controlled legislature that has stalled budgets; Taiwan renounced nuclear weapons programmes in the 1980s.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "PRK",
+      "headOfState": {
+        "name": "Kim Jong Un",
+        "title": "President of the State Affairs Commission and General Secretary of the WPK",
+        "party": "Workers' Party of Korea",
+        "since": "2011-12-17"
+      },
+      "headOfGovernment": {
+        "name": "Pak Thae-song",
+        "title": "Premier",
+        "party": "Workers' Party of Korea",
+        "since": "2024-12-29"
+      },
+      "nextElection": null,
+      "traits": {
+        "aggression": 80,
+        "riskTolerance": 70,
+        "pragmatism": 35,
+        "nationalism": 92,
+        "paranoia": 92,
+        "economicPriority": 35,
+        "allianceLoyalty": 60,
+        "nuclearThreshold": 40
+      },
+      "rationale": "A 2022 law enshrining pre-emptive nuclear use, continuous missile testing, troops and munitions supplied to Russia under the 2024 treaty, and the constitutional designation of South Korea as a hostile state; no competitive elections exist.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "SAU",
+      "headOfState": {
+        "name": "Salman bin Abdulaziz Al Saud",
+        "title": "King",
+        "party": null,
+        "since": "2015-01-23"
+      },
+      "headOfGovernment": {
+        "name": "Mohammed bin Salman Al Saud",
+        "title": "Crown Prince and Prime Minister",
+        "party": null,
+        "since": "2022-09-27"
+      },
+      "nextElection": null,
+      "traits": {
+        "aggression": 55,
+        "riskTolerance": 60,
+        "pragmatism": 65,
+        "nationalism": 70,
+        "paranoia": 65,
+        "economicPriority": 85,
+        "allianceLoyalty": 50,
+        "nuclearThreshold": 80
+      },
+      "rationale": "The Crown Prince runs day-to-day government around Vision 2030 diversification, the 2023 China-brokered détente with Iran and hedging between Washington and Beijing, after the costly Yemen intervention; MBS has stated Saudi Arabia would seek a bomb if Iran acquired one; the absolute monarchy holds no national elections.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "ARE",
+      "headOfState": {
+        "name": "Mohamed bin Zayed Al Nahyan",
+        "title": "President",
+        "party": null,
+        "since": "2022-05-14"
+      },
+      "headOfGovernment": {
+        "name": "Mohammed bin Rashid Al Maktoum",
+        "title": "Vice President and Prime Minister",
+        "party": null,
+        "since": "2006-01-05"
+      },
+      "nextElection": null,
+      "traits": {
+        "aggression": 50,
+        "riskTolerance": 55,
+        "pragmatism": 75,
+        "nationalism": 60,
+        "paranoia": 60,
+        "economicPriority": 85,
+        "allianceLoyalty": 50,
+        "nuclearThreshold": 90
+      },
+      "rationale": "Abraham Accords normalisation with Israel, active proxy involvement in Libya, Yemen and Sudan, deep investment diplomacy with both the US and China, and a civil nuclear programme under IAEA safeguards; the federation of hereditary rulers holds no competitive national elections.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "EGY",
+      "headOfState": {
+        "name": "Abdel Fattah el-Sisi",
+        "title": "President",
+        "party": "Independent",
+        "since": "2014-06-08"
+      },
+      "headOfGovernment": {
+        "name": "Mostafa Madbouly",
+        "title": "Prime Minister",
+        "party": "Independent",
+        "since": "2018-06-14"
+      },
+      "nextElection": "2029-12",
+      "traits": {
+        "aggression": 45,
+        "riskTolerance": 35,
+        "pragmatism": 65,
+        "nationalism": 75,
+        "paranoia": 75,
+        "economicPriority": 70,
+        "allianceLoyalty": 55,
+        "nuclearThreshold": 90
+      },
+      "rationale": "Military-backed presidency focused on regime security, mediation on Gaza, firm red lines on Rafah and Nile water (GERD), and reliance on Gulf, IMF and US financing; Madbouly has headed government since 2018 and survived a February 2026 reshuffle.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "POL",
+      "headOfState": {
+        "name": "Karol Nawrocki",
+        "title": "President",
+        "party": "Independent (backed by Law and Justice)",
+        "since": "2025-08-06"
+      },
+      "headOfGovernment": {
+        "name": "Donald Tusk",
+        "title": "Prime Minister",
+        "party": "Civic Platform",
+        "since": "2023-12-13"
+      },
+      "nextElection": "2027-11",
+      "traits": {
+        "aggression": 50,
+        "riskTolerance": 50,
+        "pragmatism": 55,
+        "nationalism": 75,
+        "paranoia": 75,
+        "economicPriority": 60,
+        "allianceLoyalty": 85,
+        "nuclearThreshold": 90
+      },
+      "rationale": "Europe's highest defence spending share of GDP, hard line on Russia and Belarus, and strong NATO/US alignment, amid cohabitation friction between Tusk's coalition and President Nawrocki, who has vetoed legislation including EU defence-loan access.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "ITA",
+      "headOfState": {
+        "name": "Sergio Mattarella",
+        "title": "President",
+        "party": "Independent",
+        "since": "2015-02-03"
+      },
+      "headOfGovernment": {
+        "name": "Giorgia Meloni",
+        "title": "Prime Minister",
+        "party": "Brothers of Italy",
+        "since": "2022-10-22"
+      },
+      "nextElection": "2027-09",
+      "traits": {
+        "aggression": 40,
+        "riskTolerance": 40,
+        "pragmatism": 65,
+        "nationalism": 70,
+        "paranoia": 45,
+        "economicPriority": 70,
+        "allianceLoyalty": 75,
+        "nuclearThreshold": 92
+      },
+      "rationale": "Meloni combines national-conservative domestic politics with reliable Atlanticism, support for Ukraine and a bridging role with the Trump administration, while cautious on fiscal commitments; Italy is a non-nuclear NATO host state.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "ESP",
+      "headOfState": { "name": "Felipe VI", "title": "King", "party": null, "since": "2014-06-19" },
+      "headOfGovernment": {
+        "name": "Pedro Sánchez",
+        "title": "Prime Minister",
+        "party": "Spanish Socialist Workers' Party",
+        "since": "2018-06-02"
+      },
+      "nextElection": "2026-11",
+      "traits": {
+        "aggression": 30,
+        "riskTolerance": 55,
+        "pragmatism": 60,
+        "nationalism": 40,
+        "paranoia": 40,
+        "economicPriority": 75,
+        "allianceLoyalty": 65,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Sánchez has resisted NATO's 5% spending target, recognised Palestine and opposed Israel's Gaza campaign, and governs by minority coalition; after Congress rejected his housing decrees he called a snap general election for 29 November 2026.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "CAN",
+      "headOfState": {
+        "name": "Charles III",
+        "title": "King",
+        "party": null,
+        "since": "2022-09-08"
+      },
+      "headOfGovernment": {
+        "name": "Mark Carney",
+        "title": "Prime Minister",
+        "party": "Liberal Party",
+        "since": "2025-03-14"
+      },
+      "nextElection": "2029-10",
+      "traits": {
+        "aggression": 30,
+        "riskTolerance": 45,
+        "pragmatism": 80,
+        "nationalism": 55,
+        "paranoia": 40,
+        "economicPriority": 85,
+        "allianceLoyalty": 70,
+        "nuclearThreshold": 96
+      },
+      "rationale": "Former central banker who won a majority via 2026 by-elections, prioritising trade diversification and a US tariff deal, defence spending increases and sovereignty rhetoric in response to US pressure; Canada is a non-nuclear NATO member.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "AUS",
+      "headOfState": {
+        "name": "Charles III",
+        "title": "King",
+        "party": null,
+        "since": "2022-09-08"
+      },
+      "headOfGovernment": {
+        "name": "Anthony Albanese",
+        "title": "Prime Minister",
+        "party": "Australian Labor Party",
+        "since": "2022-05-23"
+      },
+      "nextElection": "2028-05",
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 40,
+        "pragmatism": 70,
+        "nationalism": 50,
+        "paranoia": 50,
+        "economicPriority": 75,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Second-term Labor government continuing AUKUS submarines and US alliance while stabilising trade with China, and a 2026 budget centred on fuel security; Australia is a non-nuclear state under the US umbrella.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "MEX",
+      "headOfState": {
+        "name": "Claudia Sheinbaum",
+        "title": "President",
+        "party": "Morena",
+        "since": "2024-10-01"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2030-06",
+      "traits": {
+        "aggression": 20,
+        "riskTolerance": 40,
+        "pragmatism": 70,
+        "nationalism": 70,
+        "paranoia": 45,
+        "economicPriority": 80,
+        "allianceLoyalty": 50,
+        "nuclearThreshold": 97
+      },
+      "rationale": "Sovereignty-first but cooperative handling of US tariff and cartel pressure, judicial reform and continuity of social programmes with a congressional supermajority; Mexico is a Treaty of Tlatelolco non-nuclear state.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "IDN",
+      "headOfState": {
+        "name": "Prabowo Subianto",
+        "title": "President",
+        "party": "Gerindra Party",
+        "since": "2024-10-20"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2029-02",
+      "traits": {
+        "aggression": 45,
+        "riskTolerance": 55,
+        "pragmatism": 65,
+        "nationalism": 80,
+        "paranoia": 55,
+        "economicPriority": 75,
+        "allianceLoyalty": 40,
+        "nuclearThreshold": 93
+      },
+      "rationale": "Former general pursuing free-and-active non-alignment (BRICS membership, balanced US-China ties), expanded military role in government and large state-led spending programmes; Indonesia is a non-nuclear NPT state.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "VNM",
+      "headOfState": {
+        "name": "Tô Lâm",
+        "title": "President and General Secretary of the CPV",
+        "party": "Communist Party of Vietnam",
+        "since": "2026-04-07"
+      },
+      "headOfGovernment": {
+        "name": "Lê Minh Hưng",
+        "title": "Prime Minister",
+        "party": "Communist Party of Vietnam",
+        "since": "2026-04-07"
+      },
+      "nextElection": null,
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 40,
+        "pragmatism": 75,
+        "nationalism": 80,
+        "paranoia": 65,
+        "economicPriority": 85,
+        "allianceLoyalty": 40,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Tô Lâm consolidated party and state leadership in April 2026 after the 14th Party Congress, with former central-bank governor Lê Minh Hưng as PM, continuing bamboo diplomacy between China and the US and export-led growth; National Assembly elections are single-party and not competitive.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "PHL",
+      "headOfState": {
+        "name": "Ferdinand Marcos Jr.",
+        "title": "President",
+        "party": "Partido Federal ng Pilipinas",
+        "since": "2022-06-30"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2028-05",
+      "traits": {
+        "aggression": 45,
+        "riskTolerance": 50,
+        "pragmatism": 60,
+        "nationalism": 70,
+        "paranoia": 55,
+        "economicPriority": 65,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 96
+      },
+      "rationale": "Expanded US basing access and assertive publicising of South China Sea confrontations with China, a bitter feud with the Duterte camp, and impeachment complaints dismissed by the House in February 2026; the Philippines is constitutionally nuclear-free.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "THA",
+      "headOfState": {
+        "name": "Vajiralongkorn",
+        "title": "King",
+        "party": null,
+        "since": "2016-10-13"
+      },
+      "headOfGovernment": {
+        "name": "Anutin Charnvirakul",
+        "title": "Prime Minister",
+        "party": "Bhumjaithai Party",
+        "since": "2025-09-07"
+      },
+      "nextElection": "2030-02",
+      "traits": {
+        "aggression": 40,
+        "riskTolerance": 45,
+        "pragmatism": 70,
+        "nationalism": 65,
+        "paranoia": 50,
+        "economicPriority": 75,
+        "allianceLoyalty": 50,
+        "nuclearThreshold": 96
+      },
+      "rationale": "Conservative coalition leader re-elected PM in March 2026 after Bhumjaithai topped the February election, following the 2025 border clashes with Cambodia; Thailand hedges between the US treaty alliance and China and is a non-nuclear state.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "NGA",
+      "headOfState": {
+        "name": "Bola Tinubu",
+        "title": "President",
+        "party": "All Progressives Congress",
+        "since": "2023-05-29"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2027-01",
+      "traits": {
+        "aggression": 40,
+        "riskTolerance": 55,
+        "pragmatism": 60,
+        "nationalism": 65,
+        "paranoia": 55,
+        "economicPriority": 75,
+        "allianceLoyalty": 50,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Market-oriented shock reforms (fuel subsidy removal, naira float), ECOWAS leadership during the Sahel coups, and an APC ticket secured for the January 2027 election amid security crises; Nigeria is a non-nuclear state.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "ZAF",
+      "headOfState": {
+        "name": "Cyril Ramaphosa",
+        "title": "President",
+        "party": "African National Congress",
+        "since": "2018-02-15"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2029-05",
+      "traits": {
+        "aggression": 25,
+        "riskTolerance": 35,
+        "pragmatism": 70,
+        "nationalism": 55,
+        "paranoia": 40,
+        "economicPriority": 75,
+        "allianceLoyalty": 45,
+        "nuclearThreshold": 97
+      },
+      "rationale": "Leads a Government of National Unity with the DA, pursues non-aligned BRICS diplomacy and brought the ICJ genocide case against Israel while weathering US aid and trade pressure; South Africa dismantled its nuclear arsenal in 1990.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "ETH",
+      "headOfState": {
+        "name": "Taye Atske Selassie",
+        "title": "President",
+        "party": "Prosperity Party",
+        "since": "2024-10-07"
+      },
+      "headOfGovernment": {
+        "name": "Abiy Ahmed",
+        "title": "Prime Minister",
+        "party": "Prosperity Party",
+        "since": "2018-04-02"
+      },
+      "nextElection": "2031-06",
+      "traits": {
+        "aggression": 65,
+        "riskTolerance": 65,
+        "pragmatism": 50,
+        "nationalism": 85,
+        "paranoia": 70,
+        "economicPriority": 60,
+        "allianceLoyalty": 40,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Abiy was sworn in for a new term in October 2026 after the Prosperity Party's June landslide; his record includes the Tigray war, ongoing Amhara and Oromia insurgencies, the GERD completion and public insistence on Red Sea access that has strained ties with Eritrea and Somalia.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "ARG",
+      "headOfState": {
+        "name": "Javier Milei",
+        "title": "President",
+        "party": "La Libertad Avanza",
+        "since": "2023-12-10"
+      },
+      "headOfGovernment": null,
+      "nextElection": "2027-10",
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 80,
+        "pragmatism": 45,
+        "nationalism": 55,
+        "paranoia": 50,
+        "economicPriority": 90,
+        "allianceLoyalty": 65,
+        "nuclearThreshold": 96
+      },
+      "rationale": "Radical libertarian austerity and deregulation strengthened by the October 2025 midterm win, close alignment with the US and Israel and withdrawal from multilateral forums; Argentina is a Tlatelolco non-nuclear state.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "SWE",
+      "headOfState": {
+        "name": "Carl XVI Gustaf",
+        "title": "King",
+        "party": null,
+        "since": "1973-09-15"
+      },
+      "headOfGovernment": {
+        "name": "Ulf Kristersson",
+        "title": "Prime Minister (caretaker)",
+        "party": "Moderate Party",
+        "since": "2022-10-18"
+      },
+      "nextElection": "2030-09",
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 40,
+        "pragmatism": 70,
+        "nationalism": 50,
+        "paranoia": 55,
+        "economicPriority": 70,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Kristersson, who took Sweden into NATO and raised defence spending, resigned after the centre-left bloc won 176-173 seats on 13 September 2026 and serves as caretaker while the Riksdag, which voted down Magdalena Andersson's first candidacy, continues government formation.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "FIN",
+      "headOfState": {
+        "name": "Alexander Stubb",
+        "title": "President",
+        "party": "National Coalition Party (membership suspended in office)",
+        "since": "2024-03-01"
+      },
+      "headOfGovernment": {
+        "name": "Petteri Orpo",
+        "title": "Prime Minister",
+        "party": "National Coalition Party",
+        "since": "2023-06-20"
+      },
+      "nextElection": "2027-04",
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 40,
+        "pragmatism": 75,
+        "nationalism": 55,
+        "paranoia": 65,
+        "economicPriority": 65,
+        "allianceLoyalty": 85,
+        "nuclearThreshold": 94
+      },
+      "rationale": "New NATO member with a closed Russian border, Stubb's active values-based diplomacy on Ukraine and Orpo's fiscally conservative coalition with the Finns Party; Finland is a non-nuclear state with strong total-defence traditions.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "NLD",
+      "headOfState": {
+        "name": "Willem-Alexander",
+        "title": "King",
+        "party": null,
+        "since": "2013-04-30"
+      },
+      "headOfGovernment": {
+        "name": "Rob Jetten",
+        "title": "Prime Minister",
+        "party": "Democrats 66",
+        "since": "2026-02-23"
+      },
+      "nextElection": "2030-03",
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 45,
+        "pragmatism": 75,
+        "nationalism": 40,
+        "paranoia": 45,
+        "economicPriority": 75,
+        "allianceLoyalty": 85,
+        "nuclearThreshold": 94
+      },
+      "rationale": "Jetten leads a D66-CDA-VVD minority cabinet sworn in February 2026 after D66 narrowly beat the PVV, continuing strong Ukraine and NATO commitments and a pro-EU, centrist economic line; the Netherlands hosts US nuclear-sharing but has no weapons of its own.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "BLR",
+      "headOfState": {
+        "name": "Alexander Lukashenko",
+        "title": "President",
+        "party": "Independent",
+        "since": "1994-07-20"
+      },
+      "headOfGovernment": {
+        "name": "Alexander Turchin",
+        "title": "Prime Minister",
+        "party": "Independent",
+        "since": "2025-03-10"
+      },
+      "nextElection": "2030-01",
+      "traits": {
+        "aggression": 55,
+        "riskTolerance": 45,
+        "pragmatism": 50,
+        "nationalism": 65,
+        "paranoia": 85,
+        "economicPriority": 50,
+        "allianceLoyalty": 80,
+        "nuclearThreshold": 55
+      },
+      "rationale": "Hosts Russian tactical nuclear weapons and Oreshnik missiles under the Union State, served as a staging ground for the 2022 invasion while avoiding direct troop commitment, and maintains tight domestic control; elections are held but not judged competitive by observers.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "KAZ",
+      "headOfState": {
+        "name": "Kassym-Jomart Tokayev",
+        "title": "President",
+        "party": "Independent",
+        "since": "2019-03-20"
+      },
+      "headOfGovernment": {
+        "name": "Olzhas Bektenov",
+        "title": "Prime Minister",
+        "party": "Independent",
+        "since": "2024-02-06"
+      },
+      "nextElection": "2029-11",
+      "traits": {
+        "aggression": 25,
+        "riskTolerance": 35,
+        "pragmatism": 80,
+        "nationalism": 60,
+        "paranoia": 60,
+        "economicPriority": 80,
+        "allianceLoyalty": 55,
+        "nuclearThreshold": 97
+      },
+      "rationale": "Multi-vector foreign policy balancing Russia, China and the West, public refusal to recognise Russian annexations in Ukraine, and a 2026 constitutional overhaul creating a unicameral Kurultai and vice presidency; Kazakhstan gave up Soviet nuclear weapons in the 1990s.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "QAT",
+      "headOfState": {
+        "name": "Tamim bin Hamad Al Thani",
+        "title": "Emir",
+        "party": null,
+        "since": "2013-06-25"
+      },
+      "headOfGovernment": {
+        "name": "Mohammed bin Abdulrahman Al Thani",
+        "title": "Prime Minister and Minister of Foreign Affairs",
+        "party": null,
+        "since": "2023-03-07"
+      },
+      "nextElection": null,
+      "traits": {
+        "aggression": 25,
+        "riskTolerance": 50,
+        "pragmatism": 85,
+        "nationalism": 55,
+        "paranoia": 55,
+        "economicPriority": 80,
+        "allianceLoyalty": 60,
+        "nuclearThreshold": 95
+      },
+      "rationale": "Mediator in Gaza, Afghanistan and Iran-US channels, host of Al Udeid air base and a 2025 Iranian missile strike, and LNG-driven investment diplomacy; the absolute monarchy holds no competitive national elections.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "IRQ",
+      "headOfState": {
+        "name": "Nizar Amedi",
+        "title": "President",
+        "party": "Patriotic Union of Kurdistan",
+        "since": "2026-04-11"
+      },
+      "headOfGovernment": {
+        "name": "Ali al-Zaidi",
+        "title": "Prime Minister",
+        "party": null,
+        "since": "2026-05-14"
+      },
+      "nextElection": "2029-11",
+      "traits": {
+        "aggression": 35,
+        "riskTolerance": 40,
+        "pragmatism": 60,
+        "nationalism": 65,
+        "paranoia": 70,
+        "economicPriority": 70,
+        "allianceLoyalty": 45,
+        "nuclearThreshold": 95
+      },
+      "rationale": "After a five-month deadlock following the November 2025 election, parliament elected Amedi president in April and approved al-Zaidi's partial cabinet in May 2026 as he pledged a state monopoly on arms amid US pressure over Iran-aligned militias and fallout from the 2026 Iran war.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "SYR",
+      "headOfState": {
+        "name": "Ahmed al-Sharaa",
+        "title": "President (transitional)",
+        "party": null,
+        "since": "2025-01-29"
+      },
+      "headOfGovernment": null,
+      "nextElection": null,
+      "traits": {
+        "aggression": 50,
+        "riskTolerance": 60,
+        "pragmatism": 70,
+        "nationalism": 75,
+        "paranoia": 70,
+        "economicPriority": 65,
+        "allianceLoyalty": 45,
+        "nuclearThreshold": 96
+      },
+      "rationale": "Former HTS leader governing under a March 2025 interim constitution with no prime minister, pursuing sanctions relief and reconstruction ties with Gulf states, Turkey and the West while managing sectarian violence and Israeli strikes; no national election date has been set in the transition.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "VEN",
+      "headOfState": {
+        "name": "Delcy Rodríguez",
+        "title": "Acting President",
+        "party": "United Socialist Party of Venezuela",
+        "since": "2026-01-05"
+      },
+      "headOfGovernment": null,
+      "nextElection": null,
+      "traits": {
+        "aggression": 45,
+        "riskTolerance": 50,
+        "pragmatism": 60,
+        "nationalism": 80,
+        "paranoia": 80,
+        "economicPriority": 65,
+        "allianceLoyalty": 45,
+        "nuclearThreshold": 96
+      },
+      "rationale": "Became acting president after US forces detained Nicolás Maduro in January 2026; she has engaged in US-backed transition talks and oil deals, promised elections under a renewed electoral authority without setting a date, and faces a returned opposition led by María Corina Machado.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    },
+    {
+      "iso3": "NZL",
+      "headOfState": {
+        "name": "Charles III",
+        "title": "King",
+        "party": null,
+        "since": "2022-09-08"
+      },
+      "headOfGovernment": {
+        "name": "Christopher Luxon",
+        "title": "Prime Minister",
+        "party": "New Zealand National Party",
+        "since": "2023-11-27"
+      },
+      "nextElection": "2026-11",
+      "traits": {
+        "aggression": 20,
+        "riskTolerance": 40,
+        "pragmatism": 75,
+        "nationalism": 45,
+        "paranoia": 35,
+        "economicPriority": 80,
+        "allianceLoyalty": 65,
+        "nuclearThreshold": 98
+      },
+      "rationale": "Business-oriented coalition leader facing a general election on 7 November 2026 after surviving an April caucus leadership vote; New Zealand maintains its nuclear-free legislation and a modest, Five Eyes-aligned defence posture.",
+      "verifiedAsOf": "2026-11-02",
+      "fictional": false
+    }
+  ]
+}

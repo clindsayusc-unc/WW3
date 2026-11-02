@@ -1,0 +1,522 @@
+{
+  "source": "Original game design. Technology names and framing reflect publicly reported programmes (e.g. CSIS, IISS, RAND open publications); effects are gameplay abstractions.",
+  "asOf": "2026-11-02",
+  "estimate": false,
+  "branches": [
+    { "id": "ai", "name": "AI & Autonomy", "color": "#a78bfa" },
+    { "id": "drones", "name": "Drones & Robotics", "color": "#34d399" },
+    { "id": "missiles", "name": "Missiles & Hypersonics", "color": "#f87171" },
+    { "id": "missileDefense", "name": "Missile Defence", "color": "#60a5fa" },
+    { "id": "cyber", "name": "Cyber & Electronic Warfare", "color": "#fbbf24" },
+    { "id": "space", "name": "Space", "color": "#c084fc" },
+    { "id": "energy", "name": "Energy & Industry", "color": "#fb923c" },
+    { "id": "semiconductors", "name": "Semiconductors & Quantum", "color": "#22d3ee" }
+  ],
+  "techs": [
+    {
+      "id": "ai-decision-support",
+      "branch": "ai",
+      "tier": 1,
+      "name": "AI Decision Support",
+      "cost": 60,
+      "requires": [],
+      "framing": "Machine-learning staff tools shorten targeting and logistics cycles.",
+      "effects": [
+        { "key": "landAttack", "value": 0.03 },
+        { "key": "researchSpeed", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "ai-isr-fusion",
+      "branch": "ai",
+      "tier": 2,
+      "name": "ISR Fusion",
+      "cost": 120,
+      "requires": ["ai-decision-support"],
+      "framing": "Automated fusion of satellite, drone and signals intelligence.",
+      "effects": [
+        { "key": "intel", "value": 1 },
+        { "key": "airPower", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "ai-autonomous-logistics",
+      "branch": "ai",
+      "tier": 3,
+      "name": "Autonomous Logistics",
+      "cost": 200,
+      "requires": ["ai-isr-fusion"],
+      "framing": "Self-driving convoys and predictive maintenance cut upkeep.",
+      "effects": [{ "key": "upkeep", "value": -0.1 }]
+    },
+    {
+      "id": "ai-swarm-command",
+      "branch": "ai",
+      "tier": 4,
+      "name": "Swarm Command",
+      "cost": 320,
+      "requires": ["ai-autonomous-logistics", "drones-loitering-munitions"],
+      "framing": "Human-on-the-loop control of hundreds of autonomous systems.",
+      "effects": [
+        { "key": "droneStrength", "value": 0.3 },
+        { "key": "landAttack", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "ai-strategic-ai",
+      "branch": "ai",
+      "tier": 5,
+      "name": "Strategic AI",
+      "cost": 520,
+      "requires": ["ai-swarm-command", "semi-advanced-nodes"],
+      "framing": "Frontier models in the war room: faster, colder decisions.",
+      "effects": [
+        { "key": "researchSpeed", "value": 0.15 },
+        { "key": "landAttack", "value": 0.05 },
+        { "key": "airPower", "value": 0.05 }
+      ]
+    },
+
+    {
+      "id": "drones-tactical-isr",
+      "branch": "drones",
+      "tier": 1,
+      "name": "Tactical ISR Drones",
+      "cost": 50,
+      "requires": [],
+      "framing": "Cheap quadcopters give every battalion eyes above the trees.",
+      "effects": [{ "key": "landDefence", "value": 0.04 }]
+    },
+    {
+      "id": "drones-loitering-munitions",
+      "branch": "drones",
+      "tier": 2,
+      "name": "Loitering Munitions",
+      "cost": 110,
+      "requires": ["drones-tactical-isr"],
+      "framing": "One-way attack drones built by the tens of thousands.",
+      "effects": [
+        { "key": "droneStrength", "value": 0.25 },
+        { "key": "landAttack", "value": 0.03 }
+      ]
+    },
+    {
+      "id": "drones-naval-usv",
+      "branch": "drones",
+      "tier": 3,
+      "name": "Uncrewed Surface Vessels",
+      "cost": 180,
+      "requires": ["drones-loitering-munitions"],
+      "framing": "Explosive sea drones that threaten capital ships in confined waters.",
+      "effects": [{ "key": "navalPower", "value": 0.08 }]
+    },
+    {
+      "id": "drones-collaborative-combat",
+      "branch": "drones",
+      "tier": 4,
+      "name": "Collaborative Combat Aircraft",
+      "cost": 300,
+      "requires": ["drones-naval-usv"],
+      "framing": "Loyal-wingman jets flying alongside crewed fighters.",
+      "effects": [
+        { "key": "airPower", "value": 0.12 },
+        { "key": "droneStrength", "value": 0.2 }
+      ]
+    },
+    {
+      "id": "drones-ground-robotics",
+      "branch": "drones",
+      "tier": 5,
+      "name": "Ground Combat Robotics",
+      "cost": 480,
+      "requires": ["drones-collaborative-combat", "ai-swarm-command"],
+      "framing": "Robotic assault vehicles absorb losses that would break human units.",
+      "effects": [
+        { "key": "landAttack", "value": 0.1 },
+        { "key": "landDefence", "value": 0.08 }
+      ]
+    },
+
+    {
+      "id": "missiles-precision-strike",
+      "branch": "missiles",
+      "tier": 1,
+      "name": "Precision Strike Complex",
+      "cost": 70,
+      "requires": [],
+      "framing": "Networked sensors and GPS-guided rockets at scale.",
+      "effects": [{ "key": "landAttack", "value": 0.06 }]
+    },
+    {
+      "id": "missiles-cruise-mass",
+      "branch": "missiles",
+      "tier": 2,
+      "name": "Cruise Missile Mass Production",
+      "cost": 140,
+      "requires": ["missiles-precision-strike"],
+      "framing": "Long-range cruise missiles become an expendable commodity.",
+      "effects": [
+        { "key": "navalPower", "value": 0.05 },
+        { "key": "strikePower", "value": 0.2 }
+      ]
+    },
+    {
+      "id": "missiles-hypersonic-glide",
+      "branch": "missiles",
+      "tier": 3,
+      "name": "Hypersonic Glide Vehicles",
+      "cost": 260,
+      "requires": ["missiles-cruise-mass"],
+      "framing": "Manoeuvring warheads that outrun current interceptors.",
+      "effects": [
+        { "key": "strikePower", "value": 0.3 },
+        { "key": "deterrence", "value": 0.1 }
+      ]
+    },
+    {
+      "id": "missiles-anti-ship-ballistic",
+      "branch": "missiles",
+      "tier": 4,
+      "name": "Anti-Ship Ballistic Missiles",
+      "cost": 360,
+      "requires": ["missiles-hypersonic-glide", "space-isr-constellation"],
+      "framing": "Carrier-killer missiles cued by satellites.",
+      "effects": [{ "key": "navalPower", "value": 0.15 }]
+    },
+    {
+      "id": "missiles-mirv-modernisation",
+      "branch": "missiles",
+      "tier": 5,
+      "name": "Strategic Force Modernisation",
+      "cost": 560,
+      "requires": ["missiles-anti-ship-ballistic"],
+      "framing": "New delivery systems make the arsenal survivable and credible.",
+      "effects": [{ "key": "deterrence", "value": 0.25 }]
+    },
+
+    {
+      "id": "md-point-defence",
+      "branch": "missileDefense",
+      "tier": 1,
+      "name": "Layered Point Defence",
+      "cost": 60,
+      "requires": [],
+      "framing": "Short-range interceptors protect bases and cities.",
+      "effects": [
+        { "key": "landDefence", "value": 0.03 },
+        { "key": "missileDefence", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "md-theatre-interceptors",
+      "branch": "missileDefense",
+      "tier": 2,
+      "name": "Theatre Interceptors",
+      "cost": 130,
+      "requires": ["md-point-defence"],
+      "framing": "Exo-atmospheric interceptors for the regional threat.",
+      "effects": [
+        { "key": "missileDefence", "value": 0.1 },
+        { "key": "antiAir", "value": 0.1 }
+      ]
+    },
+    {
+      "id": "md-directed-energy",
+      "branch": "missileDefense",
+      "tier": 3,
+      "name": "Directed-Energy Defence",
+      "cost": 240,
+      "requires": ["md-theatre-interceptors", "energy-grid-storage"],
+      "framing": "Lasers and microwaves kill drones for the price of electricity.",
+      "effects": [
+        { "key": "antiAir", "value": 0.2 },
+        { "key": "droneResistance", "value": 0.3 }
+      ]
+    },
+    {
+      "id": "md-space-sensor-layer",
+      "branch": "missileDefense",
+      "tier": 4,
+      "name": "Space Sensor Layer",
+      "cost": 340,
+      "requires": ["md-directed-energy", "space-isr-constellation"],
+      "framing": "Hypersonic-tracking satellites close the detection gap.",
+      "effects": [{ "key": "missileDefence", "value": 0.15 }]
+    },
+    {
+      "id": "md-homeland-shield",
+      "branch": "missileDefense",
+      "tier": 5,
+      "name": "Homeland Shield",
+      "cost": 600,
+      "requires": ["md-space-sensor-layer"],
+      "framing": "A national shield that blunts, but cannot stop, a full exchange.",
+      "effects": [
+        { "key": "missileDefence", "value": 0.25 },
+        { "key": "stability", "value": 3 }
+      ]
+    },
+
+    {
+      "id": "cyber-national-cert",
+      "branch": "cyber",
+      "tier": 1,
+      "name": "National Cyber Defence",
+      "cost": 50,
+      "requires": [],
+      "framing": "Hardened grids and a national incident-response capability.",
+      "effects": [
+        { "key": "cyberDefence", "value": 0.2 },
+        { "key": "stability", "value": 2 }
+      ]
+    },
+    {
+      "id": "cyber-offensive-ops",
+      "branch": "cyber",
+      "tier": 2,
+      "name": "Offensive Cyber Operations",
+      "cost": 120,
+      "requires": ["cyber-national-cert"],
+      "framing": "Persistent access to adversary networks.",
+      "effects": [{ "key": "cyberAttack", "value": 0.3 }]
+    },
+    {
+      "id": "cyber-ew-dominance",
+      "branch": "cyber",
+      "tier": 3,
+      "name": "Electronic Warfare Dominance",
+      "cost": 210,
+      "requires": ["cyber-offensive-ops"],
+      "framing": "Jamming and spoofing degrade enemy drones and precision weapons.",
+      "effects": [
+        { "key": "droneResistance", "value": 0.3 },
+        { "key": "landDefence", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "cyber-infowar",
+      "branch": "cyber",
+      "tier": 4,
+      "name": "Information Operations",
+      "cost": 300,
+      "requires": ["cyber-ew-dominance"],
+      "framing": "Shaping foreign publics and steadying your own.",
+      "effects": [
+        { "key": "stability", "value": 3 },
+        { "key": "cyberAttack", "value": 0.2 }
+      ]
+    },
+    {
+      "id": "cyber-quantum-crypto",
+      "branch": "cyber",
+      "tier": 5,
+      "name": "Quantum-Safe Networks",
+      "cost": 450,
+      "requires": ["cyber-infowar", "semi-quantum-computing"],
+      "framing": "Post-quantum cryptography and quantum key distribution.",
+      "effects": [
+        { "key": "cyberDefence", "value": 0.5 },
+        { "key": "intel", "value": 1 }
+      ]
+    },
+
+    {
+      "id": "space-launch-cadence",
+      "branch": "space",
+      "tier": 1,
+      "name": "Reusable Launch Cadence",
+      "cost": 80,
+      "requires": [],
+      "framing": "Weekly launches make satellites cheap and replaceable.",
+      "effects": [
+        { "key": "productionCost", "value": -0.03 },
+        { "key": "researchSpeed", "value": 0.03 }
+      ]
+    },
+    {
+      "id": "space-isr-constellation",
+      "branch": "space",
+      "tier": 2,
+      "name": "Proliferated ISR Constellation",
+      "cost": 160,
+      "requires": ["space-launch-cadence"],
+      "framing": "Hundreds of small satellites watch every theatre, all the time.",
+      "effects": [
+        { "key": "intel", "value": 2 },
+        { "key": "airPower", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "space-resilient-pnt",
+      "branch": "space",
+      "tier": 3,
+      "name": "Resilient Positioning & Timing",
+      "cost": 240,
+      "requires": ["space-isr-constellation"],
+      "framing": "Jam-resistant navigation keeps precision weapons precise.",
+      "effects": [
+        { "key": "landAttack", "value": 0.05 },
+        { "key": "navalPower", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "space-counterspace",
+      "branch": "space",
+      "tier": 4,
+      "name": "Counterspace Capabilities",
+      "cost": 360,
+      "requires": ["space-resilient-pnt"],
+      "framing": "ASAT weapons and co-orbital inspectors threaten enemy constellations.",
+      "effects": [
+        { "key": "enemyIntel", "value": -1 },
+        { "key": "deterrence", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "space-orbital-industry",
+      "branch": "space",
+      "tier": 5,
+      "name": "Orbital Industry",
+      "cost": 560,
+      "requires": ["space-counterspace", "energy-fusion-pilot"],
+      "framing": "Manufacturing and power beaming from orbit.",
+      "effects": [
+        { "key": "gdpGrowth", "value": 0.4 },
+        { "key": "researchSpeed", "value": 0.1 }
+      ]
+    },
+
+    {
+      "id": "energy-grid-storage",
+      "branch": "energy",
+      "tier": 1,
+      "name": "Grid-Scale Storage",
+      "cost": 60,
+      "requires": [],
+      "framing": "Batteries and pumped hydro decouple the economy from fuel imports.",
+      "effects": [
+        { "key": "gdpGrowth", "value": 0.2 },
+        { "key": "sanctionResistance", "value": 0.1 }
+      ]
+    },
+    {
+      "id": "energy-smr",
+      "branch": "energy",
+      "tier": 2,
+      "name": "Small Modular Reactors",
+      "cost": 140,
+      "requires": ["energy-grid-storage"],
+      "framing": "Factory-built reactors for bases, cities and data centres.",
+      "effects": [
+        { "key": "gdpGrowth", "value": 0.2 },
+        { "key": "stability", "value": 2 }
+      ]
+    },
+    {
+      "id": "energy-war-economy",
+      "branch": "energy",
+      "tier": 3,
+      "name": "Industrial Mobilisation",
+      "cost": 200,
+      "requires": ["energy-smr"],
+      "framing": "Munitions plants and shipyards on a wartime footing.",
+      "effects": [
+        { "key": "productionCost", "value": -0.12 },
+        { "key": "buildSpeed", "value": 0.2 }
+      ]
+    },
+    {
+      "id": "energy-critical-minerals",
+      "branch": "energy",
+      "tier": 4,
+      "name": "Critical Minerals Independence",
+      "cost": 300,
+      "requires": ["energy-war-economy"],
+      "framing": "Domestic refining of rare earths, lithium and gallium.",
+      "effects": [
+        { "key": "sanctionResistance", "value": 0.3 },
+        { "key": "productionCost", "value": -0.05 }
+      ]
+    },
+    {
+      "id": "energy-fusion-pilot",
+      "branch": "energy",
+      "tier": 5,
+      "name": "Fusion Pilot Plant",
+      "cost": 650,
+      "requires": ["energy-critical-minerals", "semi-advanced-nodes"],
+      "framing": "The first grid-connected fusion plant changes the energy map.",
+      "effects": [
+        { "key": "gdpGrowth", "value": 0.6 },
+        { "key": "stability", "value": 3 }
+      ]
+    },
+
+    {
+      "id": "semi-mature-nodes",
+      "branch": "semiconductors",
+      "tier": 1,
+      "name": "Mature-Node Self-Sufficiency",
+      "cost": 70,
+      "requires": [],
+      "framing": "Domestic fabs for the chips in every vehicle and missile.",
+      "effects": [
+        { "key": "sanctionResistance", "value": 0.15 },
+        { "key": "productionCost", "value": -0.03 }
+      ]
+    },
+    {
+      "id": "semi-advanced-packaging",
+      "branch": "semiconductors",
+      "tier": 2,
+      "name": "Advanced Packaging",
+      "cost": 150,
+      "requires": ["semi-mature-nodes"],
+      "framing": "Chiplets and 3D stacking stretch existing lithography.",
+      "effects": [
+        { "key": "researchSpeed", "value": 0.08 },
+        { "key": "gdpGrowth", "value": 0.1 }
+      ]
+    },
+    {
+      "id": "semi-advanced-nodes",
+      "branch": "semiconductors",
+      "tier": 3,
+      "name": "Leading-Edge Nodes",
+      "cost": 280,
+      "requires": ["semi-advanced-packaging"],
+      "framing": "Sub-2 nm production at home.",
+      "effects": [
+        { "key": "researchSpeed", "value": 0.12 },
+        { "key": "gdpGrowth", "value": 0.2 }
+      ]
+    },
+    {
+      "id": "semi-quantum-computing",
+      "branch": "semiconductors",
+      "tier": 4,
+      "name": "Fault-Tolerant Quantum Computing",
+      "cost": 420,
+      "requires": ["semi-advanced-nodes"],
+      "framing": "Error-corrected qubits threaten today's encryption.",
+      "effects": [
+        { "key": "cyberAttack", "value": 0.4 },
+        { "key": "researchSpeed", "value": 0.1 }
+      ]
+    },
+    {
+      "id": "semi-neuromorphic",
+      "branch": "semiconductors",
+      "tier": 5,
+      "name": "Neuromorphic Edge Compute",
+      "cost": 520,
+      "requires": ["semi-quantum-computing", "ai-strategic-ai"],
+      "framing": "Brain-like chips put frontier AI inside every weapon.",
+      "effects": [
+        { "key": "droneStrength", "value": 0.3 },
+        { "key": "airPower", "value": 0.1 },
+        { "key": "landAttack", "value": 0.05 }
+      ]
+    }
+  ]
+}

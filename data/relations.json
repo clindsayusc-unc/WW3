@@ -1,0 +1,2866 @@
+{
+  "source": "Editorial assessment of bilateral relations as of November 2026 based on public reporting (alliances, treaties, sanctions regimes, active conflicts; see docs/DATA_SOURCES.md); fictional game values",
+  "asOf": "2026-11-02",
+  "estimate": true,
+  "scale": "-100 active war; -80..-60 hostile/sanctions; -40..-20 rivalry; 0 neutral; 20..40 friendly; 60..80 allies; 90+ special relationship",
+  "defaultByBloc": {
+    "sameBloc": 40,
+    "NATO-CSTO": -50,
+    "NATO-SCO": -10,
+    "EU-CSTO": -50,
+    "AUKUS-SCO": -15,
+    "Quad-SCO": -10
+  },
+  "pairs": [
+    {
+      "a": "USA",
+      "b": "CHN",
+      "value": -50,
+      "reason": "Trade truce extended at 2026 summit; Taiwan arms, tech controls persist"
+    },
+    {
+      "a": "USA",
+      "b": "RUS",
+      "value": -40,
+      "reason": "Sanctions remain; Washington mediating Ukraine talks with Moscow"
+    },
+    {
+      "a": "USA",
+      "b": "IND",
+      "value": 30,
+      "reason": "Tariff dispute of 2025 partly repaired; Quad defence ties continue"
+    },
+    {
+      "a": "USA",
+      "b": "GBR",
+      "value": 70,
+      "reason": "Special relationship strained by tariffs but intelligence ties intact"
+    },
+    {
+      "a": "USA",
+      "b": "FRA",
+      "value": 25,
+      "reason": "Tariff and Greenland rows; shared NATO commitments"
+    },
+    {
+      "a": "USA",
+      "b": "DEU",
+      "value": 30,
+      "reason": "Tariffs and burden-sharing friction; core NATO partnership"
+    },
+    {
+      "a": "USA",
+      "b": "JPN",
+      "value": 60,
+      "reason": "Alliance strong; tariff deal and minerals action plan 2026"
+    },
+    {
+      "a": "USA",
+      "b": "KOR",
+      "value": 55,
+      "reason": "Alliance intact; tariff and troop-cost friction"
+    },
+    {
+      "a": "USA",
+      "b": "IRN",
+      "value": -85,
+      "reason": "2026 war ended by fragile Islamabad Memorandum ceasefire"
+    },
+    {
+      "a": "USA",
+      "b": "ISR",
+      "value": 85,
+      "reason": "Wartime partner in 2026 Iran campaign; close coordination"
+    },
+    {
+      "a": "USA",
+      "b": "TUR",
+      "value": 15,
+      "reason": "NATO allies at odds over Syria, S-400, Israel policy"
+    },
+    {
+      "a": "USA",
+      "b": "PAK",
+      "value": 35,
+      "reason": "Pakistan brokered Iran ceasefire; warmer ties with Islamabad"
+    },
+    {
+      "a": "USA",
+      "b": "BRA",
+      "value": 0,
+      "reason": "2025 tariff and judicial row; relations cool but functional"
+    },
+    {
+      "a": "CHN",
+      "b": "RUS",
+      "value": 70,
+      "reason": "No-limits partnership; energy, arms-adjacent trade, UN coordination"
+    },
+    {
+      "a": "CHN",
+      "b": "IND",
+      "value": -25,
+      "reason": "LAC stabilisation talks progressing; rivalry and trade deficit remain"
+    },
+    {
+      "a": "CHN",
+      "b": "GBR",
+      "value": -25,
+      "reason": "Espionage cases and Hong Kong disputes; trade dialogue continues"
+    },
+    {
+      "a": "CHN",
+      "b": "FRA",
+      "value": -5,
+      "reason": "Trade disputes over EVs and cognac; diplomatic engagement"
+    },
+    {
+      "a": "CHN",
+      "b": "DEU",
+      "value": -5,
+      "reason": "De-risking and EV tariffs; deep trade interdependence"
+    },
+    {
+      "a": "CHN",
+      "b": "JPN",
+      "value": -55,
+      "reason": "Diplomatic crisis since late 2025; rare-earth export curbs on Japan"
+    },
+    {
+      "a": "CHN",
+      "b": "KOR",
+      "value": -10,
+      "reason": "Seoul balancing; Yellow Sea structures dispute; trade ties"
+    },
+    {
+      "a": "CHN",
+      "b": "IRN",
+      "value": 50,
+      "reason": "Strategic partnership; oil purchases despite sanctions"
+    },
+    {
+      "a": "CHN",
+      "b": "ISR",
+      "value": -10,
+      "reason": "Beijing critical of 2026 Iran war; limited trade ties"
+    },
+    {
+      "a": "CHN",
+      "b": "TUR",
+      "value": 10,
+      "reason": "Belt and Road cooperation; Uyghur issue friction"
+    },
+    {
+      "a": "CHN",
+      "b": "PAK",
+      "value": 85,
+      "reason": "All-weather partnership; CPEC and arms supply"
+    },
+    {
+      "a": "CHN",
+      "b": "BRA",
+      "value": 40,
+      "reason": "BRICS partners; commodities trade boom"
+    },
+    {
+      "a": "RUS",
+      "b": "IND",
+      "value": 45,
+      "reason": "Defence legacy and discounted oil; India hedging westward"
+    },
+    {
+      "a": "RUS",
+      "b": "GBR",
+      "value": -75,
+      "reason": "Sanctions, sabotage allegations, Ukraine support"
+    },
+    {
+      "a": "RUS",
+      "b": "FRA",
+      "value": -65,
+      "reason": "Sanctions and reassurance-force debate; channels largely closed"
+    },
+    {
+      "a": "RUS",
+      "b": "DEU",
+      "value": -65,
+      "reason": "Sanctions, sabotage and drone incidents; energy ties severed"
+    },
+    {
+      "a": "RUS",
+      "b": "JPN",
+      "value": -55,
+      "reason": "Kremlin calls ties at zero; territorial dispute unresolved"
+    },
+    {
+      "a": "RUS",
+      "b": "KOR",
+      "value": -35,
+      "reason": "North Korea troops in Ukraine war strain ties"
+    },
+    {
+      "a": "RUS",
+      "b": "IRN",
+      "value": 55,
+      "reason": "Strategic partnership treaty; drones and nuclear cooperation"
+    },
+    {
+      "a": "RUS",
+      "b": "ISR",
+      "value": 5,
+      "reason": "Deconfliction in Syria ended; Moscow critical of Iran strikes"
+    },
+    {
+      "a": "RUS",
+      "b": "TUR",
+      "value": 10,
+      "reason": "Transactional ties; Black Sea grain, energy, Syria rivalry"
+    },
+    {
+      "a": "RUS",
+      "b": "PAK",
+      "value": 10,
+      "reason": "Limited engagement; energy and SCO contacts"
+    },
+    {
+      "a": "RUS",
+      "b": "BRA",
+      "value": 20,
+      "reason": "BRICS partners; Brazil neutral on Ukraine"
+    },
+    {
+      "a": "IND",
+      "b": "GBR",
+      "value": 45,
+      "reason": "2025 free trade agreement; diaspora and defence ties"
+    },
+    {
+      "a": "IND",
+      "b": "FRA",
+      "value": 55,
+      "reason": "Rafale and strategic partnership; Indo-Pacific cooperation"
+    },
+    {
+      "a": "IND",
+      "b": "DEU",
+      "value": 40,
+      "reason": "Growing trade and skilled-migration ties"
+    },
+    {
+      "a": "IND",
+      "b": "JPN",
+      "value": 55,
+      "reason": "Quad partners; infrastructure investment"
+    },
+    {
+      "a": "IND",
+      "b": "KOR",
+      "value": 35,
+      "reason": "Trade and shipbuilding cooperation"
+    },
+    {
+      "a": "IND",
+      "b": "IRN",
+      "value": 15,
+      "reason": "Chabahar port; ties constrained by sanctions and war"
+    },
+    {
+      "a": "IND",
+      "b": "ISR",
+      "value": 55,
+      "reason": "Defence technology partnership; shared counter-terror agenda"
+    },
+    {
+      "a": "IND",
+      "b": "TUR",
+      "value": -30,
+      "reason": "Ankara backed Pakistan during 2025 conflict"
+    },
+    {
+      "a": "IND",
+      "b": "PAK",
+      "value": -80,
+      "reason": "Relations frozen since 2025 clashes; Indus treaty suspended"
+    },
+    {
+      "a": "IND",
+      "b": "BRA",
+      "value": 40,
+      "reason": "BRICS and G20 partners"
+    },
+    {
+      "a": "GBR",
+      "b": "FRA",
+      "value": 65,
+      "reason": "Coalition-of-the-willing partners on Ukraine; Channel migration friction"
+    },
+    {
+      "a": "GBR",
+      "b": "DEU",
+      "value": 60,
+      "reason": "Post-Brexit defence treaty; close Ukraine coordination"
+    },
+    {
+      "a": "GBR",
+      "b": "JPN",
+      "value": 60,
+      "reason": "GCAP fighter programme and reciprocal access agreement"
+    },
+    {
+      "a": "GBR",
+      "b": "KOR",
+      "value": 50,
+      "reason": "Trade and defence partnership"
+    },
+    {
+      "a": "GBR",
+      "b": "IRN",
+      "value": -70,
+      "reason": "Sanctions; embassy tensions after 2026 war"
+    },
+    {
+      "a": "GBR",
+      "b": "ISR",
+      "value": 35,
+      "reason": "Ally but arms-export curbs and Gaza criticism"
+    },
+    {
+      "a": "GBR",
+      "b": "TUR",
+      "value": 25,
+      "reason": "NATO allies; Eurofighter sale"
+    },
+    {
+      "a": "GBR",
+      "b": "PAK",
+      "value": 30,
+      "reason": "Diaspora ties; development partnership"
+    },
+    {
+      "a": "GBR",
+      "b": "BRA",
+      "value": 25,
+      "reason": "Trade and climate cooperation"
+    },
+    {
+      "a": "FRA",
+      "b": "DEU",
+      "value": 75,
+      "reason": "Franco-German engine; defence industry disputes"
+    },
+    {
+      "a": "FRA",
+      "b": "JPN",
+      "value": 50,
+      "reason": "Indo-Pacific partners"
+    },
+    {
+      "a": "FRA",
+      "b": "KOR",
+      "value": 40,
+      "reason": "Trade and cultural ties"
+    },
+    {
+      "a": "FRA",
+      "b": "IRN",
+      "value": -65,
+      "reason": "Sanctions; detained nationals; snapback supporter"
+    },
+    {
+      "a": "FRA",
+      "b": "ISR",
+      "value": 15,
+      "reason": "Paris recognised Palestine in 2025; ties strained"
+    },
+    {
+      "a": "FRA",
+      "b": "TUR",
+      "value": 0,
+      "reason": "Mediterranean and Libya rivalries"
+    },
+    {
+      "a": "FRA",
+      "b": "PAK",
+      "value": 15,
+      "reason": "Limited ties; Rafale rival in region"
+    },
+    {
+      "a": "FRA",
+      "b": "BRA",
+      "value": 35,
+      "reason": "Strategic partnership; submarine programme"
+    },
+    {
+      "a": "DEU",
+      "b": "JPN",
+      "value": 55,
+      "reason": "G7 partners; supply-chain cooperation"
+    },
+    {
+      "a": "DEU",
+      "b": "KOR",
+      "value": 45,
+      "reason": "Trade and technology partners"
+    },
+    {
+      "a": "DEU",
+      "b": "IRN",
+      "value": -65,
+      "reason": "Sanctions; Berlin backed Israeli self-defence in 2026"
+    },
+    {
+      "a": "DEU",
+      "b": "ISR",
+      "value": 45,
+      "reason": "Historic responsibility; arms export pause debates"
+    },
+    {
+      "a": "DEU",
+      "b": "TUR",
+      "value": 15,
+      "reason": "Large diaspora; EU accession stalled"
+    },
+    {
+      "a": "DEU",
+      "b": "PAK",
+      "value": 20,
+      "reason": "Development cooperation"
+    },
+    {
+      "a": "DEU",
+      "b": "BRA",
+      "value": 35,
+      "reason": "Mercosur deal partners; industrial investment"
+    },
+    {
+      "a": "JPN",
+      "b": "KOR",
+      "value": 45,
+      "reason": "Lee-Takaichi shuttle diplomacy; energy cooperation 2026"
+    },
+    {
+      "a": "JPN",
+      "b": "IRN",
+      "value": -20,
+      "reason": "Tokyo condemned Hormuz disruption; historic oil ties"
+    },
+    {
+      "a": "JPN",
+      "b": "ISR",
+      "value": 20,
+      "reason": "Cautious ties; Tokyo critical of Gaza conduct"
+    },
+    {
+      "a": "JPN",
+      "b": "TUR",
+      "value": 30,
+      "reason": "Friendly historic ties"
+    },
+    {
+      "a": "JPN",
+      "b": "PAK",
+      "value": 15,
+      "reason": "Development aid; limited strategic ties"
+    },
+    {
+      "a": "JPN",
+      "b": "BRA",
+      "value": 45,
+      "reason": "Large diaspora; trade"
+    },
+    {
+      "a": "KOR",
+      "b": "IRN",
+      "value": -25,
+      "reason": "Hormuz disruption hit Korean energy imports"
+    },
+    {
+      "a": "KOR",
+      "b": "ISR",
+      "value": 25,
+      "reason": "Trade and technology ties"
+    },
+    {
+      "a": "KOR",
+      "b": "TUR",
+      "value": 45,
+      "reason": "Korean War legacy; defence industry sales"
+    },
+    {
+      "a": "KOR",
+      "b": "PAK",
+      "value": 10,
+      "reason": "Limited engagement"
+    },
+    {
+      "a": "KOR",
+      "b": "BRA",
+      "value": 30,
+      "reason": "Trade partners"
+    },
+    {
+      "a": "IRN",
+      "b": "ISR",
+      "value": -95,
+      "reason": "Direct war in 2026; ceasefire holds tenuously"
+    },
+    {
+      "a": "IRN",
+      "b": "TUR",
+      "value": 10,
+      "reason": "Rivalry in Syria and Caucasus; trade continues"
+    },
+    {
+      "a": "IRN",
+      "b": "PAK",
+      "value": 40,
+      "reason": "Islamabad mediated 2026 ceasefire; border security issues"
+    },
+    {
+      "a": "IRN",
+      "b": "BRA",
+      "value": 15,
+      "reason": "BRICS partners; limited trade"
+    },
+    {
+      "a": "ISR",
+      "b": "TUR",
+      "value": -60,
+      "reason": "Harsh rhetoric; trade cut; rivalry in Syria"
+    },
+    {
+      "a": "ISR",
+      "b": "PAK",
+      "value": -50,
+      "reason": "No relations; Pakistan-Saudi defence pact"
+    },
+    {
+      "a": "ISR",
+      "b": "BRA",
+      "value": -20,
+      "reason": "Brasilia recalled ambassador over Gaza; trade continues"
+    },
+    {
+      "a": "TUR",
+      "b": "PAK",
+      "value": 70,
+      "reason": "Close defence and political partnership"
+    },
+    {
+      "a": "TUR",
+      "b": "BRA",
+      "value": 20,
+      "reason": "Trade partners"
+    },
+    {
+      "a": "PAK",
+      "b": "BRA",
+      "value": 10,
+      "reason": "Minimal ties"
+    },
+    {
+      "a": "USA",
+      "b": "UKR",
+      "value": 35,
+      "reason": "Minerals deal and mediation; pressure over peace terms"
+    },
+    {
+      "a": "USA",
+      "b": "TWN",
+      "value": 65,
+      "reason": "Arms sales and security backing; arms package delayed as leverage"
+    },
+    {
+      "a": "USA",
+      "b": "PRK",
+      "value": -75,
+      "reason": "Sanctions and hostility; summit outreach floated"
+    },
+    {
+      "a": "USA",
+      "b": "SAU",
+      "value": 60,
+      "reason": "Investment pledges; defence ties; Gaza plan partner"
+    },
+    {
+      "a": "USA",
+      "b": "ARE",
+      "value": 65,
+      "reason": "Close defence and AI-investment partnership"
+    },
+    {
+      "a": "USA",
+      "b": "EGY",
+      "value": 45,
+      "reason": "Aid and Gaza mediation partner"
+    },
+    {
+      "a": "USA",
+      "b": "POL",
+      "value": 70,
+      "reason": "Closest NATO ally on eastern flank; troop presence"
+    },
+    {
+      "a": "USA",
+      "b": "ITA",
+      "value": 55,
+      "reason": "Warm government-level ties"
+    },
+    {
+      "a": "USA",
+      "b": "ESP",
+      "value": 35,
+      "reason": "Defence-spending row; base access"
+    },
+    {
+      "a": "USA",
+      "b": "CAN",
+      "value": 20,
+      "reason": "Tariff war and annexation rhetoric strain alliance"
+    },
+    {
+      "a": "USA",
+      "b": "AUS",
+      "value": 70,
+      "reason": "AUKUS partner; alliance strong"
+    },
+    {
+      "a": "USA",
+      "b": "MEX",
+      "value": 15,
+      "reason": "Cartel operations friction; USMCA review; security cooperation"
+    },
+    {
+      "a": "USA",
+      "b": "IDN",
+      "value": 30,
+      "reason": "Trade deal; defence engagement"
+    },
+    {
+      "a": "USA",
+      "b": "VNM",
+      "value": 35,
+      "reason": "Comprehensive strategic partnership; tariff friction"
+    },
+    {
+      "a": "USA",
+      "b": "PHL",
+      "value": 70,
+      "reason": "Treaty ally; expanded base access"
+    },
+    {
+      "a": "USA",
+      "b": "THA",
+      "value": 40,
+      "reason": "Treaty ally; trade talks"
+    },
+    {
+      "a": "USA",
+      "b": "NGA",
+      "value": 25,
+      "reason": "Security assistance debates"
+    },
+    {
+      "a": "USA",
+      "b": "ZAF",
+      "value": -15,
+      "reason": "Diplomatic rows and tariffs since 2025"
+    },
+    {
+      "a": "USA",
+      "b": "ETH",
+      "value": 15,
+      "reason": "Limited engagement"
+    },
+    {
+      "a": "USA",
+      "b": "ARG",
+      "value": 55,
+      "reason": "Milei government aligned with Washington"
+    },
+    {
+      "a": "USA",
+      "b": "SWE",
+      "value": 45,
+      "reason": "New NATO ally; tariff friction"
+    },
+    {
+      "a": "USA",
+      "b": "FIN",
+      "value": 50,
+      "reason": "New NATO ally; icebreaker cooperation"
+    },
+    {
+      "a": "USA",
+      "b": "NLD",
+      "value": 50,
+      "reason": "NATO ally; chip-export alignment"
+    },
+    {
+      "a": "USA",
+      "b": "BLR",
+      "value": -60,
+      "reason": "Sanctions; prisoner-release diplomacy"
+    },
+    {
+      "a": "USA",
+      "b": "KAZ",
+      "value": 25,
+      "reason": "Critical minerals interest"
+    },
+    {
+      "a": "USA",
+      "b": "QAT",
+      "value": 55,
+      "reason": "Major non-NATO ally; mediator in Gaza and Iran talks"
+    },
+    {
+      "a": "USA",
+      "b": "IRQ",
+      "value": 20,
+      "reason": "Troop drawdown; militia tensions after Iran war"
+    },
+    {
+      "a": "USA",
+      "b": "SYR",
+      "value": 20,
+      "reason": "Sanctions lifted 2025; engagement with new government"
+    },
+    {
+      "a": "USA",
+      "b": "VEN",
+      "value": -10,
+      "reason": "US-managed transition after January 2026 intervention"
+    },
+    {
+      "a": "USA",
+      "b": "NZL",
+      "value": 45,
+      "reason": "Friendly; Five Eyes partner"
+    },
+    {
+      "a": "USA",
+      "b": "LTU",
+      "value": 60,
+      "reason": "Strong NATO ally"
+    },
+    {
+      "a": "USA",
+      "b": "LVA",
+      "value": 60,
+      "reason": "Strong NATO ally"
+    },
+    {
+      "a": "USA",
+      "b": "EST",
+      "value": 60,
+      "reason": "Strong NATO ally"
+    },
+    {
+      "a": "USA",
+      "b": "NOR",
+      "value": 50,
+      "reason": "NATO ally; Arctic cooperation"
+    },
+    {
+      "a": "USA",
+      "b": "DNK",
+      "value": 0,
+      "reason": "Greenland sovereignty pressure sours alliance"
+    },
+    {
+      "a": "USA",
+      "b": "GRC",
+      "value": 50,
+      "reason": "Base access; defence cooperation"
+    },
+    {
+      "a": "USA",
+      "b": "ARM",
+      "value": 40,
+      "reason": "Washington brokered 2025 peace framework"
+    },
+    {
+      "a": "USA",
+      "b": "AZE",
+      "value": 35,
+      "reason": "Transit corridor deal; energy ties"
+    },
+    {
+      "a": "USA",
+      "b": "GEO",
+      "value": 5,
+      "reason": "Sanctions on officials; democratic backsliding concerns"
+    },
+    {
+      "a": "USA",
+      "b": "LBN",
+      "value": 20,
+      "reason": "Support for army; ceasefire monitoring"
+    },
+    {
+      "a": "USA",
+      "b": "YEM",
+      "value": -70,
+      "reason": "Strikes on Houthis; hostility"
+    },
+    {
+      "a": "USA",
+      "b": "CUB",
+      "value": -70,
+      "reason": "Maximum pressure; embargo tightened"
+    },
+    {
+      "a": "USA",
+      "b": "MYS",
+      "value": 20,
+      "reason": "Trade friction; ASEAN engagement"
+    },
+    {
+      "a": "USA",
+      "b": "SGP",
+      "value": 55,
+      "reason": "Close security partner"
+    },
+    {
+      "a": "USA",
+      "b": "BGD",
+      "value": 10,
+      "reason": "Interim government; trade talks"
+    },
+    {
+      "a": "USA",
+      "b": "MMR",
+      "value": -50,
+      "reason": "Sanctions on junta"
+    },
+    {
+      "a": "USA",
+      "b": "AFG",
+      "value": -55,
+      "reason": "No recognition of Taliban government"
+    },
+    {
+      "a": "USA",
+      "b": "LBY",
+      "value": 0,
+      "reason": "Fragmented state; limited engagement"
+    },
+    {
+      "a": "USA",
+      "b": "DZA",
+      "value": 10,
+      "reason": "Energy and counter-terror contacts"
+    },
+    {
+      "a": "USA",
+      "b": "MAR",
+      "value": 50,
+      "reason": "Western Sahara recognition; defence ties"
+    },
+    {
+      "a": "USA",
+      "b": "KEN",
+      "value": 35,
+      "reason": "Major non-NATO ally status"
+    },
+    {
+      "a": "USA",
+      "b": "COD",
+      "value": 30,
+      "reason": "Minerals-for-security partnership"
+    },
+    {
+      "a": "USA",
+      "b": "SDN",
+      "value": -30,
+      "reason": "Sanctions over war conduct"
+    },
+    {
+      "a": "CHN",
+      "b": "TWN",
+      "value": -75,
+      "reason": "Military pressure and drills; no dialogue"
+    },
+    {
+      "a": "CHN",
+      "b": "PRK",
+      "value": 55,
+      "reason": "Treaty ally; Kim visited Beijing October 2026"
+    },
+    {
+      "a": "CHN",
+      "b": "PHL",
+      "value": -55,
+      "reason": "Repeated water-cannon and ramming incidents"
+    },
+    {
+      "a": "CHN",
+      "b": "VNM",
+      "value": -10,
+      "reason": "Party ties but South China Sea disputes"
+    },
+    {
+      "a": "CHN",
+      "b": "AUS",
+      "value": -10,
+      "reason": "Trade stabilised; security suspicion"
+    },
+    {
+      "a": "CHN",
+      "b": "CAN",
+      "value": -15,
+      "reason": "EV tariffs and canola dispute"
+    },
+    {
+      "a": "CHN",
+      "b": "MEX",
+      "value": 5,
+      "reason": "Tariffs on Chinese goods under US pressure"
+    },
+    {
+      "a": "CHN",
+      "b": "IDN",
+      "value": 25,
+      "reason": "Investment partner; Natuna friction"
+    },
+    {
+      "a": "CHN",
+      "b": "MYS",
+      "value": 30,
+      "reason": "Trade partner; quiet maritime disputes"
+    },
+    {
+      "a": "CHN",
+      "b": "SGP",
+      "value": 25,
+      "reason": "Trade hub; balancing"
+    },
+    {
+      "a": "CHN",
+      "b": "THA",
+      "value": 35,
+      "reason": "Rail and trade cooperation"
+    },
+    {
+      "a": "CHN",
+      "b": "MMR",
+      "value": 40,
+      "reason": "Backing junta and ceasefire brokering"
+    },
+    {
+      "a": "CHN",
+      "b": "KAZ",
+      "value": 55,
+      "reason": "Belt and Road anchor"
+    },
+    {
+      "a": "CHN",
+      "b": "BLR",
+      "value": 40,
+      "reason": "Strategic partner"
+    },
+    {
+      "a": "CHN",
+      "b": "CUB",
+      "value": 50,
+      "reason": "Political ally; investment"
+    },
+    {
+      "a": "CHN",
+      "b": "VEN",
+      "value": 20,
+      "reason": "Oil debts; post-Maduro uncertainty"
+    },
+    {
+      "a": "CHN",
+      "b": "ZAF",
+      "value": 45,
+      "reason": "BRICS partner"
+    },
+    {
+      "a": "CHN",
+      "b": "NGA",
+      "value": 35,
+      "reason": "Infrastructure lending"
+    },
+    {
+      "a": "CHN",
+      "b": "ETH",
+      "value": 45,
+      "reason": "Major lender and investor"
+    },
+    {
+      "a": "CHN",
+      "b": "KEN",
+      "value": 40,
+      "reason": "Rail and port financing"
+    },
+    {
+      "a": "CHN",
+      "b": "COD",
+      "value": 40,
+      "reason": "Copper and cobalt mining stakes"
+    },
+    {
+      "a": "CHN",
+      "b": "EGY",
+      "value": 35,
+      "reason": "Investment partner"
+    },
+    {
+      "a": "CHN",
+      "b": "SAU",
+      "value": 40,
+      "reason": "Oil trade; strategic partnership"
+    },
+    {
+      "a": "CHN",
+      "b": "ARE",
+      "value": 45,
+      "reason": "Trade hub and AI investment"
+    },
+    {
+      "a": "CHN",
+      "b": "QAT",
+      "value": 30,
+      "reason": "LNG supply deals"
+    },
+    {
+      "a": "CHN",
+      "b": "IRQ",
+      "value": 35,
+      "reason": "Oil purchases; infrastructure"
+    },
+    {
+      "a": "CHN",
+      "b": "ARG",
+      "value": 10,
+      "reason": "Swap lines; Milei pivot to Washington"
+    },
+    {
+      "a": "CHN",
+      "b": "NZL",
+      "value": 15,
+      "reason": "Trade partner; Pacific competition"
+    },
+    {
+      "a": "CHN",
+      "b": "LTU",
+      "value": -40,
+      "reason": "Taiwan office dispute; downgraded ties"
+    },
+    {
+      "a": "CHN",
+      "b": "NLD",
+      "value": -15,
+      "reason": "Chip-equipment export curbs"
+    },
+    {
+      "a": "CHN",
+      "b": "POL",
+      "value": 5,
+      "reason": "Trade; divergence on Russia"
+    },
+    {
+      "a": "CHN",
+      "b": "ITA",
+      "value": 15,
+      "reason": "Left Belt and Road; trade continues"
+    },
+    {
+      "a": "CHN",
+      "b": "ESP",
+      "value": 25,
+      "reason": "Investment-friendly stance"
+    },
+    {
+      "a": "CHN",
+      "b": "UKR",
+      "value": -5,
+      "reason": "Beijing seen as Russia's enabler"
+    },
+    {
+      "a": "CHN",
+      "b": "AFG",
+      "value": 25,
+      "reason": "Recognition-level engagement; mining"
+    },
+    {
+      "a": "CHN",
+      "b": "BGD",
+      "value": 35,
+      "reason": "Infrastructure and defence sales"
+    },
+    {
+      "a": "CHN",
+      "b": "SWE",
+      "value": -20,
+      "reason": "Security and human-rights disputes"
+    },
+    {
+      "a": "CHN",
+      "b": "FIN",
+      "value": -10,
+      "reason": "Cable incident suspicions"
+    },
+    {
+      "a": "CHN",
+      "b": "NOR",
+      "value": 0,
+      "reason": "Trade normalised; Arctic interest"
+    },
+    {
+      "a": "CHN",
+      "b": "DNK",
+      "value": -5,
+      "reason": "Greenland investment blocked"
+    },
+    {
+      "a": "RUS",
+      "b": "UKR",
+      "value": -100,
+      "reason": "Full-scale war since 2022; talks without ceasefire"
+    },
+    {
+      "a": "RUS",
+      "b": "BLR",
+      "value": 85,
+      "reason": "Union State; nuclear basing"
+    },
+    {
+      "a": "RUS",
+      "b": "PRK",
+      "value": 75,
+      "reason": "Mutual defence treaty; troops and munitions"
+    },
+    {
+      "a": "RUS",
+      "b": "KAZ",
+      "value": 50,
+      "reason": "EAEU partner; multi-vector hedging"
+    },
+    {
+      "a": "RUS",
+      "b": "ARM",
+      "value": 10,
+      "reason": "Yerevan drifting west; CSTO frozen"
+    },
+    {
+      "a": "RUS",
+      "b": "AZE",
+      "value": -20,
+      "reason": "2024 airliner downing row; mutual arrests"
+    },
+    {
+      "a": "RUS",
+      "b": "GEO",
+      "value": -40,
+      "reason": "Occupied territories; no diplomatic ties"
+    },
+    {
+      "a": "RUS",
+      "b": "SYR",
+      "value": -10,
+      "reason": "Bases under review after Assad's fall"
+    },
+    {
+      "a": "RUS",
+      "b": "VEN",
+      "value": 25,
+      "reason": "Partner weakened by US intervention"
+    },
+    {
+      "a": "RUS",
+      "b": "CUB",
+      "value": 50,
+      "reason": "Historic ally; aid shipments"
+    },
+    {
+      "a": "RUS",
+      "b": "FIN",
+      "value": -65,
+      "reason": "Border closed; drone incidents"
+    },
+    {
+      "a": "RUS",
+      "b": "SWE",
+      "value": -65,
+      "reason": "Baltic sabotage suspicions"
+    },
+    {
+      "a": "RUS",
+      "b": "EST",
+      "value": -75,
+      "reason": "Hybrid pressure; airspace violations"
+    },
+    {
+      "a": "RUS",
+      "b": "LVA",
+      "value": -75,
+      "reason": "Drone shootdown August 2026"
+    },
+    {
+      "a": "RUS",
+      "b": "LTU",
+      "value": -75,
+      "reason": "Kaliningrad transit disputes"
+    },
+    {
+      "a": "RUS",
+      "b": "POL",
+      "value": -80,
+      "reason": "Drone incursions and sabotage allegations"
+    },
+    {
+      "a": "RUS",
+      "b": "NOR",
+      "value": -45,
+      "reason": "Svalbard and Arctic friction"
+    },
+    {
+      "a": "RUS",
+      "b": "DNK",
+      "value": -55,
+      "reason": "Baltic shadow-fleet inspections"
+    },
+    {
+      "a": "RUS",
+      "b": "NLD",
+      "value": -60,
+      "reason": "Sanctions; MH17 legacy"
+    },
+    {
+      "a": "RUS",
+      "b": "ITA",
+      "value": -50,
+      "reason": "Sanctions; Rome backs Kyiv"
+    },
+    {
+      "a": "RUS",
+      "b": "ESP",
+      "value": -50,
+      "reason": "Sanctions"
+    },
+    {
+      "a": "RUS",
+      "b": "GRC",
+      "value": -40,
+      "reason": "Sanctions; Orthodox ties"
+    },
+    {
+      "a": "RUS",
+      "b": "CAN",
+      "value": -65,
+      "reason": "Sanctions; Arctic rivalry"
+    },
+    {
+      "a": "RUS",
+      "b": "AUS",
+      "value": -55,
+      "reason": "Sanctions"
+    },
+    {
+      "a": "RUS",
+      "b": "NZL",
+      "value": -45,
+      "reason": "Sanctions"
+    },
+    {
+      "a": "RUS",
+      "b": "MEX",
+      "value": 0,
+      "reason": "Neutral"
+    },
+    {
+      "a": "RUS",
+      "b": "IDN",
+      "value": 20,
+      "reason": "Arms and energy contacts"
+    },
+    {
+      "a": "RUS",
+      "b": "MYS",
+      "value": 15,
+      "reason": "Limited ties"
+    },
+    {
+      "a": "RUS",
+      "b": "THA",
+      "value": 15,
+      "reason": "Tourism and limited ties"
+    },
+    {
+      "a": "RUS",
+      "b": "MMR",
+      "value": 55,
+      "reason": "Arms supplier to junta"
+    },
+    {
+      "a": "RUS",
+      "b": "IRQ",
+      "value": 10,
+      "reason": "Oil contracts"
+    },
+    {
+      "a": "RUS",
+      "b": "SAU",
+      "value": 25,
+      "reason": "OPEC+ coordination"
+    },
+    {
+      "a": "RUS",
+      "b": "ARE",
+      "value": 35,
+      "reason": "Financial hub for Russian capital"
+    },
+    {
+      "a": "RUS",
+      "b": "QAT",
+      "value": 15,
+      "reason": "Gas forum contacts"
+    },
+    {
+      "a": "RUS",
+      "b": "EGY",
+      "value": 35,
+      "reason": "Nuclear plant and wheat"
+    },
+    {
+      "a": "RUS",
+      "b": "DZA",
+      "value": 45,
+      "reason": "Arms supplier"
+    },
+    {
+      "a": "RUS",
+      "b": "LBY",
+      "value": 20,
+      "reason": "Backs eastern factions"
+    },
+    {
+      "a": "RUS",
+      "b": "SDN",
+      "value": 25,
+      "reason": "Red Sea base ambitions"
+    },
+    {
+      "a": "RUS",
+      "b": "ZAF",
+      "value": 35,
+      "reason": "BRICS partner"
+    },
+    {
+      "a": "RUS",
+      "b": "ETH",
+      "value": 25,
+      "reason": "BRICS partner"
+    },
+    {
+      "a": "RUS",
+      "b": "NGA",
+      "value": 15,
+      "reason": "Limited ties"
+    },
+    {
+      "a": "RUS",
+      "b": "AFG",
+      "value": 20,
+      "reason": "Recognised Taliban government 2025"
+    },
+    {
+      "a": "RUS",
+      "b": "BGD",
+      "value": 15,
+      "reason": "Nuclear plant project"
+    },
+    {
+      "a": "RUS",
+      "b": "VNM",
+      "value": 40,
+      "reason": "Legacy defence ties"
+    },
+    {
+      "a": "RUS",
+      "b": "ARG",
+      "value": -10,
+      "reason": "Milei government hostile"
+    },
+    {
+      "a": "RUS",
+      "b": "LBN",
+      "value": 10,
+      "reason": "Limited ties"
+    },
+    {
+      "a": "RUS",
+      "b": "YEM",
+      "value": 10,
+      "reason": "Houthi contacts reported"
+    },
+    {
+      "a": "IND",
+      "b": "BGD",
+      "value": -25,
+      "reason": "Post-2024 transition friction; water and border disputes"
+    },
+    {
+      "a": "IND",
+      "b": "AFG",
+      "value": 30,
+      "reason": "Engagement with Taliban government against Pakistan"
+    },
+    {
+      "a": "IND",
+      "b": "SAU",
+      "value": 40,
+      "reason": "Energy and diaspora partnership"
+    },
+    {
+      "a": "IND",
+      "b": "ARE",
+      "value": 60,
+      "reason": "Trade agreement and investment corridor"
+    },
+    {
+      "a": "IND",
+      "b": "AUS",
+      "value": 55,
+      "reason": "Quad partners; trade agreement"
+    },
+    {
+      "a": "IND",
+      "b": "VNM",
+      "value": 35,
+      "reason": "Defence and trade partnership"
+    },
+    {
+      "a": "IND",
+      "b": "IDN",
+      "value": 35,
+      "reason": "Maritime cooperation"
+    },
+    {
+      "a": "IND",
+      "b": "MMR",
+      "value": 15,
+      "reason": "Border security; limited ties"
+    },
+    {
+      "a": "IND",
+      "b": "ZAF",
+      "value": 35,
+      "reason": "BRICS partner"
+    },
+    {
+      "a": "IND",
+      "b": "CAN",
+      "value": 5,
+      "reason": "Ties slowly repaired after 2023-24 crisis"
+    },
+    {
+      "a": "IND",
+      "b": "TWN",
+      "value": 20,
+      "reason": "Semiconductor cooperation; informal ties"
+    },
+    {
+      "a": "IND",
+      "b": "EGY",
+      "value": 30,
+      "reason": "Strategic partnership"
+    },
+    {
+      "a": "IND",
+      "b": "QAT",
+      "value": 30,
+      "reason": "LNG supplier"
+    },
+    {
+      "a": "IND",
+      "b": "KAZ",
+      "value": 25,
+      "reason": "Connectivity partner"
+    },
+    {
+      "a": "IND",
+      "b": "ARM",
+      "value": 35,
+      "reason": "Arms sales to Yerevan"
+    },
+    {
+      "a": "IND",
+      "b": "AZE",
+      "value": -15,
+      "reason": "Baku backs Pakistan"
+    },
+    {
+      "a": "IND",
+      "b": "SGP",
+      "value": 50,
+      "reason": "Close trade and defence partner"
+    },
+    {
+      "a": "IND",
+      "b": "NLD",
+      "value": 35,
+      "reason": "Trade partner"
+    },
+    {
+      "a": "IND",
+      "b": "POL",
+      "value": 25,
+      "reason": "Growing trade"
+    },
+    {
+      "a": "IND",
+      "b": "ITA",
+      "value": 30,
+      "reason": "Trade and connectivity"
+    },
+    {
+      "a": "GBR",
+      "b": "UKR",
+      "value": 70,
+      "reason": "Security pact; reassurance force lead"
+    },
+    {
+      "a": "GBR",
+      "b": "POL",
+      "value": 60,
+      "reason": "Defence treaty partners"
+    },
+    {
+      "a": "GBR",
+      "b": "AUS",
+      "value": 75,
+      "reason": "AUKUS partner"
+    },
+    {
+      "a": "GBR",
+      "b": "CAN",
+      "value": 70,
+      "reason": "Close Commonwealth ally"
+    },
+    {
+      "a": "GBR",
+      "b": "NZL",
+      "value": 70,
+      "reason": "Close Commonwealth ally"
+    },
+    {
+      "a": "GBR",
+      "b": "SAU",
+      "value": 45,
+      "reason": "Arms sales; investment"
+    },
+    {
+      "a": "GBR",
+      "b": "ARE",
+      "value": 50,
+      "reason": "Investment partner"
+    },
+    {
+      "a": "GBR",
+      "b": "QAT",
+      "value": 50,
+      "reason": "Investment and gas"
+    },
+    {
+      "a": "GBR",
+      "b": "NOR",
+      "value": 65,
+      "reason": "Energy and northern security"
+    },
+    {
+      "a": "GBR",
+      "b": "NLD",
+      "value": 65,
+      "reason": "Close NATO partners"
+    },
+    {
+      "a": "GBR",
+      "b": "ITA",
+      "value": 55,
+      "reason": "GCAP fighter partners"
+    },
+    {
+      "a": "GBR",
+      "b": "ESP",
+      "value": 40,
+      "reason": "Gibraltar deal reached; trade"
+    },
+    {
+      "a": "GBR",
+      "b": "EST",
+      "value": 60,
+      "reason": "Forward presence leader"
+    },
+    {
+      "a": "GBR",
+      "b": "EGY",
+      "value": 30,
+      "reason": "Trade and security"
+    },
+    {
+      "a": "GBR",
+      "b": "NGA",
+      "value": 35,
+      "reason": "Diaspora and trade"
+    },
+    {
+      "a": "GBR",
+      "b": "KEN",
+      "value": 40,
+      "reason": "Defence cooperation"
+    },
+    {
+      "a": "GBR",
+      "b": "IRQ",
+      "value": 20,
+      "reason": "Limited engagement"
+    },
+    {
+      "a": "GBR",
+      "b": "MMR",
+      "value": -45,
+      "reason": "Sanctions on junta"
+    },
+    {
+      "a": "GBR",
+      "b": "AFG",
+      "value": -50,
+      "reason": "No recognition"
+    },
+    {
+      "a": "FRA",
+      "b": "UKR",
+      "value": 65,
+      "reason": "Reassurance force co-lead; Mirage transfers"
+    },
+    {
+      "a": "FRA",
+      "b": "POL",
+      "value": 50,
+      "reason": "Nancy treaty 2025"
+    },
+    {
+      "a": "FRA",
+      "b": "ITA",
+      "value": 55,
+      "reason": "EU partners; migration frictions"
+    },
+    {
+      "a": "FRA",
+      "b": "ESP",
+      "value": 60,
+      "reason": "EU partners"
+    },
+    {
+      "a": "FRA",
+      "b": "GRC",
+      "value": 60,
+      "reason": "Frigates and defence pact"
+    },
+    {
+      "a": "FRA",
+      "b": "ARE",
+      "value": 60,
+      "reason": "Base and arms sales"
+    },
+    {
+      "a": "FRA",
+      "b": "SAU",
+      "value": 40,
+      "reason": "Arms and investment"
+    },
+    {
+      "a": "FRA",
+      "b": "QAT",
+      "value": 50,
+      "reason": "Investment partner"
+    },
+    {
+      "a": "FRA",
+      "b": "EGY",
+      "value": 45,
+      "reason": "Rafale customer"
+    },
+    {
+      "a": "FRA",
+      "b": "DZA",
+      "value": -30,
+      "reason": "Western Sahara and migration disputes"
+    },
+    {
+      "a": "FRA",
+      "b": "MAR",
+      "value": 50,
+      "reason": "Reconciliation since 2024"
+    },
+    {
+      "a": "FRA",
+      "b": "LBN",
+      "value": 55,
+      "reason": "Historic ties; ceasefire sponsor"
+    },
+    {
+      "a": "FRA",
+      "b": "ARM",
+      "value": 50,
+      "reason": "Defence sales to Yerevan"
+    },
+    {
+      "a": "FRA",
+      "b": "AZE",
+      "value": -25,
+      "reason": "Baku accuses Paris of bias"
+    },
+    {
+      "a": "FRA",
+      "b": "CAN",
+      "value": 55,
+      "reason": "Francophone partners"
+    },
+    {
+      "a": "FRA",
+      "b": "AUS",
+      "value": 40,
+      "reason": "Ties repaired after AUKUS row"
+    },
+    {
+      "a": "FRA",
+      "b": "NLD",
+      "value": 60,
+      "reason": "EU partners"
+    },
+    {
+      "a": "FRA",
+      "b": "SYR",
+      "value": 25,
+      "reason": "Engagement with new government"
+    },
+    {
+      "a": "DEU",
+      "b": "UKR",
+      "value": 65,
+      "reason": "Second-largest donor; air defence supplier"
+    },
+    {
+      "a": "DEU",
+      "b": "POL",
+      "value": 45,
+      "reason": "Reparations debate; defence cooperation"
+    },
+    {
+      "a": "DEU",
+      "b": "ITA",
+      "value": 60,
+      "reason": "EU partners"
+    },
+    {
+      "a": "DEU",
+      "b": "NLD",
+      "value": 75,
+      "reason": "Integrated forces"
+    },
+    {
+      "a": "DEU",
+      "b": "LTU",
+      "value": 70,
+      "reason": "German brigade stationed"
+    },
+    {
+      "a": "DEU",
+      "b": "ESP",
+      "value": 55,
+      "reason": "EU partners"
+    },
+    {
+      "a": "DEU",
+      "b": "CAN",
+      "value": 55,
+      "reason": "Energy and defence partners"
+    },
+    {
+      "a": "DEU",
+      "b": "GRC",
+      "value": 45,
+      "reason": "Debt-era scars healed; migration friction"
+    },
+    {
+      "a": "DEU",
+      "b": "SAU",
+      "value": 30,
+      "reason": "Arms-export debates"
+    },
+    {
+      "a": "DEU",
+      "b": "ARE",
+      "value": 40,
+      "reason": "Energy partnership"
+    },
+    {
+      "a": "DEU",
+      "b": "SYR",
+      "value": 20,
+      "reason": "Repatriation and reconstruction talks"
+    },
+    {
+      "a": "DEU",
+      "b": "EGY",
+      "value": 35,
+      "reason": "Migration and energy partner"
+    },
+    {
+      "a": "DEU",
+      "b": "MAR",
+      "value": 40,
+      "reason": "Energy partnership"
+    },
+    {
+      "a": "DEU",
+      "b": "DNK",
+      "value": 65,
+      "reason": "Close neighbours"
+    },
+    {
+      "a": "DEU",
+      "b": "SWE",
+      "value": 65,
+      "reason": "Defence industry links"
+    },
+    {
+      "a": "DEU",
+      "b": "FIN",
+      "value": 60,
+      "reason": "NATO partners"
+    },
+    {
+      "a": "DEU",
+      "b": "NOR",
+      "value": 65,
+      "reason": "Gas and submarines"
+    },
+    {
+      "a": "JPN",
+      "b": "PRK",
+      "value": -80,
+      "reason": "Abductions; missile threats"
+    },
+    {
+      "a": "JPN",
+      "b": "TWN",
+      "value": 55,
+      "reason": "Close informal ties; semiconductor investment"
+    },
+    {
+      "a": "JPN",
+      "b": "AUS",
+      "value": 65,
+      "reason": "Quasi-alliance; frigate deal"
+    },
+    {
+      "a": "JPN",
+      "b": "PHL",
+      "value": 55,
+      "reason": "Reciprocal access agreement"
+    },
+    {
+      "a": "JPN",
+      "b": "VNM",
+      "value": 45,
+      "reason": "Strategic partnership"
+    },
+    {
+      "a": "JPN",
+      "b": "IDN",
+      "value": 45,
+      "reason": "Investment and defence ties"
+    },
+    {
+      "a": "JPN",
+      "b": "THA",
+      "value": 45,
+      "reason": "Major investor"
+    },
+    {
+      "a": "JPN",
+      "b": "MYS",
+      "value": 40,
+      "reason": "Trade partner"
+    },
+    {
+      "a": "JPN",
+      "b": "SGP",
+      "value": 50,
+      "reason": "Trade partner"
+    },
+    {
+      "a": "JPN",
+      "b": "SAU",
+      "value": 45,
+      "reason": "Oil supplier"
+    },
+    {
+      "a": "JPN",
+      "b": "ARE",
+      "value": 50,
+      "reason": "Oil and investment"
+    },
+    {
+      "a": "JPN",
+      "b": "QAT",
+      "value": 45,
+      "reason": "LNG supplier"
+    },
+    {
+      "a": "JPN",
+      "b": "CAN",
+      "value": 55,
+      "reason": "G7 and LNG partners"
+    },
+    {
+      "a": "JPN",
+      "b": "UKR",
+      "value": 45,
+      "reason": "Major reconstruction donor"
+    },
+    {
+      "a": "KOR",
+      "b": "PRK",
+      "value": -85,
+      "reason": "Mine blasts and missile barrages October 2026"
+    },
+    {
+      "a": "KOR",
+      "b": "TWN",
+      "value": 20,
+      "reason": "Trade ties; political caution"
+    },
+    {
+      "a": "KOR",
+      "b": "AUS",
+      "value": 50,
+      "reason": "Defence industry partners"
+    },
+    {
+      "a": "KOR",
+      "b": "VNM",
+      "value": 50,
+      "reason": "Largest investor"
+    },
+    {
+      "a": "KOR",
+      "b": "PHL",
+      "value": 45,
+      "reason": "Defence sales"
+    },
+    {
+      "a": "KOR",
+      "b": "IDN",
+      "value": 40,
+      "reason": "Fighter co-development friction"
+    },
+    {
+      "a": "KOR",
+      "b": "POL",
+      "value": 55,
+      "reason": "Major arms customer"
+    },
+    {
+      "a": "KOR",
+      "b": "SAU",
+      "value": 40,
+      "reason": "Construction and energy"
+    },
+    {
+      "a": "KOR",
+      "b": "ARE",
+      "value": 50,
+      "reason": "Nuclear plant partner"
+    },
+    {
+      "a": "KOR",
+      "b": "UKR",
+      "value": 30,
+      "reason": "Indirect support; monitoring North Korean troops"
+    },
+    {
+      "a": "IRN",
+      "b": "SAU",
+      "value": -40,
+      "reason": "Detente eroded by 2026 war and Gulf strikes"
+    },
+    {
+      "a": "IRN",
+      "b": "ARE",
+      "value": -35,
+      "reason": "Hormuz disruption hit Emirati trade"
+    },
+    {
+      "a": "IRN",
+      "b": "QAT",
+      "value": 20,
+      "reason": "Qatar co-mediated memorandum; gas field shared"
+    },
+    {
+      "a": "IRN",
+      "b": "IRQ",
+      "value": 50,
+      "reason": "Deep influence; militia network"
+    },
+    {
+      "a": "IRN",
+      "b": "SYR",
+      "value": -30,
+      "reason": "Lost Assad ally; hostile new government"
+    },
+    {
+      "a": "IRN",
+      "b": "YEM",
+      "value": 60,
+      "reason": "Houthi partnership"
+    },
+    {
+      "a": "IRN",
+      "b": "LBN",
+      "value": 30,
+      "reason": "Hezbollah ties; Beirut government wary"
+    },
+    {
+      "a": "IRN",
+      "b": "AZE",
+      "value": -15,
+      "reason": "Israel ties and Zangezur corridor friction"
+    },
+    {
+      "a": "IRN",
+      "b": "ARM",
+      "value": 30,
+      "reason": "Border and trade partner"
+    },
+    {
+      "a": "IRN",
+      "b": "AFG",
+      "value": 15,
+      "reason": "Water disputes; refugee expulsions"
+    },
+    {
+      "a": "IRN",
+      "b": "EGY",
+      "value": 0,
+      "reason": "Cautious thaw stalled by war"
+    },
+    {
+      "a": "IRN",
+      "b": "VEN",
+      "value": 20,
+      "reason": "Ally weakened by US intervention"
+    },
+    {
+      "a": "IRN",
+      "b": "CUB",
+      "value": 35,
+      "reason": "Political solidarity"
+    },
+    {
+      "a": "IRN",
+      "b": "KAZ",
+      "value": 20,
+      "reason": "Caspian cooperation"
+    },
+    {
+      "a": "ISR",
+      "b": "SAU",
+      "value": -20,
+      "reason": "Normalisation stalled; Gaza and Syria conduct"
+    },
+    {
+      "a": "ISR",
+      "b": "ARE",
+      "value": 40,
+      "reason": "Abraham Accords endured 2026 war"
+    },
+    {
+      "a": "ISR",
+      "b": "EGY",
+      "value": 10,
+      "reason": "Cold peace; Gaza border disputes"
+    },
+    {
+      "a": "ISR",
+      "b": "QAT",
+      "value": -40,
+      "reason": "2025 Doha strike; mediation role"
+    },
+    {
+      "a": "ISR",
+      "b": "SYR",
+      "value": -20,
+      "reason": "Security talks via Jordan; buffer-zone occupation"
+    },
+    {
+      "a": "ISR",
+      "b": "LBN",
+      "value": -60,
+      "reason": "Ceasefire since June 2026; Israel holds positions"
+    },
+    {
+      "a": "ISR",
+      "b": "YEM",
+      "value": -80,
+      "reason": "Houthi strikes paused under ceasefire"
+    },
+    {
+      "a": "ISR",
+      "b": "IRQ",
+      "value": -40,
+      "reason": "Militia attacks during 2026 war"
+    },
+    {
+      "a": "ISR",
+      "b": "AZE",
+      "value": 60,
+      "reason": "Energy and arms partnership"
+    },
+    {
+      "a": "ISR",
+      "b": "ARG",
+      "value": 60,
+      "reason": "Milei strongly pro-Israel"
+    },
+    {
+      "a": "ISR",
+      "b": "ITA",
+      "value": 35,
+      "reason": "Friendly government; Gaza criticism"
+    },
+    {
+      "a": "ISR",
+      "b": "GRC",
+      "value": 55,
+      "reason": "Energy and defence cooperation"
+    },
+    {
+      "a": "ISR",
+      "b": "ESP",
+      "value": -25,
+      "reason": "Madrid recognised Palestine; arms embargo"
+    },
+    {
+      "a": "ISR",
+      "b": "NLD",
+      "value": 25,
+      "reason": "Friendly; export controls"
+    },
+    {
+      "a": "ISR",
+      "b": "POL",
+      "value": 25,
+      "reason": "Friendly ties"
+    },
+    {
+      "a": "ISR",
+      "b": "ZAF",
+      "value": -50,
+      "reason": "ICJ genocide case"
+    },
+    {
+      "a": "ISR",
+      "b": "AUS",
+      "value": 25,
+      "reason": "Friendly; recognised Palestine 2025"
+    },
+    {
+      "a": "ISR",
+      "b": "CAN",
+      "value": 15,
+      "reason": "Recognised Palestine 2025"
+    },
+    {
+      "a": "ISR",
+      "b": "UKR",
+      "value": 20,
+      "reason": "Sympathy but limited support"
+    },
+    {
+      "a": "TUR",
+      "b": "GRC",
+      "value": -30,
+      "reason": "Aegean disputes; calm maintained"
+    },
+    {
+      "a": "TUR",
+      "b": "SYR",
+      "value": 60,
+      "reason": "Patron of new government"
+    },
+    {
+      "a": "TUR",
+      "b": "AZE",
+      "value": 85,
+      "reason": "One nation, two states"
+    },
+    {
+      "a": "TUR",
+      "b": "ARM",
+      "value": 0,
+      "reason": "Normalisation talks progressing"
+    },
+    {
+      "a": "TUR",
+      "b": "EGY",
+      "value": 25,
+      "reason": "Reconciliation since 2023"
+    },
+    {
+      "a": "TUR",
+      "b": "SAU",
+      "value": 40,
+      "reason": "Defence pact talks with Riyadh and Islamabad"
+    },
+    {
+      "a": "TUR",
+      "b": "QAT",
+      "value": 70,
+      "reason": "Close ally; base"
+    },
+    {
+      "a": "TUR",
+      "b": "LBY",
+      "value": 45,
+      "reason": "Backs Tripoli government"
+    },
+    {
+      "a": "TUR",
+      "b": "IRQ",
+      "value": 20,
+      "reason": "Water and PKK issues"
+    },
+    {
+      "a": "TUR",
+      "b": "ARE",
+      "value": 25,
+      "reason": "Reconciled; investment"
+    },
+    {
+      "a": "TUR",
+      "b": "UKR",
+      "value": 40,
+      "reason": "Drone sales; grain diplomacy"
+    },
+    {
+      "a": "TUR",
+      "b": "KAZ",
+      "value": 50,
+      "reason": "Turkic Council partners"
+    },
+    {
+      "a": "TUR",
+      "b": "ITA",
+      "value": 35,
+      "reason": "Defence industry cooperation"
+    },
+    {
+      "a": "TUR",
+      "b": "POL",
+      "value": 35,
+      "reason": "Drone sales"
+    },
+    {
+      "a": "TUR",
+      "b": "IDN",
+      "value": 40,
+      "reason": "Defence cooperation"
+    },
+    {
+      "a": "TUR",
+      "b": "MYS",
+      "value": 45,
+      "reason": "Friendly ties"
+    },
+    {
+      "a": "TUR",
+      "b": "SDN",
+      "value": 15,
+      "reason": "Port interests"
+    },
+    {
+      "a": "PAK",
+      "b": "AFG",
+      "value": -80,
+      "reason": "Open hostilities since February 2026 strikes"
+    },
+    {
+      "a": "PAK",
+      "b": "SAU",
+      "value": 75,
+      "reason": "Mutual defence agreement 2025"
+    },
+    {
+      "a": "PAK",
+      "b": "ARE",
+      "value": 45,
+      "reason": "Investment and remittances"
+    },
+    {
+      "a": "PAK",
+      "b": "BGD",
+      "value": 30,
+      "reason": "Rapprochement after 2024"
+    },
+    {
+      "a": "PAK",
+      "b": "QAT",
+      "value": 40,
+      "reason": "Co-mediator and gas supplier"
+    },
+    {
+      "a": "PAK",
+      "b": "AZE",
+      "value": 50,
+      "reason": "Trilateral with Turkey"
+    },
+    {
+      "a": "PAK",
+      "b": "MYS",
+      "value": 35,
+      "reason": "Friendly ties"
+    },
+    {
+      "a": "PAK",
+      "b": "UKR",
+      "value": 10,
+      "reason": "Arms exports to Kyiv reported"
+    },
+    {
+      "a": "BRA",
+      "b": "ARG",
+      "value": 25,
+      "reason": "Lula-Milei ideological rift; Mercosur ties"
+    },
+    {
+      "a": "BRA",
+      "b": "VEN",
+      "value": 0,
+      "reason": "Cool ties after contested election and intervention"
+    },
+    {
+      "a": "BRA",
+      "b": "MEX",
+      "value": 35,
+      "reason": "Regional partners"
+    },
+    {
+      "a": "BRA",
+      "b": "ZAF",
+      "value": 45,
+      "reason": "BRICS partner"
+    },
+    {
+      "a": "BRA",
+      "b": "ARE",
+      "value": 35,
+      "reason": "Investment partner"
+    },
+    {
+      "a": "BRA",
+      "b": "SAU",
+      "value": 30,
+      "reason": "Trade partner"
+    },
+    {
+      "a": "BRA",
+      "b": "NGA",
+      "value": 30,
+      "reason": "Trade partner"
+    },
+    {
+      "a": "BRA",
+      "b": "IDN",
+      "value": 30,
+      "reason": "New BRICS partner"
+    },
+    {
+      "a": "BRA",
+      "b": "CUB",
+      "value": 30,
+      "reason": "Lula government sympathetic"
+    },
+    {
+      "a": "BRA",
+      "b": "ESP",
+      "value": 40,
+      "reason": "Cultural and trade ties"
+    },
+    {
+      "a": "BRA",
+      "b": "ITA",
+      "value": 40,
+      "reason": "Diaspora ties"
+    },
+    {
+      "a": "PRK",
+      "b": "TWN",
+      "value": -30,
+      "reason": "No relations"
+    },
+    {
+      "a": "ARM",
+      "b": "AZE",
+      "value": -40,
+      "reason": "Peace treaty initialled 2025, unsigned"
+    },
+    {
+      "a": "SAU",
+      "b": "ARE",
+      "value": 35,
+      "reason": "Partners with Yemen and OPEC frictions"
+    },
+    {
+      "a": "SAU",
+      "b": "QAT",
+      "value": 35,
+      "reason": "Reconciled since 2021"
+    },
+    {
+      "a": "SAU",
+      "b": "YEM",
+      "value": -50,
+      "reason": "Houthi conflict frozen"
+    },
+    {
+      "a": "SAU",
+      "b": "EGY",
+      "value": 55,
+      "reason": "Close partners"
+    },
+    {
+      "a": "SAU",
+      "b": "SYR",
+      "value": 50,
+      "reason": "Backing reconstruction"
+    },
+    {
+      "a": "SAU",
+      "b": "IRQ",
+      "value": 30,
+      "reason": "Improving ties"
+    },
+    {
+      "a": "SAU",
+      "b": "SDN",
+      "value": 20,
+      "reason": "Mediation role"
+    },
+    {
+      "a": "ARE",
+      "b": "QAT",
+      "value": 10,
+      "reason": "Reconciled; rivalry persists"
+    },
+    {
+      "a": "ARE",
+      "b": "YEM",
+      "value": -30,
+      "reason": "Backs southern factions"
+    },
+    {
+      "a": "ARE",
+      "b": "SDN",
+      "value": -60,
+      "reason": "Accused of arming RSF"
+    },
+    {
+      "a": "ARE",
+      "b": "EGY",
+      "value": 45,
+      "reason": "Investment partner"
+    },
+    {
+      "a": "ARE",
+      "b": "SYR",
+      "value": 40,
+      "reason": "Engagement with new government"
+    },
+    {
+      "a": "EGY",
+      "b": "ETH",
+      "value": -35,
+      "reason": "Nile dam dispute"
+    },
+    {
+      "a": "EGY",
+      "b": "SDN",
+      "value": 30,
+      "reason": "Backs army"
+    },
+    {
+      "a": "EGY",
+      "b": "LBY",
+      "value": 25,
+      "reason": "Backs eastern factions"
+    },
+    {
+      "a": "EGY",
+      "b": "QAT",
+      "value": 30,
+      "reason": "Gaza mediation partners"
+    },
+    {
+      "a": "EGY",
+      "b": "SYR",
+      "value": 30,
+      "reason": "Cautious engagement"
+    },
+    {
+      "a": "ETH",
+      "b": "SDN",
+      "value": 0,
+      "reason": "Border and dam friction"
+    },
+    {
+      "a": "ETH",
+      "b": "KEN",
+      "value": 35,
+      "reason": "Regional partners"
+    },
+    {
+      "a": "DZA",
+      "b": "MAR",
+      "value": -60,
+      "reason": "Border closed; Western Sahara"
+    },
+    {
+      "a": "ESP",
+      "b": "MAR",
+      "value": 35,
+      "reason": "Migration cooperation"
+    },
+    {
+      "a": "ESP",
+      "b": "DZA",
+      "value": 10,
+      "reason": "Gas ties repaired"
+    },
+    {
+      "a": "ITA",
+      "b": "LBY",
+      "value": 40,
+      "reason": "Migration and energy pacts"
+    },
+    {
+      "a": "ITA",
+      "b": "DZA",
+      "value": 35,
+      "reason": "Gas supplier"
+    },
+    {
+      "a": "ITA",
+      "b": "EGY",
+      "value": 30,
+      "reason": "Energy ties"
+    },
+    {
+      "a": "BLR",
+      "b": "UKR",
+      "value": -60,
+      "reason": "Launch pad for 2022 invasion"
+    },
+    {
+      "a": "BLR",
+      "b": "POL",
+      "value": -70,
+      "reason": "Border migrant pressure"
+    },
+    {
+      "a": "BLR",
+      "b": "LTU",
+      "value": -70,
+      "reason": "Border closures"
+    },
+    {
+      "a": "BLR",
+      "b": "LVA",
+      "value": -65,
+      "reason": "Border pressure"
+    },
+    {
+      "a": "POL",
+      "b": "UKR",
+      "value": 55,
+      "reason": "Key supporter; grain and history frictions"
+    },
+    {
+      "a": "POL",
+      "b": "LTU",
+      "value": 70,
+      "reason": "Close allies"
+    },
+    {
+      "a": "POL",
+      "b": "SWE",
+      "value": 55,
+      "reason": "Baltic partners"
+    },
+    {
+      "a": "EST",
+      "b": "LVA",
+      "value": 80,
+      "reason": "Baltic unity"
+    },
+    {
+      "a": "EST",
+      "b": "LTU",
+      "value": 80,
+      "reason": "Baltic unity"
+    },
+    {
+      "a": "LVA",
+      "b": "LTU",
+      "value": 80,
+      "reason": "Baltic unity"
+    },
+    {
+      "a": "FIN",
+      "b": "SWE",
+      "value": 85,
+      "reason": "Nordic alliance partners"
+    },
+    {
+      "a": "FIN",
+      "b": "EST",
+      "value": 70,
+      "reason": "Close kin states"
+    },
+    {
+      "a": "NOR",
+      "b": "SWE",
+      "value": 80,
+      "reason": "Nordic partners"
+    },
+    {
+      "a": "SWE",
+      "b": "DNK",
+      "value": 80,
+      "reason": "Nordic partners"
+    },
+    {
+      "a": "DNK",
+      "b": "NOR",
+      "value": 80,
+      "reason": "Nordic partners"
+    },
+    {
+      "a": "DNK",
+      "b": "CAN",
+      "value": 60,
+      "reason": "Arctic partners; Hans Island deal"
+    },
+    {
+      "a": "NLD",
+      "b": "POL",
+      "value": 50,
+      "reason": "NATO partners"
+    },
+    {
+      "a": "GEO",
+      "b": "UKR",
+      "value": 20,
+      "reason": "Sympathy; government distance"
+    },
+    {
+      "a": "GEO",
+      "b": "ARM",
+      "value": 40,
+      "reason": "Neighbours"
+    },
+    {
+      "a": "GEO",
+      "b": "AZE",
+      "value": 45,
+      "reason": "Energy corridor partners"
+    },
+    {
+      "a": "KAZ",
+      "b": "UKR",
+      "value": 15,
+      "reason": "Neutral"
+    },
+    {
+      "a": "SYR",
+      "b": "LBN",
+      "value": 20,
+      "reason": "New governments rebuilding ties"
+    },
+    {
+      "a": "SYR",
+      "b": "IRQ",
+      "value": 15,
+      "reason": "Cautious engagement"
+    },
+    {
+      "a": "LBN",
+      "b": "YEM",
+      "value": 0,
+      "reason": "Minimal ties"
+    },
+    {
+      "a": "AUS",
+      "b": "NZL",
+      "value": 90,
+      "reason": "ANZAC partners"
+    },
+    {
+      "a": "AUS",
+      "b": "IDN",
+      "value": 45,
+      "reason": "Defence treaty 2025"
+    },
+    {
+      "a": "AUS",
+      "b": "PHL",
+      "value": 50,
+      "reason": "Maritime cooperation"
+    },
+    {
+      "a": "AUS",
+      "b": "SGP",
+      "value": 60,
+      "reason": "Close partners"
+    },
+    {
+      "a": "CAN",
+      "b": "MEX",
+      "value": 45,
+      "reason": "USMCA partners under US pressure"
+    },
+    {
+      "a": "CAN",
+      "b": "UKR",
+      "value": 65,
+      "reason": "Large diaspora; strong supporter"
+    },
+    {
+      "a": "MEX",
+      "b": "CUB",
+      "value": 35,
+      "reason": "Historic ties; oil shipments"
+    },
+    {
+      "a": "CUB",
+      "b": "VEN",
+      "value": 50,
+      "reason": "Alliance weakened after Maduro's capture"
+    },
+    {
+      "a": "ARG",
+      "b": "VEN",
+      "value": -20,
+      "reason": "Milei hostile to Chavismo"
+    },
+    {
+      "a": "TWN",
+      "b": "PHL",
+      "value": 30,
+      "reason": "Growing security dialogue"
+    },
+    {
+      "a": "PHL",
+      "b": "VNM",
+      "value": 25,
+      "reason": "Maritime cooperation despite overlapping claims"
+    },
+    {
+      "a": "VNM",
+      "b": "THA",
+      "value": 40,
+      "reason": "ASEAN partners"
+    },
+    {
+      "a": "THA",
+      "b": "MYS",
+      "value": 45,
+      "reason": "ASEAN partners"
+    },
+    {
+      "a": "MYS",
+      "b": "SGP",
+      "value": 50,
+      "reason": "Close but prickly neighbours"
+    },
+    {
+      "a": "IDN",
+      "b": "MYS",
+      "value": 50,
+      "reason": "ASEAN partners"
+    },
+    {
+      "a": "IDN",
+      "b": "SGP",
+      "value": 50,
+      "reason": "ASEAN partners"
+    },
+    {
+      "a": "MMR",
+      "b": "BGD",
+      "value": -35,
+      "reason": "Rohingya crisis"
+    },
+    {
+      "a": "MMR",
+      "b": "THA",
+      "value": 20,
+      "reason": "Border and refugee issues"
+    },
+    {
+      "a": "BGD",
+      "b": "MYS",
+      "value": 35,
+      "reason": "Labour migration"
+    },
+    {
+      "a": "AFG",
+      "b": "KAZ",
+      "value": 20,
+      "reason": "Trade contacts"
+    },
+    {
+      "a": "NGA",
+      "b": "ZAF",
+      "value": 30,
+      "reason": "Regional rivals and partners"
+    },
+    {
+      "a": "COD",
+      "b": "KEN",
+      "value": 20,
+      "reason": "Regional diplomacy"
+    },
+    {
+      "a": "SDN",
+      "b": "LBY",
+      "value": 10,
+      "reason": "Smuggling and militia routes"
+    },
+    {
+      "a": "YEM",
+      "b": "QAT",
+      "value": 15,
+      "reason": "Mediation contacts"
+    },
+    {
+      "a": "KOR",
+      "b": "CUB",
+      "value": 10,
+      "reason": "Relations established 2024"
+    },
+    {
+      "a": "LBN",
+      "b": "QAT",
+      "value": 40,
+      "reason": "Reconstruction donor"
+    }
+  ]
+}
