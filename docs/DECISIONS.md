@@ -371,3 +371,19 @@ region) under Russian control, weariness 30/35, existing sanctions on Russia, No
 Cuba, Venezuela and Syria. "Taiwan Strait Crisis": same world with Taiwan tension 90, US–China
 −78, PLA reinforcements and amphibious groups in the strait, three US carrier groups moved west.
 Seeds come from the clock at New Game; everything after is deterministic.
+
+## D-045 — 2026-11-02 — The sun follows the camera
+
+The sub-solar longitude is the camera longitude + 38° (plus a slow ±12° real-time sway), with the
+declination from the in-game month. The viewed hemisphere is therefore always in afternoon light
+with the terminator and city lights visible at the limb, instead of the player's country spending
+half of real time in darkness. Astronomically wrong, deliberately: readability of the political map
+wins over simulating the time of day.
+
+## D-046 — 2026-11-02 — Performance probe in the app
+
+`window.ww3.perf(seconds)` (installed by `src/render/perf.ts`) sweeps the camera through eight
+stops and resolves with average/p95 frame time, fps, JS heap (Chrome only), texture count and the
+estimated GPU bytes of uploaded textures. `npm run perf` runs it under Playwright and writes
+`docs/perf-last-run.json`. Headless SwiftShader numbers are recorded in `docs/PERF.md` as
+non-representative; the M3 figures must be measured on the owner's machine.
