@@ -167,6 +167,44 @@ describe('ai', () => {
   });
 });
 
+describe('escalation', () => {
+  it('nuclear strike devastates the target, costs warheads, and a full exchange ends the game', () => {
+    let g = createGame({ seed: 9, player: 'USA', scenario: 'world-2027' }, world);
+    g = applyCommand(world, g, { type: 'propose', proposal: 'declareWar', target: 'RUS' });
+    expect(g.wars.some((w) => w.attackers.includes('USA') && w.defenders.includes('RUS'))).toBe(
+      true,
+    );
+    // Not at DEFCON 1 yet: the command must be refused.
+    expect(() =>
+      applyCommand(world, g, {
+        type: 'nuclearStrike',
+        target: 'RUS',
+        region: world.capitalRegion.get('RUS')!,
+      }),
+    ).toThrow(/DEFCON 1/);
+    // Force the conditions and strike.
+    const forced = structuredClone(g);
+    forced.nations['USA']!.defcon = 1;
+    const target = world.capitalRegion.get('RUS')!;
+    const before = forced.nations['RUS']!.gdp;
+    const after = applyCommand(world, forced, {
+      type: 'nuclearStrike',
+      target: 'RUS',
+      region: target,
+    });
+    expect(after.detonations).toBeGreaterThanOrEqual(1);
+    expect(after.nations['USA']!.warheads).toBeLessThanOrEqual(forced.nations['USA']!.warheads - 10);
+    expect(after.nations['RUS']!.gdp).toBeLessThan(before);
+    expect(after.regions[target]!.devastation).toBeGreaterThan(0.1);
+    expect(after.globalTension).toBe(100);
+    // Eight detonations → nobody wins.
+    const doom = structuredClone(after);
+    doom.detonations = 8;
+    const ended = applyCommand(world, doom, { type: 'endTurn' });
+    expect(ended.defeat?.kind).toBe('nuclearWar');
+  });
+});
+
 describe('soak', () => {
   it('runs 120 turns without exceptions or NaN', () => {
     const t0 = performance.now();

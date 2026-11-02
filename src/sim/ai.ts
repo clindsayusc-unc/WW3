@@ -404,7 +404,7 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
       rel >= 20 &&
       !hasTreaty(state, iso, other, 'trade') &&
       !atWar(state, iso, other) &&
-      roll(state) < 0.03 + t.economicPriority / 3000
+      roll(state) < (other === state.player ? 0.006 : 0.015) + t.economicPriority / 6000
     ) {
       propose(
         world,

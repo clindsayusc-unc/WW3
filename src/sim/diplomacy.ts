@@ -409,12 +409,14 @@ export function executeProposal(
   if (type === 'resolution') return verdict;
   if (!verdict.accept) {
     adjustRelation(world, state, from, to, type === 'demand' ? -12 : -3);
-    log(state, {
-      kind: 'diplomacy',
-      text: `${toName} rejects ${fromName}'s proposal (${PROPOSAL_LABELS[type].toLowerCase()}): ${verdict.reason}`,
-      nations: [from, to],
-      alert: isPlayer,
-    });
+    if (isPlayer || (world.nations.get(from)?.major && world.nations.get(to)?.major)) {
+      log(state, {
+        kind: 'diplomacy',
+        text: `${toName} rejects ${fromName}'s proposal (${PROPOSAL_LABELS[type].toLowerCase()}): ${verdict.reason}`,
+        nations: [from, to],
+        alert: isPlayer,
+      });
+    }
     return verdict;
   }
   bumpDiplomacy(state);
@@ -465,12 +467,17 @@ export function executeProposal(
       makePeace(world, state, from, to, 'statusQuo');
       break;
   }
-  log(state, {
-    kind: 'diplomacy',
-    text: `${toName} accepts ${fromName}'s ${PROPOSAL_LABELS[type].toLowerCase()}: ${verdict.reason}`,
-    nations: [from, to],
-    alert: isPlayer,
-  });
+  // Minor-power housekeeping (trade deals between non-majors) stays out of the log (D-048).
+  const notable =
+    isPlayer || type !== 'trade' || world.nations.get(from)?.major || world.nations.get(to)?.major;
+  if (notable) {
+    log(state, {
+      kind: 'diplomacy',
+      text: `${toName} accepts ${fromName}'s ${PROPOSAL_LABELS[type].toLowerCase()}: ${verdict.reason}`,
+      nations: [from, to],
+      alert: isPlayer,
+    });
+  }
   if (isPlayer)
     headline(state, `${fromName} and ${toName}: ${PROPOSAL_LABELS[type].toLowerCase()} agreed`);
   return verdict;
