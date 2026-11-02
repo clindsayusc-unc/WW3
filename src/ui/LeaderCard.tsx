@@ -3,6 +3,7 @@ import { flagEmoji } from './flags';
 import { Stat } from './Stat';
 import type { LeaderMeta, NationMeta } from '../sim/world';
 import { DEFAULT_TRAITS } from '../sim/world';
+import { Portrait } from './Portrait';
 
 const TRAIT_LABELS: { key: keyof LeaderMeta['traits']; label: string; tip: string }[] = [
   {
@@ -46,51 +47,6 @@ const TRAIT_LABELS: { key: keyof LeaderMeta['traits']; label: string; tip: strin
     tip: 'How desperate the situation must be before nuclear use is considered. Higher is safer.',
   },
 ];
-
-/** Deterministic abstract portrait from the ISO code: concentric geometry in the nation accent. */
-function Portrait({ iso3, accent }: { iso3: string; accent: string }) {
-  let h = 2166136261;
-  for (const ch of iso3) {
-    h ^= ch.charCodeAt(0);
-    h = Math.imul(h, 16777619);
-  }
-  const r = (h >>> 0) % 360;
-  const shapes = Array.from({ length: 5 }, (_, i) => {
-    const a = ((h >>> (i * 5)) % 100) / 100;
-    return {
-      cx: 50 + Math.cos(r + i * 1.3) * 12 * a,
-      cy: 46 + Math.sin(r + i * 1.7) * 10 * a,
-      rad: 30 - i * 5,
-      op: 0.18 + i * 0.12,
-    };
-  });
-  return (
-    <svg viewBox="0 0 100 100" className="portrait" aria-hidden="true">
-      <defs>
-        <radialGradient id={`g-${iso3}`} cx="50%" cy="40%" r="60%">
-          <stop offset="0%" stopColor={accent} stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#0b1220" stopOpacity="1" />
-        </radialGradient>
-      </defs>
-      <rect width="100" height="100" fill={`url(#g-${iso3})`} />
-      {shapes.map((s, i) => (
-        <circle
-          key={i}
-          cx={s.cx}
-          cy={s.cy}
-          r={s.rad}
-          fill="none"
-          stroke="#e8eef6"
-          strokeOpacity={s.op}
-          strokeWidth={1.2}
-        />
-      ))}
-      <path d="M30 78 Q50 58 70 78 L70 100 L30 100 Z" fill="#0b1220" opacity="0.85" />
-      <circle cx="50" cy="52" r="13" fill="#0b1220" opacity="0.85" />
-      <circle cx="50" cy="52" r="13" fill="none" stroke={accent} strokeWidth="1.5" />
-    </svg>
-  );
-}
 
 interface Props {
   nation: NationMeta;
@@ -155,7 +111,7 @@ export function LeaderCard({
       type="button"
     >
       <div className="leader-top">
-        <Portrait iso3={nation.iso3} accent={accent} />
+        <Portrait iso3={nation.iso3} accent={accent} name={leader?.name} role={leader?.role} title={leader?.title} />
         <div className="leader-id">
           <div className="leader-flag">
             {flagEmoji(nation.iso2)} <span className="leader-nation">{nation.name}</span>

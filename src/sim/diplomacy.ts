@@ -23,6 +23,9 @@ import {
 } from './query';
 import { relationKey, sanctionKey } from './world';
 import { imposeEmbargo, imposeSecondary, liftEmbargo as liftEmbargoOn, liftSecondary, rallyCoalition } from './trade';
+import { adjustLegitimacy, agendaWeight, opinionOf, remember } from './personality';
+import { honourObligations } from './blocs';
+import { issueDispatch } from './statements';
 
 export const PROPOSAL_LABELS: Record<ProposalType, string> = {
   trade: 'Trade agreement',
@@ -41,6 +44,7 @@ export const PROPOSAL_LABELS: Record<ProposalType, string> = {
   secondarySanctions: 'Secondary sanctions',
   liftSecondary: 'Drop secondary sanctions',
   rallySanctions: 'Rally sanctions coalition',
+  deal: 'Deal',
 };
 
 /** Relations drift one point per month toward their structural baseline. */
@@ -56,16 +60,25 @@ export function decayRelations(world: World, state: GameState): void {
     const [f, t] = s.split('>') as [Iso3, Iso3];
     sanctioned.add(relationKey(f, t));
   }
+  // Remembered grievances and favours pull the baseline (D-071): half the mean of both sides' memory.
+  const memoryPull = new Map<string, number>();
+  for (const [holder, list] of Object.entries(state.memory ?? {}))
+    for (const m of list) {
+      const k = relationKey(holder, m.about);
+      memoryPull.set(k, (memoryPull.get(k) ?? 0) + (m.kind === 'favour' ? m.weight : -m.weight) * 0.25);
+    }
   for (const key of Object.keys(state.relations)) {
     const [a, b] = key.split('|') as [Iso3, Iso3];
     if (atWar(state, a, b)) {
       state.relations[key] = Math.min(state.relations[key]!, -80);
       continue;
     }
-    let baseline = defaultRelation(world, a, b);
+    let baseline = defaultRelation(world, a, b, state);
     const tr = treatyByPair.get(key);
     if (tr !== undefined) baseline = Math.max(baseline, tr);
     if (sanctioned.has(key)) baseline = Math.min(baseline, -40);
+    const pull = memoryPull.get(key);
+    if (pull) baseline = clamp(baseline + clamp(pull, -30, 30), -100, 100);
     const cur = state.relations[key]!;
     if (Math.abs(cur - baseline) <= 1) continue;
     state.relations[key] = cur + Math.sign(baseline - cur) * 0.5;
@@ -81,6 +94,10 @@ export function declareWar(
 ): void {
   if (attacker === defender || atWar(state, attacker, defender)) return;
   if (!state.nations[attacker]?.alive || !state.nations[defender]?.alive) return;
+  // AI leaders never attack an ally (D-071): defence partners and bloc allies are off limits.
+  if (attacker !== state.player && alliesOf(world, state, attacker).includes(defender)) return;
+  // Relations before the declaration decide whether the war looks provoked.
+  const rel = getRelation(world, state, attacker, defender);
   const broken =
     hasTreaty(state, attacker, defender, 'nap') ||
     hasTreaty(state, attacker, defender, 'defensive') ||
@@ -99,7 +116,6 @@ export function declareWar(
   state.wars.push(war);
   setRelation(state, attacker, defender, -100);
   const att = state.nations[attacker]!;
-  const rel = getRelation(world, state, attacker, defender);
   if (rel > -40) att.stability -= 4; // unjustified war
   if (broken) {
     att.stability -= 6;
@@ -112,21 +128,16 @@ export function declareWar(
     0,
     100,
   );
-  // Defensive obligations drag allies of the defender in (and allies of the attacker if attacked back later).
-  for (const ally of alliesOf(world, state, defender)) {
-    if (ally === attacker || war.attackers.includes(ally) || war.defenders.includes(ally)) continue;
-    if (!state.nations[ally]?.alive) continue;
-    const loyalty = traitsOf(world, ally).allianceLoyalty;
-    if (loyalty < 35 && !world.nations.get(ally)?.blocs.includes('NATO')) continue; // fair-weather friend
-    war.defenders.push(ally);
-    setRelation(state, ally, attacker, -100);
-    log(state, {
-      kind: 'war',
-      text: `${nationName(world, ally)} honours its defence pact with ${nationName(world, defender)} and enters the war against ${nationName(world, attacker)}.`,
-      nations: [ally, attacker, defender],
-      alert: ally === state.player || attacker === state.player,
-    });
+  // Defence partners decide one by one (NATO Article 5 / CSTO Article 4 logic, D-071).
+  honourObligations(world, state, war, attacker, defender);
+  // Memory and legitimacy: the victim never forgets; an unprovoked war costs standing.
+  remember(state, defender, attacker, 'grievance', 40, 'attacked us');
+  adjustLegitimacy(state, attacker, rel > -40 ? -12 : -6);
+  for (const m of world.majors) {
+    if (m === attacker || m === defender || !state.nations[m]?.alive) continue;
+    if (opinionOf(world, state, m, defender) >= 30) remember(state, m, attacker, 'grievance', 10, `attacked ${nationName(world, defender)}`);
   }
+  issueDispatch(world, state, defender, attacker, 'condemnation', 'We will defend every inch of our land.');
   for (const n of Object.values(state.nations)) {
     if (n.iso3 === attacker || n.iso3 === defender) continue;
     const r = getRelation(world, state, n.iso3, defender);
@@ -212,11 +223,13 @@ function settlePair(
   void world;
 }
 
-export function imposeSanction(world: World, state: GameState, from: Iso3, to: Iso3): void {
+export function imposeSanction(world: World, state: GameState, from: Iso3, to: Iso3, quiet = false): void {
   const key = sanctionKey(from, to);
   if (state.sanctions.includes(key)) return;
   state.sanctions.push(key);
   adjustRelation(world, state, from, to, -20);
+  remember(state, to, from, 'grievance', 8 * (1 + 0.5 * agendaWeight(world, to, 'regimeSurvival')), 'sanctioned us');
+  if (quiet) return;
   log(state, {
     kind: 'diplomacy',
     text: `${nationName(world, from)} imposes sanctions on ${nationName(world, to)}.`,
@@ -252,7 +265,8 @@ export function evaluateProposal(
   type: ProposalType,
 ): Verdict {
   const t = traitsOf(world, to);
-  const rel = getRelation(world, state, from, to);
+  // The AI judges by what its leader thinks: relations plus remembered grievances and favours (D-071).
+  const rel = opinionOf(world, state, to, from);
   const toName = nationName(world, to);
   const myPower = militaryPower(world, state, to);
   const theirPower = militaryPower(world, state, from);
@@ -370,6 +384,8 @@ export function evaluateProposal(
         return { accept: true, reason: `${toName} keeps what it holds — a favourable peace.` };
       return { accept: false, reason: `${toName} will not sign while the front is undecided.` };
     }
+    case 'deal':
+      return { accept: false, reason: 'Deals are negotiated on the negotiation screen.' };
     case 'sanction':
     case 'liftSanction':
     case 'declareWar':

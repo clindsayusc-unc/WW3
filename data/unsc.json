@@ -1,0 +1,60 @@
+{
+  "source": "United Nations Security Council membership: un.org/securitycouncil/content/current-members; 2026 election results (Austria, Kyrgyzstan, Portugal, Trinidad and Tobago, Zimbabwe for 2027–28) reported by UN News and wire services on 2026-06-03; Charter of the United Nations, Article 27 (nine affirmative votes including the concurring votes of the permanent members).",
+  "asOf": "2026-11-02",
+  "urls": [
+    "https://www.un.org/securitycouncil/content/current-members",
+    "https://en.wikipedia.org/wiki/2026_United_Nations_Security_Council_election",
+    "https://www.un.org/en/about-us/un-charter/chapter-5"
+  ],
+  "permanent": [
+    "USA",
+    "CHN",
+    "RUS",
+    "GBR",
+    "FRA"
+  ],
+  "elected": [
+    {
+      "iso3": "BHR",
+      "until": 2027
+    },
+    {
+      "iso3": "COL",
+      "until": 2027
+    },
+    {
+      "iso3": "COD",
+      "until": 2027
+    },
+    {
+      "iso3": "LVA",
+      "until": 2027
+    },
+    {
+      "iso3": "LBR",
+      "until": 2027
+    },
+    {
+      "iso3": "AUT",
+      "until": 2028
+    },
+    {
+      "iso3": "KGZ",
+      "until": 2028
+    },
+    {
+      "iso3": "PRT",
+      "until": 2028
+    },
+    {
+      "iso3": "TTO",
+      "until": 2028
+    },
+    {
+      "iso3": "ZWE",
+      "until": 2028
+    }
+  ],
+  "votesToPass": 9,
+  "notes": "From January 2028 the game elects replacements itself (deterministic, by regional group of the outgoing member) — simulated, not real."
+}

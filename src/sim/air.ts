@@ -74,15 +74,17 @@ export function regionsInRange(world: World, from: RegionId, range: number): Reg
 }
 
 interface AirCache {
-  version: string;
+  /** turn, regionsVersion, diplomacyVersion, nextId (new units bump nextId; deletions invalidate explicitly). */
+  version: [number, number, number, number];
   interdiction: Map<RegionId, Map<Iso3, number>>;
   defenceAA: Map<RegionId, Map<Iso3, number>>;
 }
 const airCache = new WeakMap<GameState, AirCache>();
 function cacheFor(world: World, state: GameState): AirCache {
-  const version = `${state.turn}|${state.regionsVersion}|${state.diplomacyVersion}|${Object.keys(state.units).length}`;
+  const version: AirCache['version'] = [state.turn, state.regionsVersion, state.diplomacyVersion, state.nextId];
   let c = airCache.get(state);
-  if (c && c.version === version) return c;
+  if (c && c.version[0] === version[0] && c.version[1] === version[1] && c.version[2] === version[2] && c.version[3] === version[3])
+    return c;
   c = { version, interdiction: new Map(), defenceAA: new Map() };
   // Interdiction weight per region per victim: wings at war with the victim, within range.
   for (const u of Object.values(state.units)) {

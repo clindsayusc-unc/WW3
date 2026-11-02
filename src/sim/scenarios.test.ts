@@ -370,6 +370,8 @@ describe('calibration: invading the continental United States', () => {
 describe('calibration: Russia and the Baltic states', () => {
   it('without a NATO response the Baltics fall within a few months', () => {
     const g = newGame('RUS');
+    // No NATO response at all: no troops and no aid (D-072) from the alliance or the EU.
+    g.aidSuspended = [...new Set([...g.blocs.NATO.members, ...g.blocs.EU.members])];
     for (const b of ['EST', 'LVA', 'LTU']) rawWar(g, 'RUS', b);
     // The real Western Military District: a corps on the Narva/Pskov axis and another facing Lithuania.
     moveAll(g, (u) => u.owner === 'RUS' && ['armored', 'mechanized'].includes(u.type), R.tver);
@@ -500,8 +502,11 @@ describe('calibration: ground offensive across the Korean DMZ', () => {
     // D-059: the ROK corps now needs two months to embark for its Yellow Sea counter-landing, so
     // the fighting over Gyeonggi comes later and the bill is shared differently (docs/BALANCE.md).
     expect(log.captured.get(R.gyeonggi) ?? 99).toBeGreaterThanOrEqual(3);
-    expect(log.attackerLossTotal + log.defenderLossTotal).toBeGreaterThan(500);
-    expect(log.defenderLossTotal).toBeGreaterThan(200);
+    // D-072: the ROK AI now holds Seoul with a standing garrison instead of feeding it into
+    // counter-attacks on the KPA's massed corps, so the defender bleeds less (docs/BALANCE.md).
+    expect(log.attackerLossTotal + log.defenderLossTotal).toBeGreaterThan(250);
+    expect(log.defenderLossTotal).toBeGreaterThan(50);
+    expect(log.attackerLossTotal).toBeGreaterThan(log.defenderLossTotal);
     expect(log.battles).toBeGreaterThanOrEqual(10);
   }, 120_000);
 });

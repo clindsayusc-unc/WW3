@@ -821,3 +821,155 @@ forecasts already price in — carries zero penalties (`runTrade(…, calibrate 
   waters. `GameState.history` keeps ≤ 240 samples for the 14 majors and the player.
 - **Saves** from before this entry are migrated in `refreshLeaders` → `migrateEconomy`: the loaded
   world becomes the new baseline and elections are rescheduled at least six months out.
+
+## D-071 — 2026-11-02 — Diplomacy AI: personalities, memory, deals, statements, blocs, UN, war plans
+
+AI leaders now behave like Civilization leaders grounded in real politics. New modules in `src/sim`:
+
+- **Personality** (`personality.ts`). Traits (D-049) plus **agendas** from `data/agendas.json`
+  (reunification, territorial recovery, regional hegemony, alliance preservation, regime survival,
+  non-alignment, transactional, economic development — each with targets, a sphere and a flashpoint,
+  cited from the public record) produce goal weights (security, expansion, prosperity, cohesion,
+  survival, restraint). Nations without a researched agenda default to economic development
+  (regime survival for autocracies). Each leader keeps a **memory** (`GameState.memory`, ≤ 14
+  entries per holder) of grievances and favours: attacked us (40), sanctioned us (8, ×1.5 for regime
+  survival), honoured / sat out Article 5, aid received, arming our enemy, vetoed our resolution,
+  generous or insulting offers, threats. Repeated memories accumulate in one entry. Grievances
+  decay 1.5–10 %/month (faster for pragmatists, slower for paranoid nationalists); favours 3–12 %.
+  **Opinion** = relations + favours − grievances (±50) and is what the AI uses everywhere it judges
+  another nation (deals, proposals, votes, war plans, aid). Memory also pulls the relations
+  baseline in `decayRelations` (¼ of each side's memory, ±30).
+- **Deals** (`deals.ts`). A deal bundles items each side gives: money, regions, basing rights, tech
+  sharing, lifting sanctions, arms sales, joining a war, treaties. The AI values every item in US$
+  bn-equivalent from its own leader's view (money weighted by economic priority, a transactional
+  agenda and a thin treasury; ceding land by nationalism and territorial recovery, capitals never;
+  basing by sovereignty cost, the risk of drawing fire and protection against a shared threat;
+  joining a war by the odds, nuclear risk, restraint, hostility to the target and agenda claims),
+  adds a trust term (opinion and legitimacy) and accepts when the net value ≥ 0. Acceptance
+  likelihood = logistic(1.5 × value ÷ scale), scale = 0.4 % of GDP + 1 — so the bar is ≥ 50 %
+  exactly when the verdict is accept. Hard refusals (attack an ally, cede a capital, arm an ally's
+  enemy, hand tech to a rival, anything while at war) have likelihood 0. Close calls (within 4 ×
+  scale) get a **counter-offer**: ask for the shortfall in cash (if affordable) or drop the costliest
+  item; a counter is only made if it would itself be accepted. The evaluation is pure, so the
+  negotiation screen shows exactly what the simulation will decide. Basing rights make the host's
+  territory friendly to the guest for movement and supply (`hasBasing`).
+- **Statements** (`statements.ts`). Template-driven dispatches (threat, warning, praise, request,
+  offer, condemnation, communiqué) whose tone (blunt / cold / measured / formal) follows traits;
+  the template is picked by a hash so statements never consume the RNG. Only statements involving a
+  major or the player are kept (≤ 40). Shown as illustrated portrait cards (`src/ui/Portrait.tsx`:
+  one generic bust for everyone with the nation's colours, the leader's initials and an office
+  insignia — never a likeness).
+- **Blocs** (`blocs.ts`). Live membership in `GameState.blocs` (alliesOf and the relations baseline
+  read it). NATO Article 5 / CSTO Article 4 replace D-024's blanket rule: each partner computes a
+  willingness (loyalty, alliance-preservation and transactional/non-aligned agendas, opinion of the
+  victim and the attacker, nuclear risk, bloc cohesion, borders) and fights at ≥ 45; NATO members
+  below it answer with aid (and the victim remembers); treaty partners who walk away lose
+  legitimacy. Partners allied to both sides stay out. Cohesion drifts toward a target from relations
+  among the six largest members, a shared adversary, wars between members, departures and
+  transactional leaders. Annual summits (NATO July, SCO September, CSTO November, AUKUS December)
+  warm or sour relations, name the threat, press NATO low spenders and share AUKUS technology. A
+  member at war with another member leaves; one whose opinion of the bloc's leading powers falls
+  below −30 while cohesion is under 40 may walk out (8 %/month, hash-drawn). The player can leave a
+  bloc.
+- **UN Security Council** (`un.ts`, `data/unsc.json`). The real 2027 Council; elected seats rotate
+  from 2028 (largest economy of the outgoing member's region not recently seated — simulated).
+  Resolutions: sanctions, ceasefire, condemnation; nine votes and no permanent-member veto. Votes
+  come from opinion of sponsor vs target, the target's legitimacy, bloc solidarity, non-alignment
+  and who started the war. The AI tables a condemnation (majors) or ceasefire (minors) against a
+  fresh aggressor, a yearly ceasefire in long wars and sanctions after nuclear use. AI resolutions
+  wait a month so the player can vote (a P5 player's "no" is a veto; a player who does not vote
+  backs its own drafts, opposes drafts aimed at itself and otherwise abstains). Adopted sanctions bind every
+  nation that is not a friend of the target; ceasefires are accepted by war-weary parties and cost
+  the others legitimacy; condemnations cost legitimacy and stability. Vetoes cost the vetoer 3
+  legitimacy. **Legitimacy** (`NationState.legitimacy`, 0–100, drifts to 50) also falls 6–12 for
+  starting a war and enters every deal's trust term.
+- **Strategic layer** (`strategy.ts`). Every AI major keeps a **war plan**: a target chosen from
+  hostility, agenda claims, shared flashpoint tension and relative weakness (score × expansion
+  weight, against a bar raised by restraint); a coalition sounded out with joinWar asks; and a
+  threshold = 1.75 − risk/120 − aggression/400 (×2.2 against a target with ≥ 50 warheads, ×1.3–1.8
+  against smaller arsenals). Credible second-strike arsenals take 90 points off a target's score.
+  Readiness = odds ÷ threshold; at 0.5–1 the AI rearms (+6 military budget); at 0.85 it publicly
+  threatens the target (dispatch, flashpoint +4). It attacks only when readiness ≥ 1, the plan is
+  at least six months old and has been announced, the flashpoint is hot (≥ 55) or opinion ≤ −60, it
+  is not busy with another major, and a roll under aggression × risk × 5 % × (1 + claim) × (1 −
+  restraint/2) succeeds; coalition partners re-confirm and join. Minors keep D-032's opportunistic
+  rule. **No AI ever declares war on an ally**: `declareWar` refuses it for every non-player
+  attacker, joinWar refuses it, and partners allied to both sides stay neutral.
+- **Balancing coalitions.** Threat index = ½ share of world output + ½ share of military power + 3 ×
+  share of world output in conquered foreign land. At ≥ 0.30 for the player (0.42 for an AI power,
+  checked every six months) the AI powers whose opinion of the hegemon is below 25 + 150 × (threat −
+  0.3) + paranoia/5 form a coalition: relations among members +10, defensive pacts among the five
+  strongest, a grievance against the hegemon, +5 military budget, war plans re-targeted (the
+  nuclear penalty is shared: 35 instead of 90). It dissolves below 0.22.
+- **UI.** The Diplomacy screen has tabs: Nations (with the leader's agenda, what they remember about
+  you, visible war-plan intelligence, aid received and your aid programme), Negotiate (deal builder
+  with live acceptance bar, line-by-line valuation, counter-offers), Dispatches, Blocs and UN
+  Security Council (council, pending vote with your ballot, tabling with a vote forecast, history).
+  A "Wire" button in the top bar opens the dispatches with a count of new statements. AI nations at
+  war send the player arms requests as deal proposals.
+- **Turn order.** AI → strategy (coalitions, war plans) → aid (D-072) → trade … → relations drift →
+  blocs → UN → memory decay → escalation → events.
+- **Saves** from before this entry are migrated in `refreshLeaders` → `migrateDiplomacy`.
+
+## D-072 — 2026-11-02 — Western aid as AI diplomacy; Ukraine calibration
+
+Ukraine collapsed within months on some seeds. Two causes, two fixes:
+
+- **Aid** (`src/sim/aid.ts`). Every month each NATO/EU member decides how much to send to a partner
+  fighting a rival: the victim of aggression (a defender) when the donor's opinion of it is ≥ 5 and
+  of the aggressor ≤ −20 — never a great power more than twice the donor's size. Annual aid = GDP × 0.25 % × relations factor ×
+  trait factor (loyalty, alliance preservation +, transactional −, non-alignment −, aggression) ×
+  hostility to the aggressor × domestic approval (aid fatigue below 65) × 1.6 if the donor borders
+  the aggressor × 1.25 if the recipient has lost territory; capped at 1.2 % of GDP (Kiel Institute
+  Ukraine Support Tracker scale). Autocratic patrons (regime survival / regional hegemony agendas)
+  back like-minded regimes at 40 %. Each package is 40 % money (recipient treasury), 45 % arms
+  (banked and delivered as mechanised, artillery and air-defence formations through the recipient's
+  production queue, ≤ 2 a month, tagged with the donor) and 15 % munitions (`aidSupply` =
+  munitions ÷ the recipient's military budget × ½, ≤ 0.35: multiplies regional supply, adds a
+  "Foreign aid" combat modifier of 1 + 0.6 × aidSupply for both attack and defence, and speeds
+  refits ×(1 + 1.5 × aidSupply)). A transactional donor (the United States in 2027) gives no money
+  and 30 % of the arms; European donors buy a quarter of their arms aid from US industry (PURL),
+  credited to the US treasury. Aid costs the donor treasury and a little approval (nationalist
+  publics tire faster), earns the recipient's favour and the aggressor's grievance, and produces
+  periodic statements. `GameState.aidSuspended` lists donors that have cut aid (events, politics,
+  tests); the player runs its own programmes at 0.1–0.3 % of GDP (`setAid`). Start of 2027: about
+  US$ 7 bn a month reaches Ukraine (≈ US$ 85 bn a year), the Kiel tracker's order of magnitude.
+- **Defensive AI.** Ukraine's AI was counter-invading Russia (Volgograd, Stavropol, Tatarstan)
+  while Russian forces staged through Belarus toward an empty Kyiv. Now (`ai.ts`): a nation on the
+  defensive (own land occupied, or facing a stronger enemy) liberates its own regions but does not
+  invade the enemy homeland while its own land is occupied (and otherwise only at ≥ 2.2:1); the
+  capital is defended first — enemy formations adjacent to it count wherever they stand (including
+  a co-belligerent's territory), its garrison holds, and the nearest formations (each region keeps
+  one) reinforce it until the garrison's defence reaches 1.1 × the adjacent enemy attack. The
+  defender also gets a **Capital** modifier ×1.3 in its own capital region. `declareWar` now
+  measures "unjustified war" on the relation before the declaration (the old code read it after
+  setting it to −100, so the stability penalty never applied).
+- **Calibration** (`src/sim/ukraine-aid.test.ts`, `ukraine-noaid.test.ts`, `tests/ukraineRun.ts`):
+  World of 2027, Brazil as a passive player, seeds 1–10, 24 months. With aid Kyiv held in all 10
+  seeds (the test requires ≥ 7); with every donor suspended it fell in 4 of 10, in months 4–6, two
+  of them ending in capitulation (the test requires ≥ 3). Average turn ≈ 287 ms. The same runs assert that no AI declares war on (or joins a war against)
+  an ally. The Baltic calibration ("no NATO response") now also suspends NATO/EU aid; the Korea
+  calibration's loss bounds were lowered because the ROK AI holds Seoul instead of feeding its
+  garrison into counter-attacks (docs/BALANCE.md).
+
+## D-073 — 2026-11-02 — Sourced trade data, leader re-check, turn-time budget
+
+- `data/trade.json` was re-sourced pair by pair (174 of 175 from official statistics; IRN–IRQ
+  partly estimated). Each row's reporter, year, figure and URL is in `rowSources` and the per-pair
+  table in `docs/DATA_SOURCES.md`; the top-level `estimate` flag is gone and `estimated` lists the
+  one remaining estimate. Large changes against the old approximations: US–Taiwan 158 → 256 (AI
+  servers), US–Switzerland 85 → 180 (gold), US–Vietnam 149 → 210, US–Canada 762 → 716, China–Germany
+  250 → 211. The economy is still calibrated to zero penalties at the start (D-061), so these move
+  the weight of each relationship, not the starting growth.
+- `data/leaders.json` re-verified (second pass, no officeholder changes; Finland and Netherlands
+  election dates corrected).
+- **Turn time.** The turn had crept to ≈ 360–560 ms in Node. Profiling showed `runSupply` (two
+  calls a turn) dominating: one scan of every region per nation, a linear extract-max, and
+  per-call string cache keys. Now: home regions grouped in one pass; a binary max-heap over typed
+  arrays; a single best-level array (every land region a nation's search enters is friendly to it
+  and alliances are symmetric, so each search counts for each region it reaches — the same result
+  as the old per-ally max); nations at peace skip sea-balance lookups (no enemy can threaten their
+  convoys); `isFriendly` uses a cached ally `Set`; the geography memo and the air cache compare
+  numeric versions instead of building strings (the air cache keyed on `Object.keys(units).length`,
+  rebuilding an array of ~1,300 keys on every lookup). The turn now averages ≈ 280–310 ms with all
+  of D-071/D-072 included (`docs/PERF.md`).

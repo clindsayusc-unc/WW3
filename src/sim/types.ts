@@ -98,6 +98,8 @@ export interface ProductionItem {
   readonly type: UnitTypeId;
   readonly region: RegionId;
   monthsLeft: number;
+  /** Donor when the formation is a foreign arms-aid delivery (D-072). */
+  readonly aidFrom?: Iso3;
 }
 
 export interface Finances {
@@ -193,6 +195,155 @@ export interface NationState {
   protestMonths: number;
   /** Turns since the last sovereign default (interest premium while < 36). */
   monthsSinceDefault: number;
+  /** International legitimacy 0–100 (D-071): UN votes, aggression and vetoes move it; deals and votes read it. */
+  legitimacy: number;
+  /** Munitions aid this month as a supply and recovery bonus, 0..0.35 (D-072). */
+  aidSupply: number;
+  /** Foreign aid received last month, US$ bn (money + arms + munitions). */
+  aidReceived: number;
+  /** Arms aid banked toward the next delivered formation, US$ bn. */
+  aidArmsBank: number;
+}
+
+// --- Diplomacy AI (D-071) ----------------------------------------------------------------------
+
+export type AgendaId =
+  | 'reunification'
+  | 'territorialRecovery'
+  | 'regionalHegemony'
+  | 'alliancePreservation'
+  | 'regimeSurvival'
+  | 'nonAlignment'
+  | 'transactional'
+  | 'economicDevelopment';
+
+/** Something a leader remembers about another nation: a grievance or a favour, decaying monthly. */
+export interface MemoryEntry {
+  readonly about: Iso3;
+  readonly kind: 'grievance' | 'favour';
+  weight: number;
+  readonly reason: string;
+  turn: number;
+}
+
+export type DispatchKind = 'threat' | 'warning' | 'praise' | 'request' | 'offer' | 'condemnation' | 'communique';
+
+/** A leader's diplomatic statement, generated from templates flavoured by personality. */
+export interface Dispatch {
+  readonly id: number;
+  readonly turn: number;
+  readonly from: Iso3;
+  /** Addressee; null for a public statement. */
+  readonly to: Iso3 | null;
+  readonly kind: DispatchKind;
+  readonly text: string;
+  /** Tone the template was chosen for (shown on the card). */
+  readonly tone: 'blunt' | 'cold' | 'measured' | 'formal';
+}
+
+export type BlocId = 'NATO' | 'CSTO' | 'SCO' | 'AUKUS' | 'EU' | 'Quad' | 'BRICS' | 'GCC';
+
+export interface BlocState {
+  members: Iso3[];
+  /** 0–100: shared threat, relations among members and burden sharing. */
+  cohesion: number;
+  /** Turn of the next summit. */
+  nextSummit: number;
+  /** Members that walked out, with the turn. */
+  departed: { iso3: Iso3; turn: number }[];
+}
+
+export type ResolutionKind = 'sanctions' | 'ceasefire' | 'condemnation';
+export type UnVote = 'yes' | 'no' | 'abstain';
+
+export interface Resolution {
+  readonly id: number;
+  readonly kind: ResolutionKind;
+  readonly sponsor: Iso3;
+  readonly target: Iso3;
+  readonly turn: number;
+  readonly text: string;
+  votes: Record<Iso3, UnVote>;
+  status: 'pending' | 'adopted' | 'vetoed' | 'failed';
+  vetoedBy: Iso3[];
+}
+
+export interface UnState {
+  council: Iso3[];
+  /** Last year of each elected member's term. */
+  electedUntil: Record<Iso3, number>;
+  /** Recent resolutions (pending first), newest last; ≤ 12 kept. */
+  resolutions: Resolution[];
+}
+
+/** One month of aid from a donor to a nation at war (D-072). US$ bn this month. */
+export interface AidFlow {
+  readonly donor: Iso3;
+  readonly recipient: Iso3;
+  readonly against: Iso3;
+  readonly money: number;
+  readonly arms: number;
+  readonly munitions: number;
+}
+
+export interface WarPlan {
+  target: Iso3;
+  /** Nations expected to fight alongside. */
+  coalition: Iso3[];
+  /** Force ratio needed before attacking (from risk tolerance and aggression). */
+  threshold: number;
+  /** Current estimated force ratio against the target and its likely defenders. */
+  odds: number;
+  /** odds ÷ threshold, 0..1.5. */
+  readiness: number;
+  readonly formed: number;
+  reason: string;
+  /** True once the leader has publicly warned the target. */
+  warned: boolean;
+}
+
+/** A balancing coalition against a runaway power. */
+export interface BalancingCoalition {
+  target: Iso3;
+  members: Iso3[];
+  readonly formed: number;
+  /** Target's dominance index when last measured (0..1). */
+  dominance: number;
+}
+
+export type DealItem =
+  | { readonly kind: 'money'; readonly amount: number }
+  | { readonly kind: 'region'; readonly region: RegionId }
+  | { readonly kind: 'basing' }
+  | { readonly kind: 'tech' }
+  | { readonly kind: 'liftSanctions' }
+  | { readonly kind: 'arms'; readonly units: number }
+  | { readonly kind: 'joinWar'; readonly against: Iso3 }
+  | { readonly kind: 'treaty'; readonly treaty: TreatyType };
+
+/** `give` flows from `from` to `to`; `get` flows from `to` to `from`. */
+export interface Deal {
+  readonly from: Iso3;
+  readonly to: Iso3;
+  readonly give: readonly DealItem[];
+  readonly get: readonly DealItem[];
+}
+
+export interface DealLine {
+  readonly label: string;
+  /** Value to the evaluating side, US$ bn equivalent (+ good for them). */
+  readonly value: number;
+}
+
+export interface DealVerdict {
+  readonly verdict: 'accept' | 'reject' | 'counter';
+  /** Net value to the evaluating side, US$ bn equivalent. */
+  readonly score: number;
+  /** 0..1 shown as the acceptance bar; ≥ 0.5 exactly when the verdict is accept. */
+  readonly likelihood: number;
+  readonly reason: string;
+  readonly lines: readonly DealLine[];
+  readonly counter: Deal | null;
 }
 
 export interface RegionState {
@@ -365,7 +516,8 @@ export type ProposalType =
   | 'liftEmbargo'
   | 'secondarySanctions'
   | 'liftSecondary'
-  | 'rallySanctions';
+  | 'rallySanctions'
+  | 'deal';
 
 export interface Proposal {
   readonly id: number;
@@ -374,6 +526,8 @@ export interface Proposal {
   readonly type: ProposalType;
   readonly turn: number;
   readonly text: string;
+  /** For `deal` proposals: the package on offer (`from` is the AI, `to` the player). */
+  readonly deal?: Deal;
 }
 
 export type LogKind =
@@ -485,6 +639,26 @@ export interface GameState {
   economy: WorldEconomy;
   /** Monthly economic samples for the majors and the player (≤ 240 each). */
   history: Record<Iso3, EconSample[]>;
+  /** Leader memories: holder → grievances and favours (D-071). */
+  memory: Record<Iso3, MemoryEntry[]>;
+  /** Recent diplomatic statements, newest last (≤ 40). */
+  dispatches: Dispatch[];
+  /** Live bloc membership and cohesion (members can leave). */
+  blocs: Record<BlocId, BlocState>;
+  /** UN Security Council. */
+  un: UnState;
+  /** War plans of the AI majors. */
+  warPlans: Record<Iso3, WarPlan>;
+  /** Balancing coalition against a runaway power, if one has formed. */
+  coalition: BalancingCoalition | null;
+  /** Basing rights, `host>guest`. */
+  basing: string[];
+  /** Aid delivered last month (D-072). */
+  aid: AidFlow[];
+  /** Donors that have suspended all military and financial aid (events, politics or tests). */
+  aidSuspended: Iso3[];
+  /** Player aid programmes: recipient → level 0–3 (each level 0.1 % of GDP a year). */
+  playerAid: Record<Iso3, number>;
 }
 
 export interface WorldEconomy {
@@ -536,7 +710,12 @@ export type Command =
   | { readonly type: 'cyberOp'; readonly target: Iso3; readonly kind: CyberKind }
   | { readonly type: 'spyOp'; readonly target: Iso3 }
   | { readonly type: 'launchSatellite' }
-  | { readonly type: 'asat'; readonly target: Iso3 };
+  | { readonly type: 'asat'; readonly target: Iso3 }
+  | { readonly type: 'proposeDeal'; readonly deal: Deal }
+  | { readonly type: 'unPropose'; readonly kind: ResolutionKind; readonly target: Iso3 }
+  | { readonly type: 'unVote'; readonly resolutionId: number; readonly vote: UnVote }
+  | { readonly type: 'setAid'; readonly recipient: Iso3; readonly level: number }
+  | { readonly type: 'leaveBloc'; readonly bloc: BlocId };
 
 export interface NewGameOptions {
   readonly seed: number;

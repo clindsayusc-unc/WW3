@@ -20,6 +20,18 @@ import { nationHex } from '../../render/palette';
 import { LeaderCard } from '../LeaderCard';
 import { playSound } from '../audio';
 import type { ProposalType } from '../../sim/types';
+import { NegotiationPanel } from '../diplomacy/NegotiationPanel';
+import { BlocsPanel, DispatchFeed, LeaderIntel, UnPanel } from '../diplomacy/Panels';
+import { itemLabel } from '../../sim/deals';
+import type { DiplomacyTab } from '../../state/uiStore';
+
+const TABS: { id: DiplomacyTab; label: string; tip: string }[] = [
+  { id: 'nations', label: 'Nations', tip: 'Relations, treaties, quick actions, leader agendas and memory.' },
+  { id: 'negotiate', label: 'Negotiate', tip: 'Build a deal item by item; the acceptance bar updates live.' },
+  { id: 'dispatches', label: 'Dispatches', tip: 'Statements from world leaders: threats, warnings, praise and requests.' },
+  { id: 'blocs', label: 'Blocs', tip: 'NATO, CSTO, SCO and AUKUS: cohesion, summits, Article 5.' },
+  { id: 'un', label: 'UN Security Council', tip: 'Resolutions, votes and vetoes; legitimacy.' },
+];
 
 const world = loadWorld();
 
@@ -78,6 +90,8 @@ export function DiplomacyModal() {
   const game = useGameStore((s) => s.game);
   const target = useUiStore((s) => s.diplomacyTarget);
   const setTarget = useUiStore((s) => s.setDiplomacyTarget);
+  const tab = useUiStore((s) => s.diplomacyTab);
+  const setTab = useUiStore((s) => s.setDiplomacyTab);
   const [filter, setFilter] = useState('');
   const [lastReply, setLastReply] = useState<string | null>(null);
   const list = useMemo(() => {
@@ -120,6 +134,18 @@ export function DiplomacyModal() {
       wide
       testId="modal-diplomacy"
     >
+      <div className="seg" style={{ marginBottom: 12 }}>
+        {TABS.map((t) => (
+          <button key={t.id} className={`seg-btn ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)} data-tip={t.tip} data-testid={`dip-tab-${t.id}`}>
+            {t.label}
+            {t.id === 'dispatches' && game.dispatches.some((d) => d.turn >= game.turn - 1 && d.to === me) ? ' •' : ''}
+          </button>
+        ))}
+      </div>
+      {tab === 'dispatches' && <DispatchFeed game={game} />}
+      {tab === 'blocs' && <BlocsPanel game={game} />}
+      {tab === 'un' && <UnPanel game={game} />}
+      {(tab === 'nations' || tab === 'negotiate') && (
       <div className="diplomacy-layout">
         <div className="nation-list">
           <input
@@ -158,7 +184,13 @@ export function DiplomacyModal() {
             })}
           </div>
         </div>
-        {n && meta && iso && (
+        {n && meta && iso && tab === 'negotiate' && (
+          <div className="nation-detail">
+            <LeaderCard nation={meta} leader={world.leaders.get(iso)} accent={nationHex(iso)} compact />
+            <NegotiationPanel key={iso} game={game} partner={iso} />
+          </div>
+        )}
+        {n && meta && iso && tab === 'nations' && (
           <div className="nation-detail">
             <LeaderCard
               nation={meta}
@@ -245,9 +277,13 @@ export function DiplomacyModal() {
                 {lastReply}
               </div>
             )}
+            <LeaderIntel game={game} iso={iso} />
           </div>
         )}
       </div>
+      )}
+      {tab === 'nations' && (
+      <>
       <div className="section-title" style={{ marginTop: 16 }}>
         Incoming proposals
       </div>
@@ -258,6 +294,14 @@ export function DiplomacyModal() {
             <strong style={{ color: nationHex(p.from) }}>{nationName(world, p.from)}</strong> —{' '}
             {PROPOSAL_LABELS[p.type]}
             <div className="dim">{p.text}</div>
+            {p.deal && (
+              <div className="dim">
+                {[
+                  ...p.deal.give.map((i) => `They give: ${itemLabel(world, game, i, p.deal!.from, p.deal!.to)}`),
+                  ...p.deal.get.map((i) => `You give: ${itemLabel(world, game, i, p.deal!.to, p.deal!.from)}`),
+                ].join(' · ')}
+              </div>
+            )}
           </div>
           <div className="proposal-actions">
             <button className="btn small primary" onClick={() => respond(p.id, true)}>
@@ -294,6 +338,8 @@ export function DiplomacyModal() {
           {game.resolutionPassed ? 'Resolution adopted' : 'Table resolution'}
         </button>
       </div>
+      </>
+      )}
     </Modal>
   );
 }

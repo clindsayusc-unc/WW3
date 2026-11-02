@@ -88,11 +88,12 @@ export interface SeaBalance {
 }
 
 /** Per-state memo for sea balances, lift and landing targets; cleared whenever units move. */
-const geoCache = new WeakMap<GameState, { version: string; map: Map<string, unknown> }>();
+const geoCache = new WeakMap<GameState, { dv: number; rv: number; map: Map<string, unknown> }>();
 function memo<T>(state: GameState, key: string, compute: () => T): T {
-  const version = `${state.diplomacyVersion}|${state.regionsVersion}`;
+  // Numeric version check: this runs hundreds of thousands of times a turn.
   let e = geoCache.get(state);
-  if (!e || e.version !== version) geoCache.set(state, (e = { version, map: new Map() }));
+  if (!e || e.dv !== state.diplomacyVersion || e.rv !== state.regionsVersion)
+    geoCache.set(state, (e = { dv: state.diplomacyVersion, rv: state.regionsVersion, map: new Map() }));
   const m = e.map;
   if (m.has(key)) return m.get(key) as T;
   const v = compute();

@@ -1,4 +1,6 @@
 /** New-game construction: nations, regions, starting forces, relations, wars (D-023). */
+import { initBlocs } from './blocs';
+import { initUn } from './un';
 import forcesData from '../../data/forces.json';
 import { isoYearMonth } from './calendar';
 import { seedRng } from './rng';
@@ -147,6 +149,10 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       coupRisk: 0,
       protestMonths: 0,
       monthsSinceDefault: 999,
+      legitimacy: 50,
+      aidSupply: 0,
+      aidReceived: 0,
+      aidArmsBank: 0,
     };
   }
 
@@ -217,6 +223,16 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       routeRef: {},
     },
     history: {},
+    memory: {},
+    dispatches: [],
+    blocs: initBlocs(world),
+    un: initUn(world),
+    warPlans: {},
+    coalition: null,
+    basing: [],
+    aid: [],
+    aidSuspended: [],
+    playerAid: {},
   };
 
   for (const [key, rel] of world.relations) state.relations[key] = rel.value;

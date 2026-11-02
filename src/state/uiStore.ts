@@ -5,6 +5,7 @@ import { levelsForPreset } from '../render/quality';
 import { DEFAULT_AUDIO, type AudioSettings } from '../ui/audioSettings';
 
 export type Screen = 'menu' | 'game';
+export type DiplomacyTab = 'nations' | 'negotiate' | 'dispatches' | 'blocs' | 'un';
 export type Modal =
   | null
   | 'budget'
@@ -119,6 +120,7 @@ interface UiStore {
   selectedRegion: RegionId | null;
   selectedUnitIds: number[];
   diplomacyTarget: string | null;
+  diplomacyTab: DiplomacyTab;
   /** Battle report shown by the battle modal (D-059). */
   battleReportId: number | null;
   flyTo: FlyTarget | null;
@@ -151,6 +153,7 @@ interface UiStore {
   select: (r: RegionId | null) => void;
   selectUnits: (ids: number[]) => void;
   setDiplomacyTarget: (iso: string | null) => void;
+  setDiplomacyTab: (tab: DiplomacyTab) => void;
   openBattleReport: (id: number) => void;
   fly: (lat: number, lon: number, distance?: number) => void;
   setQuality: (q: Quality) => void;
@@ -179,6 +182,7 @@ export const useUiStore = create<UiStore>((set) => ({
   selectedRegion: null,
   selectedUnitIds: [],
   diplomacyTarget: null,
+  diplomacyTab: 'nations',
   battleReportId: null,
   flyTo: null,
   quality: 'high',
@@ -203,6 +207,7 @@ export const useUiStore = create<UiStore>((set) => ({
   select: (selectedRegion) => set({ selectedRegion, selectedUnitIds: [] }),
   selectUnits: (selectedUnitIds) => set({ selectedUnitIds }),
   setDiplomacyTarget: (diplomacyTarget) => set({ diplomacyTarget }),
+  setDiplomacyTab: (diplomacyTab) => set({ diplomacyTab }),
   openBattleReport: (battleReportId) => set({ battleReportId, modal: 'battle' }),
   fly: (lat, lon, distance = 1.7) =>
     set((s) => ({ flyTo: { lat, lon, distance, nonce: (s.flyTo?.nonce ?? 0) + 1 } })),

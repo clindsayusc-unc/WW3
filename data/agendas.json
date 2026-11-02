@@ -1,0 +1,620 @@
+{
+  "source": "Agendas are the authors' editorial reading of each effective leader's public record and stated policy; each entry cites a public summary (Wikipedia articles on foreign relations, treaties and doctrines, which reference primary sources). Flashpoint ids refer to data/flashpoints.json.",
+  "asOf": "2026-11-02",
+  "estimate": true,
+  "notes": "Agenda ids: reunification, territorialRecovery, regionalHegemony, alliancePreservation, regimeSurvival, nonAlignment, transactional, economicDevelopment. weight (default 1) scales the agenda's pull; targets are nations the agenda is aimed at; sphere lists nations in a claimed sphere of influence. Nations without an entry pursue economicDevelopment (regimeSurvival if the regime is an autocracy in data/politics.json). See D-071.",
+  "agendas": [
+    {
+      "iso3": "USA",
+      "agendas": [
+        {
+          "id": "transactional",
+          "basis": "“America First” foreign policy: tariffs as leverage, allies asked to pay for protection (NATO 5 % pledge, Hague summit 2025) and Ukraine aid shifted to allied purchases of US arms (PURL, 2025).",
+          "url": "https://en.wikipedia.org/wiki/Second_presidency_of_Donald_Trump"
+        },
+        {
+          "id": "alliancePreservation",
+          "weight": 0.5,
+          "basis": "Treaty commitments to NATO, Japan, South Korea and the Philippines remain in force; force posture in Europe and the Indo-Pacific maintained.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_policy_of_the_second_Trump_administration"
+        }
+      ]
+    },
+    {
+      "iso3": "CHN",
+      "agendas": [
+        {
+          "id": "reunification",
+          "targets": [
+            "TWN"
+          ],
+          "flashpoint": "taiwan-strait",
+          "basis": "Anti-Secession Law (2005) and repeated statements by Xi Jinping that “reunification” with Taiwan is a historical inevitability; large PLA drills around Taiwan (Strait Thunder 2025A, Justice Mission 2025).",
+          "url": "https://en.wikipedia.org/wiki/Anti-Secession_Law"
+        },
+        {
+          "id": "regionalHegemony",
+          "sphere": [
+            "PHL",
+            "VNM",
+            "MYS",
+            "TWN"
+          ],
+          "flashpoint": "south-china-sea",
+          "basis": "Nine-dash-line claim in the South China Sea, rejected by the 2016 arbitral award; island-building and coast-guard pressure on the Philippines.",
+          "url": "https://en.wikipedia.org/wiki/Territorial_disputes_in_the_South_China_Sea"
+        },
+        {
+          "id": "regimeSurvival",
+          "weight": 0.5,
+          "basis": "Party rule is the overriding priority (“comprehensive national security” concept, 2014).",
+          "url": "https://en.wikipedia.org/wiki/Overall_national_security_concept"
+        }
+      ]
+    },
+    {
+      "iso3": "RUS",
+      "agendas": [
+        {
+          "id": "regionalHegemony",
+          "sphere": [
+            "UKR",
+            "GEO",
+            "MDA",
+            "EST",
+            "LVA",
+            "LTU",
+            "BLR",
+            "KAZ",
+            "ARM"
+          ],
+          "flashpoint": "russia-ukraine",
+          "basis": "Putin’s 2021 essay on the “historical unity” of Russians and Ukrainians, the 2022 invasion and the 2023 Foreign Policy Concept’s claim to a special role in the “near abroad”.",
+          "url": "https://en.wikipedia.org/wiki/On_the_Historical_Unity_of_Russians_and_Ukrainians"
+        },
+        {
+          "id": "regimeSurvival",
+          "basis": "Personalist rule shielded from Western-backed “colour revolutions” (2023 Foreign Policy Concept); sanctions treated as hostile acts.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Russia"
+        }
+      ]
+    },
+    {
+      "iso3": "IND",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "“Strategic autonomy”: Quad membership alongside SCO/BRICS, continued Russian oil purchases and refusal to join sanctions.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_India"
+        },
+        {
+          "id": "regionalHegemony",
+          "sphere": [
+            "PAK",
+            "BGD",
+            "LKA",
+            "NPL",
+            "MDV",
+            "MMR"
+          ],
+          "weight": 0.5,
+          "basis": "“Neighbourhood First” policy and primacy in the Indian Ocean; Operation Sindoor against Pakistan (May 2025).",
+          "url": "https://en.wikipedia.org/wiki/Neighbourhood_First_policy"
+        }
+      ]
+    },
+    {
+      "iso3": "GBR",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "NATO-first defence policy (Strategic Defence Review 2025), leading member of the Ukraine “coalition of the willing”.",
+          "url": "https://en.wikipedia.org/wiki/Strategic_Defence_Review_2025"
+        }
+      ]
+    },
+    {
+      "iso3": "FRA",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Co-leads the coalition of the willing for Ukraine; argues for European strategic autonomy inside NATO.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_France"
+        }
+      ]
+    },
+    {
+      "iso3": "DEU",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Zeitenwende: debt brake exempted for defence (2025), Bundeswehr brigade in Lithuania, second-largest donor to Ukraine.",
+          "url": "https://en.wikipedia.org/wiki/Zeitenwende"
+        }
+      ]
+    },
+    {
+      "iso3": "JPN",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "US–Japan alliance as the cornerstone of security; 2022 National Security Strategy doubles defence spending.",
+          "url": "https://en.wikipedia.org/wiki/Treaty_of_Mutual_Cooperation_and_Security_between_the_United_States_and_Japan"
+        }
+      ]
+    },
+    {
+      "iso3": "KOR",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Mutual Defense Treaty with the US (1953) and extended deterrence against North Korea.",
+          "url": "https://en.wikipedia.org/wiki/Mutual_Defense_Treaty_(United_States%E2%80%93South_Korea)"
+        }
+      ]
+    },
+    {
+      "iso3": "IRN",
+      "agendas": [
+        {
+          "id": "regimeSurvival",
+          "basis": "Islamic Republic’s survival after the 2025 Israeli–US strikes; hostility to US presence in the Gulf.",
+          "url": "https://en.wikipedia.org/wiki/Twelve-Day_War"
+        },
+        {
+          "id": "regionalHegemony",
+          "sphere": [
+            "IRQ",
+            "SYR",
+            "LBN",
+            "YEM",
+            "BHR"
+          ],
+          "flashpoint": "iran-israel-gulf",
+          "basis": "“Axis of Resistance” of allied militias and governments (Hezbollah, Houthis, Iraqi PMF).",
+          "url": "https://en.wikipedia.org/wiki/Axis_of_Resistance"
+        }
+      ]
+    },
+    {
+      "iso3": "ISR",
+      "agendas": [
+        {
+          "id": "regionalHegemony",
+          "sphere": [
+            "IRN",
+            "LBN",
+            "SYR",
+            "PSE"
+          ],
+          "flashpoint": "iran-israel-gulf",
+          "basis": "Doctrine of pre-emption against Iran and its proxies (2024 Lebanon campaign, 2025 strikes on Iran).",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Israel"
+        },
+        {
+          "id": "alliancePreservation",
+          "weight": 0.5,
+          "basis": "Dependence on US military aid (2016 MoU, $3.8 bn a year).",
+          "url": "https://en.wikipedia.org/wiki/Israel%E2%80%93United_States_relations"
+        }
+      ]
+    },
+    {
+      "iso3": "TUR",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "weight": 0.5,
+          "basis": "Balances NATO membership with ties to Russia (S-400, no sanctions) and mediation in the Russia–Ukraine war.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Turkey"
+        },
+        {
+          "id": "regionalHegemony",
+          "sphere": [
+            "SYR",
+            "IRQ",
+            "AZE",
+            "CYP",
+            "GRC",
+            "LBY"
+          ],
+          "weight": 0.7,
+          "basis": "Assertive regional policy: Syria operations, “Blue Homeland” maritime doctrine, backing for Azerbaijan.",
+          "url": "https://en.wikipedia.org/wiki/Blue_Homeland"
+        }
+      ]
+    },
+    {
+      "iso3": "PAK",
+      "agendas": [
+        {
+          "id": "territorialRecovery",
+          "targets": [
+            "IND"
+          ],
+          "flashpoint": "kashmir",
+          "basis": "Claim to the whole of Jammu and Kashmir; 2025 conflict with India after the Pahalgam attack.",
+          "url": "https://en.wikipedia.org/wiki/Kashmir_conflict"
+        },
+        {
+          "id": "regimeSurvival",
+          "weight": 0.5,
+          "basis": "Military-backed hybrid government; nuclear deterrent against India.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Pakistan"
+        }
+      ]
+    },
+    {
+      "iso3": "BRA",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "Lula’s non-aligned stance: BRICS leadership, refusal to arm Ukraine or sanction Russia.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Brazil"
+        },
+        {
+          "id": "economicDevelopment",
+          "weight": 0.5,
+          "basis": "Growth and social programmes first; trade dispute with US tariffs (2025).",
+          "url": "https://en.wikipedia.org/wiki/Economy_of_Brazil"
+        }
+      ]
+    },
+    {
+      "iso3": "UKR",
+      "agendas": [
+        {
+          "id": "territorialRecovery",
+          "targets": [
+            "RUS"
+          ],
+          "flashpoint": "russia-ukraine",
+          "basis": "Restoration of 1991 borders as stated war aim; no recognition of annexations (Peace Formula, 2022).",
+          "url": "https://en.wikipedia.org/wiki/Ukrainian_peace_formula"
+        },
+        {
+          "id": "alliancePreservation",
+          "basis": "Survival depends on Western military and financial aid (Ramstein group, EU Ukraine Facility).",
+          "url": "https://en.wikipedia.org/wiki/Ukraine_Defense_Contact_Group"
+        }
+      ]
+    },
+    {
+      "iso3": "TWN",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Security relies on US arms sales under the Taiwan Relations Act (1979) and partner support.",
+          "url": "https://en.wikipedia.org/wiki/Taiwan_Relations_Act"
+        },
+        {
+          "id": "regimeSurvival",
+          "weight": 0.5,
+          "basis": "Lai Ching-te: Taiwan and the PRC “are not subordinate to each other”; resisting annexation.",
+          "url": "https://en.wikipedia.org/wiki/Lai_Ching-te"
+        }
+      ]
+    },
+    {
+      "iso3": "PRK",
+      "agendas": [
+        {
+          "id": "regimeSurvival",
+          "basis": "Kim dynasty’s survival via nuclear deterrence; 2024 “two hostile states” doctrine toward South Korea; troops sent to Russia (2024).",
+          "url": "https://en.wikipedia.org/wiki/North_Korea_and_weapons_of_mass_destruction"
+        }
+      ]
+    },
+    {
+      "iso3": "SAU",
+      "agendas": [
+        {
+          "id": "economicDevelopment",
+          "basis": "Vision 2030 economic diversification.",
+          "url": "https://en.wikipedia.org/wiki/Saudi_Vision_2030"
+        },
+        {
+          "id": "nonAlignment",
+          "weight": 0.5,
+          "basis": "Hedging between the US, China and Russia (OPEC+); 2025 defence pact with Pakistan.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Saudi_Arabia"
+        }
+      ]
+    },
+    {
+      "iso3": "ARE",
+      "agendas": [
+        {
+          "id": "economicDevelopment",
+          "basis": "Trade and investment hub strategy; normalisation with Israel (Abraham Accords).",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_the_United_Arab_Emirates"
+        }
+      ]
+    },
+    {
+      "iso3": "EGY",
+      "agendas": [
+        {
+          "id": "regimeSurvival",
+          "basis": "Military-backed government focused on internal stability and IMF-backed economy.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Egypt"
+        },
+        {
+          "id": "nonAlignment",
+          "weight": 0.5,
+          "basis": "Balances US aid with ties to Russia and China; mediator in Gaza.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Egypt"
+        }
+      ]
+    },
+    {
+      "iso3": "POL",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "NATO’s eastern flank: defence spending above 4 % of GDP, main logistics hub for aid to Ukraine.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Poland"
+        }
+      ]
+    },
+    {
+      "iso3": "ITA",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Atlanticist government, supports Ukraine and NATO.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Italy"
+        }
+      ]
+    },
+    {
+      "iso3": "ESP",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "weight": 0.7,
+          "basis": "NATO and EU member; opted out of the 5 % defence-spending target (2025).",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Spain"
+        }
+      ]
+    },
+    {
+      "iso3": "CAN",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "NATO and NORAD member; diversifying away from the US after the 2025 tariff dispute.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Canada"
+        }
+      ]
+    },
+    {
+      "iso3": "AUS",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "AUKUS and ANZUS alliances anchor security policy.",
+          "url": "https://en.wikipedia.org/wiki/AUKUS"
+        }
+      ]
+    },
+    {
+      "iso3": "MEX",
+      "agendas": [
+        {
+          "id": "economicDevelopment",
+          "basis": "USMCA trade dependence; non-intervention doctrine (Estrada).",
+          "url": "https://en.wikipedia.org/wiki/Estrada_Doctrine"
+        }
+      ]
+    },
+    {
+      "iso3": "IDN",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "“Free and active” foreign policy; joined BRICS in 2025.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Indonesia"
+        }
+      ]
+    },
+    {
+      "iso3": "VNM",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "“Four nos” defence policy and “bamboo diplomacy”.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Vietnam"
+        },
+        {
+          "id": "territorialRecovery",
+          "targets": [
+            "CHN"
+          ],
+          "flashpoint": "south-china-sea",
+          "weight": 0.3,
+          "basis": "Claims to the Paracel and Spratly Islands.",
+          "url": "https://en.wikipedia.org/wiki/Spratly_Islands_dispute"
+        }
+      ]
+    },
+    {
+      "iso3": "PHL",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "US–Philippines Mutual Defense Treaty (1951) and expanded EDCA basing (2023).",
+          "url": "https://en.wikipedia.org/wiki/Enhanced_Defense_Cooperation_Agreement"
+        },
+        {
+          "id": "territorialRecovery",
+          "targets": [
+            "CHN"
+          ],
+          "flashpoint": "south-china-sea",
+          "weight": 0.5,
+          "basis": "2016 arbitral award on the West Philippine Sea.",
+          "url": "https://en.wikipedia.org/wiki/Philippines_v._China"
+        }
+      ]
+    },
+    {
+      "iso3": "THA",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "Traditional balancing between the US and China; 2025 border clashes with Cambodia.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Thailand"
+        }
+      ]
+    },
+    {
+      "iso3": "NGA",
+      "agendas": [
+        {
+          "id": "economicDevelopment",
+          "basis": "Economic reform and regional security in West Africa.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Nigeria"
+        }
+      ]
+    },
+    {
+      "iso3": "ZAF",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "Non-aligned stance in BRICS; ICJ genocide case against Israel.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_South_Africa"
+        }
+      ]
+    },
+    {
+      "iso3": "ETH",
+      "agendas": [
+        {
+          "id": "regionalHegemony",
+          "sphere": [
+            "ERI",
+            "SOM",
+            "SDN"
+          ],
+          "weight": 0.5,
+          "basis": "Abiy Ahmed’s push for Red Sea access and tensions with Eritrea.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Ethiopia"
+        }
+      ]
+    },
+    {
+      "iso3": "ARG",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "weight": 0.7,
+          "basis": "Milei’s alignment with the US and Israel.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Argentina"
+        }
+      ]
+    },
+    {
+      "iso3": "SWE",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Joined NATO in 2024 after two centuries of neutrality.",
+          "url": "https://en.wikipedia.org/wiki/Sweden_in_NATO"
+        }
+      ]
+    },
+    {
+      "iso3": "FIN",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Joined NATO in 2023; 1,340 km border with Russia.",
+          "url": "https://en.wikipedia.org/wiki/Finland_in_NATO"
+        }
+      ]
+    },
+    {
+      "iso3": "NLD",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "basis": "Atlanticist; hosted the 2025 NATO summit.",
+          "url": "https://en.wikipedia.org/wiki/2025_The_Hague_NATO_summit"
+        }
+      ]
+    },
+    {
+      "iso3": "BLR",
+      "agendas": [
+        {
+          "id": "regimeSurvival",
+          "basis": "Lukashenko’s rule depends on Russian backing (Union State); hosts Russian nuclear weapons.",
+          "url": "https://en.wikipedia.org/wiki/Union_State"
+        }
+      ]
+    },
+    {
+      "iso3": "KAZ",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "“Multi-vector” foreign policy between Russia, China and the West.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Kazakhstan"
+        }
+      ]
+    },
+    {
+      "iso3": "QAT",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "Mediator (Gaza, US–Taliban); hosts Al Udeid air base.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Qatar"
+        }
+      ]
+    },
+    {
+      "iso3": "IRQ",
+      "agendas": [
+        {
+          "id": "nonAlignment",
+          "basis": "Balancing US and Iranian influence.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Iraq"
+        }
+      ]
+    },
+    {
+      "iso3": "SYR",
+      "agendas": [
+        {
+          "id": "regimeSurvival",
+          "basis": "Transitional government consolidating control after the fall of Assad (December 2024).",
+          "url": "https://en.wikipedia.org/wiki/Syrian_transitional_government"
+        }
+      ]
+    },
+    {
+      "iso3": "VEN",
+      "agendas": [
+        {
+          "id": "regimeSurvival",
+          "basis": "Chavista government under US military pressure (2026).",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_Venezuela"
+        }
+      ]
+    },
+    {
+      "iso3": "NZL",
+      "agendas": [
+        {
+          "id": "alliancePreservation",
+          "weight": 0.7,
+          "basis": "Five Eyes member; independent foreign policy tradition.",
+          "url": "https://en.wikipedia.org/wiki/Foreign_relations_of_New_Zealand"
+        }
+      ]
+    }
+  ]
+}
