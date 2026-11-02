@@ -59,17 +59,54 @@ export interface Traits {
   readonly nuclearThreshold: number;
 }
 
+export type LeaderRole = 'headOfGovernment' | 'headOfState' | 'supremeLeader' | 'partyLeader';
+export const LEADER_ROLES: readonly LeaderRole[] = ['headOfGovernment', 'headOfState', 'supremeLeader', 'partyLeader'];
+
+export interface OfficeHolder {
+  readonly name: string;
+  readonly title: string;
+  readonly party: string | null;
+  readonly since: string;
+}
+
+/**
+ * The playable leader and AI personality: whoever actually directs foreign and defence policy
+ * (D-049). `name`/`title`/`traits`/`rationale` describe that person; the head of state and head of
+ * government are kept as secondary fields for display.
+ */
 export interface LeaderMeta {
   readonly iso3: Iso3;
   readonly name: string;
   readonly title: string;
   readonly party: string | null;
   readonly since: string;
-  readonly headOfGovernment: { name: string; title: string } | null;
+  readonly role: LeaderRole;
+  /** Why this person directs foreign and defence policy. */
+  readonly basis: string;
+  readonly headOfState: OfficeHolder;
+  readonly headOfGovernment: OfficeHolder | null;
   readonly nextElection: string | null;
   readonly traits: Traits;
   readonly rationale: string;
 }
+
+/** Raw shape of one `data/leaders.json` entry. */
+interface RawLeader {
+  iso3: string;
+  effectiveLeader?: { name: string; title: string; party?: string | null; since: string; role: string; basis: string };
+  headOfState: { name: string; title: string; party?: string | null; since: string };
+  headOfGovernment: { name: string; title: string; party?: string | null; since: string } | null;
+  nextElection?: string | null;
+  traits: Traits;
+  rationale: string;
+}
+
+const office = (o: { name: string; title: string; party?: string | null; since: string }): OfficeHolder => ({
+  name: o.name,
+  title: o.title,
+  party: o.party ?? null,
+  since: o.since,
+});
 
 export interface UnitTypeMeta {
   readonly id: UnitTypeId;
@@ -268,16 +305,22 @@ export function loadWorld(): World {
   const nations = new Map(nationList.map((n) => [n.iso3, n]));
 
   const leaders = new Map<Iso3, LeaderMeta>();
-  for (const l of leadersData.leaders) {
+  for (const l of leadersData.leaders as unknown as RawLeader[]) {
+    // No fallback to the head of state: a missing effective leader is a data error (D-049).
+    const e = l.effectiveLeader;
+    if (!e || !e.name || !LEADER_ROLES.includes(e.role as LeaderRole)) {
+      throw new Error(`data/leaders.json: ${l.iso3} has no valid effectiveLeader`);
+    }
     leaders.set(l.iso3, {
       iso3: l.iso3,
-      name: l.headOfState.name,
-      title: l.headOfState.title,
-      party: l.headOfState.party ?? null,
-      since: l.headOfState.since,
-      headOfGovernment: l.headOfGovernment
-        ? { name: l.headOfGovernment.name, title: l.headOfGovernment.title }
-        : null,
+      name: e.name,
+      title: e.title,
+      party: e.party ?? null,
+      since: e.since,
+      role: e.role as LeaderRole,
+      basis: e.basis,
+      headOfState: office(l.headOfState),
+      headOfGovernment: l.headOfGovernment ? office(l.headOfGovernment) : null,
       nextElection: l.nextElection ?? null,
       traits: l.traits,
       rationale: l.rationale,

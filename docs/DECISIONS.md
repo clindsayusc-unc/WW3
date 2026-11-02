@@ -407,3 +407,24 @@ and growth); rejections are logged only when a major or the player is involved. 
 run at 1.5%/pair/month (0.6% toward the player) so the player's inbox holds a few meaningful offers
 rather than a flood. Starting garrisons weight the capital by +0.08 population share instead of
 +0.3, so the capital holds a strong but not overwhelming share of the army.
+
+## D-049 — 2026-11-02 — The playable leader is whoever directs foreign and defence policy
+
+Supersedes the leader choice in D-042. `data/leaders.json` gains an `effectiveLeader` per entry
+(`name`, `title`, `party`, `since`, `role`, `basis`), and the playable leader card, the AI
+personality (`traits`, `rationale`) and `NationState.leaderName` all follow it:
+
+- parliamentary systems and constitutional monarchies → the head of government (UK, Germany,
+  India, Japan, Israel, Pakistan, Italy, Spain, Canada, Australia, …);
+- Iran → the Supreme Leader (`role: supremeLeader`);
+- presidential and semi-presidential systems where the president directs foreign and defence
+  policy → the president (USA, Russia, France, South Korea, Turkey, Brazil, Finland, …);
+- one-party states → the paramount party leader; ruling monarchies → whoever actually runs policy.
+
+The head of state (and a third-person head of government) stays as a secondary field: shown on the
+full leader card and under the card in the nation panel, with the `basis` as tooltip. The loader
+throws when an entry lacks a valid `effectiveLeader` — there is deliberately no fallback to the head
+of state, which caused the bug. `tests/leaders.test.ts` checks every major, the parliamentary and
+Iranian cases, internal consistency and that the world/game objects use the effective leader. Saves
+made earlier get their leader names refreshed on load (`refreshLeaders`). All 44 entries were
+re-verified by web search on 2026-11-02.
