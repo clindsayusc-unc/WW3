@@ -1,0 +1,1434 @@
+{
+  "source": "Editorial assessment of nine geopolitical flashpoints as of November 2026 based on public reporting (see docs/DATA_SOURCES.md); starting tension values and scripted events are fictional game content",
+  "asOf": "2026-11-02",
+  "estimate": true,
+  "flashpoints": [
+    {
+      "id": "taiwan-strait",
+      "name": "Taiwan Strait",
+      "lat": 24.0,
+      "lon": 120.5,
+      "nations": ["CHN", "TWN", "USA", "JPN"],
+      "sides": [["CHN"], ["TWN", "USA", "JPN"]],
+      "tension": 55,
+      "description": "China keeps up carrier drills and coast-guard pressure around Taiwan while the September 2026 US-China summit extended a trade truce without progress on Taiwan. A pending US arms package has been publicly described as a bargaining chip, and Japan's stated willingness to treat a Taiwan contingency as a survival-threatening situation has frozen Tokyo-Beijing ties.",
+      "events": [
+        {
+          "id": "ts-encirclement-drills",
+          "title": "PLA announces encirclement exercise",
+          "text": "The People's Liberation Army declares live-fire exercise zones around Taiwan and dispatches a carrier group east of the island. Taipei raises its alert level and commercial flights are rerouted for several days.",
+          "scope": "world",
+          "weight": 5,
+          "once": false,
+          "cooldown": 8,
+          "conditions": [{ "type": "flashpointMin", "id": "taiwan-strait", "value": 45 }],
+          "choices": [
+            {
+              "label": "Drills proceed",
+              "tooltip": "Regional tension rises and relations between Beijing and Taiwan's partners deteriorate.",
+              "effects": [
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": 8 },
+                { "type": "tension", "delta": 3 },
+                { "type": "relation", "a": "CHN", "b": "TWN", "delta": -5 },
+                { "type": "relation", "a": "CHN", "b": "USA", "delta": -5 },
+                { "type": "relation", "a": "CHN", "b": "JPN", "delta": -5 },
+                {
+                  "type": "news",
+                  "text": "PLA encirclement drills around Taiwan enter third day; Taipei on heightened alert"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ts-arms-package-decision",
+          "title": "Taiwan arms package awaits decision",
+          "text": "A multi-billion-dollar arms package for Taiwan is ready for notification to Congress. Beijing has signalled that approval would end the trade truce, while Taipei and Tokyo are watching for signs of US resolve.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 18,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["USA"] },
+            { "type": "flashpointMin", "id": "taiwan-strait", "value": 40 }
+          ],
+          "choices": [
+            {
+              "label": "Approve the full package",
+              "tooltip": "Reassures Taiwan and Japan and brings in export revenue, but angers Beijing and raises strait tension.",
+              "effects": [
+                { "type": "relation", "a": "USA", "b": "TWN", "delta": 10 },
+                { "type": "relation", "a": "USA", "b": "JPN", "delta": 4 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": -12 },
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": 6 },
+                { "type": "treasury", "nation": "USA", "pctGdp": 0.05 }
+              ]
+            },
+            {
+              "label": "Hold it as leverage",
+              "tooltip": "Keeps the trade truce alive with Beijing at the cost of confidence in Taipei and Tokyo.",
+              "effects": [
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": 6 },
+                { "type": "relation", "a": "USA", "b": "TWN", "delta": -8 },
+                { "type": "relation", "a": "USA", "b": "JPN", "delta": -4 },
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": -3 }
+              ]
+            },
+            {
+              "label": "Approve a scaled-down package",
+              "tooltip": "Splits the difference: modest reassurance, modest Chinese displeasure.",
+              "effects": [
+                { "type": "relation", "a": "USA", "b": "TWN", "delta": 4 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": -5 },
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": 2 },
+                { "type": "treasury", "nation": "USA", "pctGdp": 0.02 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ts-quarantine-option",
+          "title": "Customs quarantine proposal",
+          "text": "Planners present {PLAYER} with an option to impose coast-guard inspections on shipping bound for Taiwan, short of a formal blockade. It would test US and Japanese responses but would also disrupt trade and invite sanctions.",
+          "scope": "player",
+          "weight": 3,
+          "once": false,
+          "cooldown": 24,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["CHN"] },
+            { "type": "flashpointMin", "id": "taiwan-strait", "value": 60 }
+          ],
+          "choices": [
+            {
+              "label": "Impose the quarantine",
+              "tooltip": "Sharp escalation: tension spikes, Washington sanctions you, and your own trade suffers.",
+              "effects": [
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": 15 },
+                { "type": "tension", "delta": 8 },
+                { "type": "relation", "a": "CHN", "b": "USA", "delta": -15 },
+                { "type": "relation", "a": "CHN", "b": "JPN", "delta": -10 },
+                { "type": "relation", "a": "CHN", "b": "TWN", "delta": -10 },
+                { "type": "sanction", "from": "USA", "to": "CHN" },
+                { "type": "gdp", "nation": "CHN", "pct": -1.0 },
+                {
+                  "type": "news",
+                  "text": "China begins inspecting Taiwan-bound shipping; Washington announces sanctions"
+                }
+              ]
+            },
+            {
+              "label": "Stage exercises only",
+              "tooltip": "Signals resolve without crossing the inspection threshold.",
+              "effects": [
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": 5 },
+                { "type": "tension", "delta": 2 },
+                { "type": "relation", "a": "CHN", "b": "USA", "delta": -4 },
+                { "type": "relation", "a": "CHN", "b": "TWN", "delta": -4 }
+              ]
+            },
+            {
+              "label": "Stand down and propose cross-strait talks",
+              "tooltip": "Lowers tension and improves ties with Taipei, but hardliners at home are unhappy.",
+              "effects": [
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": -8 },
+                { "type": "relation", "a": "CHN", "b": "TWN", "delta": 6 },
+                { "type": "relation", "a": "CHN", "b": "USA", "delta": 4 },
+                { "type": "stability", "nation": "CHN", "delta": -3 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ts-japan-southwest-posture",
+          "title": "Southwest islands posture review",
+          "text": "With PLA activity rising near the Senkakus and Yonaguni, the Japanese cabinet must decide how visibly to reinforce the southwest island chain. Beijing warns that forward deployments would be met with countermeasures.",
+          "scope": "player",
+          "weight": 3,
+          "once": false,
+          "cooldown": 18,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["JPN"] },
+            { "type": "flashpointMin", "id": "taiwan-strait", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Forward-deploy air defence to Yonaguni",
+              "tooltip": "Strengthens deterrence and alliance ties, but deepens the freeze with Beijing.",
+              "effects": [
+                { "type": "units", "nation": "JPN", "unitType": "airDefense", "count": 1 },
+                { "type": "treasury", "nation": "JPN", "pctGdp": -0.1 },
+                { "type": "relation", "a": "JPN", "b": "USA", "delta": 6 },
+                { "type": "relation", "a": "JPN", "b": "CHN", "delta": -10 },
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": 5 }
+              ]
+            },
+            {
+              "label": "Reaffirm restraint and seek a leaders' call",
+              "tooltip": "Opens a path to easing rare-earth curbs at some cost to alliance confidence.",
+              "effects": [
+                { "type": "relation", "a": "JPN", "b": "CHN", "delta": 6 },
+                { "type": "relation", "a": "JPN", "b": "USA", "delta": -3 },
+                { "type": "flashpoint", "id": "taiwan-strait", "delta": -3 },
+                { "type": "stability", "nation": "JPN", "delta": -2 }
+              ]
+            },
+            {
+              "label": "Convene Quad maritime coordination",
+              "tooltip": "Builds a wider coalition response at a modest cost in tension.",
+              "effects": [
+                { "type": "relation", "a": "JPN", "b": "IND", "delta": 5 },
+                { "type": "relation", "a": "JPN", "b": "AUS", "delta": 5 },
+                { "type": "relation", "a": "JPN", "b": "CHN", "delta": -5 },
+                { "type": "tension", "delta": 2 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "south-china-sea",
+      "name": "South China Sea",
+      "lat": 15.0,
+      "lon": 115.0,
+      "nations": ["CHN", "PHL", "VNM", "MYS", "USA"],
+      "sides": [["CHN"], ["PHL", "VNM", "USA"]],
+      "tension": 50,
+      "description": "Chinese coast-guard water-cannon and boarding incidents against Philippine vessels at Scarborough and Second Thomas Shoal continued through 2026, and Chinese naval units shadowed a US warship near a disputed shoal in October. Resupply of the grounded BRP Sierra Madre remains the most likely trigger for a wider clash.",
+      "events": [
+        {
+          "id": "scs-water-cannon",
+          "title": "Water-cannon clash at Scarborough Shoal",
+          "text": "Chinese coast-guard ships fire water cannon at Philippine fisheries vessels delivering supplies near Scarborough Shoal. Manila files a protest and Washington reiterates that its defence treaty covers Philippine public vessels.",
+          "scope": "world",
+          "weight": 6,
+          "once": false,
+          "cooldown": 6,
+          "conditions": [{ "type": "flashpointMin", "id": "south-china-sea", "value": 35 }],
+          "choices": [
+            {
+              "label": "Incident reported",
+              "tooltip": "Tension rises; Manila leans further toward Washington.",
+              "effects": [
+                { "type": "flashpoint", "id": "south-china-sea", "delta": 5 },
+                { "type": "relation", "a": "CHN", "b": "PHL", "delta": -5 },
+                { "type": "relation", "a": "USA", "b": "PHL", "delta": 3 },
+                {
+                  "type": "news",
+                  "text": "Philippine vessels hit by water cannon near Scarborough Shoal; Manila protests"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "scs-fonop-shadowing",
+          "title": "Chinese warships shadow US destroyer",
+          "text": "Chinese naval vessels trail a US destroyer conducting a freedom-of-navigation transit near a disputed reef. Both sides release footage accusing the other of unsafe manoeuvres.",
+          "scope": "world",
+          "weight": 4,
+          "once": false,
+          "cooldown": 6,
+          "conditions": [{ "type": "flashpointMin", "id": "south-china-sea", "value": 40 }],
+          "choices": [
+            {
+              "label": "Encounter ends without contact",
+              "tooltip": "A minor rise in tension and US-China friction.",
+              "effects": [
+                { "type": "flashpoint", "id": "south-china-sea", "delta": 3 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": -4 },
+                {
+                  "type": "news",
+                  "text": "Chinese and US warships in close encounter in South China Sea; both trade accusations"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "scs-treaty-test",
+          "title": "Manila invokes the defence treaty",
+          "text": "A Filipino sailor is injured during a resupply run to Second Thomas Shoal and Manila formally asks whether the Mutual Defense Treaty applies. {PLAYER} must decide how far to back its ally.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["USA"] },
+            { "type": "flashpointMin", "id": "south-china-sea", "value": 55 }
+          ],
+          "choices": [
+            {
+              "label": "Escort the next resupply with US ships",
+              "tooltip": "Strong alliance signal; raises the risk of a direct US-China incident.",
+              "effects": [
+                { "type": "flashpoint", "id": "south-china-sea", "delta": 8 },
+                { "type": "tension", "delta": 3 },
+                { "type": "relation", "a": "USA", "b": "PHL", "delta": 10 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": -10 },
+                { "type": "relation", "a": "USA", "b": "JPN", "delta": 3 }
+              ]
+            },
+            {
+              "label": "Issue a diplomatic protest only",
+              "tooltip": "Avoids escalation but Manila doubts US reliability.",
+              "effects": [
+                { "type": "relation", "a": "USA", "b": "PHL", "delta": -6 },
+                { "type": "flashpoint", "id": "south-china-sea", "delta": -2 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": 2 }
+              ]
+            },
+            {
+              "label": "Propose a code-of-conduct summit",
+              "tooltip": "Lowers tension with Beijing; modest cost to Philippine confidence.",
+              "effects": [
+                { "type": "flashpoint", "id": "south-china-sea", "delta": -5 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": 3 },
+                { "type": "relation", "a": "USA", "b": "PHL", "delta": -2 },
+                { "type": "relation", "a": "USA", "b": "VNM", "delta": 2 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "scs-sierra-madre-decision",
+          "title": "Sierra Madre resupply policy",
+          "text": "The coast guard asks {PLAYER} for guidance on the next Philippine resupply convoy to the grounded Sierra Madre. Options range from a tighter cordon to a face-saving humanitarian arrangement.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["CHN"] },
+            { "type": "flashpointMin", "id": "south-china-sea", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Tighten the cordon",
+              "tooltip": "Asserts control at the shoal; Manila and Washington respond angrily.",
+              "effects": [
+                { "type": "flashpoint", "id": "south-china-sea", "delta": 10 },
+                { "type": "tension", "delta": 4 },
+                { "type": "relation", "a": "CHN", "b": "PHL", "delta": -10 },
+                { "type": "relation", "a": "CHN", "b": "USA", "delta": -8 }
+              ]
+            },
+            {
+              "label": "Allow humanitarian resupply",
+              "tooltip": "Reduces tension and softens Manila, at some domestic political cost.",
+              "effects": [
+                { "type": "flashpoint", "id": "south-china-sea", "delta": -6 },
+                { "type": "relation", "a": "CHN", "b": "PHL", "delta": 5 },
+                { "type": "stability", "nation": "CHN", "delta": -2 }
+              ]
+            },
+            {
+              "label": "Offer joint resource development",
+              "tooltip": "Spends money to buy goodwill with claimant states.",
+              "effects": [
+                { "type": "flashpoint", "id": "south-china-sea", "delta": -4 },
+                { "type": "relation", "a": "CHN", "b": "PHL", "delta": 4 },
+                { "type": "relation", "a": "CHN", "b": "VNM", "delta": 4 },
+                { "type": "relation", "a": "CHN", "b": "MYS", "delta": 3 },
+                { "type": "treasury", "nation": "CHN", "pctGdp": -0.1 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "korean-peninsula",
+      "name": "Korean Peninsula",
+      "lat": 38.3,
+      "lon": 127.0,
+      "nations": ["PRK", "KOR", "USA", "JPN", "CHN"],
+      "sides": [["PRK"], ["KOR", "USA", "JPN"]],
+      "tension": 55,
+      "description": "October 2026 saw mine blasts that injured South Korean soldiers near the demarcation line, a barrage of North Korean short-range missiles, and Pyongyang's pledge to deploy new weapons along the border. Seoul has proposed border-demarcation talks without response, while Pyongyang deepens ties with Moscow and Beijing.",
+      "events": [
+        {
+          "id": "kp-missile-salvo",
+          "title": "North Korea fires missile salvo",
+          "text": "North Korea launches a salvo of short-range ballistic missiles into the sea off its east coast. Seoul and Tokyo convene security councils and the launch is condemned in Washington.",
+          "scope": "world",
+          "weight": 7,
+          "once": false,
+          "cooldown": 4,
+          "conditions": [{ "type": "flashpointMin", "id": "korean-peninsula", "value": 30 }],
+          "choices": [
+            {
+              "label": "Launch tracked",
+              "tooltip": "Routine but corrosive: tension edges up.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": 4 },
+                { "type": "tension", "delta": 2 },
+                { "type": "relation", "a": "PRK", "b": "KOR", "delta": -3 },
+                { "type": "relation", "a": "PRK", "b": "JPN", "delta": -3 },
+                {
+                  "type": "news",
+                  "text": "North Korea fires ballistic missiles toward the sea; Seoul and Tokyo condemn launch"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "kp-dmz-incident",
+          "title": "Border incident at the DMZ",
+          "text": "Soldiers are injured by mines near the military demarcation line and both Koreas accuse the other of violating the border. Front-line loudspeakers are switched back on.",
+          "scope": "world",
+          "weight": 5,
+          "once": false,
+          "cooldown": 8,
+          "conditions": [{ "type": "flashpointMin", "id": "korean-peninsula", "value": 40 }],
+          "choices": [
+            {
+              "label": "Incident contained",
+              "tooltip": "Inter-Korean relations deteriorate further.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": 6 },
+                { "type": "relation", "a": "PRK", "b": "KOR", "delta": -5 },
+                {
+                  "type": "news",
+                  "text": "Mine blast injures soldiers at Korean DMZ; both sides trade blame"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "kp-seoul-response",
+          "title": "Seoul weighs response to provocation",
+          "text": "After the latest border incident the cabinet must choose how {PLAYER} answers Pyongyang. The public wants firmness; the economy wants calm; Washington wants coordination.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 10,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["KOR"] },
+            { "type": "flashpointMin", "id": "korean-peninsula", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Resume broadcasts and live-fire drills",
+              "tooltip": "Popular at home; pushes the peninsula closer to a clash.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": 8 },
+                { "type": "relation", "a": "KOR", "b": "PRK", "delta": -8 },
+                { "type": "stability", "nation": "KOR", "delta": 2 }
+              ]
+            },
+            {
+              "label": "Propose border-demarcation talks",
+              "tooltip": "Lowers tension if Pyongyang engages; risks looking weak.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": -6 },
+                { "type": "relation", "a": "KOR", "b": "PRK", "delta": 4 },
+                { "type": "stability", "nation": "KOR", "delta": -2 }
+              ]
+            },
+            {
+              "label": "Request US strategic-asset deployment",
+              "tooltip": "Strengthens the alliance and deterrence; irritates Beijing.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": 4 },
+                { "type": "tension", "delta": 2 },
+                { "type": "relation", "a": "KOR", "b": "USA", "delta": 8 },
+                { "type": "relation", "a": "KOR", "b": "CHN", "delta": -6 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "kp-washington-outreach",
+          "title": "Pyongyang summit overture",
+          "text": "Intermediaries report that Pyongyang would consider a leader-level meeting if sanctions enforcement eases. Seoul and Tokyo are wary of being sidelined; Beijing signals quiet support for talks.",
+          "scope": "player",
+          "weight": 3,
+          "once": false,
+          "cooldown": 18,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["USA"] },
+            { "type": "flashpointMin", "id": "korean-peninsula", "value": 45 }
+          ],
+          "choices": [
+            {
+              "label": "Offer a summit",
+              "tooltip": "Cools the peninsula and opens a channel, at some cost to allied confidence.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": -8 },
+                { "type": "relation", "a": "USA", "b": "PRK", "delta": 10 },
+                { "type": "relation", "a": "USA", "b": "JPN", "delta": -3 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": 3 }
+              ]
+            },
+            {
+              "label": "Tighten sanctions enforcement",
+              "tooltip": "Pressures Pyongyang and its enablers; tension rises.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": 3 },
+                { "type": "relation", "a": "USA", "b": "PRK", "delta": -8 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": -4 },
+                { "type": "relation", "a": "USA", "b": "RUS", "delta": -3 }
+              ]
+            },
+            {
+              "label": "Expand trilateral exercises",
+              "tooltip": "Reassures Seoul and Tokyo; Pyongyang responds with more tests.",
+              "effects": [
+                { "type": "flashpoint", "id": "korean-peninsula", "delta": 5 },
+                { "type": "relation", "a": "USA", "b": "KOR", "delta": 5 },
+                { "type": "relation", "a": "USA", "b": "JPN", "delta": 5 },
+                { "type": "relation", "a": "USA", "b": "PRK", "delta": -5 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "russia-ukraine",
+      "name": "Russia-Ukraine War",
+      "lat": 48.5,
+      "lon": 37.5,
+      "nations": ["RUS", "UKR", "BLR", "USA", "POL", "DEU", "FRA", "GBR"],
+      "sides": [
+        ["RUS", "BLR"],
+        ["UKR", "POL", "DEU", "FRA", "GBR"]
+      ],
+      "tension": 85,
+      "description": "The full-scale war continues into its fifth year. US-mediated trilateral talks have produced only localised truces, with the sides still divided over territory and security guarantees; a new round is scheduled in Abu Dhabi in November 2026. Strikes on energy infrastructure and drone spillover into NATO airspace continue.",
+      "events": [
+        {
+          "id": "ru-energy-strikes",
+          "title": "Winter strikes on energy grid",
+          "text": "Large waves of missiles and drones hit Ukrainian power and heating infrastructure as temperatures fall. Rolling blackouts spread and European capitals pledge emergency equipment.",
+          "scope": "world",
+          "weight": 6,
+          "once": false,
+          "cooldown": 6,
+          "conditions": [
+            { "type": "flashpointMin", "id": "russia-ukraine", "value": 60 },
+            { "type": "notCapitulated", "nation": "UKR" }
+          ],
+          "choices": [
+            {
+              "label": "Grid damaged",
+              "tooltip": "Ukrainian stability dips and European attitudes to Moscow harden.",
+              "effects": [
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": 4 },
+                { "type": "stability", "nation": "UKR", "delta": -3 },
+                { "type": "relation", "a": "RUS", "b": "DEU", "delta": -3 },
+                { "type": "relation", "a": "RUS", "b": "FRA", "delta": -3 },
+                {
+                  "type": "news",
+                  "text": "Mass strikes on Ukrainian energy grid trigger rolling blackouts"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ru-talks-round",
+          "title": "Trilateral talks resume",
+          "text": "US, Russian and Ukrainian delegations meet for another round of talks. A limited humanitarian truce is extended, but there is no agreement on a general ceasefire.",
+          "scope": "world",
+          "weight": 5,
+          "once": false,
+          "cooldown": 5,
+          "conditions": [
+            { "type": "flashpointMin", "id": "russia-ukraine", "value": 50 },
+            { "type": "notCapitulated", "nation": "UKR" }
+          ],
+          "choices": [
+            {
+              "label": "Talks continue",
+              "tooltip": "A small easing of tension and a thaw in US-Russia contacts.",
+              "effects": [
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": -3 },
+                { "type": "relation", "a": "USA", "b": "RUS", "delta": 3 },
+                {
+                  "type": "news",
+                  "text": "Trilateral Ukraine talks extend local truce; no breakthrough on ceasefire"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ru-us-pressure-package",
+          "title": "Where to apply pressure",
+          "text": "Mediation has stalled. Advisers offer {PLAYER} two levers: pause assistance to Kyiv to force concessions, or hit Moscow's remaining revenue with secondary sanctions on its oil customers.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["USA"] },
+            { "type": "flashpointMin", "id": "russia-ukraine", "value": 65 },
+            { "type": "notCapitulated", "nation": "UKR" }
+          ],
+          "choices": [
+            {
+              "label": "Pause assistance to Kyiv",
+              "tooltip": "Moscow warms; Kyiv and European allies feel abandoned.",
+              "effects": [
+                { "type": "relation", "a": "USA", "b": "UKR", "delta": -12 },
+                { "type": "relation", "a": "USA", "b": "RUS", "delta": 8 },
+                { "type": "relation", "a": "USA", "b": "POL", "delta": -6 },
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": -4 },
+                { "type": "stability", "nation": "UKR", "delta": -4 }
+              ]
+            },
+            {
+              "label": "Impose secondary sanctions on Russian oil buyers",
+              "tooltip": "Squeezes Moscow but strains ties with India and China.",
+              "effects": [
+                { "type": "relation", "a": "USA", "b": "RUS", "delta": -10 },
+                { "type": "relation", "a": "USA", "b": "UKR", "delta": 8 },
+                { "type": "relation", "a": "USA", "b": "IND", "delta": -5 },
+                { "type": "relation", "a": "USA", "b": "CHN", "delta": -5 },
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": 3 },
+                { "type": "growth", "nation": "RUS", "delta": -0.5, "months": 12 }
+              ]
+            },
+            {
+              "label": "Keep mediating patiently",
+              "tooltip": "No shocks; a slow easing of tension.",
+              "effects": [
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": -2 },
+                { "type": "relation", "a": "USA", "b": "UKR", "delta": 2 },
+                { "type": "relation", "a": "USA", "b": "RUS", "delta": 2 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ru-spring-campaign",
+          "title": "Spring campaign plan",
+          "text": "The General Staff presents {PLAYER} with options for the coming campaign season: a major offensive to seize more territory before any ceasefire, a defensive hold to bank gains at the table, or an intensified long-range strike campaign.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["RUS"] },
+            { "type": "atWarWith", "a": "RUS", "b": "UKR" },
+            { "type": "flashpointMin", "id": "russia-ukraine", "value": 60 }
+          ],
+          "choices": [
+            {
+              "label": "Launch a major offensive",
+              "tooltip": "Commits new formations and partial mobilisation; costly at home and abroad.",
+              "effects": [
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": 10 },
+                { "type": "tension", "delta": 5 },
+                { "type": "mobilize", "nation": "RUS", "level": 1 },
+                { "type": "units", "nation": "RUS", "unitType": "mechanized", "count": 2 },
+                { "type": "stability", "nation": "RUS", "delta": -3 },
+                { "type": "gdp", "nation": "RUS", "pct": -0.5 },
+                { "type": "relation", "a": "RUS", "b": "USA", "delta": -6 }
+              ]
+            },
+            {
+              "label": "Hold the line and negotiate",
+              "tooltip": "Eases tension and improves ties with Washington; hardliners grumble.",
+              "effects": [
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": -8 },
+                { "type": "relation", "a": "RUS", "b": "USA", "delta": 6 },
+                { "type": "stability", "nation": "RUS", "delta": -2 }
+              ]
+            },
+            {
+              "label": "Intensify long-range strikes",
+              "tooltip": "Pressures Kyiv without new ground commitments; Europe hardens.",
+              "effects": [
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": 6 },
+                { "type": "tension", "delta": 3 },
+                { "type": "stability", "nation": "UKR", "delta": -3 },
+                { "type": "relation", "a": "RUS", "b": "DEU", "delta": -5 },
+                { "type": "relation", "a": "RUS", "b": "FRA", "delta": -5 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ru-european-guarantee",
+          "title": "Security guarantee decision",
+          "text": "Kyiv asks European partners to firm up post-ceasefire guarantees. {PLAYER} must decide whether to commit forces to a reassurance mission, fund Ukraine's defence industry instead, or defer to Washington.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 15,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["DEU", "FRA", "GBR"] },
+            { "type": "flashpointMin", "id": "russia-ukraine", "value": 50 },
+            { "type": "notCapitulated", "nation": "UKR" }
+          ],
+          "choices": [
+            {
+              "label": "Commit troops to a reassurance force",
+              "tooltip": "Strong signal to Kyiv; Moscow treats it as a direct threat.",
+              "effects": [
+                { "type": "relation", "a": "PLAYER", "b": "UKR", "delta": 10 },
+                { "type": "relation", "a": "PLAYER", "b": "RUS", "delta": -10 },
+                { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.2 },
+                { "type": "flashpoint", "id": "russia-ukraine", "delta": 3 },
+                { "type": "tension", "delta": 2 }
+              ]
+            },
+            {
+              "label": "Fund Ukraine's defence industry",
+              "tooltip": "Costly but builds Ukrainian resilience without boots on the ground.",
+              "effects": [
+                { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.3 },
+                { "type": "relation", "a": "PLAYER", "b": "UKR", "delta": 8 },
+                { "type": "growth", "nation": "UKR", "delta": 0.5, "months": 12 },
+                { "type": "relation", "a": "PLAYER", "b": "RUS", "delta": -4 }
+              ]
+            },
+            {
+              "label": "Defer to Washington's lead",
+              "tooltip": "Saves money and pleases the US, but Kyiv is disappointed.",
+              "effects": [
+                { "type": "relation", "a": "PLAYER", "b": "USA", "delta": 4 },
+                { "type": "relation", "a": "PLAYER", "b": "UKR", "delta": -5 },
+                { "type": "stability", "nation": "PLAYER", "delta": 1 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "baltic",
+      "name": "Baltic and Eastern Flank",
+      "lat": 57.5,
+      "lon": 21.0,
+      "nations": ["RUS", "BLR", "EST", "LVA", "LTU", "POL", "FIN", "SWE", "DEU", "USA"],
+      "sides": [
+        ["RUS", "BLR"],
+        ["EST", "LVA", "LTU", "POL", "FIN", "SWE", "DEU", "USA"]
+      ],
+      "tension": 50,
+      "description": "Drone incursions into Baltic and Finnish airspace, a NATO shootdown over Latvia in August 2026, undersea-cable damage and an alleged Russian sabotage campaign have kept the eastern flank on edge. Questions about the durability of US commitments add to regional unease.",
+      "events": [
+        {
+          "id": "bl-drone-shootdown",
+          "title": "NATO jets down drone over Baltics",
+          "text": "Allied fighters on Baltic air policing duty shoot down an unidentified drone over Latvian territory. Riga says the aircraft was steered off course by electronic warfare; Moscow denies involvement.",
+          "scope": "world",
+          "weight": 6,
+          "once": false,
+          "cooldown": 5,
+          "conditions": [{ "type": "flashpointMin", "id": "baltic", "value": 35 }],
+          "choices": [
+            {
+              "label": "Drone destroyed",
+              "tooltip": "Tension rises on the flank.",
+              "effects": [
+                { "type": "flashpoint", "id": "baltic", "delta": 5 },
+                { "type": "tension", "delta": 2 },
+                { "type": "relation", "a": "RUS", "b": "LVA", "delta": -3 },
+                {
+                  "type": "news",
+                  "text": "NATO fighters shoot down drone over Latvia; Russia denies responsibility"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bl-cable-damage",
+          "title": "Undersea cable severed",
+          "text": "A data cable between Finland and Estonia is cut; a tanker linked to a shadow fleet is detained for inspection. Investigators do not rule out deliberate anchor-dragging.",
+          "scope": "world",
+          "weight": 4,
+          "once": false,
+          "cooldown": 8,
+          "conditions": [{ "type": "flashpointMin", "id": "baltic", "value": 40 }],
+          "choices": [
+            {
+              "label": "Vessel detained",
+              "tooltip": "Nordic-Baltic states harden toward Moscow.",
+              "effects": [
+                { "type": "flashpoint", "id": "baltic", "delta": 4 },
+                { "type": "relation", "a": "RUS", "b": "FIN", "delta": -4 },
+                { "type": "relation", "a": "RUS", "b": "EST", "delta": -4 },
+                {
+                  "type": "news",
+                  "text": "Baltic data cable severed; tanker detained as sabotage investigation opens"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bl-eastern-sentry-surge",
+          "title": "Eastern flank reinforcement request",
+          "text": "Baltic governments ask {PLAYER} for more air-defence coverage and clearer rules of engagement against drones. Moscow warns that shootdown authority over the Baltics would be a provocation.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["USA", "DEU", "GBR", "FRA"] },
+            { "type": "flashpointMin", "id": "baltic", "value": 45 }
+          ],
+          "choices": [
+            {
+              "label": "Deploy additional air defence",
+              "tooltip": "Deterrence improves and allies are grateful; costs money and angers Moscow.",
+              "effects": [
+                { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.15 },
+                { "type": "flashpoint", "id": "baltic", "delta": -3 },
+                { "type": "relation", "a": "PLAYER", "b": "EST", "delta": 6 },
+                { "type": "relation", "a": "PLAYER", "b": "POL", "delta": 6 },
+                { "type": "relation", "a": "PLAYER", "b": "RUS", "delta": -6 }
+              ]
+            },
+            {
+              "label": "Authorise shootdown rules over allied airspace",
+              "tooltip": "Allies cheer; Moscow calls it a step toward direct conflict.",
+              "effects": [
+                { "type": "flashpoint", "id": "baltic", "delta": 6 },
+                { "type": "tension", "delta": 3 },
+                { "type": "relation", "a": "PLAYER", "b": "LTU", "delta": 6 },
+                { "type": "relation", "a": "PLAYER", "b": "LVA", "delta": 6 },
+                { "type": "relation", "a": "PLAYER", "b": "RUS", "delta": -10 }
+              ]
+            },
+            {
+              "label": "Call for NATO-Russia consultations",
+              "tooltip": "Lowers tension but Baltic allies feel unheard.",
+              "effects": [
+                { "type": "flashpoint", "id": "baltic", "delta": -4 },
+                { "type": "relation", "a": "PLAYER", "b": "RUS", "delta": 4 },
+                { "type": "relation", "a": "PLAYER", "b": "POL", "delta": -3 },
+                { "type": "relation", "a": "PLAYER", "b": "EST", "delta": -3 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bl-kaliningrad-posture",
+          "title": "Kaliningrad posture review",
+          "text": "Commanders propose to {PLAYER} a show of force around Kaliningrad and the Suwalki corridor in response to NATO reinforcements. Diplomats counter with a deconfliction offer.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["RUS"] },
+            { "type": "flashpointMin", "id": "baltic", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Stage large-scale exercises",
+              "tooltip": "Intimidates neighbours and raises tension sharply.",
+              "effects": [
+                { "type": "flashpoint", "id": "baltic", "delta": 8 },
+                { "type": "tension", "delta": 4 },
+                { "type": "relation", "a": "RUS", "b": "LTU", "delta": -8 },
+                { "type": "relation", "a": "RUS", "b": "POL", "delta": -8 },
+                { "type": "treasury", "nation": "RUS", "pctGdp": -0.1 }
+              ]
+            },
+            {
+              "label": "Offer a military deconfliction hotline",
+              "tooltip": "Modest thaw with Berlin and Helsinki; lowers flank tension.",
+              "effects": [
+                { "type": "flashpoint", "id": "baltic", "delta": -6 },
+                { "type": "relation", "a": "RUS", "b": "DEU", "delta": 5 },
+                { "type": "relation", "a": "RUS", "b": "FIN", "delta": 3 }
+              ]
+            },
+            {
+              "label": "Apply gray-zone pressure",
+              "tooltip": "Deniable harassment that unsettles the Baltic states.",
+              "effects": [
+                { "type": "flashpoint", "id": "baltic", "delta": 4 },
+                { "type": "relation", "a": "RUS", "b": "EST", "delta": -5 },
+                { "type": "relation", "a": "RUS", "b": "LVA", "delta": -5 },
+                { "type": "stability", "nation": "EST", "delta": -2 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "iran-israel-gulf",
+      "name": "Iran, Israel and the Gulf",
+      "lat": 28.0,
+      "lon": 52.0,
+      "nations": ["IRN", "ISR", "USA", "SAU", "ARE", "QAT", "IRQ", "YEM", "LBN"],
+      "sides": [
+        ["IRN", "YEM"],
+        ["ISR", "USA", "SAU", "ARE"]
+      ],
+      "tension": 70,
+      "description": "A US-Israeli air campaign against Iran from February 2026 ended in a fragile ceasefire framed by the Pakistan- and Qatar-mediated Islamabad Memorandum, with Hormuz shipping disrupted and periodic exchanges of fire since. Gaza and Lebanon ceasefires are holding unevenly, and Israel's October 2026 election produced no clear majority.",
+      "events": [
+        {
+          "id": "ig-hormuz-incident",
+          "title": "Shipping incident in Hormuz",
+          "text": "A tanker is boarded and another reports a near-miss with a fast attack craft in the Strait of Hormuz. Insurance rates jump and several carriers pause transits pending clarification.",
+          "scope": "world",
+          "weight": 6,
+          "once": false,
+          "cooldown": 5,
+          "conditions": [{ "type": "flashpointMin", "id": "iran-israel-gulf", "value": 50 }],
+          "choices": [
+            {
+              "label": "Transits disrupted",
+              "tooltip": "Tension and energy anxiety rise; US-Iran friction grows.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 5 },
+                { "type": "tension", "delta": 3 },
+                { "type": "relation", "a": "IRN", "b": "USA", "delta": -4 },
+                { "type": "relation", "a": "IRN", "b": "ARE", "delta": -3 },
+                {
+                  "type": "news",
+                  "text": "Tanker boarded in Strait of Hormuz; shipping firms pause transits"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ig-ceasefire-exchange",
+          "title": "Ceasefire strained by exchange of fire",
+          "text": "Israeli aircraft strike a suspected launch site and Iranian-aligned forces respond with drones; both sides say the ceasefire still stands. Mediators in Islamabad and Doha urge restraint.",
+          "scope": "world",
+          "weight": 5,
+          "once": false,
+          "cooldown": 4,
+          "conditions": [{ "type": "flashpointMin", "id": "iran-israel-gulf", "value": 55 }],
+          "choices": [
+            {
+              "label": "Ceasefire holds, barely",
+              "tooltip": "Each exchange erodes the memorandum.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 4 },
+                { "type": "relation", "a": "IRN", "b": "ISR", "delta": -3 },
+                { "type": "relation", "a": "IRN", "b": "USA", "delta": -3 },
+                {
+                  "type": "news",
+                  "text": "Strikes and drone fire test Iran ceasefire; mediators call for restraint"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ig-memorandum-renewal",
+          "title": "Islamabad Memorandum up for renewal",
+          "text": "The ceasefire framework with Iran expires within weeks. {PLAYER} must decide whether to extend it and ease the naval blockade, let it lapse, or extend it while keeping the pressure on.",
+          "scope": "player",
+          "weight": 5,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["USA"] },
+            { "type": "flashpointMin", "id": "iran-israel-gulf", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Extend and ease the blockade",
+              "tooltip": "Big drop in tension and a thaw with Tehran; Israel is unhappy.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": -10 },
+                { "type": "tension", "delta": -3 },
+                { "type": "relation", "a": "USA", "b": "IRN", "delta": 10 },
+                { "type": "relation", "a": "USA", "b": "ISR", "delta": -5 },
+                { "type": "relation", "a": "USA", "b": "PAK", "delta": 4 },
+                { "type": "relation", "a": "USA", "b": "QAT", "delta": 4 }
+              ]
+            },
+            {
+              "label": "Let it lapse and resume strikes",
+              "tooltip": "Return to open hostilities with Iran; very costly and destabilising.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 15 },
+                { "type": "tension", "delta": 8 },
+                { "type": "relation", "a": "USA", "b": "IRN", "delta": -15 },
+                { "type": "defcon", "nation": "USA", "delta": -1 },
+                { "type": "treasury", "nation": "USA", "pctGdp": -0.3 },
+                { "type": "relation", "a": "USA", "b": "ISR", "delta": 5 },
+                {
+                  "type": "news",
+                  "text": "Ceasefire framework with Iran lapses; US resumes strikes"
+                }
+              ]
+            },
+            {
+              "label": "Extend but keep the blockade",
+              "tooltip": "Buys time without concessions.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": -3 },
+                { "type": "relation", "a": "USA", "b": "IRN", "delta": 3 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ig-nuclear-file",
+          "title": "The nuclear file",
+          "text": "With enrichment sites damaged and inspectors absent, {PLAYER} must set course: rebuild enrichment at a dispersed site, restore inspector access to unlock sanctions relief, or stall for time.",
+          "scope": "player",
+          "weight": 5,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["IRN"] },
+            { "type": "flashpointMin", "id": "iran-israel-gulf", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Rebuild enrichment covertly",
+              "tooltip": "Advances the programme but risks renewed strikes and isolation.",
+              "effects": [
+                { "type": "research", "nation": "IRN", "points": 30 },
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 12 },
+                { "type": "tension", "delta": 5 },
+                { "type": "relation", "a": "IRN", "b": "USA", "delta": -15 },
+                { "type": "relation", "a": "IRN", "b": "ISR", "delta": -5 },
+                { "type": "relation", "a": "IRN", "b": "FRA", "delta": -8 }
+              ]
+            },
+            {
+              "label": "Restore inspector access",
+              "tooltip": "Lowers tension and opens the door to sanctions relief; hardliners object.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": -10 },
+                { "type": "relation", "a": "IRN", "b": "USA", "delta": 8 },
+                { "type": "relation", "a": "IRN", "b": "FRA", "delta": 6 },
+                { "type": "relation", "a": "IRN", "b": "GBR", "delta": 6 },
+                { "type": "stability", "nation": "IRN", "delta": -4 }
+              ]
+            },
+            {
+              "label": "Stall and keep ambiguity",
+              "tooltip": "No concessions, no progress; tension creeps up.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 2 },
+                { "type": "relation", "a": "IRN", "b": "USA", "delta": -2 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ig-northern-front",
+          "title": "Northern front decision",
+          "text": "Intelligence reports Hezbollah rearmament despite the ceasefire. {PLAYER} must choose between strikes, honouring the ceasefire and withdrawing from forward positions, or limited covert action.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 10,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["ISR"] },
+            { "type": "flashpointMin", "id": "iran-israel-gulf", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Strike rearmament sites",
+              "tooltip": "Degrades the threat; strains the ceasefire and ties with Paris and Washington.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 8 },
+                { "type": "relation", "a": "ISR", "b": "LBN", "delta": -8 },
+                { "type": "relation", "a": "ISR", "b": "FRA", "delta": -5 },
+                { "type": "relation", "a": "ISR", "b": "USA", "delta": -3 },
+                { "type": "stability", "nation": "LBN", "delta": -3 }
+              ]
+            },
+            {
+              "label": "Honour the ceasefire and pull back",
+              "tooltip": "Lowers tension and helps Gulf ties, at a domestic political cost.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": -6 },
+                { "type": "relation", "a": "ISR", "b": "LBN", "delta": 6 },
+                { "type": "relation", "a": "ISR", "b": "SAU", "delta": 4 },
+                { "type": "stability", "nation": "ISR", "delta": -3 }
+              ]
+            },
+            {
+              "label": "Covert action only",
+              "tooltip": "Deniable pressure with limited diplomatic cost.",
+              "effects": [
+                { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 2 },
+                { "type": "relation", "a": "ISR", "b": "IRN", "delta": -3 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kashmir",
+      "name": "Kashmir and the Line of Control",
+      "lat": 34.0,
+      "lon": 75.0,
+      "nations": ["IND", "PAK", "CHN"],
+      "sides": [["PAK"], ["IND"]],
+      "tension": 45,
+      "description": "Relations remain frozen more than a year after the May 2025 clashes: trade is near zero, the Indus Waters Treaty is in abeyance, and only unofficial Track II dialogue continues. Pakistan's military leadership has consolidated authority and deepened partnerships with China, Saudi Arabia and Türkiye.",
+      "events": [
+        {
+          "id": "ks-loc-breach",
+          "title": "Firing along the Line of Control",
+          "text": "Exchanges of small-arms and mortar fire are reported along the Line of Control, the heaviest since the 2025 ceasefire understanding. Each side blames the other for initiating.",
+          "scope": "world",
+          "weight": 5,
+          "once": false,
+          "cooldown": 6,
+          "conditions": [{ "type": "flashpointMin", "id": "kashmir", "value": 35 }],
+          "choices": [
+            {
+              "label": "Exchange subsides",
+              "tooltip": "Tension rises and relations slide further.",
+              "effects": [
+                { "type": "flashpoint", "id": "kashmir", "delta": 5 },
+                { "type": "relation", "a": "IND", "b": "PAK", "delta": -4 },
+                {
+                  "type": "news",
+                  "text": "Heaviest firing along Kashmir Line of Control since 2025; both sides trade blame"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ks-attack-response",
+          "title": "Response to a cross-border attack",
+          "text": "A deadly attack on security forces in Kashmir is attributed to a Pakistan-based group. Public pressure on {PLAYER} to respond is intense; partners urge restraint.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["IND"] },
+            { "type": "flashpointMin", "id": "kashmir", "value": 50 }
+          ],
+          "choices": [
+            {
+              "label": "Launch punitive strikes",
+              "tooltip": "Popular at home; large jump in tension and risk of wider escalation.",
+              "effects": [
+                { "type": "flashpoint", "id": "kashmir", "delta": 15 },
+                { "type": "tension", "delta": 5 },
+                { "type": "relation", "a": "IND", "b": "PAK", "delta": -15 },
+                { "type": "relation", "a": "IND", "b": "CHN", "delta": -5 },
+                { "type": "relation", "a": "IND", "b": "USA", "delta": -3 },
+                { "type": "stability", "nation": "IND", "delta": 3 }
+              ]
+            },
+            {
+              "label": "Pursue diplomatic isolation of Islamabad",
+              "tooltip": "Modest escalation; wins sympathy from partners.",
+              "effects": [
+                { "type": "flashpoint", "id": "kashmir", "delta": 3 },
+                { "type": "relation", "a": "IND", "b": "PAK", "delta": -5 },
+                { "type": "relation", "a": "IND", "b": "USA", "delta": 3 },
+                { "type": "relation", "a": "IND", "b": "SAU", "delta": 3 }
+              ]
+            },
+            {
+              "label": "Open a back-channel",
+              "tooltip": "Lowers tension but looks weak to voters.",
+              "effects": [
+                { "type": "flashpoint", "id": "kashmir", "delta": -6 },
+                { "type": "relation", "a": "IND", "b": "PAK", "delta": 5 },
+                { "type": "stability", "nation": "IND", "delta": -3 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ks-indus-standoff",
+          "title": "Indus waters standoff",
+          "text": "India accelerates dam works on western rivers while the treaty remains in abeyance. {PLAYER} must decide how to respond to what officials call an existential water threat.",
+          "scope": "player",
+          "weight": 4,
+          "once": false,
+          "cooldown": 12,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["PAK"] },
+            { "type": "flashpointMin", "id": "kashmir", "value": 40 }
+          ],
+          "choices": [
+            {
+              "label": "Warn that diversion means conflict",
+              "tooltip": "Rallies the public but sharply raises tension.",
+              "effects": [
+                { "type": "flashpoint", "id": "kashmir", "delta": 8 },
+                { "type": "tension", "delta": 3 },
+                { "type": "relation", "a": "PAK", "b": "IND", "delta": -10 },
+                { "type": "stability", "nation": "PAK", "delta": 2 }
+              ]
+            },
+            {
+              "label": "Seek arbitration and Chinese backing",
+              "tooltip": "Internationalises the dispute; Beijing draws closer.",
+              "effects": [
+                { "type": "flashpoint", "id": "kashmir", "delta": 2 },
+                { "type": "relation", "a": "PAK", "b": "CHN", "delta": 5 },
+                { "type": "relation", "a": "PAK", "b": "IND", "delta": -3 }
+              ]
+            },
+            {
+              "label": "Propose technical water talks",
+              "tooltip": "Lowers tension; critics at home call it capitulation.",
+              "effects": [
+                { "type": "flashpoint", "id": "kashmir", "delta": -5 },
+                { "type": "relation", "a": "PAK", "b": "IND", "delta": 4 },
+                { "type": "stability", "nation": "PAK", "delta": -2 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "india-china-lac",
+      "name": "India-China Line of Actual Control",
+      "lat": 33.0,
+      "lon": 78.5,
+      "nations": ["IND", "CHN"],
+      "sides": [["CHN"], ["IND"]],
+      "tension": 25,
+      "description": "The Line of Actual Control has been calm since the October 2024 disengagement, and the 25th Special Representatives round in August 2026 agreed new hotlines and an expert group on delimitation. Analysts describe managed stabilisation rather than a strategic reset.",
+      "events": [
+        {
+          "id": "lac-patrol-faceoff",
+          "title": "Patrol face-off in Ladakh",
+          "text": "Indian and Chinese patrols confront each other in a disputed sector; a scuffle is reported but no shots are fired. Local commanders meet to defuse the situation.",
+          "scope": "world",
+          "weight": 4,
+          "once": false,
+          "cooldown": 8,
+          "conditions": [{ "type": "flashpointMin", "id": "india-china-lac", "value": 20 }],
+          "choices": [
+            {
+              "label": "Face-off defused",
+              "tooltip": "A reminder that the border remains unsettled.",
+              "effects": [
+                { "type": "flashpoint", "id": "india-china-lac", "delta": 5 },
+                { "type": "relation", "a": "IND", "b": "CHN", "delta": -4 },
+                {
+                  "type": "news",
+                  "text": "Indian and Chinese patrols in face-off along Himalayan border; commanders meet"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lac-sr-round",
+          "title": "Special Representatives meet",
+          "text": "The boundary envoys of India and China hold another round of talks and agree further confidence-building steps, including expanded hotlines and pilgrim access.",
+          "scope": "world",
+          "weight": 3,
+          "once": false,
+          "cooldown": 10,
+          "conditions": [{ "type": "flashpointMax", "id": "india-china-lac", "value": 50 }],
+          "choices": [
+            {
+              "label": "Talks conclude",
+              "tooltip": "Tension eases slightly.",
+              "effects": [
+                { "type": "flashpoint", "id": "india-china-lac", "delta": -4 },
+                { "type": "relation", "a": "IND", "b": "CHN", "delta": 4 },
+                {
+                  "type": "news",
+                  "text": "India and China agree new border confidence measures at envoy talks"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lac-infrastructure-race",
+          "title": "Border infrastructure race",
+          "text": "Satellite imagery shows new roads and helipads on the other side of the Line of Actual Control. {PLAYER} must decide whether to match the build-up, propose wider buffer zones, or hold course.",
+          "scope": "player",
+          "weight": 3,
+          "once": false,
+          "cooldown": 15,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["IND", "CHN"] },
+            { "type": "flashpointMin", "id": "india-china-lac", "value": 30 }
+          ],
+          "choices": [
+            {
+              "label": "Accelerate border infrastructure",
+              "tooltip": "Improves your position but costs money and raises tension.",
+              "effects": [
+                { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.15 },
+                { "type": "flashpoint", "id": "india-china-lac", "delta": 5 },
+                { "type": "relation", "a": "IND", "b": "CHN", "delta": -5 }
+              ]
+            },
+            {
+              "label": "Propose extended buffer zones",
+              "tooltip": "Lowers tension and improves ties.",
+              "effects": [
+                { "type": "flashpoint", "id": "india-china-lac", "delta": -6 },
+                { "type": "relation", "a": "IND", "b": "CHN", "delta": 5 }
+              ]
+            },
+            {
+              "label": "Hold course",
+              "tooltip": "No change; a small boost to domestic confidence.",
+              "effects": [{ "type": "stability", "nation": "PLAYER", "delta": 1 }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "arctic",
+      "name": "Arctic and Greenland",
+      "lat": 75.0,
+      "lon": -40.0,
+      "nations": ["USA", "DNK", "CAN", "NOR", "RUS"],
+      "sides": [["RUS"], ["USA", "DNK", "CAN", "NOR", "FIN", "SWE"]],
+      "tension": 35,
+      "description": "Washington's push for control of Greenland, including a special envoy and repeated public demands, has strained ties with Denmark and unsettled NATO's northern members. Russia continues to rebuild Arctic bases and assert control over the Northern Sea Route as melting ice opens new shipping lanes.",
+      "events": [
+        {
+          "id": "ar-greenland-pressure",
+          "title": "Greenland pressure round",
+          "text": "New US statements about acquiring Greenland prompt protests in Nuuk and Copenhagen and a statement of solidarity from Nordic and Canadian leaders.",
+          "scope": "world",
+          "weight": 4,
+          "once": false,
+          "cooldown": 8,
+          "conditions": [{ "type": "flashpointMin", "id": "arctic", "value": 25 }],
+          "choices": [
+            {
+              "label": "Row continues",
+              "tooltip": "US ties with Denmark and Canada suffer.",
+              "effects": [
+                { "type": "flashpoint", "id": "arctic", "delta": 4 },
+                { "type": "relation", "a": "USA", "b": "DNK", "delta": -6 },
+                { "type": "relation", "a": "USA", "b": "CAN", "delta": -2 },
+                {
+                  "type": "news",
+                  "text": "Renewed US demands on Greenland draw protests in Copenhagen and Nuuk"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ar-northern-sea-route",
+          "title": "Northern Sea Route incident",
+          "text": "Russian authorities detain a foreign research vessel for allegedly transiting the Northern Sea Route without permission. Norway and the EU protest the enforcement of Russia's transit rules.",
+          "scope": "world",
+          "weight": 3,
+          "once": false,
+          "cooldown": 8,
+          "conditions": [{ "type": "flashpointMin", "id": "arctic", "value": 30 }],
+          "choices": [
+            {
+              "label": "Vessel released after fine",
+              "tooltip": "Arctic tension rises modestly.",
+              "effects": [
+                { "type": "flashpoint", "id": "arctic", "delta": 3 },
+                { "type": "relation", "a": "RUS", "b": "NOR", "delta": -4 },
+                {
+                  "type": "news",
+                  "text": "Russia detains research vessel on Northern Sea Route; Oslo protests"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ar-greenland-decision",
+          "title": "Greenland decision point",
+          "text": "Advisers present {PLAYER} with options on Greenland: press for a sovereignty transfer, settle for an expanded basing and minerals agreement, or drop the issue to repair alliance ties.",
+          "scope": "player",
+          "weight": 4,
+          "once": true,
+          "cooldown": 0,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["USA"] },
+            { "type": "flashpointMin", "id": "arctic", "value": 35 }
+          ],
+          "choices": [
+            {
+              "label": "Press for sovereignty transfer",
+              "tooltip": "Alienates Denmark and European allies; raises global tension.",
+              "effects": [
+                { "type": "flashpoint", "id": "arctic", "delta": 10 },
+                { "type": "tension", "delta": 4 },
+                { "type": "relation", "a": "USA", "b": "DNK", "delta": -20 },
+                { "type": "relation", "a": "USA", "b": "DEU", "delta": -8 },
+                { "type": "relation", "a": "USA", "b": "FRA", "delta": -8 },
+                { "type": "relation", "a": "USA", "b": "CAN", "delta": -6 }
+              ]
+            },
+            {
+              "label": "Negotiate basing and minerals deal",
+              "tooltip": "Secures access and resources while repairing ties with Copenhagen.",
+              "effects": [
+                { "type": "flashpoint", "id": "arctic", "delta": -5 },
+                { "type": "relation", "a": "USA", "b": "DNK", "delta": 8 },
+                { "type": "treasury", "nation": "USA", "pctGdp": -0.1 },
+                { "type": "research", "nation": "USA", "points": 10 }
+              ]
+            },
+            {
+              "label": "Drop the issue",
+              "tooltip": "Alliance repaired; some domestic supporters are disappointed.",
+              "effects": [
+                { "type": "flashpoint", "id": "arctic", "delta": -8 },
+                { "type": "relation", "a": "USA", "b": "DNK", "delta": 12 },
+                { "type": "relation", "a": "USA", "b": "CAN", "delta": 4 },
+                { "type": "stability", "nation": "USA", "delta": -2 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ar-militarisation",
+          "title": "Arctic basing programme",
+          "text": "The Northern Fleet asks {PLAYER} to fund reopened Soviet-era airfields and radar sites along the Arctic coast, citing NATO's expanded northern presence. Diplomats propose reviving Arctic Council cooperation instead.",
+          "scope": "player",
+          "weight": 3,
+          "once": false,
+          "cooldown": 18,
+          "conditions": [
+            { "type": "isNation", "nation": "PLAYER", "iso3": ["RUS"] },
+            { "type": "flashpointMin", "id": "arctic", "value": 30 }
+          ],
+          "choices": [
+            {
+              "label": "Fund the basing programme",
+              "tooltip": "Strengthens the Arctic posture at a cost in cash and northern goodwill.",
+              "effects": [
+                { "type": "treasury", "nation": "RUS", "pctGdp": -0.2 },
+                { "type": "flashpoint", "id": "arctic", "delta": 6 },
+                { "type": "relation", "a": "RUS", "b": "NOR", "delta": -6 },
+                { "type": "relation", "a": "RUS", "b": "USA", "delta": -4 },
+                { "type": "units", "nation": "RUS", "unitType": "airDefense", "count": 1 }
+              ]
+            },
+            {
+              "label": "Propose Arctic Council reset",
+              "tooltip": "Lowers tension and opens a channel to Oslo.",
+              "effects": [
+                { "type": "flashpoint", "id": "arctic", "delta": -4 },
+                { "type": "relation", "a": "RUS", "b": "NOR", "delta": 4 },
+                { "type": "relation", "a": "RUS", "b": "CAN", "delta": 2 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

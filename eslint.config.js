@@ -19,6 +19,18 @@ export default tseslint.config(
     },
   },
   {
+    // Rendering code mutates three.js objects inside useFrame callbacks by design (D-043); the
+    // React Compiler immutability/purity rules do not fit that model. Renderer modules also export
+    // helpers alongside components.
+    files: ['src/render/**/*.{ts,tsx}'],
+    rules: {
+      'react-hooks/immutability': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/refs': 'off',
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
     // The simulation must be pure and deterministic.
     files: ['src/sim/**/*.ts'],
     rules: {
@@ -60,5 +72,10 @@ export default tseslint.config(
       ],
       'no-restricted-globals': ['error', 'document', 'window', 'localStorage'],
     },
+  },
+  {
+    // Worker timing and test benchmarks may read the wall clock; the simulation itself may not.
+    files: ['src/sim/worker.ts', 'src/sim/**/*.test.ts'],
+    rules: { 'no-restricted-properties': 'off', 'no-console': 'off' },
   },
 );
