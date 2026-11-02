@@ -1,7 +1,7 @@
 {
-  "source": "World War 3 game design (fictional scenario parameters, not real-world data)",
+  "source": "World War 3 design brief (docs/DESIGN.md) — fictional scenario parameters, not real-world data",
   "asOf": "2026-11-02",
   "estimate": false,
-  "startDate": "2027-01-01",
-  "daysPerTurn": 7
+  "startMonth": "2027-01",
+  "monthsPerTurn": 1
 }

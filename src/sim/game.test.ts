@@ -2,17 +2,23 @@ import { describe, expect, it } from 'vitest';
 import { applyCommand, createGame, dateForTurn } from './game';
 
 describe('game', () => {
-  it('starts at turn 0 on the campaign start date', () => {
+  it('starts at turn 0 in January 2027', () => {
     const g = createGame(123);
     expect(g.turn).toBe(0);
-    expect(g.date).toBe('2027-01-01');
+    expect(g.date).toEqual({ year: 2027, month: 1 });
+    expect(g.isoDate).toBe('2027-01');
   });
 
-  it('advances one week per turn', () => {
+  it('advances one calendar month per turn', () => {
     const g = applyCommand(createGame(1), { type: 'endTurn' });
     expect(g.turn).toBe(1);
-    expect(g.date).toBe('2027-01-08');
-    expect(dateForTurn(52)).toBe('2027-12-31');
+    expect(g.isoDate).toBe('2027-02');
+    expect(dateForTurn(11)).toEqual({ year: 2027, month: 12 });
+    expect(dateForTurn(12)).toEqual({ year: 2028, month: 1 });
+  });
+
+  it('reaches the 2040 Deterrence horizon after 156 turns', () => {
+    expect(dateForTurn(156)).toEqual({ year: 2040, month: 1 });
   });
 
   it('does not mutate the input state', () => {

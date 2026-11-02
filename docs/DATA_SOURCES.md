@@ -6,9 +6,9 @@ Every real-world dataset and every third-party asset must have a row here. Data 
 
 ## Datasets
 
-| File                 | Source                                                  | asOf       | Licence        | Notes                                                 |
-| -------------------- | ------------------------------------------------------- | ---------- | -------------- | ----------------------------------------------------- |
-| `data/scenario.json` | World War 3 game design (fictional scenario parameters) | 2026-11-02 | n/a (original) | Not real-world data. Start date and turn length only. |
+| File                 | Source                                                                      | asOf       | Licence        | Notes                                                                      |
+| -------------------- | --------------------------------------------------------------------------- | ---------- | -------------- | -------------------------------------------------------------------------- |
+| `data/scenario.json` | World War 3 design brief (`docs/DESIGN.md`) — fictional scenario parameters | 2026-11-02 | n/a (original) | Not real-world data. Start month (2027-01) and turn length (1 month) only. |
 
 ## Assets (textures, models, fonts, audio)
 

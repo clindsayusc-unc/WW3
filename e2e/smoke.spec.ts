@@ -19,10 +19,10 @@ test('game boots, renders the globe and advances a turn', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('canvas')).toBeVisible();
   await expect(page.getByTestId('end-turn')).toBeVisible();
-  await expect(page.getByTestId('hud')).toContainText('2027-01-01');
+  await expect(page.getByTestId('hud')).toContainText('January 2027');
 
   await page.getByTestId('end-turn').click();
-  await expect(page.getByTestId('hud')).toContainText('2027-01-08');
+  await expect(page.getByTestId('hud')).toContainText('February 2027');
 
   await page.waitForTimeout(1000);
   mkdirSync('docs/screenshots', { recursive: true });

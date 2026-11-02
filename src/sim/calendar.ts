@@ -1,31 +1,21 @@
 /**
- * Pure proleptic-Gregorian calendar maths (Howard Hinnant's days-from-civil
- * algorithms). Used instead of `Date` so src/sim never touches the wall clock.
+ * Pure month-based calendar for the campaign (1 turn = 1 calendar month, see
+ * docs/DESIGN.md "Core loop"). Integer maths only, so src/sim never touches `Date`.
  */
-export function daysFromCivil(y: number, m: number, d: number): number {
-  const yy = m <= 2 ? y - 1 : y;
-  const era = Math.floor(yy / 400);
-  const yoe = yy - era * 400;
-  const doy = Math.floor((153 * (m + (m > 2 ? -3 : 9)) + 2) / 5) + d - 1;
-  const doe = yoe * 365 + Math.floor(yoe / 4) - Math.floor(yoe / 100) + doy;
-  return era * 146097 + doe - 719468;
+export interface YearMonth {
+  /** Calendar year, e.g. 2027. */
+  readonly year: number;
+  /** Calendar month, 1–12. */
+  readonly month: number;
 }
 
-export function civilFromDays(z: number): { y: number; m: number; d: number } {
-  const zz = z + 719468;
-  const era = Math.floor(zz / 146097);
-  const doe = zz - era * 146097;
-  const yoe = Math.floor(
-    (doe - Math.floor(doe / 1460) + Math.floor(doe / 36524) - Math.floor(doe / 146096)) / 365,
-  );
-  const doy = doe - (365 * yoe + Math.floor(yoe / 4) - Math.floor(yoe / 100));
-  const mp = Math.floor((5 * doy + 2) / 153);
-  const d = doy - Math.floor((153 * mp + 2) / 5) + 1;
-  const m = mp + (mp < 10 ? 3 : -9);
-  return { y: yoe + era * 400 + (m <= 2 ? 1 : 0), m, d };
+/** Adds `months` (which may be negative) to a year/month. */
+export function addMonths(start: YearMonth, months: number): YearMonth {
+  const index = start.year * 12 + (start.month - 1) + months;
+  return { year: Math.floor(index / 12), month: (((index % 12) + 12) % 12) + 1 };
 }
 
-export function isoDate(days: number): string {
-  const { y, m, d } = civilFromDays(days);
-  return `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+/** ISO-8601 year-month string, e.g. "2027-01". */
+export function isoYearMonth({ year, month }: YearMonth): string {
+  return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}`;
 }

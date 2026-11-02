@@ -1,5 +1,6 @@
 import { useGameStore } from '../state/gameStore';
 import { dispatch } from '../state/simBridge';
+import { formatMonth } from './format';
 import { Stat } from './Stat';
 
 export function Hud() {
@@ -13,12 +14,12 @@ export function Hud() {
           <Stat
             label="Turn"
             value={game.turn + 1}
-            tooltip="Current turn number. Each turn represents one week of in-game time."
+            tooltip="Current turn number. Each turn is one calendar month; turn 1 is January 2027."
           />
           <Stat
             label="Date"
-            value={game.date}
-            tooltip="In-game calendar date at the start of this turn (campaign begins 2027-01-01)."
+            value={formatMonth(game.date)}
+            tooltip="In-game month. The campaign begins in January 2027 and advances one month each time you end the turn."
           />
           <button
             className="end-turn"
