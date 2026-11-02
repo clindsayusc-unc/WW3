@@ -6,7 +6,13 @@ import { useUiStore } from '../state/uiStore';
 import { dispatch } from '../state/simBridge';
 import { loadWorld, nationName, type ChokepointMeta, type RegionMeta } from '../sim/world';
 import { TERRAIN, describeWeather, weatherAt } from '../sim/terrain';
-import { canCloseChokepoint, canMineChokepoint, chokepointState, crossingBetween, shoreControllers } from '../sim/geography';
+import {
+  canCloseChokepoint,
+  canMineChokepoint,
+  chokepointState,
+  crossingBetween,
+  shoreControllers,
+} from '../sim/geography';
 import { SUPPLY_THRESHOLD } from '../sim/military';
 import type { GameState, Modifier, OddsReport, RegionState } from '../sim/types';
 import { Stat } from './Stat';
@@ -46,7 +52,15 @@ const COVER_COLOR: Record<string, string> = {
   water: '#3b6fa0',
 };
 
-export function TerrainSection({ meta, rs, game }: { meta: RegionMeta; rs: RegionState; game: GameState }) {
+export function TerrainSection({
+  meta,
+  rs,
+  game,
+}: {
+  meta: RegionMeta;
+  rs: RegionState;
+  game: GameState;
+}) {
   const rule = TERRAIN[meta.terrain];
   const w = weatherAt(world, meta.id, game.date.month);
   const cover = Object.entries(meta.cover)
@@ -54,7 +68,12 @@ export function TerrainSection({ meta, rs, game }: { meta: RegionMeta; rs: Regio
     .sort((a, b) => b[1] - a[1]);
   const hover = useUiStore((s) => s.hoverRegion);
   const selected = useUiStore((s) => s.selectedRegion);
-  const other = selected !== null && selected !== meta.id ? selected : hover !== null && hover !== meta.id ? hover : null;
+  const other =
+    selected !== null && selected !== meta.id
+      ? selected
+      : hover !== null && hover !== meta.id
+        ? hover
+        : null;
   const crossing = other !== null ? crossingBetween(world, meta.id, other) : null;
   const c = meta.climate;
   return (
@@ -107,7 +126,9 @@ export function TerrainSection({ meta, rs, game }: { meta: RegionMeta; rs: Regio
           label="Supply"
           value={rs.controller ? formatPct(rs.supply * 100, 0) : '—'}
           tooltip={`Supply reaching the controller here. Depots are the nation's own regions; every region, sea zone, river and mountain between cuts it. Below ${Math.round(SUPPLY_THRESHOLD * 100)} % units are cut off: they fight at half strength and lose 4 strength a month.`}
-          accent={rs.supply < SUPPLY_THRESHOLD ? '#f87171' : rs.supply < 0.6 ? '#fbbf24' : undefined}
+          accent={
+            rs.supply < SUPPLY_THRESHOLD ? '#f87171' : rs.supply < 0.6 ? '#fbbf24' : undefined
+          }
         />
       </div>
       {c && (
@@ -121,7 +142,22 @@ export function TerrainSection({ meta, rs, game }: { meta: RegionMeta; rs: Regio
           <Stat
             label="Year"
             value={`${Math.min(...c.tempC).toFixed(0)}…${Math.max(...c.tempC).toFixed(0)} °C`}
-            tooltip={`Monthly means Jan–Dec: ${c.tempC.map((t) => t.toFixed(0)).join('/')} °C; rain ${c.precipMm.join('/')} mm. Winter months: ${c.winter.map((v, i) => (v >= 0.15 ? MONTH[i] : null)).filter(Boolean).join(' ') || 'none'}; monsoon: ${c.monsoon.map((v, i) => (v >= 0.15 ? MONTH[i] : null)).filter(Boolean).join(' ') || 'none'}; extreme heat: ${c.heat.map((v, i) => (v >= 0.15 ? MONTH[i] : null)).filter(Boolean).join(' ') || 'none'}.`}
+            tooltip={`Monthly means Jan–Dec: ${c.tempC.map((t) => t.toFixed(0)).join('/')} °C; rain ${c.precipMm.join('/')} mm. Winter months: ${
+              c.winter
+                .map((v, i) => (v >= 0.15 ? MONTH[i] : null))
+                .filter(Boolean)
+                .join(' ') || 'none'
+            }; monsoon: ${
+              c.monsoon
+                .map((v, i) => (v >= 0.15 ? MONTH[i] : null))
+                .filter(Boolean)
+                .join(' ') || 'none'
+            }; extreme heat: ${
+              c.heat
+                .map((v, i) => (v >= 0.15 ? MONTH[i] : null))
+                .filter(Boolean)
+                .join(' ') || 'none'
+            }.`}
           />
         </div>
       )}
@@ -133,7 +169,13 @@ export function TerrainSection({ meta, rs, game }: { meta: RegionMeta; rs: Regio
           Border with {world.regions.get(other)?.name}:{' '}
           {[
             ...crossing.rivers.map((r) => `river ${r}`),
-            ...(crossing.mountain ? [crossing.ranges.length ? `mountains (${crossing.ranges.join(', ')})` : 'mountain border'] : []),
+            ...(crossing.mountain
+              ? [
+                  crossing.ranges.length
+                    ? `mountains (${crossing.ranges.join(', ')})`
+                    : 'mountain border',
+                ]
+              : []),
             ...(crossing.pass ? [`pass: ${crossing.pass}`] : []),
           ].join(' · ')}
         </p>
@@ -156,9 +198,19 @@ function BreakdownRows({ title, mods }: { title: string; mods: Modifier[] }) {
               {m.label}
             </span>
             <span className="bk-bar" data-tip={m.detail}>
-              <span style={{ width: `${width}%`, background: good ? '#4ade80' : bad ? '#f87171' : '#94a3b8' }} />
+              <span
+                style={{
+                  width: `${width}%`,
+                  background: good ? '#4ade80' : bad ? '#f87171' : '#94a3b8',
+                }}
+              />
             </span>
-            <Stat value={`×${m.factor.toFixed(2)}`} tooltip={m.detail} inline className={`bk-value ${good ? 'good' : bad ? 'bad' : ''}`} />
+            <Stat
+              value={`×${m.factor.toFixed(2)}`}
+              tooltip={m.detail}
+              inline
+              className={`bk-value ${good ? 'good' : bad ? 'bad' : ''}`}
+            />
           </div>
         );
       })}
@@ -175,21 +227,32 @@ export function OddsBreakdown({ report }: { report: OddsReport }) {
       </div>
       {(report.attacker.length > 0 || report.defender.length > 0) && (
         <div className="breakdown">
-          {report.attacker.length > 0 && <BreakdownRows title={`Attacker in ${target?.name ?? ''}`} mods={report.attacker} />}
+          {report.attacker.length > 0 && (
+            <BreakdownRows title={`Attacker in ${target?.name ?? ''}`} mods={report.attacker} />
+          )}
           {report.defender.length > 0 && <BreakdownRows title="Defender" mods={report.defender} />}
         </div>
       )}
       {report.path && (
         <div className="route" data-testid="route-preview">
           <div className="section-title">
-            Route · <Stat value={`${report.path.turns}`} tooltip={`Months to arrive: total movement cost ${report.path.totalCost} ÷ movement points per month. Terrain, weather and river or mountain crossings raise each step's cost.`} inline />{' '}
+            Route ·{' '}
+            <Stat
+              value={`${report.path.turns}`}
+              tooltip={`Months to arrive: total movement cost ${report.path.totalCost} ÷ movement points per month. Terrain, weather and river or mountain crossings raise each step's cost.`}
+              inline
+            />{' '}
             month{report.path.turns === 1 ? '' : 's'}
           </div>
           {report.path.regions.map((r, i) => (
             <div key={r} className="route-step">
               <span>{world.regions.get(r)?.name}</span>
               <span className="mono">
-                <Stat value={`cost ${report.path!.costs[i]}`} tooltip={`Movement cost of entering ${world.regions.get(r)?.name}: ${TERRAIN[world.regions.get(r)?.terrain ?? 'plains'].name} base ×${TERRAIN[world.regions.get(r)?.terrain ?? 'plains'].moveCost} with this month's weather, plus any river or mountain crossing.`} inline />{' '}
+                <Stat
+                  value={`cost ${report.path!.costs[i]}`}
+                  tooltip={`Movement cost of entering ${world.regions.get(r)?.name}: ${TERRAIN[world.regions.get(r)?.terrain ?? 'plains'].name} base ×${TERRAIN[world.regions.get(r)?.terrain ?? 'plains'].moveCost} with this month's weather, plus any river or mountain crossing.`}
+                  inline
+                />{' '}
                 <Stat
                   value={`supply ${Math.round((report.path!.supply[i] ?? 0) * 100)}%`}
                   tooltip="Supply level the unit would have there, as things stand now: decays with every region, sea zone and crossing from the nearest depot or port."
@@ -235,7 +298,15 @@ export function ChokepointSection({ c, game }: { c: ChokepointMeta; game: GameSt
         <Stat
           label="Trade"
           value={formatPct(c.tradeShare * 100, 0)}
-          tooltip={`Rough share of world seaborne trade passing through (public estimates). Dependent economies: ${Object.entries(c.dependents).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([iso, v]) => `${nationName(world, iso)} ${Math.round(v * 100)} %`).join(', ')}.${c.semiconductors ? ' Semiconductor flows run through it: closure slows research and raises production costs for chip importers.' : ''}`}
+          tooltip={`Rough share of world seaborne trade passing through (public estimates). Dependent economies: ${Object.entries(
+            c.dependents,
+          )
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 6)
+            .map(([iso, v]) => `${nationName(world, iso)} ${Math.round(v * 100)} %`)
+            .join(
+              ', ',
+            )}.${c.semiconductors ? ' Semiconductor flows run through it: closure slows research and raises production costs for chip importers.' : ''}`}
         />
         <Stat
           label="Oil price"
@@ -244,12 +315,23 @@ export function ChokepointSection({ c, game }: { c: ChokepointMeta; game: GameSt
           accent={game.oilPrice > 1.15 ? '#f87171' : undefined}
         />
       </div>
-      <p className="hint" data-tip="Nations controlling at least one shore can close the strait while at war; ships in the strait can lay or clear mines.">
+      <p
+        className="hint"
+        data-tip="Nations controlling at least one shore can close the strait while at war; ships in the strait can lay or clear mines."
+      >
         Shores: {shores.map((iso) => nationName(world, iso)).join(', ') || 'none'}
       </p>
       <div className="choke-actions">
         {s.status === 'open' || s.by !== mine ? (
-          <button className="btn small" disabled={!!closeWhy} data-tip={closeWhy ?? 'Close the strait to hostile shipping: reroutes trade, spikes oil, blocks enemy fleets.'} onClick={() => act('close')}>
+          <button
+            className="btn small"
+            disabled={!!closeWhy}
+            data-tip={
+              closeWhy ??
+              'Close the strait to hostile shipping: reroutes trade, spikes oil, blocks enemy fleets.'
+            }
+            onClick={() => act('close')}
+          >
             Close
           </button>
         ) : (
@@ -258,11 +340,27 @@ export function ChokepointSection({ c, game }: { c: ChokepointMeta; game: GameSt
           </button>
         )}
         {!s.mined ? (
-          <button className="btn small ghost" disabled={!!mineWhy} data-tip={mineWhy ?? 'Lay mines with a submarine or destroyer group in the strait. Keeps it closed even if you lose the shore.'} onClick={() => act('mine')}>
+          <button
+            className="btn small ghost"
+            disabled={!!mineWhy}
+            data-tip={
+              mineWhy ??
+              'Lay mines with a submarine or destroyer group in the strait. Keeps it closed even if you lose the shore.'
+            }
+            onClick={() => act('mine')}
+          >
             Mine
           </button>
         ) : (
-          <button className="btn small ghost" disabled={!!mineWhy} data-tip={mineWhy ?? 'Sweep the minefield (60 % per month with a destroyer or submarine group present).'} onClick={() => act('clear')}>
+          <button
+            className="btn small ghost"
+            disabled={!!mineWhy}
+            data-tip={
+              mineWhy ??
+              'Sweep the minefield (60 % per month with a destroyer or submarine group present).'
+            }
+            onClick={() => act('clear')}
+          >
             Clear mines
           </button>
         )}

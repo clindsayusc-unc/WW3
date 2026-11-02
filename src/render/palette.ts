@@ -199,6 +199,44 @@ export function fillPalette(data: Uint8Array, world: World, state: GameState, mo
   }
 }
 
+/**
+ * Region attributes for the globe shader (D-057): R = devastation (dims night lights, scorches the
+ * ground), G = burning (battle this turn, or lingering fires scaled by devastation), B = controller
+ * at war.
+ */
+export function fillRegionAttr(data: Uint8Array, world: World, state: GameState): void {
+  data.fill(0);
+  const battles = new Set<number>();
+  for (const l of state.log)
+    if (l.kind === 'battle' && l.turn === state.turn - 1 && l.region !== undefined)
+      battles.add(l.region);
+  for (const s of state.strikes) if (s.turn >= state.turn - 1) battles.add(s.to);
+  for (const r of world.regionList) {
+    const rs = state.regions[r.id];
+    if (!rs) continue;
+    const burning = Math.max(
+      battles.has(r.id) ? 1 : 0,
+      Math.min(0.7, Math.max(0, (rs.devastation - 0.04) * 1.6)),
+    );
+    data[r.id * 4] = Math.round(Math.min(1, rs.devastation) * 255);
+    data[r.id * 4 + 1] = Math.round(burning * 255);
+    data[r.id * 4 + 2] = rs.controller && isAtWar(state, rs.controller) ? 255 : 0;
+    data[r.id * 4 + 3] = 255;
+  }
+}
+
+/** Regions with fires this turn and their intensity (0..1), for the fire/smoke particle layers. */
+export function burningRegions(world: World, state: GameState): Map<number, number> {
+  const data = new Uint8Array(2048 * 4);
+  fillRegionAttr(data, world, state);
+  const out = new Map<number, number>();
+  for (const r of world.regionList) {
+    const b = data[r.id * 4 + 1]! / 255;
+    if (b > 0.05 && !r.sea) out.set(r.id, b);
+  }
+  return out;
+}
+
 /** 16-bit nation index per region (for country borders in the shader). */
 export function fillCountryIndex(data: Uint8Array, world: World, state: GameState): void {
   data.fill(0);

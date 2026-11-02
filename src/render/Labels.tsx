@@ -15,7 +15,7 @@ interface LabelItem {
   text: string;
   pos: Vector3;
   priority: number;
-  kind: 'country' | 'capital' | 'city' | 'region' | 'sea';
+  kind: 'country' | 'capital' | 'city' | 'region' | 'sea' | 'seaNamed';
   color: string;
 }
 
@@ -58,15 +58,17 @@ function buildItems(): LabelItem[] {
     });
   }
   for (const r of world.regionList) {
-    if (r.sea)
+    if (r.sea) {
+      // Enclosed seas carry real names (D-058); open-ocean cells are "basin — country".
+      const named = !r.name.includes(' — ');
       items.push({
-        text: r.name,
+        text: named ? r.name.toUpperCase() : r.name,
         pos: latLonToVec3(r.lat, r.lon, 1),
-        priority: 0.2,
-        kind: 'sea',
+        priority: named ? 0.7 : 0.2,
+        kind: named ? 'seaNamed' : 'sea',
         color: '#7dd3fc',
       });
-    else
+    } else
       items.push({
         text: r.name,
         pos: latLonToVec3(r.lat, r.lon, 1),
@@ -144,7 +146,11 @@ export function Labels() {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = color;
-        ctx.fillText(s.status === 'closed' ? '✕' : s.status === 'contested' ? '!' : '⚓', x, y + 0.5);
+        ctx.fillText(
+          s.status === 'closed' ? '✕' : s.status === 'contested' ? '!' : '⚓',
+          x,
+          y + 0.5,
+        );
         if (dist < 2.6) {
           ctx.font = '600 10px Inter, system-ui, sans-serif';
           ctx.letterSpacing = '0.04em';
@@ -165,6 +171,7 @@ export function Labels() {
     const cityAlpha = dist < 1.9 ? Math.min(1, (1.9 - dist) / 0.3) : 0;
     const regionAlpha = dist < 1.32 ? Math.min(1, (1.32 - dist) / 0.15) : 0;
     const seaAlpha = dist < 1.7 && ui.mapMode === 'military' ? Math.min(1, (1.7 - dist) / 0.3) : 0;
+    const seaNamedAlpha = dist < 2.3 ? Math.min(0.85, (2.3 - dist) / 0.4) : 0;
     const placed: { x: number; y: number; w: number; h: number }[] = [];
     const sorted = list
       .map((it) => {
@@ -177,7 +184,9 @@ export function Labels() {
                 ? cityAlpha
                 : it.kind === 'region'
                   ? regionAlpha
-                  : seaAlpha;
+                  : it.kind === 'seaNamed'
+                    ? seaNamedAlpha
+                    : seaAlpha;
         return { it, alpha };
       })
       .filter((x) => x.alpha > 0.02)
@@ -198,8 +207,10 @@ export function Labels() {
         : it.kind === 'capital'
           ? 12
           : 11;
-      ctx.font = `${isCountry ? 700 : it.kind === 'capital' ? 600 : 400} ${fontSize}px Inter, system-ui, sans-serif`;
+      const sea = it.kind === 'seaNamed';
+      ctx.font = `${sea ? 'italic ' : ''}${isCountry ? 700 : it.kind === 'capital' ? 600 : 400} ${sea ? 10 : fontSize}px Inter, system-ui, sans-serif`;
       if (isCountry) ctx.letterSpacing = '0.14em';
+      else if (sea) ctx.letterSpacing = '0.2em';
       else ctx.letterSpacing = '0em';
       const w = ctx.measureText(it.text).width + 14;
       const h = fontSize + 10;

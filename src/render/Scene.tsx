@@ -10,7 +10,12 @@ import { Borders } from './Borders';
 import { Labels } from './Labels';
 import { Units } from './Units';
 import { Strikes } from './Strikes';
+import { FrontLines } from './FrontLines';
+import { Arrows } from './Arrows';
+import { Fires } from './Fires';
+import { Wakes } from './Wakes';
 import { loadRegionIdMap, type RegionIdMap } from './regionIds';
+import { loadHeightMap, setHeightMap } from './terrainHeight';
 import { DynamicResolution, QUALITY } from './quality';
 import { installPerfProbe } from './perf';
 import { useUiStore } from '../state/uiStore';
@@ -23,8 +28,11 @@ interface Assets {
 let assetPromise: Promise<Assets> | null = null;
 export function loadAssets(aniso: number): Promise<Assets> {
   if (!assetPromise)
-    assetPromise = Promise.all([loadGlobeTextures(aniso), loadRegionIdMap()]).then(
-      ([textures, idMap]) => ({ textures, idMap }),
+    assetPromise = Promise.all([loadGlobeTextures(aniso), loadRegionIdMap(), loadHeightMap()]).then(
+      ([textures, idMap, heightMap]) => {
+        setHeightMap(heightMap);
+        return { textures, idMap };
+      },
     );
   return assetPromise;
 }
@@ -41,6 +49,7 @@ function FrameGovernor({ dyn }: { dyn: DynamicResolution }) {
     last.current = now;
     const dpr = dyn.update(dt);
     if (dpr !== null) setDpr(dpr);
+    if (dyn.cap !== useUiStore.getState().autoCap) useUiStore.getState().setAutoCap(dyn.cap);
     frames.current++;
     acc.current += dt;
     if (acc.current >= 1000) {
@@ -60,7 +69,7 @@ function Contents({ assets }: { assets: Assets }) {
   const { gl } = useThree();
   useEffect(() => {
     gl.toneMapping = q.postprocessing ? NoToneMapping : ACESFilmicToneMapping;
-    gl.toneMappingExposure = 1.05;
+    gl.toneMappingExposure = 1.0;
   }, [gl, q]);
   return (
     <>
@@ -69,6 +78,10 @@ function Contents({ assets }: { assets: Assets }) {
       <Stars radius={60} depth={30} count={q.stars} factor={3} saturation={0.1} fade speed={0.2} />
       <Globe textures={assets.textures} idMap={assets.idMap} segments={q.segments} />
       <Borders />
+      <FrontLines />
+      <Arrows />
+      <Fires />
+      <Wakes />
       <Units />
       <Strikes />
       <Labels />

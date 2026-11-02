@@ -10,6 +10,9 @@
  *   earth-normal.jpg  4096×2048  tangent-space normal map derived from GEBCO_08 elevation
  *   earth-clouds.jpg  4096×2048  NASA Blue Marble cloud cover (greyscale, used as alpha)
  *   earth-bathy.jpg   2048×1024  GEBCO bathymetry shading (ocean depth tint)
+ *   earth-height.jpg  2048×1024  GEBCO_08 elevation (greyscale height map; 0 = sea level, ≈ 36 m per level)
+ *
+ *   --only height     build just the listed outputs (comma-separated: day,night,clouds,bathy,normal,height)
  *
  * KTX2/Basis output is not produced because no encoder is available in the build container
  * (see docs/DECISIONS.md D-022); the loader falls back to these JPGs.
@@ -103,37 +106,56 @@ async function normalMap(
 
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true });
-  const [day, night, clouds, elev, bath] = await Promise.all(
-    Object.values(SOURCES).map((s) => fetchCached(s.url, s.file)),
+  const onlyArg = args.indexOf('--only');
+  const only = new Set(
+    onlyArg >= 0 && args[onlyArg + 1]
+      ? (args[onlyArg + 1] as string).split(',')
+      : ['day', 'night', 'clouds', 'bathy', 'normal', 'height'],
   );
-  await sharp(day!)
-    .resize(4096, 2048, { kernel: 'lanczos3' })
-    .jpeg({ quality: 88, mozjpeg: true })
-    .toFile(join(OUT, 'earth-day.jpg'));
-  await sharp(night!)
-    .resize(4096, 2048, { kernel: 'lanczos3' })
-    .jpeg({ quality: 82, mozjpeg: true })
-    .toFile(join(OUT, 'earth-night.jpg'));
-  await sharp(clouds!)
-    .greyscale()
-    .resize(4096, 2048, { kernel: 'lanczos3' })
-    .jpeg({ quality: 80, mozjpeg: true })
-    .toFile(join(OUT, 'earth-clouds.jpg'));
-  await sharp(bath!)
-    .resize(2048, 1024, { kernel: 'lanczos3' })
-    .jpeg({ quality: 80, mozjpeg: true })
-    .toFile(join(OUT, 'earth-bathy.jpg'));
-  const normal = await normalMap(elev!, 4096, 2048, 6);
-  await sharp(normal, { raw: { width: 4096, height: 2048, channels: 3 } })
-    .jpeg({ quality: 90, mozjpeg: true, chromaSubsampling: '4:4:4' })
-    .toFile(join(OUT, 'earth-normal.jpg'));
+  const src = (k: keyof typeof SOURCES) => fetchCached(SOURCES[k].url, SOURCES[k].file);
+  if (only.has('day'))
+    await sharp(await src('day'))
+      .resize(4096, 2048, { kernel: 'lanczos3' })
+      .jpeg({ quality: 88, mozjpeg: true })
+      .toFile(join(OUT, 'earth-day.jpg'));
+  if (only.has('night'))
+    await sharp(await src('night'))
+      .resize(4096, 2048, { kernel: 'lanczos3' })
+      .jpeg({ quality: 82, mozjpeg: true })
+      .toFile(join(OUT, 'earth-night.jpg'));
+  if (only.has('clouds'))
+    await sharp(await src('clouds'))
+      .greyscale()
+      .resize(4096, 2048, { kernel: 'lanczos3' })
+      .jpeg({ quality: 80, mozjpeg: true })
+      .toFile(join(OUT, 'earth-clouds.jpg'));
+  if (only.has('bathy'))
+    await sharp(await src('bathymetry'))
+      .resize(2048, 1024, { kernel: 'lanczos3' })
+      .jpeg({ quality: 80, mozjpeg: true })
+      .toFile(join(OUT, 'earth-bathy.jpg'));
+  if (only.has('normal')) {
+    const normal = await normalMap(await src('elevation'), 4096, 2048, 6);
+    await sharp(normal, { raw: { width: 4096, height: 2048, channels: 3 } })
+      .jpeg({ quality: 90, mozjpeg: true, chromaSubsampling: '4:4:4' })
+      .toFile(join(OUT, 'earth-normal.jpg'));
+  }
+  if (only.has('height'))
+    // Height map for vertex displacement and the snow line; greyscale, sea level = 0.
+    await sharp(await src('elevation'))
+      .greyscale()
+      .resize(2048, 1024, { kernel: 'lanczos3' })
+      .jpeg({ quality: 85, mozjpeg: true })
+      .toFile(join(OUT, 'earth-height.jpg'));
   for (const f of [
     'earth-day.jpg',
     'earth-night.jpg',
     'earth-clouds.jpg',
     'earth-bathy.jpg',
     'earth-normal.jpg',
+    'earth-height.jpg',
   ]) {
+    if (!existsSync(join(OUT, f))) continue;
     const m = await sharp(join(OUT, f)).metadata();
     console.log(`${f} ${m.width}x${m.height} ${(m.size ?? 0) / 1e6} MB`);
   }

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { loadWorld } from '../sim/world';
 import { nationHex } from '../render/palette';
 import { LeaderCard } from './LeaderCard';
+import { GraphicsSettings } from './GraphicsSettings';
 import { newGame, loadGame } from '../state/simBridge';
 import { useUiStore } from '../state/uiStore';
 import { loadAutosave, importSave, listSaves, loadSlot, type SaveMeta } from '../state/saves';
@@ -232,18 +233,7 @@ export function MainMenu({ onStart }: { onStart: () => void }) {
         )}
         {step === 'settings' && (
           <div className="menu-step">
-            <div className="section-title">Quality</div>
-            <div className="seg">
-              {(['low', 'medium', 'high'] as const).map((q) => (
-                <button
-                  key={q}
-                  className={`seg-btn ${ui.quality === q ? 'active' : ''}`}
-                  onClick={() => ui.setQuality(q)}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
+            <GraphicsSettings />
             <div className="chips" style={{ marginTop: 10 }}>
               <button className={`chip toggle ${!ui.muted ? 'on' : ''}`} onClick={ui.toggleMute}>
                 Sound {ui.muted ? 'off' : 'on'}

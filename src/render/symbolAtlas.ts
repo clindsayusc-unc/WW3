@@ -14,6 +14,12 @@ export interface AtlasTile {
   v: number;
 }
 
+const COUNT_BUCKETS = [15, 20, 30, 50, 99];
+function bucketCount(count: number): number {
+  if (count <= 12) return count;
+  return COUNT_BUCKETS.find((b) => count <= b) ?? 99;
+}
+
 export class SymbolAtlas {
   readonly canvas: HTMLCanvasElement;
   readonly texture: CanvasTexture;
@@ -35,16 +41,25 @@ export class SymbolAtlas {
     this.texture.colorSpace = SRGBColorSpace;
   }
 
-  /** Returns the tile for a symbol + count, drawing it on first use. */
+  /**
+   * Returns the tile for a symbol + count, drawing it on first use. Counts above 12 are bucketed
+   * (15, 20, 30, 50, 99) so a long war cannot exhaust the 256 tiles; if it still fills up, the atlas
+   * is cleared and tiles are redrawn on demand.
+   */
   get(sidc: string, affiliation: Affiliation, count: number, color?: string): AtlasTile {
-    const key = `${sidc}|${affiliation}|${Math.min(count, 99)}|${color ?? ''}`;
+    const shown = bucketCount(count);
+    const key = `${sidc}|${affiliation}|${shown}|${color ?? ''}`;
     const hit = this.tiles.get(key);
     if (hit) return hit;
+    if (this.next >= COLS * COLS) {
+      this.tiles.clear();
+      this.next = 0;
+      this.ctx.clearRect(0, 0, ATLAS_SIZE, ATLAS_SIZE);
+    }
     const index = this.next++;
-    if (index >= COLS * COLS) throw new Error('symbol atlas full');
     const tile = { index, u: (index % COLS) / COLS, v: Math.floor(index / COLS) / COLS };
     this.tiles.set(key, tile);
-    this.draw(tile, sidc.slice(0, 1) + affiliation + sidc.slice(2), count, color);
+    this.draw(tile, sidc.slice(0, 1) + affiliation + sidc.slice(2), shown, color);
     return tile;
   }
 
