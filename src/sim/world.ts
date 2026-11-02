@@ -22,6 +22,7 @@ import politicsData from '../../data/politics.json';
 import economyData from '../../data/economy.json';
 import agendasData from '../../data/agendas.json';
 import unscData from '../../data/unsc.json';
+import chainsData from '../../data/chains.json';
 import type { AgendaId, Iso3, RegionId, Regime, ResourceId, TechId, UnitTypeId } from './types';
 
 /** A leader's long-term agenda from data/agendas.json (D-071). */
@@ -81,6 +82,8 @@ export interface TradePairMeta {
 export interface PoliticsMeta {
   readonly regime: Regime;
   readonly termYears: number | null;
+  /** False when the current effective leader is term-limited at the next election (D-075). */
+  readonly incumbentEligible: boolean;
 }
 
 export type TerrainClass =
@@ -308,7 +311,24 @@ export type Effect =
   | { type: 'units'; nation: string; unitType: string; count: number }
   | { type: 'mobilize'; nation: string; level: number }
   | { type: 'warheads'; nation: string; delta: number }
-  | { type: 'news'; text: string };
+  | { type: 'news'; text: string }
+  /** Schedules the next step of an event chain `delay` months later (D-074). */
+  | { type: 'chain'; event: string; delay?: number }
+  /** The leader leaves office (health, resignation, assassination): a fictional successor takes over. */
+  | { type: 'succession'; nation: string; cause: 'health' | 'resignation' | 'assassination' | 'impeachment' }
+  | { type: 'legitimacy'; nation: string; delta: number }
+  | { type: 'support'; nation: string; delta: number };
+
+/** How an AI decision-maker leans when it picks a choice for itself (D-074). */
+export type Stance = 'escalate' | 'hold' | 'deescalate';
+export interface EventChoice {
+  readonly label: string;
+  readonly tooltip: string;
+  readonly effects: readonly Effect[];
+  readonly stance?: Stance;
+  /** World events: probability of this outcome (choices without a decision-maker). */
+  readonly chance?: number;
+}
 
 export interface Condition {
   readonly type: string;
@@ -318,21 +338,39 @@ export interface Condition {
   readonly id?: string;
   readonly iso3?: readonly string[];
   readonly bloc?: string;
-  readonly value?: number | boolean;
+  readonly value?: number | boolean | string;
 }
 
 export interface EventMeta {
   readonly id: string;
   readonly title: string;
   readonly text: string;
-  readonly scope: 'player' | 'world';
+  /** player: the player's decision; world: an AI subject; chain: a step of a flashpoint chain (D-074). */
+  readonly scope: 'player' | 'world' | 'chain';
   readonly weight: number;
   readonly once: boolean;
   readonly cooldown: number;
   readonly conditions: readonly Condition[];
   readonly targetPick: string | null;
-  readonly choices: readonly { label: string; tooltip: string; effects: readonly Effect[] }[];
+  readonly choices: readonly EventChoice[];
   readonly flashpoint: string | null;
+  /** Chain this event belongs to, and whether it is a follow-up step (never drawn at random). */
+  readonly chain: string | null;
+  readonly chainStep: boolean;
+  /** Who decides a chain event: the first of these that is the player, else the first alive. */
+  readonly actor: readonly string[];
+  /** Fixed TARGET for chain events. */
+  readonly target: string | null;
+  /** Category for the news wire and the event deck. */
+  readonly category: string;
+}
+
+export interface ChainMeta {
+  readonly id: string;
+  readonly name: string;
+  readonly flashpoint: string;
+  readonly entry: string;
+  readonly steps: readonly string[];
 }
 
 export interface FlashpointMeta {
@@ -394,6 +432,9 @@ export interface World {
   readonly seaComponent: ReadonlyMap<RegionId, number>;
   /** Leader agendas (D-071); nations without an entry get a default from their regime. */
   readonly agendas: ReadonlyMap<Iso3, readonly AgendaMeta[]>;
+  /** Flashpoint event chains (D-074). */
+  readonly chains: readonly ChainMeta[];
+  readonly eventById: ReadonlyMap<string, EventMeta>;
   readonly unsc: UnscMeta;
 }
 
@@ -541,7 +582,7 @@ export function loadWorld(): World {
     id: String(e.id),
     title: String(e.title),
     text: String(e.text),
-    scope: e.scope === 'world' ? 'world' : 'player',
+    scope: e.scope === 'world' ? 'world' : e.scope === 'chain' ? 'chain' : 'player',
     weight: Number(e.weight ?? 1),
     once: Boolean(e.once ?? false),
     cooldown: Number(e.cooldown ?? 12),
@@ -549,6 +590,11 @@ export function loadWorld(): World {
     targetPick: (e.targetPick as string | undefined) ?? null,
     choices: (e.choices as EventMeta['choices'] | undefined) ?? [],
     flashpoint,
+    chain: (e.chain as string | undefined) ?? null,
+    chainStep: Boolean(e.chainStep ?? false),
+    actor: (e.actor as string[] | undefined) ?? [],
+    target: (e.target as string | undefined) ?? null,
+    category: String(e.category ?? (flashpoint ? 'security' : 'politics')),
   });
   const events: EventMeta[] = [];
   for (const e of eventsData.events as unknown as Record<string, unknown>[])
@@ -567,6 +613,17 @@ export function loadWorld(): World {
     });
     for (const e of (f.events as Record<string, unknown>[] | undefined) ?? [])
       events.push(toEvent(e, String(f.id)));
+  }
+
+  const chains: ChainMeta[] = [];
+  for (const c of chainsData.chains as unknown as Record<string, unknown>[]) {
+    const steps: string[] = [];
+    for (const e of c.events as Record<string, unknown>[]) {
+      const id = String(e.id);
+      events.push(toEvent({ ...e, scope: 'chain', chain: c.id, chainStep: id !== c.entry, category: e.category ?? 'security' }, String(c.flashpoint)));
+      steps.push(id);
+    }
+    chains.push({ id: String(c.id), name: String(c.name), flashpoint: String(c.flashpoint), entry: String(c.entry), steps });
   }
 
   const unitTypeList: UnitTypeMeta[] = unitsData.units.map((u) => {
@@ -684,7 +741,10 @@ export function loadWorld(): World {
     }))
     .filter((p) => nations.has(p.a) && nations.has(p.b));
   const politics = new Map<Iso3, PoliticsMeta>(
-    politicsData.regimes.map((r) => [r.iso3, { regime: r.regime as Regime, termYears: r.termYears }]),
+    politicsData.regimes.map((r) => [
+      r.iso3,
+      { regime: r.regime as Regime, termYears: r.termYears, incumbentEligible: (r as { incumbentEligible?: boolean }).incumbentEligible !== false },
+    ]),
   );
   const startInflation = new Map<Iso3, number>(
     Object.entries(economyData.inflation as Record<string, number>),
@@ -739,6 +799,8 @@ export function loadWorld(): World {
 
   cached = {
     agendas,
+    chains,
+    eventById: new Map(events.map((e) => [e.id, e])),
     unsc: {
       permanent: unscData.permanent,
       elected: unscData.elected,

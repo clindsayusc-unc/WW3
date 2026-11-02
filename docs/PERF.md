@@ -142,3 +142,12 @@ Chrome or Safari and paste the numbers into the log below.
   vitest runs files in parallel and contention inflates wall time.
 - UI: the negotiation panel evaluates the draft deal on the main thread (pure function, < 1 ms);
   the UN tab forecasts 15 votes per render. No renderer changes.
+
+## Escalation and events pass (D-074 – D-077)
+
+- New per-turn work: due chain steps and at most one chain entry check (six chains), health
+  checks for the 44 led nations, the nuclear aftermath (one pass over regions only while fallout
+  exists), and the wire (one pass over the month's log). Together < 5 ms; the World of 2027 turn
+  measured ≈ 315 ms over 30 months on seed 5 (dev container).
+- UI: the Escalation screen computes DEFCON factors, second strikes and nuclear postures for ≈ 20
+  powers per render (pure functions over the state); the News screen filters ≤ 150 stories.

@@ -973,3 +973,99 @@ Ukraine collapsed within months on some seeds. Two causes, two fixes:
   numeric versions instead of building strings (the air cache keyed on `Object.keys(units).length`,
   rebuilding an array of ~1,300 keys on every lookup). The turn now averages ≈ 280–310 ms with all
   of D-071/D-072 included (`docs/PERF.md`).
+
+## D-074 — 2026-11-02 — Event chains and a 133-event deck
+
+- **Chains** (`data/chains.json`, `src/sim/events.ts`). Six multi-step flashpoint crises: Taiwan
+  (customs quarantine → the quarantine bites → incident at sea / energy squeeze → brink), Korea
+  (nuclear test → Seoul's response → island shelling → retaliation), Baltic (hybrid operation in
+  Narva → Article 4 consultations → NATO reinforcement → Russian forces on the border), Gulf
+  (tanker seizure → escorts / mines → fast boats swarm a destroyer), Kashmir (massacre → strikes or
+  water squeeze → retaliation → the brink) and the Arctic (Lomonosov claim → Svalbard → frigate
+  standoff → boarding crisis). Each step names an `actor` list: the player decides when listed
+  (the step arrives as a decision, bypassing the two-event cap), otherwise the first living nation
+  decides. A `chain` effect schedules the next step 1–2 months later (`GameState.chains`); an entry
+  starts with `weight`% a month when its conditions hold and no step of that chain is pending, and at
+  most one chain starts per month. Every chain is acyclic, every step has a choice that ends it,
+  and every path ends within five steps (tested). Escalating paths can end in war
+  (`war` effects go through `declareWar`, so allies, Article 5 and the ally guard all apply).
+- **AI choices.** Choices carry a `stance` (escalate / hold / de-escalate). An AI actor picks by
+  seeded draw weighted by (traits)²: escalation by aggression, risk tolerance and nationalism (×0.8);
+  de-escalation by pragmatism, caution and economic priority; hold a flat 0.35. World events whose
+  outcomes are not decisions (pandemics, crashes, assassination attempts) give each choice a
+  `chance` instead; the old world events gained alternative outcomes this way.
+- **Deck.** 133 events: 73 in `data/events.json` (36 new: snap elections, interference,
+  impeachment, corruption, coup plots and coups next door, assassination attempts, pandemics,
+  drug-resistant infections, bond routs, a tech bubble, currency crises, tariff wars, ransomware,
+  satellite and bank hacks, hurricanes, floods, drought, wildfires, earthquakes, scientist and
+  general defections, moles, quantum, battery, interceptor and vaccine breakthroughs, plus seven
+  world events) + 36 flashpoint events + 25 chain steps. New effects: `chain`, `succession`,
+  `legitimacy`, `support`; new conditions: `regime`, `notMajor`. Every event and choice has a
+  category for the news wire.
+- **Visible trade-offs.** The decision modal lists each choice's effects as chips ("Stability (you)
+  +5", "Relations you–China −12", "WAR: …", "The crisis continues…"), green when they help the
+  player and red when they hurt (`src/ui/effectText.ts`).
+
+## D-075 — 2026-11-02 — Leader succession
+
+- **Term limits** (`data/politics.json` `incumbentEligible`): the United States (22nd Amendment),
+  France (two consecutive terms), South Korea and the Philippines (single term), Mexico (no
+  re-election), Brazil (Lula re-elected in 2026) and Turkey (two terms; only an early election would
+  let Erdoğan stand). At the next election the governing party fields a generated, fictional
+  candidate who loses the incumbency bonus (1 point; 10 in hybrid regimes); if the party wins, the
+  candidate takes office (the player's game continues under the new leader), if it loses the old
+  rules apply (an AI government is replaced, the player loses).
+- **Health crises.** No ages are modelled (birth dates are not in the data). The monthly risk is
+  0.06 % rising by 0.015 % for every year in office beyond four (≤ 0.4 %). The player answers a
+  decision (temporary transfer of power, conceal it, or step down for a successor); an AI leader
+  recovers or hands over (50/50).
+- **Other successions.** Impeachment (player decision), assassination (world event, 25 % lethal)
+  and coups (D-061) all go through `succeedLeader`: a fictional successor, marked `fictional`, with
+  `leaderSince` reset. Traits stay with the office (party or regime line) — the AI personality is
+  static data keyed by nation, and successors are not given invented personalities.
+
+## D-076 — 2026-11-02 — Escalation ladder, deterrence and the nuclear aftermath
+
+- **Ladder** (`ESCALATION_LADDER`, `escalationRung`): posturing → sanctions (great powers
+  sanctioning each other) → proxy conflict (a great power arming a nation at war with another) →
+  limited conventional war (any war involving a great power) → general war (great powers at war with
+  each other, or three at once) → tactical nuclear use (1–3 detonations) → strategic exchange (≥ 4).
+  Each rung lists what moves the world up and down. **DEFCON** is now computed from an explicit
+  factor list (`defconFactors`) shown in the UI; the rules are unchanged from D-028.
+- **Second strike** (`secondStrike`): warheads on ballistic-missile submarines at sea (120 per SSBN
+  formation, scaled by its strength) survive a disarming first strike at 90 %, the rest at 30 %;
+  survivors are reduced by the adversary's missile defence. ≥ 50 penetrating warheads is assured,
+  ≥ 10 limited. Sinking SSBNs weakens it. `deterrentAgainst` also counts allies — an ally's assured
+  second strike stays assured only inside NATO, otherwise it counts as limited (extended deterrence
+  is less credible). War plans (D-071) now use this instead of raw warhead counts.
+- **AI nuclear use** (`nuclearDecision`, pure): only at DEFCON 1 and at war; desperation = 80 × the
+  share of the homeland lost + 30 if the capital is lost + 50 after suffering a nuclear strike;
+  the leader's bar is its nuclear-threshold trait, +20 against an assured enemy second strike (not
+  after being struck), −10 × a regime-survival agenda. Above the bar it launches with 25 % a month.
+  Retaliation probability is multiplied by 1 / 0.8 / 0.3 for an assured / limited / no second strike.
+- **Launch** requires DEFCON 1 and two confirmations — the command carries `confirmations` and the
+  reducer refuses fewer than two; the UI's arm-then-confirm buttons supply them. The release screen
+  shows both sides' second-strike status.
+- **Consequences**, abstracted with no imagery: fallout (`RegionState.fallout` 1 in the struck
+  region, 0.35 in its land neighbours, −3 %/month) tints the map ochre-grey in every map mode;
+  global cooling (`nuclearWinter`, +0.6 °C per detonation, −7 %/month) costs every economy 0.4 pp of
+  growth per °C each month and erodes stability; the attacker loses 40 legitimacy, every government
+  remembers a grievance (60 for the victim, 25 for the rest) and every non-friend sanctions it.
+  `nuclearLog` records each strike. A full exchange (eight detonations, D-028) ends the game with a
+  sombre "Nobody wins" screen: detonations, people living in struck regions (not casualties), nations
+  struck, world output against January 2027, cooling, warheads remaining, months from first use.
+- **UI.** Escalation screen (X, or click Tension): gauge, ladder, flashpoints, and a DEFCON and
+  deterrence table for the player, the majors and every nuclear power with each AI's nuclear posture.
+
+## D-077 — 2026-11-02 — The WW3 Wire
+
+`src/sim/news.ts` turns each month's log into ≤ 14 wire stories in one voice: "DATELINE, Month Year
+(WW3 Wire) — lede. Context." (tension and DEFCON for war stories, relations for diplomacy, approval
+for politics, growth and inflation for the economy, detonation count and cooling for nuclear
+stories). Priorities: 3 = breaking (nuclear use, capitulations, great-power war declarations,
+Article 5, coups and assassinations in great powers, bloc walk-outs), 2 = top story, 1 = brief;
+battle reports and routine trade deals are dropped unless they involve the player. Datelines are
+the capital of the first nation involved; world events are datelined from the nations their
+effects name. `GameState.wire` keeps 150 stories. The News screen (N) filters by category, by
+importance or "about us", and by text; priority-3 stories of the last month show as a dismissable
+banner. The old one-line headlines remain for the ticker.

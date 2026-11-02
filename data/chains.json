@@ -1,0 +1,2143 @@
+{
+  "source": "Original fictional game content. Scenarios are framed by public reporting and analysis of each flashpoint as of November 2026 (CSIS ChinaPower and Joint Exercise analyses of a Taiwan quarantine; 2010 Yeonpyeong shelling; NATO Article 4 consultations; 2019 and 2023 Hormuz tanker seizures; the 2019 and 2025 India–Pakistan crises; the Lomonosov Ridge claims before the UN Commission on the Limits of the Continental Shelf).",
+  "asOf": "2026-11-02",
+  "estimate": false,
+  "notes": "Multi-step event chains (D-074). Each chain has an entry event (drawn when its conditions hold; weight = % chance per month) and follow-up steps scheduled by 'chain' effects. 'actor' lists who decides a step: the player if listed, else the first living nation; AI actors choose by 'stance' weighted by their traits. Every chain is acyclic and every step has a choice that ends it (tested).",
+  "chains": [
+    {
+      "id": "taiwan-blockade",
+      "name": "Taiwan: from quarantine to the brink",
+      "flashpoint": "taiwan-strait",
+      "entry": "tw-customs",
+      "events": [
+        {
+          "id": "tw-customs",
+          "title": "Customs quarantine of Taiwan",
+          "text": "Beijing's planners present a 'law-enforcement' option: coast-guard inspections of every ship bound for Taiwan's ports, framed as customs control rather than a blockade. The PLA Eastern Theatre Command would stand behind the cutters.",
+          "actor": [
+            "CHN"
+          ],
+          "choices": [
+            {
+              "label": "Signal with exercises only",
+              "tooltip": "Tension rises a little; nothing is enforced and the crisis ends here.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": 4
+                },
+                {
+                  "type": "tension",
+                  "delta": 2
+                },
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "TWN",
+                  "delta": -3
+                }
+              ]
+            },
+            {
+              "label": "Declare the customs quarantine",
+              "tooltip": "Sharp escalation: Taipei, Washington and Tokyo must answer. Trade with Taiwan is disrupted.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": 12
+                },
+                {
+                  "type": "tension",
+                  "delta": 6
+                },
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "TWN",
+                  "delta": -10
+                },
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "USA",
+                  "delta": -8
+                },
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "JPN",
+                  "delta": -6
+                },
+                {
+                  "type": "gdp",
+                  "nation": "TWN",
+                  "pct": -1.5
+                },
+                {
+                  "type": "news",
+                  "text": "China announces coast-guard 'customs quarantine' around Taiwan"
+                },
+                {
+                  "type": "chain",
+                  "event": "tw-quarantine",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Shelve the plan",
+              "tooltip": "The crisis is defused; hardliners grumble.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": -6
+                },
+                {
+                  "type": "stability",
+                  "nation": "CHN",
+                  "delta": -2
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flashpointMin",
+              "id": "taiwan-strait",
+              "value": 58
+            },
+            {
+              "type": "minTurn",
+              "value": 3
+            }
+          ],
+          "weight": 4,
+          "cooldown": 36,
+          "category": "security"
+        },
+        {
+          "id": "tw-quarantine",
+          "title": "The quarantine bites",
+          "text": "Chinese coast-guard cutters are boarding Taiwan-bound freighters. Insurers have suspended cover; LNG cargoes are diverting. Allies must decide how to respond.",
+          "actor": [
+            "USA",
+            "JPN",
+            "TWN"
+          ],
+          "choices": [
+            {
+              "label": "Protest and sanction, no escorts",
+              "tooltip": "Sanctions on China; Taiwan's energy stocks start to fall.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "sanction",
+                  "from": "USA",
+                  "to": "CHN"
+                },
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "CHN",
+                  "delta": -6
+                },
+                {
+                  "type": "gdp",
+                  "nation": "TWN",
+                  "pct": -1.5
+                },
+                {
+                  "type": "chain",
+                  "event": "tw-squeeze",
+                  "delay": 2
+                }
+              ]
+            },
+            {
+              "label": "Escort convoys through the strait",
+              "tooltip": "US and Japanese warships shepherd merchant ships past the cutters. Risk of an incident at sea.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "CHN",
+                  "delta": -12
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": 8
+                },
+                {
+                  "type": "tension",
+                  "delta": 5
+                },
+                {
+                  "type": "news",
+                  "text": "US destroyers begin escorting convoys to Taiwan"
+                },
+                {
+                  "type": "chain",
+                  "event": "tw-incident",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Quiet diplomacy through back channels",
+              "tooltip": "Beijing scales the inspections back to a token level; Taipei feels abandoned. The crisis ends here.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": -6
+                },
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "TWN",
+                  "delta": -4
+                },
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "CHN",
+                  "delta": 2
+                }
+              ]
+            }
+          ],
+          "target": "CHN",
+          "category": "security"
+        },
+        {
+          "id": "tw-incident",
+          "title": "Incident at sea",
+          "text": "A Chinese coast-guard cutter collides with an escorted freighter at night; warning shots are fired across the bow of an American destroyer. Both navies are on hair-trigger alert.",
+          "actor": [
+            "CHN"
+          ],
+          "choices": [
+            {
+              "label": "Hold the line and add patrols",
+              "tooltip": "Neither side blinks; the crisis moves toward its climax.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 4
+                },
+                {
+                  "type": "chain",
+                  "event": "tw-brink",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Seize the freighter",
+              "tooltip": "A direct challenge to the escort mission.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": 12
+                },
+                {
+                  "type": "tension",
+                  "delta": 8
+                },
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "USA",
+                  "delta": -15
+                },
+                {
+                  "type": "chain",
+                  "event": "tw-brink",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Use the military hotline; both sides pull back",
+              "tooltip": "The incident is contained; the quarantine is quietly relaxed.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": -8
+                },
+                {
+                  "type": "tension",
+                  "delta": -4
+                },
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "USA",
+                  "delta": 4
+                }
+              ]
+            }
+          ],
+          "category": "security"
+        },
+        {
+          "id": "tw-squeeze",
+          "title": "Taiwan's energy squeeze",
+          "text": "With LNG stocks for little more than a week, Taipei must choose between rationing, talks with Beijing or an appeal for an allied airlift.",
+          "actor": [
+            "TWN"
+          ],
+          "choices": [
+            {
+              "label": "Ration energy and hold out",
+              "tooltip": "Hardship at home, but the quarantine fails to break the island.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "stability",
+                  "nation": "TWN",
+                  "delta": -6
+                },
+                {
+                  "type": "gdp",
+                  "nation": "TWN",
+                  "pct": -2
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": -3
+                }
+              ]
+            },
+            {
+              "label": "Appeal for an allied airlift",
+              "tooltip": "Washington and Tokyo are pulled in; Beijing sees provocation.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "relation",
+                  "a": "TWN",
+                  "b": "USA",
+                  "delta": 6
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 3
+                },
+                {
+                  "type": "chain",
+                  "event": "tw-brink",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Open talks with Beijing",
+              "tooltip": "The quarantine is lifted; Taiwan's partners worry about the precedent.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "TWN",
+                  "delta": 8
+                },
+                {
+                  "type": "stability",
+                  "nation": "TWN",
+                  "delta": -4
+                },
+                {
+                  "type": "relation",
+                  "a": "TWN",
+                  "b": "USA",
+                  "delta": -4
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": -8
+                }
+              ]
+            }
+          ],
+          "target": "CHN",
+          "category": "security"
+        },
+        {
+          "id": "tw-brink",
+          "title": "Crisis in the Taiwan Strait",
+          "text": "The quarantine has become a naval standoff. The Central Military Commission meets in emergency session: stand down, mobilise and issue an ultimatum, or open fire.",
+          "actor": [
+            "CHN"
+          ],
+          "choices": [
+            {
+              "label": "Mobilise and issue an ultimatum",
+              "tooltip": "DEFCON rises on both sides of the Pacific; the world waits.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "mobilize",
+                  "nation": "CHN",
+                  "level": 1
+                },
+                {
+                  "type": "defcon",
+                  "nation": "CHN",
+                  "delta": -1
+                },
+                {
+                  "type": "defcon",
+                  "nation": "USA",
+                  "delta": -1
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": 10
+                },
+                {
+                  "type": "tension",
+                  "delta": 8
+                },
+                {
+                  "type": "news",
+                  "text": "Beijing issues ultimatum to Taipei as PLA mobilises"
+                }
+              ]
+            },
+            {
+              "label": "Open fire: invade Taiwan",
+              "tooltip": "War. The United States and Japan may enter.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "war",
+                  "a": "CHN",
+                  "b": "TWN"
+                },
+                {
+                  "type": "tension",
+                  "delta": 15
+                },
+                {
+                  "type": "news",
+                  "text": "WAR IN THE TAIWAN STRAIT"
+                }
+              ]
+            },
+            {
+              "label": "Accept a UN-brokered stand-down",
+              "tooltip": "The crisis ends; nationalist anger at home.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "taiwan-strait",
+                  "delta": -15
+                },
+                {
+                  "type": "tension",
+                  "delta": -8
+                },
+                {
+                  "type": "stability",
+                  "nation": "CHN",
+                  "delta": -4
+                },
+                {
+                  "type": "relation",
+                  "a": "CHN",
+                  "b": "USA",
+                  "delta": 6
+                }
+              ]
+            }
+          ],
+          "target": "TWN",
+          "category": "security"
+        }
+      ]
+    },
+    {
+      "id": "korea-provocation",
+      "name": "Korea: nuclear test to border shelling",
+      "flashpoint": "korean-peninsula",
+      "entry": "kr-test",
+      "events": [
+        {
+          "id": "kr-test",
+          "title": "Seventh nuclear test",
+          "text": "Satellite imagery shows tunnelling complete at Punggye-ri. Pyongyang can conduct its first nuclear test since 2017, settle for missile launches, or trade restraint for relief.",
+          "actor": [
+            "PRK"
+          ],
+          "choices": [
+            {
+              "label": "Fire missiles into the sea instead",
+              "tooltip": "A familiar provocation; Seoul and Tokyo must respond.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": 5
+                },
+                {
+                  "type": "tension",
+                  "delta": 2
+                },
+                {
+                  "type": "relation",
+                  "a": "PRK",
+                  "b": "KOR",
+                  "delta": -4
+                },
+                {
+                  "type": "chain",
+                  "event": "kr-response",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Conduct the nuclear test",
+              "tooltip": "Sanctions and outrage; the crisis escalates.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": 10
+                },
+                {
+                  "type": "tension",
+                  "delta": 6
+                },
+                {
+                  "type": "sanction",
+                  "from": "USA",
+                  "to": "PRK"
+                },
+                {
+                  "type": "relation",
+                  "a": "PRK",
+                  "b": "KOR",
+                  "delta": -10
+                },
+                {
+                  "type": "relation",
+                  "a": "PRK",
+                  "b": "CHN",
+                  "delta": -4
+                },
+                {
+                  "type": "news",
+                  "text": "North Korea conducts nuclear test"
+                },
+                {
+                  "type": "chain",
+                  "event": "kr-response",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Postpone the test and seek aid talks",
+              "tooltip": "Tension eases; hardliners in Pyongyang are displeased.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": -5
+                },
+                {
+                  "type": "stability",
+                  "nation": "PRK",
+                  "delta": -2
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flashpointMin",
+              "id": "korean-peninsula",
+              "value": 50
+            },
+            {
+              "type": "minTurn",
+              "value": 2
+            }
+          ],
+          "weight": 4,
+          "cooldown": 30,
+          "category": "security"
+        },
+        {
+          "id": "kr-response",
+          "title": "Seoul weighs its response",
+          "text": "After Pyongyang's latest provocation, South Korea and its allies must choose between deterrence, sanctions and dialogue.",
+          "actor": [
+            "KOR",
+            "USA",
+            "JPN"
+          ],
+          "choices": [
+            {
+              "label": "Push new UN sanctions",
+              "tooltip": "Pressure without military risk.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "sanction",
+                  "from": "KOR",
+                  "to": "PRK"
+                },
+                {
+                  "type": "relation",
+                  "a": "KOR",
+                  "b": "PRK",
+                  "delta": -4
+                }
+              ]
+            },
+            {
+              "label": "Deploy strategic assets and expand exercises",
+              "tooltip": "Bombers and a carrier visit; Pyongyang vows retaliation.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 3
+                },
+                {
+                  "type": "relation",
+                  "a": "PRK",
+                  "b": "KOR",
+                  "delta": -6
+                },
+                {
+                  "type": "relation",
+                  "a": "PRK",
+                  "b": "USA",
+                  "delta": -6
+                },
+                {
+                  "type": "chain",
+                  "event": "kr-shelling",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Offer talks at Panmunjom",
+              "tooltip": "A gamble on diplomacy; hawks object.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": -8
+                },
+                {
+                  "type": "relation",
+                  "a": "KOR",
+                  "b": "PRK",
+                  "delta": 6
+                },
+                {
+                  "type": "stability",
+                  "nation": "KOR",
+                  "delta": -2
+                }
+              ]
+            }
+          ],
+          "target": "PRK",
+          "category": "security"
+        },
+        {
+          "id": "kr-shelling",
+          "title": "Shells on a border island",
+          "text": "Korean People's Army artillery shells a South Korean island near the Northern Limit Line. Marines are wounded; homes burn.",
+          "actor": [
+            "PRK"
+          ],
+          "choices": [
+            {
+              "label": "Claim it was a drill gone wrong",
+              "tooltip": "Tension stays high, but the crisis ends.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": 4
+                },
+                {
+                  "type": "tension",
+                  "delta": 2
+                }
+              ]
+            },
+            {
+              "label": "Shell again and declare a new maritime border",
+              "tooltip": "Seoul must answer force with force.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": 10
+                },
+                {
+                  "type": "tension",
+                  "delta": 6
+                },
+                {
+                  "type": "relation",
+                  "a": "PRK",
+                  "b": "KOR",
+                  "delta": -12
+                },
+                {
+                  "type": "chain",
+                  "event": "kr-crisis",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Express regret through the hotline",
+              "tooltip": "Unusual restraint from Pyongyang.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": -6
+                },
+                {
+                  "type": "tension",
+                  "delta": -2
+                }
+              ]
+            }
+          ],
+          "category": "security"
+        },
+        {
+          "id": "kr-crisis",
+          "title": "Retaliate across the NLL?",
+          "text": "South Korea's rules of engagement allow a proportional response. The Joint Chiefs ask for authority to go further.",
+          "actor": [
+            "KOR",
+            "USA"
+          ],
+          "choices": [
+            {
+              "label": "Counter-battery fire only",
+              "tooltip": "A proportional answer; the exchange stops.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": 2
+                },
+                {
+                  "type": "stability",
+                  "nation": "KOR",
+                  "delta": 2
+                }
+              ]
+            },
+            {
+              "label": "Strike KPA artillery positions in depth",
+              "tooltip": "Likely war on the peninsula.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "war",
+                  "a": "KOR",
+                  "b": "PRK"
+                },
+                {
+                  "type": "tension",
+                  "delta": 12
+                },
+                {
+                  "type": "news",
+                  "text": "South Korea strikes North Korean artillery; war erupts on the peninsula"
+                }
+              ]
+            },
+            {
+              "label": "Raise readiness and wait",
+              "tooltip": "DEFCON rises; forces surge to the DMZ.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "defcon",
+                  "nation": "KOR",
+                  "delta": -1
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "korean-peninsula",
+                  "delta": 4
+                },
+                {
+                  "type": "units",
+                  "nation": "KOR",
+                  "unitType": "airDefense",
+                  "count": 1
+                }
+              ]
+            }
+          ],
+          "target": "PRK",
+          "category": "security"
+        }
+      ]
+    },
+    {
+      "id": "baltic-hybrid",
+      "name": "Baltic: little green men in Narva",
+      "flashpoint": "baltic",
+      "entry": "bl-hybrid",
+      "events": [
+        {
+          "id": "bl-hybrid",
+          "title": "Hybrid operation in Narva",
+          "text": "Russian military intelligence proposes backing a 'self-defence committee' among Russian speakers in Narva, with unmarked operatives, cyber attacks and a disinformation campaign.",
+          "actor": [
+            "RUS"
+          ],
+          "choices": [
+            {
+              "label": "Cyber and information operations only",
+              "tooltip": "A test of NATO's nerves below the threshold of force.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": 4
+                },
+                {
+                  "type": "stability",
+                  "nation": "EST",
+                  "delta": -3
+                },
+                {
+                  "type": "relation",
+                  "a": "RUS",
+                  "b": "EST",
+                  "delta": -6
+                }
+              ]
+            },
+            {
+              "label": "Back the 'self-defence committee'",
+              "tooltip": "Armed men without insignia seize the town hall; NATO must respond.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": 10
+                },
+                {
+                  "type": "tension",
+                  "delta": 5
+                },
+                {
+                  "type": "relation",
+                  "a": "RUS",
+                  "b": "EST",
+                  "delta": -15
+                },
+                {
+                  "type": "stability",
+                  "nation": "EST",
+                  "delta": -6
+                },
+                {
+                  "type": "news",
+                  "text": "Armed men without insignia seize Narva town hall"
+                },
+                {
+                  "type": "chain",
+                  "event": "bl-article4",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Stand the operation down",
+              "tooltip": "Nothing happens — this time.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": -4
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flashpointMin",
+              "id": "baltic",
+              "value": 48
+            },
+            {
+              "type": "minTurn",
+              "value": 4
+            }
+          ],
+          "weight": 3,
+          "cooldown": 36,
+          "category": "security"
+        },
+        {
+          "id": "bl-article4",
+          "title": "NATO consultations under Article 4",
+          "text": "Estonia requests consultations. Allies must choose between a show of force, police action and quiet talks with Moscow.",
+          "actor": [
+            "EST",
+            "LVA",
+            "LTU",
+            "POL",
+            "DEU",
+            "GBR",
+            "USA"
+          ],
+          "choices": [
+            {
+              "label": "Police operation and expulsions",
+              "tooltip": "Estonian police clear the town hall; Russian diplomats are expelled.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "relation",
+                  "a": "RUS",
+                  "b": "EST",
+                  "delta": -8
+                },
+                {
+                  "type": "stability",
+                  "nation": "EST",
+                  "delta": 3
+                }
+              ]
+            },
+            {
+              "label": "Invoke Article 4 and surge NATO forces",
+              "tooltip": "Battlegroups reinforce Narva; Moscow sees encirclement.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 4
+                },
+                {
+                  "type": "units",
+                  "nation": "EST",
+                  "unitType": "mechanized",
+                  "count": 2
+                },
+                {
+                  "type": "relation",
+                  "a": "RUS",
+                  "b": "USA",
+                  "delta": -6
+                },
+                {
+                  "type": "chain",
+                  "event": "bl-standoff",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Quiet talks with Moscow",
+              "tooltip": "The operatives melt away; Tallinn feels exposed.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": -6
+                },
+                {
+                  "type": "stability",
+                  "nation": "EST",
+                  "delta": -3
+                }
+              ]
+            }
+          ],
+          "target": "RUS",
+          "category": "security"
+        },
+        {
+          "id": "bl-standoff",
+          "title": "NATO reinforces Narva",
+          "text": "With allied battlegroups on the Narva river, the Kremlin weighs its next move.",
+          "actor": [
+            "RUS"
+          ],
+          "choices": [
+            {
+              "label": "Snap exercise in Pskov",
+              "tooltip": "Russian forces mass on the border.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "mobilize",
+                  "nation": "RUS",
+                  "level": 1
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 3
+                },
+                {
+                  "type": "chain",
+                  "event": "bl-brink",
+                  "delay": 2
+                }
+              ]
+            },
+            {
+              "label": "Seize the border bridge",
+              "tooltip": "War with a NATO member — Article 5.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "war",
+                  "a": "RUS",
+                  "b": "EST"
+                },
+                {
+                  "type": "tension",
+                  "delta": 15
+                },
+                {
+                  "type": "news",
+                  "text": "Russian forces cross into Estonia"
+                }
+              ]
+            },
+            {
+              "label": "Withdraw the operatives",
+              "tooltip": "The crisis ends with a Russian climb-down.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": -10
+                },
+                {
+                  "type": "stability",
+                  "nation": "RUS",
+                  "delta": -2
+                }
+              ]
+            }
+          ],
+          "category": "security"
+        },
+        {
+          "id": "bl-brink",
+          "title": "Russian forces on the border",
+          "text": "A Russian snap exercise has massed armour opposite Estonia and Latvia. Allied capitals debate how hard to push back.",
+          "actor": [
+            "USA",
+            "DEU",
+            "GBR",
+            "POL"
+          ],
+          "choices": [
+            {
+              "label": "Reinforce and wait",
+              "tooltip": "More allied troops; no ultimatum.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "units",
+                  "nation": "POL",
+                  "unitType": "mechanized",
+                  "count": 1
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": 2
+                }
+              ]
+            },
+            {
+              "label": "Issue an ultimatum: withdraw within 48 hours",
+              "tooltip": "DEFCON rises across the alliance.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "defcon",
+                  "nation": "USA",
+                  "delta": -1
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": 10
+                },
+                {
+                  "type": "tension",
+                  "delta": 6
+                },
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "RUS",
+                  "delta": -10
+                }
+              ]
+            },
+            {
+              "label": "Open a deconfliction line",
+              "tooltip": "The exercise ends; both sides claim victory.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "baltic",
+                  "delta": -8
+                },
+                {
+                  "type": "tension",
+                  "delta": -3
+                }
+              ]
+            }
+          ],
+          "target": "RUS",
+          "category": "security"
+        }
+      ]
+    },
+    {
+      "id": "gulf-shipping",
+      "name": "Gulf: the tanker war returns",
+      "flashpoint": "iran-israel-gulf",
+      "entry": "gf-seizure",
+      "events": [
+        {
+          "id": "gf-seizure",
+          "title": "Tanker seized in Hormuz",
+          "text": "IRGC naval forces seize a tanker in the Strait of Hormuz. Tehran calls it a smuggling case; Gulf capitals call it piracy.",
+          "actor": [
+            "IRN"
+          ],
+          "choices": [
+            {
+              "label": "Hold the tanker as leverage",
+              "tooltip": "Shipping insurers raise premiums; the Gulf states must decide.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": 5
+                },
+                {
+                  "type": "tension",
+                  "delta": 2
+                },
+                {
+                  "type": "relation",
+                  "a": "IRN",
+                  "b": "ARE",
+                  "delta": -4
+                },
+                {
+                  "type": "chain",
+                  "event": "gf-escorts",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Seize more tankers and mine the approaches",
+              "tooltip": "Shipping through Hormuz stops.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": 12
+                },
+                {
+                  "type": "tension",
+                  "delta": 6
+                },
+                {
+                  "type": "gdp",
+                  "nation": "IRN",
+                  "pct": -1
+                },
+                {
+                  "type": "gdp",
+                  "nation": "JPN",
+                  "pct": -0.5
+                },
+                {
+                  "type": "gdp",
+                  "nation": "KOR",
+                  "pct": -0.5
+                },
+                {
+                  "type": "gdp",
+                  "nation": "IND",
+                  "pct": -0.6
+                },
+                {
+                  "type": "gdp",
+                  "nation": "CHN",
+                  "pct": -0.3
+                },
+                {
+                  "type": "news",
+                  "text": "Mines reported in the Strait of Hormuz; tanker traffic halts"
+                },
+                {
+                  "type": "chain",
+                  "event": "gf-mines",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Release the tanker",
+              "tooltip": "Tension eases.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": -5
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flashpointMin",
+              "id": "iran-israel-gulf",
+              "value": 50
+            },
+            {
+              "type": "minTurn",
+              "value": 2
+            }
+          ],
+          "weight": 4,
+          "cooldown": 30,
+          "category": "security"
+        },
+        {
+          "id": "gf-escorts",
+          "title": "Escort the tankers?",
+          "text": "Washington and the Gulf states debate a convoy operation through the strait.",
+          "actor": [
+            "USA",
+            "SAU",
+            "ARE",
+            "GBR",
+            "FRA"
+          ],
+          "choices": [
+            {
+              "label": "Pay the release quietly",
+              "tooltip": "The ship goes free; Tehran learns it pays.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "treasury",
+                  "nation": "ARE",
+                  "pctGdp": -0.05
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": 1
+                }
+              ]
+            },
+            {
+              "label": "Launch an escort operation",
+              "tooltip": "Warships shepherd tankers past IRGC fast boats.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "IRN",
+                  "delta": -10
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 3
+                },
+                {
+                  "type": "chain",
+                  "event": "gf-clash",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Mediation through Oman",
+              "tooltip": "A face-saving release.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": -6
+                },
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "IRN",
+                  "delta": 3
+                }
+              ]
+            }
+          ],
+          "target": "IRN",
+          "category": "security"
+        },
+        {
+          "id": "gf-mines",
+          "title": "Mines in the strait",
+          "text": "A fifth of the world's oil passes through Hormuz — and now it does not. Importers clamour for action.",
+          "actor": [
+            "USA",
+            "SAU",
+            "ARE",
+            "GBR"
+          ],
+          "choices": [
+            {
+              "label": "Mine-clearing operation under escort",
+              "tooltip": "Slow, expensive and risky.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "treasury",
+                  "nation": "USA",
+                  "pctGdp": -0.02
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": 4
+                },
+                {
+                  "type": "chain",
+                  "event": "gf-clash",
+                  "delay": 2
+                }
+              ]
+            },
+            {
+              "label": "Strike IRGC naval bases",
+              "tooltip": "War with Iran.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "war",
+                  "a": "USA",
+                  "b": "IRN"
+                },
+                {
+                  "type": "tension",
+                  "delta": 12
+                },
+                {
+                  "type": "news",
+                  "text": "US strikes Iranian naval bases after Hormuz mining"
+                }
+              ]
+            },
+            {
+              "label": "Negotiate through Qatar",
+              "tooltip": "Iran clears its own mines in exchange for concessions.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": -8
+                },
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "IRN",
+                  "delta": 4
+                },
+                {
+                  "type": "stability",
+                  "nation": "USA",
+                  "delta": -2
+                }
+              ]
+            }
+          ],
+          "target": "IRN",
+          "category": "security"
+        },
+        {
+          "id": "gf-clash",
+          "title": "Fast boats swarm a destroyer",
+          "text": "Dozens of IRGC fast attack craft surround a coalition destroyer escorting tankers. The captain requests permission to fire.",
+          "actor": [
+            "IRN"
+          ],
+          "choices": [
+            {
+              "label": "Harass but do not fire",
+              "tooltip": "The boats veer off at the last moment.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": 5
+                },
+                {
+                  "type": "tension",
+                  "delta": 2
+                }
+              ]
+            },
+            {
+              "label": "Attack the escort",
+              "tooltip": "War with the escorting powers.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "war",
+                  "a": "IRN",
+                  "b": "USA"
+                },
+                {
+                  "type": "tension",
+                  "delta": 12
+                },
+                {
+                  "type": "news",
+                  "text": "Iranian boats attack US destroyer in the Gulf"
+                }
+              ]
+            },
+            {
+              "label": "Order the boats back",
+              "tooltip": "The convoy passes.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "iran-israel-gulf",
+                  "delta": -6
+                }
+              ]
+            }
+          ],
+          "category": "security"
+        }
+      ]
+    },
+    {
+      "id": "kashmir-attack",
+      "name": "Kashmir: attack and retaliation",
+      "flashpoint": "kashmir",
+      "entry": "ks-attack",
+      "events": [
+        {
+          "id": "ks-attack",
+          "title": "Massacre in Kashmir",
+          "text": "Militants kill dozens of civilians in Jammu and Kashmir. Indian intelligence traces the attackers to a group based in Pakistan. The public demands a response.",
+          "actor": [
+            "IND"
+          ],
+          "choices": [
+            {
+              "label": "Suspend water cooperation and expel diplomats",
+              "tooltip": "Coercion short of force.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": 6
+                },
+                {
+                  "type": "relation",
+                  "a": "IND",
+                  "b": "PAK",
+                  "delta": -8
+                },
+                {
+                  "type": "chain",
+                  "event": "ks-pressure",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Cross-border strikes on militant camps",
+              "tooltip": "Pakistan will answer.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": 12
+                },
+                {
+                  "type": "tension",
+                  "delta": 5
+                },
+                {
+                  "type": "relation",
+                  "a": "IND",
+                  "b": "PAK",
+                  "delta": -15
+                },
+                {
+                  "type": "news",
+                  "text": "India strikes militant camps across the Line of Control"
+                },
+                {
+                  "type": "chain",
+                  "event": "ks-retaliation",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Offer a joint investigation",
+              "tooltip": "Restraint; hardliners protest.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": -4
+                },
+                {
+                  "type": "stability",
+                  "nation": "IND",
+                  "delta": -3
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flashpointMin",
+              "id": "kashmir",
+              "value": 30
+            },
+            {
+              "type": "minTurn",
+              "value": 2
+            }
+          ],
+          "weight": 4,
+          "cooldown": 30,
+          "category": "security"
+        },
+        {
+          "id": "ks-retaliation",
+          "title": "Pakistan answers the strikes",
+          "text": "Pakistan's army and government weigh their response to Indian strikes on their territory.",
+          "actor": [
+            "PAK"
+          ],
+          "choices": [
+            {
+              "label": "Shoot down intruders and declare victory",
+              "tooltip": "Honour satisfied; the crisis subsides.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": 4
+                },
+                {
+                  "type": "stability",
+                  "nation": "PAK",
+                  "delta": 3
+                }
+              ]
+            },
+            {
+              "label": "Retaliatory air and missile strikes",
+              "tooltip": "Two nuclear powers exchange fire.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": 10
+                },
+                {
+                  "type": "tension",
+                  "delta": 6
+                },
+                {
+                  "type": "relation",
+                  "a": "PAK",
+                  "b": "IND",
+                  "delta": -10
+                },
+                {
+                  "type": "chain",
+                  "event": "ks-brink",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Accept Saudi and US mediation",
+              "tooltip": "A ceasefire understanding.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": -8
+                },
+                {
+                  "type": "relation",
+                  "a": "PAK",
+                  "b": "USA",
+                  "delta": 4
+                }
+              ]
+            }
+          ],
+          "target": "IND",
+          "category": "security"
+        },
+        {
+          "id": "ks-pressure",
+          "title": "Water and diplomatic squeeze",
+          "text": "India's suspension of water cooperation and expulsions put Islamabad under pressure.",
+          "actor": [
+            "PAK"
+          ],
+          "choices": [
+            {
+              "label": "Take it to the UN",
+              "tooltip": "Diplomatic counter-offensive.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "legitimacy",
+                  "nation": "IND",
+                  "delta": -3
+                },
+                {
+                  "type": "relation",
+                  "a": "PAK",
+                  "b": "IND",
+                  "delta": -4
+                }
+              ]
+            },
+            {
+              "label": "Mobilise along the Line of Control",
+              "tooltip": "Troops move; the crisis escalates.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "mobilize",
+                  "nation": "PAK",
+                  "level": 1
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": 8
+                },
+                {
+                  "type": "tension",
+                  "delta": 4
+                },
+                {
+                  "type": "chain",
+                  "event": "ks-brink",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Crack down on the militant group",
+              "tooltip": "Arrests at home; tension eases.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "stability",
+                  "nation": "PAK",
+                  "delta": -4
+                },
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": -8
+                },
+                {
+                  "type": "relation",
+                  "a": "PAK",
+                  "b": "IND",
+                  "delta": 4
+                }
+              ]
+            }
+          ],
+          "target": "IND",
+          "category": "security"
+        },
+        {
+          "id": "ks-brink",
+          "title": "Two nuclear powers on the brink",
+          "text": "After an exchange of strikes, Indian commanders propose naval pressure on Karachi or a limited ground offensive.",
+          "actor": [
+            "IND"
+          ],
+          "choices": [
+            {
+              "label": "Naval pressure on Karachi",
+              "tooltip": "Coercion at sea.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": 8
+                },
+                {
+                  "type": "tension",
+                  "delta": 4
+                },
+                {
+                  "type": "relation",
+                  "a": "IND",
+                  "b": "PAK",
+                  "delta": -6
+                }
+              ]
+            },
+            {
+              "label": "Limited ground offensive across the LoC",
+              "tooltip": "War between nuclear-armed neighbours.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "war",
+                  "a": "IND",
+                  "b": "PAK"
+                },
+                {
+                  "type": "tension",
+                  "delta": 15
+                },
+                {
+                  "type": "news",
+                  "text": "India launches ground offensive across the Line of Control"
+                }
+              ]
+            },
+            {
+              "label": "Agree a hotline ceasefire",
+              "tooltip": "The guns fall silent.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "kashmir",
+                  "delta": -12
+                },
+                {
+                  "type": "tension",
+                  "delta": -4
+                }
+              ]
+            }
+          ],
+          "target": "PAK",
+          "category": "security"
+        }
+      ]
+    },
+    {
+      "id": "arctic-race",
+      "name": "Arctic: the race for the seabed",
+      "flashpoint": "arctic",
+      "entry": "ar-claim",
+      "events": [
+        {
+          "id": "ar-claim",
+          "title": "Lomonosov Ridge claim",
+          "text": "With sea ice retreating, Moscow can press its continental-shelf claim along the Lomonosov Ridge with Northern Fleet escorts for its survey ships.",
+          "actor": [
+            "RUS"
+          ],
+          "choices": [
+            {
+              "label": "Militarise the Northern Sea Route",
+              "tooltip": "New bases and air-defence batteries along the route.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": 5
+                },
+                {
+                  "type": "units",
+                  "nation": "RUS",
+                  "unitType": "airDefense",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "label": "Declare an extended economic zone",
+              "tooltip": "A unilateral claim; Norway and Denmark protest.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": 8
+                },
+                {
+                  "type": "tension",
+                  "delta": 3
+                },
+                {
+                  "type": "relation",
+                  "a": "RUS",
+                  "b": "NOR",
+                  "delta": -8
+                },
+                {
+                  "type": "relation",
+                  "a": "RUS",
+                  "b": "DNK",
+                  "delta": -8
+                },
+                {
+                  "type": "chain",
+                  "event": "ar-svalbard",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Submit the claim to the UN commission",
+              "tooltip": "The lawful route; slow.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": -4
+                }
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "flashpointMin",
+              "id": "arctic",
+              "value": 40
+            },
+            {
+              "type": "minTurn",
+              "value": 6
+            }
+          ],
+          "weight": 3,
+          "cooldown": 36,
+          "category": "security"
+        },
+        {
+          "id": "ar-svalbard",
+          "title": "Survey ship off Svalbard",
+          "text": "A Russian survey ship escorted by a frigate operates inside Norway's claimed zone off Svalbard.",
+          "actor": [
+            "NOR",
+            "USA",
+            "CAN",
+            "DNK"
+          ],
+          "choices": [
+            {
+              "label": "Diplomatic protest",
+              "tooltip": "Lawfare, not warships.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "relation",
+                  "a": "NOR",
+                  "b": "RUS",
+                  "delta": -4
+                }
+              ]
+            },
+            {
+              "label": "Shadow it with NATO frigates",
+              "tooltip": "A naval standoff in the Barents Sea.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 2
+                },
+                {
+                  "type": "chain",
+                  "event": "ar-standoff",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Offer joint seabed research",
+              "tooltip": "Cooperation instead of confrontation.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": -5
+                },
+                {
+                  "type": "relation",
+                  "a": "NOR",
+                  "b": "RUS",
+                  "delta": 4
+                }
+              ]
+            }
+          ],
+          "target": "RUS",
+          "category": "security"
+        },
+        {
+          "id": "ar-standoff",
+          "title": "Frigate standoff in the Barents",
+          "text": "Russian and NATO warships manoeuvre within a few hundred metres of each other around the survey ship.",
+          "actor": [
+            "RUS"
+          ],
+          "choices": [
+            {
+              "label": "Snap Northern Fleet exercise",
+              "tooltip": "Show of force; the standoff ends.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": 6
+                },
+                {
+                  "type": "tension",
+                  "delta": 2
+                }
+              ]
+            },
+            {
+              "label": "Board the Norwegian research vessel",
+              "tooltip": "A direct challenge to a NATO member.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": 12
+                },
+                {
+                  "type": "tension",
+                  "delta": 5
+                },
+                {
+                  "type": "relation",
+                  "a": "RUS",
+                  "b": "NOR",
+                  "delta": -20
+                },
+                {
+                  "type": "chain",
+                  "event": "ar-crisis",
+                  "delay": 1
+                }
+              ]
+            },
+            {
+              "label": "Withdraw the survey ship",
+              "tooltip": "The crisis ends.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": -6
+                }
+              ]
+            }
+          ],
+          "category": "security"
+        },
+        {
+          "id": "ar-crisis",
+          "title": "Boarding crisis in the high north",
+          "text": "Russian marines have boarded a Norwegian research vessel. Oslo asks its allies for support.",
+          "actor": [
+            "NOR",
+            "USA"
+          ],
+          "choices": [
+            {
+              "label": "Sanctions on Arctic LNG",
+              "tooltip": "Economic pressure.",
+              "stance": "hold",
+              "effects": [
+                {
+                  "type": "sanction",
+                  "from": "USA",
+                  "to": "RUS"
+                },
+                {
+                  "type": "sanction",
+                  "from": "NOR",
+                  "to": "RUS"
+                }
+              ]
+            },
+            {
+              "label": "Invoke Article 4 and deploy a carrier group",
+              "tooltip": "Escalation at sea.",
+              "stance": "escalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": 10
+                },
+                {
+                  "type": "tension",
+                  "delta": 5
+                },
+                {
+                  "type": "defcon",
+                  "nation": "NOR",
+                  "delta": -1
+                },
+                {
+                  "type": "relation",
+                  "a": "USA",
+                  "b": "RUS",
+                  "delta": -8
+                }
+              ]
+            },
+            {
+              "label": "Negotiate the crew's release",
+              "tooltip": "Quiet diplomacy.",
+              "stance": "deescalate",
+              "effects": [
+                {
+                  "type": "flashpoint",
+                  "id": "arctic",
+                  "delta": -8
+                },
+                {
+                  "type": "stability",
+                  "nation": "NOR",
+                  "delta": -2
+                }
+              ]
+            }
+          ],
+          "target": "RUS",
+          "category": "security"
+        }
+      ]
+    }
+  ]
+}

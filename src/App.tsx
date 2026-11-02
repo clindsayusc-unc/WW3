@@ -17,8 +17,11 @@ import { SettingsModal } from './ui/modals/SettingsModal';
 import { EventModal } from './ui/modals/EventModal';
 import { NuclearModal } from './ui/modals/NuclearModal';
 import { BattleReportModal } from './ui/modals/BattleReportModal';
+import { EscalationModal } from './ui/modals/EscalationModal';
+import { BreakingBanner, NewsModal } from './ui/modals/NewsModal';
 import { EndScreen } from './ui/modals/EndScreen';
 import { useGameStore } from './state/gameStore';
+import { loadGame } from './state/simBridge';
 import { useUiStore } from './state/uiStore';
 import { autosave } from './state/saves';
 import { useKeyboard } from './ui/useKeyboard';
@@ -50,6 +53,7 @@ export function App() {
       fly: (lat: number, lon: number, d?: number) => useUiStore.getState().fly(lat, lon, d),
       ui: useUiStore,
       game: useGameStore,
+      load: loadGame,
     };
   }, []);
   // Autosave after every state change once in game.
@@ -117,7 +121,10 @@ export function App() {
             {modal === 'settings' && <SettingsModal key="settings" onMainMenu={toMenu} />}
             {modal === 'nuclear' && <NuclearModal key="nuclear" />}
             {modal === 'battle' && <BattleReportModal key="battle" />}
+            {modal === 'escalation' && <EscalationModal key="escalation" />}
+            {modal === 'news' && <NewsModal key="news" />}
           </AnimatePresence>
+          {!modal && <BreakingBanner />}
           {game.pendingEvents.length > 0 && !modal && <EventModal />}
           {ended && <EndScreen onMainMenu={toMenu} onContinue={() => setModal('end')} />}
         </>

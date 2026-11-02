@@ -48,6 +48,8 @@ export function useKeyboard(): void {
         m: 'military',
         e: 'economy',
         s: 'summary',
+        n: 'news',
+        x: 'escalation',
       };
       const k = e.key.toLowerCase();
       if (map[k] !== undefined && !e.metaKey && !e.ctrlKey) {

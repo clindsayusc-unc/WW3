@@ -14,6 +14,7 @@ import { obligationWillingness } from './blocs';
 import { issueDispatch } from './statements';
 import { declareWar } from './diplomacy';
 import { neighboursOf } from './ai';
+import { deterrentAgainst } from './escalation';
 
 /** Coalition forms at this threat index against the player (AI powers: COALITION_AI). */
 export const COALITION_TRIGGER = 0.3;
@@ -47,10 +48,10 @@ function sidePower(world: World, state: GameState, iso: Iso3, enemy: Iso3, extra
 export function attackThreshold(world: World, state: GameState, iso: Iso3, target: Iso3): number {
   const t = traitsOf(world, iso);
   let th = clamp(1.75 - t.riskTolerance / 120 - t.aggression / 400, 1.1, 1.7);
-  const theirs = state.nations[target]?.warheads ?? 0;
+  const deter = deterrentAgainst(world, state, target, iso).status;
   const mine = state.nations[iso]?.warheads ?? 0;
-  if (theirs >= 50) th *= 2.2;
-  else if (theirs > 0) th *= mine > 0 ? 1.3 : 1.8;
+  if (deter === 'assured') th *= 2.2;
+  else if (deter === 'limited') th *= mine > 0 ? 1.3 : 1.8;
   return th;
 }
 
@@ -77,11 +78,11 @@ function chooseTarget(world: World, state: GameState, iso: Iso3, neighbours: Set
     const flash = sharedFlashpoint(world, state, iso, x);
     const ratio = powerOf(world, state, iso) / Math.max(1, sidePower(world, state, x, iso));
     let score = -op + 60 * claim.weight + 0.5 * flash.tension + 25 * clamp(ratio - 1, -1, 1) + (isCoalitionTarget ? 50 : 0);
-    // Nuclear deterrence: a credible second strike (≥ 50 warheads) all but rules a target out.
-    const xNukes = state.nations[x]?.warheads ?? 0;
-    // A coalition shares the nuclear risk among its members.
-    if (xNukes >= 50) score -= isCoalitionTarget ? 35 : 90;
-    else if (xNukes > 0) score -= (state.nations[iso]?.warheads ?? 0) > 0 ? 25 : 45;
+    // Nuclear deterrence (D-076): an assured second strike (by the target or a nuclear ally) all but
+    // rules a target out; a coalition shares the nuclear risk among its members.
+    const deter = deterrentAgainst(world, state, x, iso).status;
+    if (deter === 'assured') score -= isCoalitionTarget ? 35 : 90;
+    else if (deter === 'limited') score -= (state.nations[iso]?.warheads ?? 0) > 0 ? 25 : 45;
     score *= 0.6 + g.expansion + (isCoalitionTarget ? g.security * 0.5 : 0);
     const bar = 70 + g.restraint * 25;
     if (score < bar || (best && score <= best.score)) continue;

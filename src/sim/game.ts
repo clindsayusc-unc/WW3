@@ -27,7 +27,7 @@ import {
 } from './economy';
 import { econZero, emptyBalances, runTrade } from './trade';
 import { runDomestic, scheduleElections } from './domestic';
-import { startingInterest } from './setup';
+import { leaderSinceTurn, startingInterest } from './setup';
 import { RESOURCE_IDS } from './types';
 import { runResearch } from './research';
 import {
@@ -53,10 +53,11 @@ import {
 } from './strikes';
 import { startingMissiles, startingSatellites } from './setup';
 import { decayRelations, executeProposal } from './diplomacy';
-import { updateTension, canLaunchNuclear, nuclearStrike } from './escalation';
+import { updateTension, canLaunchNuclear, nuclearStrike, runNuclearAftermath } from './escalation';
 import { drawEvents, resolvePendingEvent } from './events';
 import { runAi } from './ai';
 import { checkVictory } from './victory';
+import { writeWire } from './news';
 import { executeDeal, proposeDeal } from './deals';
 import { runStrategy } from './strategy';
 import { runAid } from './aid';
@@ -235,6 +236,8 @@ export function applyCommand(world: World, input: GameState, command: Command): 
       leaveBloc(world, state, player, command.bloc);
       return state;
     case 'nuclearStrike': {
+      // Release needs DEFCON 1 and two separate confirmations from the commander (D-076).
+      if (!(command.confirmations >= 2)) throw new Error('Nuclear release requires two confirmations.');
       const why = canLaunchNuclear(state, player, command.target);
       if (why) throw new Error(why);
       nuclearStrike(world, state, player, command.target, command.region);
@@ -369,8 +372,10 @@ export function endTurn(world: World, state: GameState): GameState {
   runUn(world, state);
   decayMemories(world, state);
   updateTension(world, state);
+  runNuclearAftermath(world, state);
   drawEvents(world, state);
-  // 5. Advance the calendar.
+  // 5. The month's wire stories (D-077), then advance the calendar.
+  writeWire(world, state);
   state.turn += 1;
   state.date = dateForTurn(state.turn);
   state.isoDate = isoYearMonth(state.date);
@@ -471,11 +476,20 @@ function migrateDiplomacy(world: World, state: GameState): void {
   state.aid ??= [];
   state.aidSuspended ??= [];
   state.playerAid ??= {};
+  // D-074–D-077: chains, wire, nuclear aftermath, succession.
+  state.chains ??= [];
+  state.wire ??= [];
+  state.nuclearWinter ??= 0;
+  state.nuclearLog ??= [];
+  state.worldGdpStart ??= world.nationList.reduce((s, n) => s + n.gdpUsdBn, 0);
+  for (const r of Object.values(state.regions)) if (typeof r.fallout !== 'number') r.fallout = 0;
   for (const n of Object.values(state.nations)) {
     if (typeof n.legitimacy !== 'number') n.legitimacy = 50;
     if (typeof n.aidSupply !== 'number') n.aidSupply = 0;
     if (typeof n.aidReceived !== 'number') n.aidReceived = 0;
     if (typeof n.aidArmsBank !== 'number') n.aidArmsBank = 0;
+    if (typeof n.leaderSince !== 'number') n.leaderSince = leaderSinceTurn(world.leaders.get(n.iso3)?.since);
+    if (typeof n.leaderTermLimited !== 'boolean') n.leaderTermLimited = !n.leaderFictional && world.politics.get(n.iso3)?.incumbentEligible === false;
   }
 }
 

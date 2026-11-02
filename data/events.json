@@ -11,35 +11,70 @@
       "weight": 4,
       "once": false,
       "cooldown": 24,
-      "conditions": [{ "type": "minTurn", "value": 6 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 6
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Announce a spending package",
           "tooltip": "Buys popularity now at a budget cost.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.4 },
-            { "type": "stability", "nation": "PLAYER", "delta": 6 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.4
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 6
+            }
           ]
         },
         {
           "label": "Campaign on fiscal discipline",
           "tooltip": "Unpopular in the short run; helps growth later.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -4 },
-            { "type": "growth", "nation": "PLAYER", "delta": 0.3, "months": 12 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -4
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.3,
+              "months": 12
+            }
           ]
         },
         {
           "label": "Talk tough on {TARGET}",
           "tooltip": "Rallies voters but damages relations and raises tension.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -8 },
-            { "type": "stability", "nation": "PLAYER", "delta": 4 },
-            { "type": "tension", "delta": 2 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -8
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 4
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            }
           ]
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "budget-shortfall",
@@ -49,35 +84,75 @@
       "weight": 4,
       "once": false,
       "cooldown": 18,
-      "conditions": [{ "type": "minTurn", "value": 3 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
       "choices": [
         {
           "label": "Cut defence procurement",
           "tooltip": "Frees cash now; the armed forces lose planned modernisation.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": 0.3 },
-            { "type": "research", "nation": "PLAYER", "points": -15 },
-            { "type": "stability", "nation": "PLAYER", "delta": -1 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.3
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": -15
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -1
+            }
           ]
         },
         {
           "label": "Raise taxes",
           "tooltip": "Closes the gap but slows the economy and angers voters.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": 0.4 },
-            { "type": "stability", "nation": "PLAYER", "delta": -5 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.3, "months": 12 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.4
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -5
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.3,
+              "months": 12
+            }
           ]
         },
         {
           "label": "Borrow and defer",
           "tooltip": "Painless now; debt service drags on growth for two years.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": 0.5 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.2, "months": 24 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.5
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 24
+            }
           ]
         }
-      ]
+      ],
+      "category": "economy"
     },
     {
       "id": "cyberattack-infrastructure",
@@ -87,37 +162,80 @@
       "weight": 4,
       "once": false,
       "cooldown": 12,
-      "conditions": [{ "type": "minTurn", "value": 2 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 2
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Retaliate in kind",
           "tooltip": "Covert response that raises tension but sharpens your cyber forces.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -10 },
-            { "type": "tension", "delta": 3 },
-            { "type": "research", "nation": "PLAYER", "points": 10 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -10
+            },
+            {
+              "type": "tension",
+              "delta": 3
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 10
+            }
           ]
         },
         {
           "label": "Attribute publicly and sanction",
           "tooltip": "Imposes sanctions on {TARGET}; relations fall sharply.",
           "effects": [
-            { "type": "sanction", "from": "PLAYER", "to": "TARGET" },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -15 },
-            { "type": "stability", "nation": "PLAYER", "delta": 2 }
+            {
+              "type": "sanction",
+              "from": "PLAYER",
+              "to": "TARGET"
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -15
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            }
           ]
         },
         {
           "label": "Harden systems quietly",
           "tooltip": "Spends on resilience and avoids a diplomatic fight.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.2 },
-            { "type": "research", "nation": "PLAYER", "points": 20 },
-            { "type": "stability", "nation": "PLAYER", "delta": -2 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 20
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            }
           ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "mass-protests",
@@ -127,32 +245,72 @@
       "weight": 5,
       "once": false,
       "cooldown": 8,
-      "conditions": [{ "type": "stabilityMax", "nation": "PLAYER", "value": 40 }],
+      "conditions": [
+        {
+          "type": "stabilityMax",
+          "nation": "PLAYER",
+          "value": 40
+        }
+      ],
       "choices": [
         {
           "label": "Concede reforms",
           "tooltip": "Calms the streets at a fiscal cost.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 8 },
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.3 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 8
+            },
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.3
+            }
           ]
         },
         {
           "label": "Order a crackdown",
           "tooltip": "Restores order for now; damages the economy and your image abroad.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 3 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.3, "months": 6 },
-            { "type": "relation", "a": "PLAYER", "b": "FRA", "delta": -5 },
-            { "type": "relation", "a": "PLAYER", "b": "DEU", "delta": -5 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 3
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.3,
+              "months": 6
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "FRA",
+              "delta": -5
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "DEU",
+              "delta": -5
+            }
           ]
         },
         {
           "label": "Wait it out",
           "tooltip": "No cost today; the movement may grow.",
-          "effects": [{ "type": "stability", "nation": "PLAYER", "delta": -3 }]
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "ally-exercise-request",
@@ -162,29 +320,61 @@
       "weight": 4,
       "once": false,
       "cooldown": 10,
-      "conditions": [{ "type": "minTurn", "value": 2 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 2
+        }
+      ],
       "targetPick": "ally",
       "choices": [
         {
           "label": "Join with a full contingent",
           "tooltip": "Strengthens the partnership; small cost and a nudge to global tension.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 8 },
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.1 },
-            { "type": "tension", "delta": 2 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 8
+            },
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.1
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            }
           ]
         },
         {
           "label": "Send observers only",
           "tooltip": "Minimal commitment, minimal benefit.",
-          "effects": [{ "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 2 }]
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 2
+            }
+          ]
         },
         {
           "label": "Decline",
           "tooltip": "Avoids provoking rivals; the partner is disappointed.",
-          "effects": [{ "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -6 }]
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -6
+            }
+          ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "arms-sale-offer",
@@ -194,33 +384,72 @@
       "weight": 4,
       "once": false,
       "cooldown": 12,
-      "conditions": [{ "type": "minTurn", "value": 3 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
       "targetPick": "ally",
       "choices": [
         {
           "label": "Approve the full sale",
           "tooltip": "Revenue and a stronger partner; slightly higher regional tension.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": 0.2 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 6 },
-            { "type": "units", "nation": "TARGET", "unitType": "airDefense", "count": 1 },
-            { "type": "tension", "delta": 1 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.2
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 6
+            },
+            {
+              "type": "units",
+              "nation": "TARGET",
+              "unitType": "airDefense",
+              "count": 1
+            },
+            {
+              "type": "tension",
+              "delta": 1
+            }
           ]
         },
         {
           "label": "Approve with end-use conditions",
           "tooltip": "Smaller deal, fewer complications.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": 0.1 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 3 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.1
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 3
+            }
           ]
         },
         {
           "label": "Decline",
           "tooltip": "Avoids entanglement; the partner looks elsewhere.",
-          "effects": [{ "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -4 }]
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -4
+            }
+          ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "intelligence-leak",
@@ -230,35 +459,71 @@
       "weight": 3,
       "once": false,
       "cooldown": 18,
-      "conditions": [{ "type": "minTurn", "value": 4 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
       "targetPick": "ally",
       "choices": [
         {
           "label": "Prosecute and brief partners fully",
           "tooltip": "Restores trust abroad at some domestic embarrassment.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 3 },
-            { "type": "stability", "nation": "PLAYER", "delta": -2 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 3
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            }
           ]
         },
         {
           "label": "Overhaul security clearances",
           "tooltip": "Costly reforms that improve future resilience.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.1 },
-            { "type": "research", "nation": "PLAYER", "points": 10 },
-            { "type": "stability", "nation": "PLAYER", "delta": -1 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.1
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 10
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -1
+            }
           ]
         },
         {
           "label": "Downplay the leak",
           "tooltip": "Cheapest option; partners lose confidence.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -4 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -6 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -4
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -6
+            }
           ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "refugee-crisis",
@@ -268,35 +533,73 @@
       "weight": 4,
       "once": false,
       "cooldown": 15,
-      "conditions": [{ "type": "tensionMin", "value": 35 }],
+      "conditions": [
+        {
+          "type": "tensionMin",
+          "value": 35
+        }
+      ],
       "targetPick": "neighbour",
       "choices": [
         {
           "label": "Open the border and register arrivals",
           "tooltip": "Humanitarian credit and future labour; short-term strain at home.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -4 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 8 },
-            { "type": "growth", "nation": "PLAYER", "delta": 0.2, "months": 12 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -4
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 8
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.2,
+              "months": 12
+            }
           ]
         },
         {
           "label": "Close the border",
           "tooltip": "Popular at home; sours relations with the neighbour.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 2 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -8 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -8
+            }
           ]
         },
         {
           "label": "Fund reception centres abroad",
           "tooltip": "Spends money to keep the problem at arm's length.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.2 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 4 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 4
+            }
           ]
         }
-      ]
+      ],
+      "category": "disaster"
     },
     {
       "id": "general-strike",
@@ -306,35 +609,77 @@
       "weight": 4,
       "once": false,
       "cooldown": 12,
-      "conditions": [{ "type": "stabilityMax", "nation": "PLAYER", "value": 50 }],
+      "conditions": [
+        {
+          "type": "stabilityMax",
+          "nation": "PLAYER",
+          "value": 50
+        }
+      ],
       "choices": [
         {
           "label": "Negotiate a settlement",
           "tooltip": "Ends the strike quickly at a fiscal cost.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.2 },
-            { "type": "stability", "nation": "PLAYER", "delta": 5 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.2, "months": 3 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 5
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 3
+            }
           ]
         },
         {
           "label": "Hold firm",
           "tooltip": "No concessions; the economy takes a lasting hit.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -5 },
-            { "type": "gdp", "nation": "PLAYER", "pct": -0.3 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -5
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.3
+            }
           ]
         },
         {
           "label": "Invoke emergency powers",
           "tooltip": "Restores services but draws criticism from democratic partners.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 2 },
-            { "type": "relation", "a": "PLAYER", "b": "GBR", "delta": -4 },
-            { "type": "relation", "a": "PLAYER", "b": "DEU", "delta": -4 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "GBR",
+              "delta": -4
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "DEU",
+              "delta": -4
+            }
           ]
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "market-crash",
@@ -344,35 +689,71 @@
       "weight": 2,
       "once": false,
       "cooldown": 24,
-      "conditions": [{ "type": "minTurn", "value": 6 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 6
+        }
+      ],
       "choices": [
         {
           "label": "Announce a large bailout",
           "tooltip": "Expensive but limits the damage to output.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.8 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.5, "months": 6 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.8
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.5,
+              "months": 6
+            }
           ]
         },
         {
           "label": "Let markets clear",
           "tooltip": "No bailout; a deeper, lasting hit to GDP and confidence.",
           "effects": [
-            { "type": "gdp", "nation": "PLAYER", "pct": -2.0 },
-            { "type": "stability", "nation": "PLAYER", "delta": -5 }
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -2.0
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -5
+            }
           ]
         },
         {
           "label": "Coordinate with partner central banks",
           "tooltip": "Shares the burden and builds goodwill.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.4 },
-            { "type": "gdp", "nation": "PLAYER", "pct": -0.8 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 5 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.4
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.8
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 5
+            }
           ]
         }
       ],
-      "targetPick": "ally"
+      "targetPick": "ally",
+      "category": "economy"
     },
     {
       "id": "oil-shock",
@@ -382,34 +763,72 @@
       "weight": 4,
       "once": false,
       "cooldown": 12,
-      "conditions": [{ "type": "flashpointMin", "id": "iran-israel-gulf", "value": 55 }],
+      "conditions": [
+        {
+          "type": "flashpointMin",
+          "id": "iran-israel-gulf",
+          "value": 55
+        }
+      ],
       "choices": [
         {
           "label": "Release strategic reserves",
           "tooltip": "Softens prices at a budget cost.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.2 },
-            { "type": "stability", "nation": "PLAYER", "delta": 2 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            }
           ]
         },
         {
           "label": "Impose fuel rationing",
           "tooltip": "Saves money; unpopular and slows the economy.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -5 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.3, "months": 6 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -5
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.3,
+              "months": 6
+            }
           ]
         },
         {
           "label": "Negotiate supply deal with Gulf producers",
           "tooltip": "Secures supply and improves ties with Riyadh and Abu Dhabi.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.1 },
-            { "type": "relation", "a": "PLAYER", "b": "SAU", "delta": 6 },
-            { "type": "relation", "a": "PLAYER", "b": "ARE", "delta": 4 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.1
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "SAU",
+              "delta": 6
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "ARE",
+              "delta": 4
+            }
           ]
         }
-      ]
+      ],
+      "category": "economy"
     },
     {
       "id": "drone-incursion",
@@ -419,33 +838,70 @@
       "weight": 5,
       "once": false,
       "cooldown": 8,
-      "conditions": [{ "type": "tensionMin", "value": 30 }],
+      "conditions": [
+        {
+          "type": "tensionMin",
+          "value": 30
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Shoot down and protest publicly",
           "tooltip": "Firm response; relations and tension worsen.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -8 },
-            { "type": "tension", "delta": 2 },
-            { "type": "stability", "nation": "PLAYER", "delta": 2 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -8
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            }
           ]
         },
         {
           "label": "Lodge a quiet protest",
           "tooltip": "Keeps the incident contained.",
-          "effects": [{ "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -3 }]
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -3
+            }
+          ]
         },
         {
           "label": "Launch reciprocal reconnaissance",
           "tooltip": "Gathers intelligence at the price of escalation.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -6 },
-            { "type": "tension", "delta": 3 },
-            { "type": "research", "nation": "PLAYER", "points": 5 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -6
+            },
+            {
+              "type": "tension",
+              "delta": 3
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 5
+            }
           ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "submarine-incident",
@@ -455,36 +911,74 @@
       "weight": 3,
       "once": false,
       "cooldown": 15,
-      "conditions": [{ "type": "tensionMin", "value": 35 }],
+      "conditions": [
+        {
+          "type": "tensionMin",
+          "value": 35
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Publicise the intrusion",
           "tooltip": "Rallies opinion; relations and tension suffer.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -10 },
-            { "type": "tension", "delta": 3 },
-            { "type": "stability", "nation": "PLAYER", "delta": 1 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -10
+            },
+            {
+              "type": "tension",
+              "delta": 3
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 1
+            }
           ]
         },
         {
           "label": "Raise it on the military hotline",
           "tooltip": "Keeps channels open and tension down.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 3 },
-            { "type": "tension", "delta": -1 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 3
+            },
+            {
+              "type": "tension",
+              "delta": -1
+            }
           ]
         },
         {
           "label": "Step up anti-submarine patrols",
           "tooltip": "Spends on readiness and signals vigilance.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.1 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -4 },
-            { "type": "tension", "delta": 1 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.1
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -4
+            },
+            {
+              "type": "tension",
+              "delta": 1
+            }
           ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "rival-hypersonic-test",
@@ -494,31 +988,59 @@
       "weight": 3,
       "once": false,
       "cooldown": 18,
-      "conditions": [{ "type": "minTurn", "value": 4 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Launch a crash programme",
           "tooltip": "Large research boost; expensive.",
           "effects": [
-            { "type": "research", "nation": "PLAYER", "points": 40 },
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.4 }
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 40
+            },
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.4
+            }
           ]
         },
         {
           "label": "Propose arms-control talks",
           "tooltip": "Lowers tension and improves relations.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 6 },
-            { "type": "tension", "delta": -2 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 6
+            },
+            {
+              "type": "tension",
+              "delta": -2
+            }
           ]
         },
         {
           "label": "Dismiss the test publicly",
           "tooltip": "No cost; a small knock to confidence.",
-          "effects": [{ "type": "stability", "nation": "PLAYER", "delta": -1 }]
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -1
+            }
+          ]
         }
-      ]
+      ],
+      "category": "science"
     },
     {
       "id": "pandemic-scare",
@@ -528,36 +1050,78 @@
       "weight": 2,
       "once": false,
       "cooldown": 36,
-      "conditions": [{ "type": "minTurn", "value": 3 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
       "targetPick": "neighbour",
       "choices": [
         {
           "label": "Close borders and restrict travel",
           "tooltip": "Reassures the public but hits the economy and the neighbour.",
           "effects": [
-            { "type": "growth", "nation": "PLAYER", "delta": -0.6, "months": 6 },
-            { "type": "stability", "nation": "PLAYER", "delta": 3 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -5 }
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.6,
+              "months": 6
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 3
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -5
+            }
           ]
         },
         {
           "label": "Coordinate an international response",
           "tooltip": "Moderate cost; builds goodwill.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.2 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 5 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.3, "months": 3 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 5
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.3,
+              "months": 3
+            }
           ]
         },
         {
           "label": "Take minimal measures",
           "tooltip": "Cheap now; a lasting hit if the outbreak spreads.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -4 },
-            { "type": "gdp", "nation": "PLAYER", "pct": -0.5 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -4
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.5
+            }
           ]
         }
-      ]
+      ],
+      "category": "disaster"
     },
     {
       "id": "ai-breakthrough",
@@ -567,36 +1131,79 @@
       "weight": 3,
       "once": true,
       "cooldown": 0,
-      "conditions": [{ "type": "minTurn", "value": 8 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 8
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Classify for defence use",
           "tooltip": "Big research gain; rivals react and civilian growth suffers.",
           "effects": [
-            { "type": "research", "nation": "PLAYER", "points": 40 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -8 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.2, "months": 12 }
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 40
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -8
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 12
+            }
           ]
         },
         {
           "label": "Commercialise openly",
           "tooltip": "Strong growth boost and modest research gain.",
           "effects": [
-            { "type": "growth", "nation": "PLAYER", "delta": 0.5, "months": 24 },
-            { "type": "research", "nation": "PLAYER", "points": 15 }
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.5,
+              "months": 24
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 15
+            }
           ]
         },
         {
           "label": "Restrict exports to rivals",
           "tooltip": "Balanced approach; partners appreciate the coordination.",
           "effects": [
-            { "type": "research", "nation": "PLAYER", "points": 25 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -6 },
-            { "type": "growth", "nation": "PLAYER", "delta": 0.2, "months": 12 }
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 25
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -6
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.2,
+              "months": 12
+            }
           ]
         }
-      ]
+      ],
+      "category": "science"
     },
     {
       "id": "semiconductor-export-curbs",
@@ -610,9 +1217,21 @@
         {
           "type": "isNation",
           "nation": "PLAYER",
-          "iso3": ["USA", "CHN", "JPN", "KOR", "DEU", "GBR", "FRA", "IND"]
+          "iso3": [
+            "USA",
+            "CHN",
+            "JPN",
+            "KOR",
+            "DEU",
+            "GBR",
+            "FRA",
+            "IND"
+          ]
         },
-        { "type": "minTurn", "value": 2 }
+        {
+          "type": "minTurn",
+          "value": 2
+        }
       ],
       "targetPick": "rival",
       "choices": [
@@ -620,27 +1239,65 @@
           "label": "Tighten the controls",
           "tooltip": "Slows the rival's progress; costs sales and relations.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -12 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.2, "months": 12 },
-            { "type": "research", "nation": "TARGET", "points": -20 },
-            { "type": "research", "nation": "PLAYER", "points": 10 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -12
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 12
+            },
+            {
+              "type": "research",
+              "nation": "TARGET",
+              "points": -20
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 10
+            }
           ]
         },
         {
           "label": "Hold current rules",
           "tooltip": "No change.",
-          "effects": [{ "type": "stability", "nation": "PLAYER", "delta": 0 }]
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 0
+            }
+          ]
         },
         {
           "label": "Loosen controls for a trade deal",
           "tooltip": "Revenue and a thaw; the rival gains technology.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 8 },
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": 0.1 },
-            { "type": "research", "nation": "TARGET", "points": 15 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 8
+            },
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.1
+            },
+            {
+              "type": "research",
+              "nation": "TARGET",
+              "points": 15
+            }
           ]
         }
-      ]
+      ],
+      "category": "economy"
     },
     {
       "id": "un-resolution-vote",
@@ -650,36 +1307,82 @@
       "weight": 4,
       "once": false,
       "cooldown": 10,
-      "conditions": [{ "type": "tensionMin", "value": 30 }],
+      "conditions": [
+        {
+          "type": "tensionMin",
+          "value": 30
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Vote in favour",
           "tooltip": "Aligns with partners; relations with the target fall.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -6 },
-            { "type": "relation", "a": "PLAYER", "b": "USA", "delta": 3 },
-            { "type": "relation", "a": "PLAYER", "b": "GBR", "delta": 3 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -6
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "USA",
+              "delta": 3
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "GBR",
+              "delta": 3
+            }
           ]
         },
         {
           "label": "Abstain",
           "tooltip": "Pleases no one; small costs on both sides.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": -2 },
-            { "type": "relation", "a": "PLAYER", "b": "USA", "delta": -2 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -2
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "USA",
+              "delta": -2
+            }
           ]
         },
         {
           "label": "Vote against",
           "tooltip": "Wins favour with the target; Western partners object.",
           "effects": [
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 6 },
-            { "type": "relation", "a": "PLAYER", "b": "USA", "delta": -6 },
-            { "type": "relation", "a": "PLAYER", "b": "FRA", "delta": -4 }
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 6
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "USA",
+              "delta": -6
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "FRA",
+              "delta": -4
+            }
           ]
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "war-weariness-protests",
@@ -690,8 +1393,15 @@
       "once": false,
       "cooldown": 8,
       "conditions": [
-        { "type": "atWar", "nation": "PLAYER", "value": true },
-        { "type": "minTurn", "value": 6 }
+        {
+          "type": "atWar",
+          "nation": "PLAYER",
+          "value": true
+        },
+        {
+          "type": "minTurn",
+          "value": 6
+        }
       ],
       "targetPick": "warEnemy",
       "choices": [
@@ -699,29 +1409,65 @@
           "label": "Open ceasefire talks",
           "tooltip": "Calms the home front and lowers tension; the enemy senses weakness.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 5 },
-            { "type": "tension", "delta": -3 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 5 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 5
+            },
+            {
+              "type": "tension",
+              "delta": -3
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 5
+            }
           ]
         },
         {
           "label": "Rally the nation",
           "tooltip": "Keeps the war effort going at an economic cost.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -2 },
-            { "type": "growth", "nation": "PLAYER", "delta": -0.3, "months": 6 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.3,
+              "months": 6
+            }
           ]
         },
         {
           "label": "Suppress the protests",
           "tooltip": "Short-term order; long-term instability and allied criticism.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": -6 },
-            { "type": "relation", "a": "PLAYER", "b": "FRA", "delta": -5 },
-            { "type": "relation", "a": "PLAYER", "b": "DEU", "delta": -5 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -6
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "FRA",
+              "delta": -5
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "DEU",
+              "delta": -5
+            }
           ]
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "mutiny-risk",
@@ -731,30 +1477,59 @@
       "weight": 5,
       "once": false,
       "cooldown": 6,
-      "conditions": [{ "type": "stabilityMax", "nation": "PLAYER", "value": 25 }],
+      "conditions": [
+        {
+          "type": "stabilityMax",
+          "nation": "PLAYER",
+          "value": 25
+        }
+      ],
       "choices": [
         {
           "label": "Pay arrears and improve conditions",
           "tooltip": "Expensive but restores loyalty.",
           "effects": [
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.4 },
-            { "type": "stability", "nation": "PLAYER", "delta": 6 }
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.4
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 6
+            }
           ]
         },
         {
           "label": "Purge the officer corps",
           "tooltip": "Removes plotters but weakens the force.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 2 },
-            { "type": "research", "nation": "PLAYER", "points": -10 }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": -10
+            }
           ]
         },
         {
           "label": "Ignore the reports",
           "tooltip": "Nothing spent; the rot spreads.",
-          "effects": [{ "type": "stability", "nation": "PLAYER", "delta": -8 }]
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -8
+            }
+          ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "coup-attempt",
@@ -764,26 +1539,60 @@
       "weight": 6,
       "once": true,
       "cooldown": 0,
-      "conditions": [{ "type": "stabilityMax", "nation": "PLAYER", "value": 20 }],
+      "conditions": [
+        {
+          "type": "stabilityMax",
+          "nation": "PLAYER",
+          "value": 20
+        }
+      ],
       "targetPick": "rival",
       "choices": [
         {
           "label": "Crush the coup with loyalist forces",
           "tooltip": "The government survives; the economy and public trust take a heavy hit.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 10 },
-            { "type": "gdp", "nation": "PLAYER", "pct": -1.5 },
-            { "type": "treasury", "nation": "PLAYER", "pctGdp": -0.3 },
-            { "type": "news", "text": "Coup attempt put down after street fighting in the capital" }
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 10
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -1.5
+            },
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.3
+            },
+            {
+              "type": "news",
+              "text": "Coup attempt put down after street fighting in the capital"
+            }
           ]
         },
         {
           "label": "Negotiate a power-sharing deal",
           "tooltip": "Avoids bloodshed; the new arrangement is fragile.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 6 },
-            { "type": "gdp", "nation": "PLAYER", "pct": -1.0 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 5 },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 6
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -1.0
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 5
+            },
             {
               "type": "news",
               "text": "Government and rebel officers agree transitional power-sharing arrangement"
@@ -794,19 +1603,44 @@
           "label": "Step aside; regime collapses",
           "tooltip": "A transitional government takes over: demobilisation, de-escalation and a sharp economic contraction.",
           "effects": [
-            { "type": "stability", "nation": "PLAYER", "delta": 15 },
-            { "type": "gdp", "nation": "PLAYER", "pct": -3.0 },
-            { "type": "mobilize", "nation": "PLAYER", "level": 0 },
-            { "type": "defcon", "nation": "PLAYER", "delta": 1 },
-            { "type": "relation", "a": "PLAYER", "b": "TARGET", "delta": 10 },
-            { "type": "tension", "delta": -3 },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 15
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -3.0
+            },
+            {
+              "type": "mobilize",
+              "nation": "PLAYER",
+              "level": 0
+            },
+            {
+              "type": "defcon",
+              "nation": "PLAYER",
+              "delta": 1
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 10
+            },
+            {
+              "type": "tension",
+              "delta": -3
+            },
             {
               "type": "news",
               "text": "Government falls; transitional council announces demobilisation and review of foreign commitments"
             }
           ]
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "world-earthquake",
@@ -823,15 +1657,44 @@
           "label": "Disaster response under way",
           "tooltip": "The affected nation's economy and stability take a hit.",
           "effects": [
-            { "type": "gdp", "nation": "TARGET", "pct": -1.0 },
-            { "type": "stability", "nation": "TARGET", "delta": -3 },
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -1.0
+            },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -3
+            },
             {
               "type": "news",
               "text": "Major earthquake causes widespread damage; international aid mobilised"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.4
+        },
+        {
+          "label": "Moderate damage",
+          "tooltip": "Local losses only.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -0.3
+            },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -1
+            }
+          ],
+          "chance": 0.6
         }
-      ]
+      ],
+      "category": "disaster"
     },
     {
       "id": "world-coup",
@@ -841,24 +1704,67 @@
       "weight": 2,
       "once": false,
       "cooldown": 18,
-      "conditions": [{ "type": "minTurn", "value": 3 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
       "targetPick": "random",
       "choices": [
         {
           "label": "Junta consolidates",
           "tooltip": "Stability and output fall; Western ties sour.",
           "effects": [
-            { "type": "stability", "nation": "TARGET", "delta": -10 },
-            { "type": "gdp", "nation": "TARGET", "pct": -2.0 },
-            { "type": "relation", "a": "TARGET", "b": "USA", "delta": -8 },
-            { "type": "relation", "a": "TARGET", "b": "FRA", "delta": -5 },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -10
+            },
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -2.0
+            },
+            {
+              "type": "relation",
+              "a": "TARGET",
+              "b": "USA",
+              "delta": -8
+            },
+            {
+              "type": "relation",
+              "a": "TARGET",
+              "b": "FRA",
+              "delta": -5
+            },
             {
               "type": "news",
               "text": "Military seizes power in surprise coup; borders closed and constitution suspended"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "The coup fails",
+          "tooltip": "Loyalists restore the government.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -4
+            },
+            {
+              "type": "news",
+              "text": "Coup attempt crushed by loyalist troops"
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "world-fusion-milestone",
@@ -868,24 +1774,65 @@
       "weight": 2,
       "once": true,
       "cooldown": 0,
-      "conditions": [{ "type": "minTurn", "value": 12 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 12
+        }
+      ],
       "choices": [
         {
           "label": "Research race accelerates",
           "tooltip": "Major research boost for leading technology powers.",
           "effects": [
-            { "type": "research", "nation": "USA", "points": 15 },
-            { "type": "research", "nation": "CHN", "points": 15 },
-            { "type": "research", "nation": "DEU", "points": 10 },
-            { "type": "research", "nation": "JPN", "points": 10 },
-            { "type": "research", "nation": "KOR", "points": 10 },
+            {
+              "type": "research",
+              "nation": "USA",
+              "points": 15
+            },
+            {
+              "type": "research",
+              "nation": "CHN",
+              "points": 15
+            },
+            {
+              "type": "research",
+              "nation": "DEU",
+              "points": 10
+            },
+            {
+              "type": "research",
+              "nation": "JPN",
+              "points": 10
+            },
+            {
+              "type": "research",
+              "nation": "KOR",
+              "points": 10
+            },
             {
               "type": "news",
               "text": "Pilot plant reports sustained net-energy fusion; governments boost research budgets"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "Results disputed",
+          "tooltip": "Peer review finds flaws.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "USA",
+              "points": 5
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "science"
     },
     {
       "id": "world-opec-cut",
@@ -901,17 +1848,72 @@
           "label": "Prices rise",
           "tooltip": "Producers gain, importers slow.",
           "effects": [
-            { "type": "growth", "nation": "SAU", "delta": 0.5, "months": 6 },
-            { "type": "growth", "nation": "RUS", "delta": 0.3, "months": 6 },
-            { "type": "growth", "nation": "ARE", "delta": 0.3, "months": 6 },
-            { "type": "growth", "nation": "IND", "delta": -0.2, "months": 6 },
-            { "type": "growth", "nation": "CHN", "delta": -0.2, "months": 6 },
-            { "type": "growth", "nation": "JPN", "delta": -0.2, "months": 6 },
-            { "type": "growth", "nation": "KOR", "delta": -0.2, "months": 6 },
-            { "type": "news", "text": "OPEC+ agrees output cut; crude prices climb" }
-          ]
+            {
+              "type": "growth",
+              "nation": "SAU",
+              "delta": 0.5,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "RUS",
+              "delta": 0.3,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "ARE",
+              "delta": 0.3,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "IND",
+              "delta": -0.2,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "CHN",
+              "delta": -0.2,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "JPN",
+              "delta": -0.2,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "KOR",
+              "delta": -0.2,
+              "months": 6
+            },
+            {
+              "type": "news",
+              "text": "OPEC+ agrees output cut; crude prices climb"
+            }
+          ],
+          "stance": "hold",
+          "chance": 0.7
+        },
+        {
+          "label": "Cut collapses in quarrelling",
+          "tooltip": "Prices barely move.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "SAU",
+              "b": "RUS",
+              "delta": -3
+            }
+          ],
+          "chance": 0.3
         }
-      ]
+      ],
+      "category": "economy"
     },
     {
       "id": "world-opec-increase",
@@ -927,16 +1929,59 @@
           "label": "Prices fall",
           "tooltip": "Importers gain, producers lose revenue.",
           "effects": [
-            { "type": "growth", "nation": "SAU", "delta": -0.4, "months": 6 },
-            { "type": "growth", "nation": "RUS", "delta": -0.4, "months": 6 },
-            { "type": "growth", "nation": "IRN", "delta": -0.3, "months": 6 },
-            { "type": "growth", "nation": "IND", "delta": 0.2, "months": 6 },
-            { "type": "growth", "nation": "CHN", "delta": 0.2, "months": 6 },
-            { "type": "growth", "nation": "JPN", "delta": 0.2, "months": 6 },
-            { "type": "news", "text": "OPEC+ raises output; crude prices slide" }
-          ]
+            {
+              "type": "growth",
+              "nation": "SAU",
+              "delta": -0.4,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "RUS",
+              "delta": -0.4,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "IRN",
+              "delta": -0.3,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "IND",
+              "delta": 0.2,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "CHN",
+              "delta": 0.2,
+              "months": 6
+            },
+            {
+              "type": "growth",
+              "nation": "JPN",
+              "delta": 0.2,
+              "months": 6
+            },
+            {
+              "type": "news",
+              "text": "OPEC+ raises output; crude prices slide"
+            }
+          ],
+          "stance": "hold",
+          "chance": 0.7
+        },
+        {
+          "label": "Increase reversed within weeks",
+          "tooltip": "Markets whipsaw.",
+          "stance": "deescalate",
+          "effects": [],
+          "chance": 0.3
         }
-      ]
+      ],
+      "category": "economy"
     },
     {
       "id": "world-red-sea-cable",
@@ -946,22 +1991,55 @@
       "weight": 3,
       "once": false,
       "cooldown": 10,
-      "conditions": [{ "type": "tensionMin", "value": 30 }],
+      "conditions": [
+        {
+          "type": "tensionMin",
+          "value": 30
+        }
+      ],
       "choices": [
         {
           "label": "Repairs will take weeks",
           "tooltip": "Economic disruption in the region and a notch of global tension.",
           "effects": [
-            { "type": "gdp", "nation": "EGY", "pct": -0.3 },
-            { "type": "growth", "nation": "IND", "delta": -0.1, "months": 3 },
-            { "type": "tension", "delta": 2 },
+            {
+              "type": "gdp",
+              "nation": "EGY",
+              "pct": -0.3
+            },
+            {
+              "type": "growth",
+              "nation": "IND",
+              "delta": -0.1,
+              "months": 3
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            },
             {
               "type": "news",
               "text": "Multiple Red Sea data cables severed; Europe-Asia traffic rerouted"
             }
-          ]
+          ],
+          "stance": "escalate",
+          "chance": 0.5
+        },
+        {
+          "label": "Rerouted traffic",
+          "tooltip": "Minor slowdown.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "EGY",
+              "pct": -0.1
+            }
+          ],
+          "chance": 0.5
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "world-famine-horn",
@@ -977,15 +2055,39 @@
           "label": "Aid appeal launched",
           "tooltip": "Affected states lose stability.",
           "effects": [
-            { "type": "stability", "nation": "SDN", "delta": -5 },
-            { "type": "stability", "nation": "ETH", "delta": -4 },
+            {
+              "type": "stability",
+              "nation": "SDN",
+              "delta": -5
+            },
+            {
+              "type": "stability",
+              "nation": "ETH",
+              "delta": -4
+            },
             {
               "type": "news",
               "text": "UN declares famine in parts of Sudan and Ethiopia; aid access blocked by fighting"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "Aid corridors open",
+          "tooltip": "Lives saved.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "SDN",
+              "delta": -2
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "disaster"
     },
     {
       "id": "world-debt-default",
@@ -995,22 +2097,56 @@
       "weight": 3,
       "once": false,
       "cooldown": 15,
-      "conditions": [{ "type": "minTurn", "value": 4 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
       "targetPick": "random",
       "choices": [
         {
           "label": "Restructuring talks begin",
           "tooltip": "A sharp hit to the defaulting economy.",
           "effects": [
-            { "type": "gdp", "nation": "TARGET", "pct": -2.0 },
-            { "type": "stability", "nation": "TARGET", "delta": -6 },
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -2.0
+            },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -6
+            },
             {
               "type": "news",
               "text": "Sovereign default triggers emergency IMF talks and market sell-off"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "Last-minute IMF rescue",
+          "tooltip": "Default averted.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -2
+            },
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -0.5
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "economy"
     },
     {
       "id": "world-mediterranean-migration",
@@ -1026,17 +2162,50 @@
           "label": "Reception systems strained",
           "tooltip": "Political strain in southern Europe.",
           "effects": [
-            { "type": "stability", "nation": "ITA", "delta": -3 },
-            { "type": "stability", "nation": "GRC", "delta": -3 },
-            { "type": "stability", "nation": "ESP", "delta": -2 },
-            { "type": "relation", "a": "ITA", "b": "LBY", "delta": -4 },
+            {
+              "type": "stability",
+              "nation": "ITA",
+              "delta": -3
+            },
+            {
+              "type": "stability",
+              "nation": "GRC",
+              "delta": -3
+            },
+            {
+              "type": "stability",
+              "nation": "ESP",
+              "delta": -2
+            },
+            {
+              "type": "relation",
+              "a": "ITA",
+              "b": "LBY",
+              "delta": -4
+            },
             {
               "type": "news",
               "text": "Record Mediterranean crossings strain southern European reception systems"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "EU deal with transit states",
+          "tooltip": "Arrivals fall.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "ITA",
+              "delta": -1
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "disaster"
     },
     {
       "id": "world-space-debris",
@@ -1046,24 +2215,60 @@
       "weight": 2,
       "once": false,
       "cooldown": 24,
-      "conditions": [{ "type": "minTurn", "value": 5 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 5
+        }
+      ],
       "choices": [
         {
           "label": "Debris tracked",
           "tooltip": "Space powers bicker; tracking research gets a boost.",
           "effects": [
-            { "type": "tension", "delta": 2 },
-            { "type": "relation", "a": "USA", "b": "CHN", "delta": -4 },
-            { "type": "relation", "a": "USA", "b": "RUS", "delta": -3 },
-            { "type": "research", "nation": "USA", "points": 8 },
-            { "type": "research", "nation": "CHN", "points": 8 },
+            {
+              "type": "tension",
+              "delta": 2
+            },
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "CHN",
+              "delta": -4
+            },
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "RUS",
+              "delta": -3
+            },
+            {
+              "type": "research",
+              "nation": "USA",
+              "points": 8
+            },
+            {
+              "type": "research",
+              "nation": "CHN",
+              "points": 8
+            },
             {
               "type": "news",
               "text": "Orbital collision creates debris cloud; satellite operators forced to manoeuvre"
             }
-          ]
+          ],
+          "stance": "escalate",
+          "chance": 0.5
+        },
+        {
+          "label": "Debris cloud dissipates",
+          "tooltip": "Little lasting harm.",
+          "stance": "deescalate",
+          "effects": [],
+          "chance": 0.5
         }
-      ]
+      ],
+      "category": "science"
     },
     {
       "id": "world-cyber-worm",
@@ -1073,25 +2278,69 @@
       "weight": 3,
       "once": false,
       "cooldown": 18,
-      "conditions": [{ "type": "minTurn", "value": 3 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
       "choices": [
         {
           "label": "Patch distributed",
           "tooltip": "Small GDP losses in major economies and a rise in tension.",
           "effects": [
-            { "type": "gdp", "nation": "USA", "pct": -0.3 },
-            { "type": "gdp", "nation": "CHN", "pct": -0.3 },
-            { "type": "gdp", "nation": "DEU", "pct": -0.3 },
-            { "type": "gdp", "nation": "JPN", "pct": -0.3 },
-            { "type": "gdp", "nation": "IND", "pct": -0.2 },
-            { "type": "tension", "delta": 2 },
+            {
+              "type": "gdp",
+              "nation": "USA",
+              "pct": -0.3
+            },
+            {
+              "type": "gdp",
+              "nation": "CHN",
+              "pct": -0.3
+            },
+            {
+              "type": "gdp",
+              "nation": "DEU",
+              "pct": -0.3
+            },
+            {
+              "type": "gdp",
+              "nation": "JPN",
+              "pct": -0.3
+            },
+            {
+              "type": "gdp",
+              "nation": "IND",
+              "pct": -0.2
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            },
             {
               "type": "news",
               "text": "Worldwide worm outbreak halts factories and ports; emergency patch released"
             }
-          ]
+          ],
+          "stance": "escalate",
+          "chance": 0.5
+        },
+        {
+          "label": "Patched within days",
+          "tooltip": "Minor losses.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "USA",
+              "pct": -0.1
+            }
+          ],
+          "chance": 0.5
         }
-      ]
+      ],
+      "category": "security"
     },
     {
       "id": "world-election-surprise",
@@ -1101,22 +2350,52 @@
       "weight": 4,
       "once": false,
       "cooldown": 10,
-      "conditions": [{ "type": "minTurn", "value": 2 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 2
+        }
+      ],
       "targetPick": "random",
       "choices": [
         {
           "label": "New government sworn in",
           "tooltip": "A period of uncertainty and a review of ties with your nation.",
           "effects": [
-            { "type": "stability", "nation": "TARGET", "delta": -4 },
-            { "type": "relation", "a": "TARGET", "b": "PLAYER", "delta": -5 },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -4
+            },
+            {
+              "type": "relation",
+              "a": "TARGET",
+              "b": "PLAYER",
+              "delta": -5
+            },
             {
               "type": "news",
               "text": "Surprise election result brings government pledging foreign-policy review"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.5
+        },
+        {
+          "label": "Incumbent holds on",
+          "tooltip": "A narrow win.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -1
+            }
+          ],
+          "chance": 0.5
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "world-brics-summit",
@@ -1126,23 +2405,65 @@
       "weight": 3,
       "once": false,
       "cooldown": 24,
-      "conditions": [{ "type": "minTurn", "value": 4 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
       "choices": [
         {
           "label": "Pact signed",
           "tooltip": "BRICS members draw closer; US ties with Brazil cool.",
           "effects": [
-            { "type": "relation", "a": "CHN", "b": "BRA", "delta": 5 },
-            { "type": "relation", "a": "RUS", "b": "IND", "delta": 3 },
-            { "type": "relation", "a": "CHN", "b": "ZAF", "delta": 3 },
-            { "type": "relation", "a": "USA", "b": "BRA", "delta": -4 },
+            {
+              "type": "relation",
+              "a": "CHN",
+              "b": "BRA",
+              "delta": 5
+            },
+            {
+              "type": "relation",
+              "a": "RUS",
+              "b": "IND",
+              "delta": 3
+            },
+            {
+              "type": "relation",
+              "a": "CHN",
+              "b": "ZAF",
+              "delta": 3
+            },
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "BRA",
+              "delta": -4
+            },
             {
               "type": "news",
               "text": "BRICS summit agrees expanded local-currency settlement pact"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "Summit ends in division",
+          "tooltip": "India and Brazil block the plan.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "CHN",
+              "b": "IND",
+              "delta": -3
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "world-nato-spending-row",
@@ -1152,20 +2473,65 @@
       "weight": 3,
       "once": false,
       "cooldown": 24,
-      "conditions": [{ "type": "minTurn", "value": 3 }],
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
       "choices": [
         {
           "label": "Summit ends in discord",
           "tooltip": "US ties with laggards suffer; front-line states gain favour.",
           "effects": [
-            { "type": "relation", "a": "USA", "b": "DEU", "delta": -4 },
-            { "type": "relation", "a": "USA", "b": "ESP", "delta": -5 },
-            { "type": "relation", "a": "USA", "b": "CAN", "delta": -4 },
-            { "type": "relation", "a": "USA", "b": "POL", "delta": 4 },
-            { "type": "news", "text": "NATO summit ends in open dispute over defence spending" }
-          ]
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "DEU",
+              "delta": -4
+            },
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "ESP",
+              "delta": -5
+            },
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "CAN",
+              "delta": -4
+            },
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "POL",
+              "delta": 4
+            },
+            {
+              "type": "news",
+              "text": "NATO summit ends in open dispute over defence spending"
+            }
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "Compromise on burden-sharing",
+          "tooltip": "The row is papered over.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "USA",
+              "b": "DEU",
+              "delta": 1
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "world-pak-afg-clashes",
@@ -1175,22 +2541,59 @@
       "weight": 4,
       "once": false,
       "cooldown": 6,
-      "conditions": [{ "type": "relationMax", "a": "PAK", "b": "AFG", "value": -50 }],
+      "conditions": [
+        {
+          "type": "relationMax",
+          "a": "PAK",
+          "b": "AFG",
+          "value": -50
+        }
+      ],
       "choices": [
         {
           "label": "Fighting continues for days",
           "tooltip": "Relations worsen and Pakistan's stability dips.",
           "effects": [
-            { "type": "relation", "a": "PAK", "b": "AFG", "delta": -5 },
-            { "type": "stability", "nation": "PAK", "delta": -2 },
-            { "type": "stability", "nation": "AFG", "delta": -3 },
+            {
+              "type": "relation",
+              "a": "PAK",
+              "b": "AFG",
+              "delta": -5
+            },
+            {
+              "type": "stability",
+              "nation": "PAK",
+              "delta": -2
+            },
+            {
+              "type": "stability",
+              "nation": "AFG",
+              "delta": -3
+            },
             {
               "type": "news",
               "text": "Pakistan and Afghanistan exchange airstrikes and artillery along border"
             }
-          ]
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "Ceasefire within days",
+          "tooltip": "Qatar mediates.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PAK",
+              "b": "AFG",
+              "delta": 2
+            }
+          ],
+          "chance": 0.4
         }
-      ]
+      ],
+      "category": "politics"
     },
     {
       "id": "world-gaza-phase-two",
@@ -1200,18 +2603,2699 @@
       "weight": 3,
       "once": false,
       "cooldown": 8,
-      "conditions": [{ "type": "flashpointMax", "id": "iran-israel-gulf", "value": 85 }],
+      "conditions": [
+        {
+          "type": "flashpointMax",
+          "id": "iran-israel-gulf",
+          "value": 85
+        }
+      ],
       "choices": [
         {
           "label": "Truce reaffirmed",
           "tooltip": "Small improvements in Israel's ties with mediators.",
           "effects": [
-            { "type": "relation", "a": "ISR", "b": "EGY", "delta": 3 },
-            { "type": "relation", "a": "ISR", "b": "QAT", "delta": 2 },
-            { "type": "flashpoint", "id": "iran-israel-gulf", "delta": -2 },
+            {
+              "type": "relation",
+              "a": "ISR",
+              "b": "EGY",
+              "delta": 3
+            },
+            {
+              "type": "relation",
+              "a": "ISR",
+              "b": "QAT",
+              "delta": 2
+            },
+            {
+              "type": "flashpoint",
+              "id": "iran-israel-gulf",
+              "delta": -2
+            },
             {
               "type": "news",
               "text": "Gaza ceasefire reaffirmed as phase-two talks continue in Cairo"
+            }
+          ],
+          "stance": "hold",
+          "chance": 0.6
+        },
+        {
+          "label": "Talks collapse",
+          "tooltip": "Fighting resumes.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "flashpoint",
+              "id": "iran-israel-gulf",
+              "delta": 4
+            }
+          ],
+          "chance": 0.4
+        }
+      ],
+      "category": "politics"
+    },
+    {
+      "id": "snap-election",
+      "title": "Snap election called",
+      "text": "A confidence vote fails and parliament forces an early election in {PLAYER}. Coalition partners demand concessions; the opposition smells blood.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 24,
+      "conditions": [
+        {
+          "type": "regime",
+          "value": "democracy"
+        },
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
+      "choices": [
+        {
+          "label": "Campaign on security and the economy",
+          "tooltip": "Costly, but a fresh mandate strengthens you.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.3
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 5
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Form a national-unity government",
+          "tooltip": "Stability now; your own base is unhappy.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 5
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "label": "Postpone the vote under emergency powers",
+          "tooltip": "Legal but corrosive: legitimacy and approval suffer.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -8
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -6
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        }
+      ],
+      "category": "politics"
+    },
+    {
+      "id": "election-interference",
+      "title": "Foreign interference in the campaign",
+      "text": "Security services find that {TARGET} ran a covert influence campaign and hacked party servers ahead of the vote in {PLAYER}.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 24,
+      "conditions": [
+        {
+          "type": "regime",
+          "value": "democracy"
+        },
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
+      "choices": [
+        {
+          "label": "Expose it publicly and sanction",
+          "tooltip": "Voters rally; relations with {TARGET} collapse.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -12
+            },
+            {
+              "type": "sanction",
+              "from": "PLAYER",
+              "to": "TARGET"
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 3
+            }
+          ]
+        },
+        {
+          "label": "Quiet countermeasures and briefings",
+          "tooltip": "No diplomatic cost; some damage stays.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "label": "Downplay it to avoid panic",
+          "tooltip": "The story leaks later.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -4
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        }
+      ],
+      "category": "politics",
+      "targetPick": "rival"
+    },
+    {
+      "id": "impeachment-crisis",
+      "title": "Impeachment proceedings",
+      "text": "A procurement scandal reaches the leader's office. The legislature opens impeachment proceedings against the head of government of {PLAYER}.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [
+        {
+          "type": "regime",
+          "value": "democracy"
+        },
+        {
+          "type": "minTurn",
+          "value": 8
+        },
+        {
+          "type": "stabilityMax",
+          "value": 60
+        }
+      ],
+      "choices": [
+        {
+          "label": "Fight the charges",
+          "tooltip": "A long, divisive battle; stability and approval fall.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -5
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -5
+            }
+          ]
+        },
+        {
+          "label": "Offer a plea of reforms and resignations of aides",
+          "tooltip": "Painful but contained.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -2
+            },
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.1
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Resign: a successor from the party takes over",
+          "tooltip": "The leader steps down; a new (fictional) leader takes office and the scandal fades.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "succession",
+              "nation": "PLAYER",
+              "cause": "impeachment"
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 6
+            }
+          ]
+        }
+      ],
+      "category": "politics"
+    },
+    {
+      "id": "corruption-scandal",
+      "title": "Corruption scandal",
+      "text": "Leaked documents expose ministers in {PLAYER} taking kickbacks on defence contracts.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 30,
+      "conditions": [],
+      "choices": [
+        {
+          "label": "Sack the ministers and open an inquiry",
+          "tooltip": "Approval recovers slowly.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -2
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 1
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Deny everything",
+          "tooltip": "The story runs for months.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -5
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "label": "Blame foreign disinformation",
+          "tooltip": "Rallies the base, alienates partners.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 1
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -5
+            },
+            {
+              "type": "tension",
+              "delta": 1
+            }
+          ]
+        }
+      ],
+      "category": "politics"
+    },
+    {
+      "id": "foiled-coup-plot",
+      "title": "Coup plot uncovered",
+      "text": "Military intelligence uncovers officers plotting to depose the government of {PLAYER}.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [
+        {
+          "type": "stabilityMax",
+          "value": 55
+        },
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
+      "choices": [
+        {
+          "label": "Purge the officer corps",
+          "tooltip": "The plotters are gone; so are capable commanders.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 4
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": -10
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -4
+            }
+          ]
+        },
+        {
+          "label": "Quietly retire the ringleaders",
+          "tooltip": "Risk remains, but the army stays intact.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "label": "Address the officers' grievances",
+          "tooltip": "Pay rises calm the barracks.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 3
+            }
+          ]
+        }
+      ],
+      "category": "politics"
+    },
+    {
+      "id": "coup-in-neighbour",
+      "title": "Coup next door",
+      "text": "The army has seized power in {TARGET}, a neighbour of {PLAYER}. The junta seeks recognition.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 48,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 5
+        }
+      ],
+      "choices": [
+        {
+          "label": "Recognise the junta",
+          "tooltip": "Stability on the border; partners object.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 6
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "label": "Sanction and suspend ties",
+          "tooltip": "Principled; trade and border security suffer.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "sanction",
+              "from": "PLAYER",
+              "to": "TARGET"
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -12
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 3
+            }
+          ]
+        },
+        {
+          "label": "Mediate a return to civilian rule",
+          "tooltip": "Diplomatic capital spent, credit earned.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.05
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 4
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 2
+            }
+          ]
+        }
+      ],
+      "category": "politics",
+      "targetPick": "neighbour"
+    },
+    {
+      "id": "assassination-attempt",
+      "title": "Assassination attempt",
+      "text": "A gunman opens fire at a rally of {PLAYER}'s leader. The leader survives with minor injuries; investigators look for links abroad.",
+      "scope": "player",
+      "weight": 1,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 6
+        }
+      ],
+      "choices": [
+        {
+          "label": "Call for national unity",
+          "tooltip": "A surge of sympathy.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 6
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 3
+            }
+          ]
+        },
+        {
+          "label": "Emergency security crackdown",
+          "tooltip": "Order restored; civil liberties suffer.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 5
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -4
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "label": "Blame {TARGET} for the plot",
+          "tooltip": "Rallies the nation; relations crash.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -15
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 4
+            },
+            {
+              "type": "tension",
+              "delta": 3
+            }
+          ]
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "pandemic-novel-flu",
+      "title": "Novel influenza outbreak",
+      "text": "An avian influenza strain is spreading between people in {PLAYER}. Hospitals are filling; the WHO warns of a pandemic.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
+      "choices": [
+        {
+          "label": "Lockdowns and border closures",
+          "tooltip": "Contains the virus at a heavy economic cost.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -1.5,
+              "months": 9
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "label": "Targeted measures and vaccination drive",
+          "tooltip": "A middle course; some excess deaths.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.3
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.6,
+              "months": 9
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "label": "Coordinate an international response",
+          "tooltip": "Costly, earns goodwill, slower at home.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.5
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 4
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.8,
+              "months": 9
+            }
+          ]
+        }
+      ],
+      "category": "disaster"
+    },
+    {
+      "id": "antimicrobial-crisis",
+      "title": "Drug-resistant infections",
+      "text": "A drug-resistant fungal infection spreads through hospitals in {PLAYER}.",
+      "scope": "player",
+      "weight": 1,
+      "once": false,
+      "cooldown": 48,
+      "conditions": [],
+      "choices": [
+        {
+          "label": "Emergency hospital funding",
+          "tooltip": "Expensive and effective.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.3
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 1
+            }
+          ]
+        },
+        {
+          "label": "Fast-track experimental drugs",
+          "tooltip": "Research effort diverted.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": -12
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Minimal response",
+          "tooltip": "Cheap; approval suffers.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -4
+            }
+          ]
+        }
+      ],
+      "category": "disaster"
+    },
+    {
+      "id": "bond-market-rout",
+      "title": "Bond market rout",
+      "text": "Investors dump {PLAYER}'s government bonds after a weak auction. Yields spike and the currency slides.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
+      "choices": [
+        {
+          "label": "Announce austerity",
+          "tooltip": "Markets calm; voters do not.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -6
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.4,
+              "months": 12
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "label": "Central bank buys bonds",
+          "tooltip": "Calm returns, inflation risk rises.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.2
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 6
+            }
+          ]
+        },
+        {
+          "label": "Blame foreign speculators",
+          "tooltip": "Defiance rallies voters; the rout deepens.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 2
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -1.0,
+              "months": 12
+            }
+          ]
+        }
+      ],
+      "category": "economy"
+    },
+    {
+      "id": "ai-bubble-burst",
+      "title": "Tech bubble bursts",
+      "text": "AI company valuations collapse after a string of disappointing results; pension funds and banks in {PLAYER} take heavy losses.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 8
+        },
+        {
+          "type": "isMajor"
+        }
+      ],
+      "choices": [
+        {
+          "label": "Bail out the banks",
+          "tooltip": "Stops the panic at a price.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.6
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.4,
+              "months": 9
+            }
+          ]
+        },
+        {
+          "label": "Let the market clear",
+          "tooltip": "A sharp recession, then recovery.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -1.4,
+              "months": 9
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -4
+            }
+          ]
+        },
+        {
+          "label": "Fiscal stimulus",
+          "tooltip": "Cushions the blow, adds debt.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.8
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 9
+            }
+          ]
+        }
+      ],
+      "category": "economy"
+    },
+    {
+      "id": "currency-crisis",
+      "title": "Currency crisis",
+      "text": "Capital flight sends {PLAYER}'s currency to record lows; imports and debt service soar.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 48,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        },
+        {
+          "type": "notMajor"
+        }
+      ],
+      "choices": [
+        {
+          "label": "Ask the IMF for a programme",
+          "tooltip": "Conditions bite, confidence returns.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.5
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -5
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.5,
+              "months": 12
+            }
+          ]
+        },
+        {
+          "label": "Impose capital controls",
+          "tooltip": "Stops the bleeding, scares investors.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.8,
+              "months": 12
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -1
+            }
+          ]
+        },
+        {
+          "label": "Devalue and print",
+          "tooltip": "Inflation soars; exports boom.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.3,
+              "months": 12
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -7
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        }
+      ],
+      "category": "economy"
+    },
+    {
+      "id": "trade-war-escalation",
+      "title": "Tariff war",
+      "text": "{TARGET} slaps sweeping tariffs on {PLAYER}'s exports, citing unfair subsidies.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 2
+        }
+      ],
+      "choices": [
+        {
+          "label": "Retaliate in kind",
+          "tooltip": "Both economies lose; voters cheer.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -8
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.4,
+              "months": 12
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Challenge at the WTO",
+          "tooltip": "Slow and principled.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.3,
+              "months": 12
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Negotiate a deal",
+          "tooltip": "Concessions; exporters relieved.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 4
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.1,
+              "months": 12
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        }
+      ],
+      "category": "economy",
+      "targetPick": "rival"
+    },
+    {
+      "id": "ransomware-hospitals",
+      "title": "Ransomware hits hospitals",
+      "text": "A ransomware gang linked to {TARGET} encrypts hospital systems across {PLAYER}; surgeries are cancelled.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 24,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 2
+        }
+      ],
+      "choices": [
+        {
+          "label": "Refuse to pay; restore from backups",
+          "tooltip": "Weeks of disruption.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 3
+            }
+          ]
+        },
+        {
+          "label": "Pay the ransom quietly",
+          "tooltip": "Fast recovery, invites more attacks.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.05
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "label": "Offensive cyber operation against the gang's hosts",
+          "tooltip": "Satisfying; {TARGET} retaliates.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -10
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 1
+            }
+          ]
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "satellite-hack",
+      "title": "Satellite network hacked",
+      "text": "Military communications satellites of {PLAYER} go dark for hours; forensic traces point to {TARGET}.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        },
+        {
+          "type": "isMajor"
+        }
+      ],
+      "choices": [
+        {
+          "label": "Harden the ground segment",
+          "tooltip": "Expensive and slow.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 5
+            }
+          ]
+        },
+        {
+          "label": "Attribute publicly and expel diplomats",
+          "tooltip": "Relations suffer.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -10
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Say nothing and watch",
+          "tooltip": "Intelligence gain, risk of repeat.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 8
+            }
+          ]
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "bank-cyber-heist",
+      "title": "Central bank cyber heist",
+      "text": "Hackers siphon reserves through the payment network of {PLAYER}'s central bank.",
+      "scope": "player",
+      "weight": 1,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [],
+      "choices": [
+        {
+          "label": "Freeze transfers and investigate",
+          "tooltip": "Markets jittery for a month.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.1
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": -0.2,
+              "months": 3
+            }
+          ]
+        },
+        {
+          "label": "Sanction the state behind it",
+          "tooltip": "Relations with {TARGET} collapse.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "sanction",
+              "from": "PLAYER",
+              "to": "TARGET"
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -8
+            }
+          ]
+        },
+        {
+          "label": "Insure the losses and move on",
+          "tooltip": "The cost lands on taxpayers.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            }
+          ]
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "hurricane-landfall",
+      "title": "Major hurricane",
+      "text": "A category-five storm makes landfall in {PLAYER}, flooding ports and power stations.",
+      "scope": "player",
+      "weight": 3,
+      "once": false,
+      "cooldown": 12,
+      "conditions": [
+        {
+          "type": "isNation",
+          "iso3": [
+            "USA",
+            "MEX",
+            "CUB",
+            "PHL",
+            "JPN",
+            "CHN",
+            "IND",
+            "BGD",
+            "VNM",
+            "TWN",
+            "KOR",
+            "AUS",
+            "DOM",
+            "HTI"
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "label": "Full federal emergency response",
+          "tooltip": "Expensive; approval rises.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.4
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 3
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.3
+            }
+          ]
+        },
+        {
+          "label": "Request international aid",
+          "tooltip": "Cheaper; goodwill flows both ways.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.1
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.5
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Minimal response",
+          "tooltip": "Saves money; anger grows.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.7
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -6
+            }
+          ]
+        }
+      ],
+      "category": "disaster"
+    },
+    {
+      "id": "river-floods",
+      "title": "Catastrophic floods",
+      "text": "Monsoon-strength rains swell rivers across {PLAYER}; millions are displaced.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 24,
+      "conditions": [],
+      "choices": [
+        {
+          "label": "Mobilise the army for relief",
+          "tooltip": "Troops diverted, lives saved.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 3
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 1
+            }
+          ]
+        },
+        {
+          "label": "Build back better",
+          "tooltip": "Higher cost, stronger infrastructure.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.5
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.2,
+              "months": 24
+            }
+          ]
+        },
+        {
+          "label": "Local authorities only",
+          "tooltip": "Cheap; resentment.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.6
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -4
+            }
+          ]
+        }
+      ],
+      "category": "disaster"
+    },
+    {
+      "id": "drought-crop-failure",
+      "title": "Drought and crop failure",
+      "text": "A second dry year wipes out harvests in {PLAYER}; food prices double.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [],
+      "choices": [
+        {
+          "label": "Import grain at any price",
+          "tooltip": "Expensive; shelves stay full.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.4
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 1
+            }
+          ]
+        },
+        {
+          "label": "Ration food and ban exports",
+          "tooltip": "Neighbours complain; prices stabilise.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "label": "Appeal to the World Food Programme",
+          "tooltip": "Aid arrives; national pride bruised.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -2
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        }
+      ],
+      "category": "disaster"
+    },
+    {
+      "id": "wildfire-season",
+      "title": "Record wildfires",
+      "text": "Wildfires burn across {PLAYER}, choking cities in smoke and destroying towns.",
+      "scope": "player",
+      "weight": 2,
+      "once": false,
+      "cooldown": 12,
+      "conditions": [
+        {
+          "type": "isNation",
+          "iso3": [
+            "USA",
+            "CAN",
+            "AUS",
+            "GRC",
+            "TUR",
+            "ESP",
+            "PRT",
+            "RUS",
+            "BRA",
+            "ITA",
+            "FRA"
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "label": "Mass evacuations and firefighting surge",
+          "tooltip": "Costly; homes saved.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Ask allies for water bombers",
+          "tooltip": "Allies help; goodwill.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "USA",
+              "delta": 2
+            },
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.05
+            }
+          ]
+        },
+        {
+          "label": "Let local services cope",
+          "tooltip": "Losses mount.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.4
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -4
+            }
+          ]
+        }
+      ],
+      "category": "disaster"
+    },
+    {
+      "id": "earthquake-capital",
+      "title": "Earthquake near the capital",
+      "text": "A powerful earthquake strikes near {PLAYER}'s capital, collapsing buildings and cutting power.",
+      "scope": "player",
+      "weight": 1,
+      "once": false,
+      "cooldown": 48,
+      "conditions": [
+        {
+          "type": "isNation",
+          "iso3": [
+            "JPN",
+            "TUR",
+            "IRN",
+            "CHN",
+            "IND",
+            "PAK",
+            "MEX",
+            "CHL",
+            "PER",
+            "ITA",
+            "GRC",
+            "IDN",
+            "PHL",
+            "NPL",
+            "TWN",
+            "USA",
+            "NZL"
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "label": "All-out rescue effort",
+          "tooltip": "Lives saved; huge cost.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.6
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.5
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 4
+            }
+          ]
+        },
+        {
+          "label": "Accept foreign rescue teams",
+          "tooltip": "Faster help; rivals' teams too.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.6
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 3
+            }
+          ]
+        },
+        {
+          "label": "Prioritise government and military sites",
+          "tooltip": "Continuity of command; public fury.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "PLAYER",
+              "pct": -0.8
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -8
+            }
+          ]
+        }
+      ],
+      "category": "disaster"
+    },
+    {
+      "id": "scientist-defection",
+      "title": "Nuclear scientist defects",
+      "text": "A senior weapons scientist from {TARGET} walks into {PLAYER}'s embassy asking for asylum.",
+      "scope": "player",
+      "weight": 1,
+      "once": false,
+      "cooldown": 48,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
+      "choices": [
+        {
+          "label": "Grant asylum and debrief",
+          "tooltip": "Research gains; relations with {TARGET} plunge.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 30
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -10
+            }
+          ]
+        },
+        {
+          "label": "Debrief quietly, then resettle",
+          "tooltip": "Some gains, little fuss.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 15
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "label": "Hand the defector back",
+          "tooltip": "Relations improve; your allies are appalled.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 8
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -5
+            }
+          ]
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "general-defection",
+      "title": "General defects with war plans",
+      "text": "A general from {TARGET} defects with operational plans and order-of-battle data.",
+      "scope": "player",
+      "weight": 1,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 6
+        }
+      ],
+      "choices": [
+        {
+          "label": "Exploit the intelligence quietly",
+          "tooltip": "Military insight; no diplomatic cost.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 10
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": 1
+            }
+          ]
+        },
+        {
+          "label": "Parade the defector on television",
+          "tooltip": "Propaganda win; {TARGET} is furious.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 3
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -12
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Return the general as goodwill",
+          "tooltip": "An olive branch.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": 10
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "mole-uncovered",
+      "title": "Mole in the intelligence service",
+      "text": "Counter-intelligence finds a senior officer in {PLAYER} who has been passing secrets to {TARGET} for years.",
+      "scope": "player",
+      "weight": 1,
+      "once": false,
+      "cooldown": 48,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
+      "choices": [
+        {
+          "label": "Public trial and expulsions",
+          "tooltip": "Justice is seen to be done.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "TARGET",
+              "delta": -10
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Turn the mole into a double agent",
+          "tooltip": "Risky, potentially valuable.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 10
+            }
+          ]
+        },
+        {
+          "label": "Quiet retirement",
+          "tooltip": "Avoids embarrassment; damage unknown.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "quantum-breakthrough",
+      "title": "Quantum computing breakthrough",
+      "text": "Researchers in {PLAYER} demonstrate an error-corrected quantum computer able to threaten current encryption.",
+      "scope": "player",
+      "weight": 2,
+      "once": true,
+      "cooldown": 120,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 10
+        },
+        {
+          "type": "isMajor"
+        }
+      ],
+      "choices": [
+        {
+          "label": "Classify it for intelligence use",
+          "tooltip": "Research and intelligence edge; allies left out.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 40
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "USA",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "label": "Share with allies",
+          "tooltip": "Goodwill and a joint programme.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 20
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 3
+            }
+          ]
+        },
+        {
+          "label": "Publish openly",
+          "tooltip": "Global goodwill; rivals catch up.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 10
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 5
+            }
+          ]
+        }
+      ],
+      "category": "science"
+    },
+    {
+      "id": "battery-breakthrough",
+      "title": "Solid-state battery breakthrough",
+      "text": "A {PLAYER} consortium unveils a solid-state battery that halves the cost of grid storage.",
+      "scope": "player",
+      "weight": 2,
+      "once": true,
+      "cooldown": 120,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 6
+        }
+      ],
+      "choices": [
+        {
+          "label": "Subsidise domestic factories",
+          "tooltip": "Industrial boom; costly.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.3
+            },
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.6,
+              "months": 24
+            }
+          ]
+        },
+        {
+          "label": "License it worldwide",
+          "tooltip": "Royalties and goodwill.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.2
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Restrict exports to rivals",
+          "tooltip": "Strategic edge; trade friction.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "PLAYER",
+              "delta": 0.3,
+              "months": 24
+            },
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "CHN",
+              "delta": -4
+            }
+          ]
+        }
+      ],
+      "category": "science"
+    },
+    {
+      "id": "interceptor-breakthrough",
+      "title": "Hypersonic interceptor test",
+      "text": "{PLAYER}'s engineers intercept a hypersonic glide vehicle in a test.",
+      "scope": "player",
+      "weight": 2,
+      "once": true,
+      "cooldown": 120,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 12
+        },
+        {
+          "type": "isMajor"
+        }
+      ],
+      "choices": [
+        {
+          "label": "Rush it into production",
+          "tooltip": "Missile defence improves; rivals alarmed.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 25
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Continue testing",
+          "tooltip": "Steady progress.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "PLAYER",
+              "points": 12
+            }
+          ]
+        },
+        {
+          "label": "Offer arms-control talks",
+          "tooltip": "Rivals listen; hawks object.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "tension",
+              "delta": -2
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -1
+            }
+          ]
+        }
+      ],
+      "category": "science"
+    },
+    {
+      "id": "vaccine-platform",
+      "title": "Universal vaccine platform",
+      "text": "Scientists in {PLAYER} announce a vaccine platform that can be adapted to new viruses within weeks.",
+      "scope": "player",
+      "weight": 1,
+      "once": true,
+      "cooldown": 120,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 10
+        }
+      ],
+      "choices": [
+        {
+          "label": "Donate doses worldwide",
+          "tooltip": "Legitimacy soars.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": -0.2
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": 6
+            }
+          ]
+        },
+        {
+          "label": "Sell at market prices",
+          "tooltip": "Revenue.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "treasury",
+              "nation": "PLAYER",
+              "pctGdp": 0.3
+            }
+          ]
+        },
+        {
+          "label": "Reserve for allies",
+          "tooltip": "Strengthens alliances; others resent it.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "PLAYER",
+              "b": "USA",
+              "delta": 3
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -2
+            }
+          ]
+        }
+      ],
+      "category": "science"
+    },
+    {
+      "id": "world-pandemic",
+      "title": "Pandemic declared",
+      "text": "The WHO declares a pandemic as a new respiratory virus spreads from {TARGET}.",
+      "scope": "world",
+      "weight": 1,
+      "once": false,
+      "cooldown": 120,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 8
+        }
+      ],
+      "choices": [
+        {
+          "label": "Global lockdowns",
+          "tooltip": "Severe shock.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "TARGET",
+              "delta": -1.5,
+              "months": 9
+            },
+            {
+              "type": "growth",
+              "nation": "USA",
+              "delta": -0.6,
+              "months": 9
+            },
+            {
+              "type": "growth",
+              "nation": "CHN",
+              "delta": -0.6,
+              "months": 9
+            },
+            {
+              "type": "growth",
+              "nation": "DEU",
+              "delta": -0.5,
+              "months": 9
+            },
+            {
+              "type": "news",
+              "text": "WHO declares pandemic; borders close"
+            }
+          ],
+          "chance": 0.4
+        },
+        {
+          "label": "Contained within months",
+          "tooltip": "A milder outbreak.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "TARGET",
+              "delta": -0.6,
+              "months": 6
+            },
+            {
+              "type": "news",
+              "text": "New virus spreads; WHO urges calm"
+            }
+          ],
+          "chance": 0.6
+        }
+      ],
+      "category": "disaster",
+      "targetPick": "random"
+    },
+    {
+      "id": "world-market-crash",
+      "title": "Global market crash",
+      "text": "Stock markets crash worldwide after a major bank in {TARGET} collapses.",
+      "scope": "world",
+      "weight": 1,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 6
+        }
+      ],
+      "choices": [
+        {
+          "label": "Contagion",
+          "tooltip": "Recession everywhere.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "USA",
+              "delta": -0.8,
+              "months": 12
+            },
+            {
+              "type": "growth",
+              "nation": "CHN",
+              "delta": -0.6,
+              "months": 12
+            },
+            {
+              "type": "growth",
+              "nation": "DEU",
+              "delta": -0.6,
+              "months": 12
+            },
+            {
+              "type": "growth",
+              "nation": "JPN",
+              "delta": -0.5,
+              "months": 12
+            },
+            {
+              "type": "growth",
+              "nation": "GBR",
+              "delta": -0.6,
+              "months": 12
+            },
+            {
+              "type": "growth",
+              "nation": "TARGET",
+              "delta": -1.5,
+              "months": 12
+            },
+            {
+              "type": "news",
+              "text": "Global markets crash as bank collapse spreads panic"
+            }
+          ],
+          "chance": 0.35
+        },
+        {
+          "label": "Central banks contain it",
+          "tooltip": "A sharp but brief sell-off.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "growth",
+              "nation": "TARGET",
+              "delta": -0.8,
+              "months": 6
+            },
+            {
+              "type": "news",
+              "text": "Central banks coordinate to halt market slide"
+            }
+          ],
+          "chance": 0.65
+        }
+      ],
+      "category": "economy",
+      "targetPick": "random"
+    },
+    {
+      "id": "world-assassination",
+      "title": "Assassination attempt abroad",
+      "text": "An assassin attacks the leader of {TARGET} during a public appearance.",
+      "scope": "world",
+      "weight": 1,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 6
+        }
+      ],
+      "choices": [
+        {
+          "label": "The leader survives",
+          "tooltip": "A security scare; a sympathy rally.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": 2
+            },
+            {
+              "type": "news",
+              "text": "Leader survives assassination attempt"
+            }
+          ],
+          "chance": 0.75
+        },
+        {
+          "label": "The leader is killed",
+          "tooltip": "A successor (fictional) takes office amid turmoil.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "succession",
+              "nation": "TARGET",
+              "cause": "assassination"
+            },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -8
+            },
+            {
+              "type": "tension",
+              "delta": 3
+            },
+            {
+              "type": "news",
+              "text": "Leader assassinated; successor sworn in"
+            }
+          ],
+          "chance": 0.25
+        }
+      ],
+      "category": "politics",
+      "targetPick": "random"
+    },
+    {
+      "id": "world-defection",
+      "title": "High-profile defection",
+      "text": "A senior intelligence officer from {TARGET} defects to the West with a trove of documents.",
+      "scope": "world",
+      "weight": 1,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 4
+        }
+      ],
+      "choices": [
+        {
+          "label": "Documents leaked",
+          "tooltip": "Embarrassment for {TARGET}.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -2
+            },
+            {
+              "type": "relation",
+              "a": "TARGET",
+              "b": "USA",
+              "delta": -4
+            },
+            {
+              "type": "news",
+              "text": "Defector's documents expose spy network"
+            }
+          ],
+          "chance": 0.6
+        },
+        {
+          "label": "Network rolled up quietly",
+          "tooltip": "No public fallout.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "relation",
+              "a": "TARGET",
+              "b": "GBR",
+              "delta": -3
+            }
+          ],
+          "chance": 0.4
+        }
+      ],
+      "category": "security",
+      "targetPick": "rival"
+    },
+    {
+      "id": "world-volcano",
+      "title": "Volcanic eruption",
+      "text": "A major eruption in {TARGET} sends ash into the stratosphere, grounding flights across a continent.",
+      "scope": "world",
+      "weight": 1,
+      "once": false,
+      "cooldown": 60,
+      "conditions": [],
+      "choices": [
+        {
+          "label": "Ash cloud lingers",
+          "tooltip": "Weeks of disruption.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -0.8
+            },
+            {
+              "type": "growth",
+              "nation": "DEU",
+              "delta": -0.1,
+              "months": 3
+            },
+            {
+              "type": "growth",
+              "nation": "GBR",
+              "delta": -0.1,
+              "months": 3
+            },
+            {
+              "type": "news",
+              "text": "Volcanic ash cloud grounds flights"
+            }
+          ],
+          "chance": 0.4
+        },
+        {
+          "label": "Local damage only",
+          "tooltip": "Evacuations and recovery.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -0.3
+            },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -2
+            }
+          ],
+          "chance": 0.6
+        }
+      ],
+      "category": "disaster",
+      "targetPick": "random"
+    },
+    {
+      "id": "world-cyber-blackout",
+      "title": "Grid blackout",
+      "text": "A cyberattack blacks out the power grid of {TARGET} for days.",
+      "scope": "world",
+      "weight": 1,
+      "once": false,
+      "cooldown": 36,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 3
+        }
+      ],
+      "choices": [
+        {
+          "label": "Days of blackout",
+          "tooltip": "Economic damage and anger.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "gdp",
+              "nation": "TARGET",
+              "pct": -0.5
+            },
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -4
+            },
+            {
+              "type": "tension",
+              "delta": 2
+            },
+            {
+              "type": "news",
+              "text": "Cyberattack blacks out national grid"
+            }
+          ],
+          "chance": 0.5
+        },
+        {
+          "label": "Power restored within hours",
+          "tooltip": "A warning shot.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "TARGET",
+              "delta": -1
+            }
+          ],
+          "chance": 0.5
+        }
+      ],
+      "category": "security",
+      "targetPick": "random"
+    },
+    {
+      "id": "world-tech-breakthrough",
+      "title": "Breakthrough abroad",
+      "text": "Engineers in {TARGET} announce a breakthrough in advanced chip manufacturing.",
+      "scope": "world",
+      "weight": 1,
+      "once": false,
+      "cooldown": 48,
+      "conditions": [
+        {
+          "type": "minTurn",
+          "value": 8
+        },
+        {
+          "type": "isMajor",
+          "nation": "TARGET"
+        }
+      ],
+      "choices": [
+        {
+          "label": "Mass production follows",
+          "tooltip": "A lasting edge.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "TARGET",
+              "points": 30
+            },
+            {
+              "type": "growth",
+              "nation": "TARGET",
+              "delta": 0.3,
+              "months": 12
+            },
+            {
+              "type": "news",
+              "text": "Chip breakthrough reshapes technology race"
+            }
+          ],
+          "chance": 0.5
+        },
+        {
+          "label": "Claims prove overstated",
+          "tooltip": "Little changes.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "research",
+              "nation": "TARGET",
+              "points": 10
+            }
+          ],
+          "chance": 0.5
+        }
+      ],
+      "category": "science",
+      "targetPick": "random"
+    },
+    {
+      "id": "leader-health",
+      "title": "The leader's health",
+      "text": "Doctors report that {PLAYER}'s leader has suffered a serious illness. Rumours are already spreading; the cabinet must decide how to handle the succession question.",
+      "scope": "player",
+      "weight": 0,
+      "once": false,
+      "cooldown": 24,
+      "conditions": [],
+      "category": "politics",
+      "choices": [
+        {
+          "label": "Temporary transfer of powers",
+          "tooltip": "Transparent and steady: a brief dip in stability, the leader returns.",
+          "stance": "hold",
+          "effects": [
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -3
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "label": "Conceal the illness",
+          "tooltip": "No disruption now; if it leaks, approval and legitimacy suffer.",
+          "stance": "escalate",
+          "effects": [
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": -4
+            },
+            {
+              "type": "legitimacy",
+              "nation": "PLAYER",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "label": "The leader steps down",
+          "tooltip": "A designated successor (fictional) takes office; a short honeymoon follows.",
+          "stance": "deescalate",
+          "effects": [
+            {
+              "type": "succession",
+              "nation": "PLAYER",
+              "cause": "health"
+            },
+            {
+              "type": "support",
+              "nation": "PLAYER",
+              "delta": 5
+            },
+            {
+              "type": "stability",
+              "nation": "PLAYER",
+              "delta": -2
             }
           ]
         }
