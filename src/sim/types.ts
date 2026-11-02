@@ -135,6 +135,14 @@ export interface NationState {
   budget: Budget;
   researchCurrent: TechId | null;
   researchPoints: number;
+  /** Projects to start, in order, once the current one completes (D-079). */
+  researchQueue: TechId[];
+  /** Share of a technology's cost already covered (stolen designs, shared data), 0..0.6. */
+  techCredit: Record<TechId, number>;
+  /** Modifiers of the technologies held in January 2027: calibrated economies subtract them (D-079). */
+  techBaseline: Record<string, number>;
+  /** Months before the intelligence services can attempt another theft of technology. */
+  espionageCooldown: number;
   techs: TechId[];
   modifiers: Record<string, number>;
   defcon: Defcon;
@@ -656,6 +664,8 @@ export interface GameState {
   embargoes: string[];
   /** Secondary sanctions, `from>to`: `from` penalises third parties that keep trading with `to`. */
   secondarySanctions: string[];
+  /** Technology export controls `from>to` (chips, chip tools, AI), D-079: raise the target's cost in controlled branches. */
+  techControls: string[];
   treaties: Treaty[];
   wars: War[];
   proposals: Proposal[];
@@ -747,6 +757,12 @@ export type Command =
   | { readonly type: 'queueProduction'; readonly unitType: UnitTypeId; readonly region: RegionId }
   | { readonly type: 'cancelProduction'; readonly id: number }
   | { readonly type: 'setResearch'; readonly tech: TechId }
+  /** Queue a technology and every missing prerequisite; `append` keeps the current queue (D-079). */
+  | { readonly type: 'queueResearch'; readonly tech: TechId; readonly append?: boolean }
+  | { readonly type: 'setResearchQueue'; readonly queue: TechId[] }
+  | { readonly type: 'stealTech'; readonly target: Iso3; readonly tech: TechId }
+  | { readonly type: 'shareTech'; readonly to: Iso3; readonly tech: TechId }
+  | { readonly type: 'techControls'; readonly target: Iso3; readonly on: boolean }
   | { readonly type: 'moveUnits'; readonly unitIds: number[]; readonly target: RegionId }
   | { readonly type: 'propose'; readonly proposal: ProposalType; readonly target: Iso3 }
   | { readonly type: 'respond'; readonly proposalId: number; readonly accept: boolean }
@@ -760,7 +776,7 @@ export type Command =
       readonly action: 'close' | 'open' | 'mine' | 'clear';
     }
   | { readonly type: 'setAirMission'; readonly unitIds: number[]; readonly mission: AirMission }
-  | { readonly type: 'missileStrike'; readonly region: RegionId; readonly kind: StrikeKind }
+  | { readonly type: 'missileStrike'; readonly region: RegionId; readonly kind: StrikeKind; readonly hypersonic?: boolean }
   | { readonly type: 'cyberOp'; readonly target: Iso3; readonly kind: CyberKind }
   | { readonly type: 'spyOp'; readonly target: Iso3 }
   | { readonly type: 'launchSatellite' }

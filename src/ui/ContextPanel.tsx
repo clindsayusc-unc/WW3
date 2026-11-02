@@ -15,7 +15,8 @@ import { ChokepointSection, OddsBreakdown, TerrainSection } from './GeographyPan
 import { estimateStack, INTEL_LABEL, intelLevel } from '../sim/intel';
 import { MISSION_INFO, missionsFor } from '../sim/air';
 import { zoneControl } from '../sim/naval';
-import { STRIKE_INFO, SALVO, canMissileStrike } from '../sim/strikes';
+import { STRIKE_INFO, SALVO, HYPERSONIC_SALVO, canMissileStrike, interceptionChance } from '../sim/strikes';
+import { hasAbility } from '../sim/research';
 import { TRAIT_INFO } from '../sim/commanders';
 import { prepNeeded } from '../sim/military';
 import { dispatch } from '../state/simBridge';
@@ -168,6 +169,28 @@ export function ContextPanel() {
               </button>
             ))}
           </div>
+          {hasAbility(world, game, game.player, 'hypersonicStrike') && (
+            <div className="choke-actions" style={{ marginTop: 6 }}>
+              {(Object.keys(STRIKE_INFO) as (keyof typeof STRIKE_INFO)[]).map((kind) => (
+                <button
+                  key={kind}
+                  className="btn small"
+                  disabled={!!strikeWhy}
+                  data-testid={`hstrike-${kind}`}
+                  data-tip={
+                    strikeWhy ??
+                    `Hypersonic salvo: ${HYPERSONIC_SALVO} glide vehicles (uses ${SALVO} missiles). Interception chance ${Math.round(interceptionChance(world, game, id, game.player, true) * 100)} % each instead of ${Math.round(interceptionChance(world, game, id, game.player) * 100)} %; each hit counts ×1.5. ${STRIKE_INFO[kind].description}`
+                  }
+                  onClick={() => {
+                    dispatch({ type: 'missileStrike', region: id, kind, hypersonic: true });
+                    playSound('order');
+                  }}
+                >
+                  ⚡ {STRIKE_INFO[kind].label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
       {meta.sea &&

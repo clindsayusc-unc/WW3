@@ -3,6 +3,7 @@
  * budget execution, recessions and stability. Trade, sanctions and resource shortages arrive as
  * pre-computed terms from trade.ts (`NationState.econ`).
  */
+import { techDelta } from './research';
 import { nationName, type World } from './world';
 import type { GameState, Iso3, NationState } from './types';
 import {
@@ -143,7 +144,8 @@ export function growthBreakdown(world: World, state: GameState, iso: Iso3): Grow
   const n = state.nations[iso]!;
   const base = trendGrowth(state, n);
   const infra = (n.budget.infrastructure - 20) * 0.03; // 20% is neutral
-  const tech = n.modifiers.gdpGrowth ?? 0;
+  // Relative to January 2027: IMF forecasts already price in the technology fielded then (D-079).
+  const tech = techDelta(n, 'gdpGrowth');
   const tax = -(n.taxRate - DEFAULT_TAX_RATE) * 0.06;
   const e = n.econ;
   const trade = e.tradeEffect;
@@ -345,7 +347,7 @@ export function runEconomy(world: World, state: GameState): void {
     if (n.inflation > 40) ds -= 0.4;
     if (n.inflation > 100) ds -= 1.2;
     if (n.recession) ds -= 0.2;
-    ds += (n.modifiers.stability ?? 0) / 24;
+    ds += techDelta(n, 'stability') / 24;
     ds += (65 - n.stability) * 0.04; // mean reversion
     n.stability = clamp(n.stability + ds, 0, 100);
     n.monthsUnstable = n.stability < 10 ? n.monthsUnstable + 1 : 0;

@@ -115,17 +115,17 @@ describe('resource shortages', () => {
   });
 
   it('a production line starved of inputs takes longer to deliver', () => {
+    // Measured on the trade step alone, so random AI decisions in the first month (a sanction
+    // drawn by the AI) cannot dent the baseline.
     const base = newGame('USA');
     const starved = newGame('USA');
     blockadeTaiwan(starved);
-    for (const g of [base, starved]) {
-      g.nations['USA']!.production.push({ id: g.nextId++, type: 'fighter', region: world.capitalRegion.get('USA')!, monthsLeft: 8 });
-    }
-    const a = applyCommand(world, base, { type: 'endTurn' });
-    const b = applyCommand(world, starved, { type: 'endTurn' });
-    const left = (g: GameState) => g.nations['USA']!.production.find((p) => p.type === 'fighter')!.monthsLeft;
-    expect(left(a)).toBeCloseTo(7, 1);
-    expect(left(b)).toBeGreaterThan(7.1);
+    runTrade(world, base);
+    runTrade(world, starved);
+    const a = productionThroughput(world, base, 'USA', 'fighter');
+    const b = productionThroughput(world, starved, 'USA', 'fighter');
+    expect(a).toBeGreaterThan(0.97);
+    expect(b).toBeLessThan(a - 0.1);
   });
 
   it('a Chinese rare-earth embargo on the G7 starves missile and drone programmes', () => {

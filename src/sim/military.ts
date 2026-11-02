@@ -1,4 +1,5 @@
 /** Movement, supply, combat, attrition, captures and capitulation (D-025, D-029, D-050–D-052). */
+import { hasAbility } from './research';
 import { nationName, type World } from './world';
 import type {
   BattleSide,
@@ -59,6 +60,9 @@ import {
   weatherAttackFactor,
   weatherAttrition,
 } from './terrain';
+
+/** Battle modifier for nations with AI battle management (D-079). */
+export const AI_COMMAND_FACTOR = 1.08;
 
 export const LANCHESTER_K = 3;
 /** Attack firepower saturates beyond this many land units in one region (front width). */
@@ -420,6 +424,8 @@ export function attackerFactors(
     const tech = 1 + (n.modifiers.landAttack ?? 0);
     if (tech > 1.001) mods.push({ label: 'Technology', factor: tech, detail: 'Researched land-attack bonuses.' });
   }
+  if (n && hasAbility(world, state, u.owner, 'aiCommand'))
+    mods.push({ label: 'AI battle management', factor: AI_COMMAND_FACTOR, detail: 'AI command systems match every sensor to the best shooter: faster targeting and better-coordinated fires (D-079).' });
   mods.push({
     label: 'Experience',
     factor: Math.round(experienceFactor(u.experience) * 100) / 100,
@@ -481,6 +487,8 @@ export function defenderFactors(
     const tech = 1 + (n.modifiers.landDefence ?? 0);
     if (tech > 1.001) mods.push({ label: 'Technology', factor: tech, detail: 'Researched land-defence bonuses.' });
   }
+  if (n && hasAbility(world, state, u.owner, 'aiCommand'))
+    mods.push({ label: 'AI battle management', factor: AI_COMMAND_FACTOR, detail: 'AI command systems cue counter-battery fire and reserves faster than the attacker can react (D-079).' });
   mods.push({
     label: 'Experience',
     factor: Math.round(experienceFactor(u.experience) * 100) / 100,

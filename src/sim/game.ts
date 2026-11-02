@@ -29,7 +29,8 @@ import { econZero, emptyBalances, runTrade } from './trade';
 import { runDomestic, scheduleElections } from './domestic';
 import { leaderSinceTurn, startingInterest } from './setup';
 import { RESOURCE_IDS } from './types';
-import { runResearch } from './research';
+import { advanceQueue, queueResearch, runResearch, startingTechList, unitLockReason, recomputeModifiers, CALIBRATED_KEYS } from './research';
+import { applyShareTech, applyStealTech, runTechWar, setTechControls } from './techwar';
 import {
   checkCapitulations,
   findPath,
@@ -107,6 +108,8 @@ export function applyCommand(world: World, input: GameState, command: Command): 
     case 'queueProduction': {
       const cost = unitCost(world, state, player, command.unitType);
       if (!Number.isFinite(cost)) throw new Error(`Unknown unit type ${command.unitType}`);
+      const locked = unitLockReason(world, state, player, command.unitType);
+      if (locked) throw new Error(locked);
       if (state.regions[command.region]?.controller !== player)
         throw new Error('You can only build in regions you control');
       if (me.treasury < cost)
@@ -135,8 +138,25 @@ export function applyCommand(world: World, input: GameState, command: Command): 
       if (!tech.requires.every((r) => me.techs.includes(r)))
         throw new Error('Prerequisites not met');
       me.researchCurrent = tech.id;
+      me.researchQueue = me.researchQueue.filter((id) => id !== tech.id);
       return state;
     }
+    case 'queueResearch':
+      queueResearch(world, state, player, command.tech, command.append ?? false);
+      return state;
+    case 'setResearchQueue':
+      me.researchQueue = command.queue.filter((id, i) => world.techs.has(id) && !me.techs.includes(id) && command.queue.indexOf(id) === i);
+      advanceQueue(world, state, player);
+      return state;
+    case 'stealTech':
+      applyStealTech(world, state, player, command.target, command.tech);
+      return state;
+    case 'shareTech':
+      applyShareTech(world, state, player, command.to, command.tech);
+      return state;
+    case 'techControls':
+      setTechControls(world, state, player, command.target, command.on);
+      return state;
     case 'moveUnits': {
       for (const id of command.unitIds) {
         const u = state.units[id];
@@ -160,7 +180,7 @@ export function applyCommand(world: World, input: GameState, command: Command): 
       return state;
     }
     case 'missileStrike':
-      applyMissileStrike(world, state, player, command.region, command.kind);
+      applyMissileStrike(world, state, player, command.region, command.kind, command.hypersonic ?? false);
       return state;
     case 'cyberOp':
       applyCyberOp(world, state, player, command.target, command.kind);
@@ -349,6 +369,7 @@ export function endTurn(world: World, state: GameState): GameState {
   runDomestic(world, state);
   runProduction(world, state);
   const techs = runResearch(world, state);
+  runTechWar(world, state);
   runSpaceTick(world, state);
   runIntelTick(world, state);
   // 3. Military resolution: supply first (it shapes everything), then the air war, movement,
@@ -454,6 +475,7 @@ export function refreshLeaders(world: World, input: GameState): GameState {
   if (typeof state.oilPrice !== 'number') state.oilPrice = 1;
   migrateEconomy(world, state);
   migrateDiplomacy(world, state);
+  migrateResearch(world, state);
   for (const n of Object.values(state.nations)) {
     if (n.leaderFictional) continue;
     const l = world.leaders.get(n.iso3);
@@ -462,6 +484,32 @@ export function refreshLeaders(world: World, input: GameState): GameState {
     n.leaderTitle = l.title;
   }
   return state;
+}
+
+/**
+ * Saves from before D-079 used the 41-tech tree and started everyone with no technology: drop
+ * unknown ids, grant the January 2027 technologies, and treat the save's world as the baseline.
+ */
+function migrateResearch(world: World, state: GameState): void {
+  state.techControls ??= ['USA>CHN', 'NLD>CHN', 'JPN>CHN'];
+  for (const n of Object.values(state.nations)) {
+    if (Array.isArray(n.researchQueue)) continue;
+    n.researchQueue = [];
+    n.techCredit = {};
+    n.espionageCooldown = 0;
+    n.techs = [...new Set([...startingTechList(world, n.iso3), ...n.techs.filter((id) => world.techs.has(id))])];
+    for (let changed = true; changed; ) {
+      changed = false;
+      n.techs = n.techs.filter((id) => {
+        const ok = world.techs.get(id)!.requires.every((r) => n.techs.includes(r));
+        if (!ok) changed = true;
+        return ok;
+      });
+    }
+    if (n.researchCurrent && (!world.techs.has(n.researchCurrent) || n.techs.includes(n.researchCurrent))) n.researchCurrent = null;
+    recomputeModifiers(world, state, n.iso3);
+    n.techBaseline = Object.fromEntries(CALIBRATED_KEYS.map((k) => [k, n.modifiers[k] ?? 0]));
+  }
 }
 
 /** Saves from before D-071 lack memories, blocs, the UN, war plans and aid. */

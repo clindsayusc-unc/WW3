@@ -42,9 +42,27 @@ export const MISSION_INFO: Record<AirMission, { label: string; short: string; de
   },
 };
 
+/** The air role of a unit type: fighters (incl. sixth-generation and loyal wingmen), bombers, drones. */
+export function airClass(type: string): 'fighter' | 'bomber' | 'drone' | null {
+  switch (type) {
+    case 'fighter':
+    case 'fighter6':
+    case 'loyalWingman':
+      return 'fighter';
+    case 'bomber':
+      return 'bomber';
+    case 'drone':
+    case 'droneSwarm':
+      return 'drone';
+    default:
+      return null;
+  }
+}
+
 /** Which missions a unit type may fly. */
 export function missionsFor(type: string): AirMission[] {
-  switch (type) {
+  if (type === 'droneSwarm') return ['cas', 'interdiction', 'recon'];
+  switch (airClass(type)) {
     case 'fighter':
       return ['superiority', 'cas', 'interdiction', 'recon'];
     case 'bomber':
@@ -77,7 +95,7 @@ interface AirCache {
   /** turn, regionsVersion, diplomacyVersion, nextId (new units bump nextId; deletions invalidate explicitly). */
   version: [number, number, number, number];
   interdiction: Map<RegionId, Map<Iso3, number>>;
-  defenceAA: Map<RegionId, Map<Iso3, number>>;
+  defenceAA: Map<RegionId, Map<Iso3, { aa: number; drone: number; ew: number }>>;
 }
 const airCache = new WeakMap<GameState, AirCache>();
 function cacheFor(world: World, state: GameState): AirCache {
@@ -122,14 +140,25 @@ export function interdictionAttrition(world: World, state: GameState, region: Re
   return Math.min(6, 2 * w);
 }
 
-/** Air-defence weight the controller of `region` (and allies) can bring against an intruding wing of `intruder`. */
-export function airDefenceAt(world: World, state: GameState, region: RegionId, intruder: Iso3): number {
+/**
+ * Air-defence weight the controller of `region` (and allies) can bring against an intruding wing
+ * of `intruder`. Against uncrewed wings, laser brigades add their counter-drone weight and the
+ * defenders' electronic warfare (`droneResistance`) multiplies the result (D-079).
+ */
+export function airDefenceAt(world: World, state: GameState, region: RegionId, intruder: Iso3, uncrewed = false): number {
+  const d = airDefenceParts(world, state, region, intruder);
+  return uncrewed ? (d.aa + d.drone) * (1 + d.ew) : d.aa;
+}
+
+function airDefenceParts(world: World, state: GameState, region: RegionId, intruder: Iso3): { aa: number; drone: number; ew: number } {
   const c = cacheFor(world, state);
   let m = c.defenceAA.get(region);
   if (!m) c.defenceAA.set(region, (m = new Map()));
   const hit = m.get(intruder);
   if (hit !== undefined) return hit;
   let aa = 0;
+  let drone = 0;
+  let ew = 0;
   const ctrl = state.regions[region]?.controller ?? null;
   const defenders = new Set<Iso3>();
   for (const n of Object.values(state.nations)) if (n.alive && atWar(state, n.iso3, intruder)) defenders.add(n.iso3);
@@ -139,16 +168,19 @@ export function airDefenceAt(world: World, state: GameState, region: RegionId, i
     const t = world.unitTypes.get(u.type);
     if (!t) continue;
     if (t.domain === 'land' && u.region === region && t.antiAir >= 3) {
-      aa += (u.strength / 100) * t.antiAir * (1 + (state.nations[u.owner]?.modifiers.antiAir ?? 0));
+      const w = (u.strength / 100) * t.antiAir * (1 + (state.nations[u.owner]?.modifiers.antiAir ?? 0));
+      aa += w;
+      drone += w * t.counterDrone;
     } else if (t.domain === 'air' && u.mission === 'superiority' && near.has(u.region)) {
       aa += (u.strength / 100) * t.antiAir * 0.6 * (1 + (state.nations[u.owner]?.modifiers.airPower ?? 0));
     } else if (t.domain === 'sea' && t.antiAir >= 5 && world.regions.get(region)?.neighbours.includes(u.region)) {
       aa += (u.strength / 100) * t.antiAir * 0.3;
     }
   }
-  void ctrl;
-  m.set(intruder, aa);
-  return aa;
+  if (ctrl && defenders.has(ctrl)) ew = clamp(state.nations[ctrl]?.modifiers.droneResistance ?? 0, 0, 1.5);
+  const out = { aa, drone, ew };
+  m.set(intruder, out);
+  return out;
 }
 
 /** Escort weight protecting wings based in `base` (friendly superiority wings within one step). */
@@ -170,14 +202,13 @@ function escortAt(world: World, state: GameState, base: RegionId, iso: Iso3): nu
  * is weighed against the wing's escorts and its own air-power technology.
  */
 export function interceptionLoss(world: World, state: GameState, wing: Unit, target: RegionId): number {
-  const defence = airDefenceAt(world, state, target, wing.owner);
+  const t = world.unitTypes.get(wing.type);
+  const defence = airDefenceAt(world, state, target, wing.owner, t?.uncrewed ?? false);
   if (defence <= 0) return 0;
   const escorts = escortAt(world, state, wing.region, wing.owner);
   const tech = 1 + (state.nations[wing.owner]?.modifiers.airPower ?? 0);
-  const t = world.unitTypes.get(wing.type);
-  const stealth = wing.type === 'bomber' ? 0.8 : wing.type === 'drone' ? 1.2 : 1;
+  const stealth = t?.signature ?? 1;
   const exposure = wing.mission === 'cas' ? 1.2 : wing.mission === 'recon' ? 0.6 : 1;
-  void t;
   return clamp((5 * defence * stealth * exposure) / (tech * (1 + 0.6 * escorts)), 0, 25);
 }
 

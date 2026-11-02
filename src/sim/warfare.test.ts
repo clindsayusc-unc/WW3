@@ -364,6 +364,8 @@ describe('cyber and space (D-059)', () => {
   it('ASAT needs the tech and a war, destroys satellites and leaves debris that hurts everyone', () => {
     const g = newGame('USA');
     rawWar(g, 'USA', 'CHN');
+    // The US has fielded counterspace weapons since its 2008 test (D-079); take them away first.
+    g.nations['USA']!.techs = g.nations['USA']!.techs.filter((id) => id !== 'space-counterspace');
     expect(canAsat(world, g, 'USA', 'CHN')).toMatch(/Counterspace/);
     g.nations['USA']!.techs.push('space-counterspace');
     expect(canAsat(world, g, 'USA', 'CHN')).toBeNull();

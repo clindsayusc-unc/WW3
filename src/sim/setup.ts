@@ -1,4 +1,5 @@
 /** New-game construction: nations, regions, starting forces, relations, wars (D-023). */
+import { grantStartingTechs } from './research';
 import { initBlocs } from './blocs';
 import { initUn } from './un';
 import forcesData from '../../data/forces.json';
@@ -107,6 +108,10 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       budget: defaultBudget(world, n.iso3),
       researchCurrent: null,
       researchPoints: 0,
+      researchQueue: [],
+      techCredit: {},
+      techBaseline: {},
+      espionageCooldown: 0,
       techs: [],
       modifiers: {},
       defcon: 5,
@@ -203,6 +208,9 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     // Comprehensive US embargoes and US secondary sanctions in force in 2026 (D-061).
     embargoes: ['USA>CUB', 'USA>PRK', 'USA>IRN'],
     secondarySanctions: ['USA>IRN', 'USA>RUS'],
+    // US export controls on advanced chips, chip tools and AI for China (BIS rules of October 2022,
+    // 2023 and 2024–25), joined by the Netherlands and Japan on lithography tools (2023), D-079.
+    techControls: ['USA>CHN', 'NLD>CHN', 'JPN>CHN'],
     treaties: [],
     wars: [],
     proposals: [],
@@ -311,6 +319,8 @@ export function createGame(world: World, options: NewGameOptions): GameState {
   placeStartingForces(world, state);
 
   if (scenario === 'taiwan-crisis') applyTaiwanCrisis(world, state);
+  // January 2027 technology (data/tech-start.json) before the economy is calibrated (D-079).
+  grantStartingTechs(world, state);
   initEconomy(world, state);
 
   state.log.push({

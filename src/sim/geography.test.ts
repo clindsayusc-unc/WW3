@@ -148,6 +148,8 @@ describe('supply', () => {
 describe('crossings', () => {
   it('a river or mountain border penalises the attacker, eased by engineering tech', () => {
     const g = game('FRA');
+    // France fields bridging equipment from the start (D-079); measure the bare penalty first.
+    g.nations['FRA']!.modifiers.crossing = 0;
     const byName = (iso: string, name: string) => world.regionList.find((r) => r.iso3 === iso && r.name === name)!;
     const m = crossingModifier(world, g, 'FRA', byName('FRA', 'Moselle').id, byName('DEU', 'Baden-Württemberg').id)!;
     expect(m.factor).toBeLessThan(0.8);

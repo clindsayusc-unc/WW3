@@ -226,7 +226,10 @@ production; research → RP = 10·√($bn/month); infrastructure above 20% adds 
 250% of GDP triggers a default (debt halves, stability −12, growth −2 pp for 24 months). Treasury
 cannot go negative. Growth is clamped to −15…+12% per year.
 
-## D-027 — 2026-11-02 — Research as modifiers
+## D-027 — 2026-11-02 — Research as modifiers — PARTLY SUPERSEDED
+
+> **Extended by D-079:** 81 techs in five eras, unlocks, abilities, starting capability, a queue,
+> theft, sharing and export controls. Effects are still summed into `nation.modifiers`.
 
 Tech effects are summed into `nation.modifiers` (`landAttack`, `airPower`, `researchSpeed`,
 `gdpGrowth`, `missileDefence`, …) and read by combat, economy and escalation. 40 techs in 8 branches
@@ -1110,3 +1113,92 @@ predecessor's traits exactly.
   points from the predecessor and inside the faction's bounds; successors in a running game drive
   `traitsOf`; determinism; faction choice per cause; coups and revolutions shift further than
   orderly successions; a term-limited US president is succeeded within the Republican profile.
+
+## D-079 — 2026-11-02 — The research tree: 81 techs, real starting capability, the technology war
+
+Supersedes the "40 techs for v1" part of D-027; the brief's ~80 are in.
+
+- **Data** (`data/techs.json`): 81 technologies, about ten per branch, in five **eras** —
+  I Fielded (2027), II Near term (2028–30), III Mid term (2031–33), IV Long term (2034–36),
+  V Frontier (2037–40). Each has a `year` (earliest plausible fielding), a two-to-three sentence
+  real-world framing naming the programmes it stands for, a cost (era averages ≈ 135 / 315 / 500 /
+  900 / 1,500 RP; the US and China make ≈ 90 RP a month at the start, Russia ≈ 23), prerequisites
+  from the same or earlier eras (cross-branch links: the sixth-generation fighter needs the AI pilot,
+  adaptive-cycle engines and CCAs) and effects. `tier` is kept equal to `era` for older code (deal
+  values, headlines). The file is `estimate: true`: years beyond era I are the authors' reading of
+  public roadmaps. New effect keys: `missileRate`, `hypersonicDefence`, `espionage`,
+  `counterIntel`, `satelliteSurvival`; the old unused `droneResistance` and `deterrence` now act.
+- **Starting capability** (`data/tech-start.json`, `estimate: true`): what 28 nations field in
+  January 2027 with a `basis` line of the programmes counted — e.g. the US 28 techs (Dark Eagle,
+  PrSM, Starshield, Intel 18A; no mass FPV base, no sixth-gen yet), China 32 (DF-17, DF-21D/26,
+  Micius QKD, rare-earth refining, Ascend; no ≤ 3 nm logic), Russia 24 (Zircon, Avangard, mass
+  FPV, EW), Ukraine 19 (sea drones, ground robots), Israel 19 (Iron Beam), Taiwan 13 (TSMC A16).
+  Prerequisites are always closed. Other nations: tactical drones, precision strike and a CERT at
+  ≥ $5 bn defence budget, tactical drones at ≥ $1 bn. **Calibration:** the economy was calibrated
+  to IMF forecasts that already price in today's technology, so `NationState.techBaseline` stores
+  the starting `gdpGrowth` and `stability` modifiers and the economy reads only the change
+  (`techDelta`). Military modifiers count in full — a real capability gap is the point. The
+  calibrated war scenarios (Ukraine, Korea, Baltic, Taiwan, …) stayed inside their ranges.
+- **Costs** (`techCostBreakdown`): base × max(0.35, 1 − ally discount − diffusion − credit) ×
+  export controls. Each ally (treaty partner, NATO/CSTO member) already fielding the tech, and not
+  sanctioning or export-controlling us, takes 10 % off (max 30 %): alliance tech sharing as passive
+  spillover. Once nations with half the world's GDP field it, another 10 % ("it has been done").
+  Stolen or shared designs (`techCredit`) cover up to 60 %.
+- **Sanctions slow research** in two ways: the existing ×(1 − 0.3 × sanctioners' GDP share) on
+  research points (D-061), and **export controls** — `GameState.techControls` (`from>to`), seeded
+  with the US, Dutch and Japanese chip and tool controls on China — which multiply the cost of
+  semiconductor and AI techs by 1 + 1.2 × the GDP share of nations sanctioning or controlling the
+  target (reduced by sanction resistance; China's sovereign-EUV tech is the way out). Controllers
+  and sanctioners share nothing. The player can impose or lift controls (relations −8 / +4).
+- **Queue.** `researchQueue` holds projects after the current one; `queueResearch` puts the whole
+  missing path to a tech in order (prerequisites first, earlier eras and cheaper first), replacing
+  the queue or, with shift-click, appending. Research completes up to two projects a month when
+  points are banked and starts the next queued project whose prerequisites are met.
+- **Units** (`data/units.json` `requiresTech`): sixth-generation fighter wing (AA 13, signature 0.55,
+  $22 bn), loyal-wingman CCA wing ($4 bn, 3 months), drone swarm group (attack 7, built in a month,
+  signature 1.4), laser air-defence brigade (AA 11, ×2 counter-drone weight, half weight against
+  cruise missiles and 0.1 against hypersonics). `signature` replaces the hard-coded bomber/drone
+  interception factors; `uncrewed` types get drone-strength tech and are hunted by the defender's
+  `droneResistance` (EW, counter-UAS, microwave) and laser brigades. Production refuses a locked
+  type; the AI substitutes researched successors for fighters, drones and air defence.
+- **Abilities** (`techs.json` `abilities`): hypersonic strike (a strike option: four glide
+  vehicles for eight missiles' stock, interception ×0.35 plus the defender's `hypersonicDefence`
+  from glide-phase interceptors and the space sensor layer, hits ×1.5; the AI uses it against
+  defended targets); AI battle management (×1.08 attack and defence, shown as a battle modifier);
+  quantum-secure communications (enemy blinding and sabotage cyber operations at half odds, theft
+  −15 points); space-based sensors (intel, missile and hypersonic defence); directed energy (the
+  laser brigade).
+- **Espionage** (`src/sim/techwar.ts`): steal a tech the target fields whose prerequisites you hold;
+  0.01 % of GDP, four-month cooldown. Success 35 % + espionage + ½ cyber attack − 0.3 × their
+  cyber defence − their counter-intelligence (+15 with a spy network, −15 against quantum comms),
+  5–85 %; success covers half the cost. Exposure is rolled separately (40 % + counter-intelligence
+  + 0.3 × cyber defence − ½ espionage): relations −15, legitimacy −2, the victim's allies −4, a
+  "stole our technology" grievance, tension +1.
+- **Sharing:** hand any fielded tech to an ally or a partner at relations ≥ 50 whose prerequisites
+  are met: it is granted at once, +6 relations and a favour (8 + 2 × era); the recipient's enemies
+  (relations ≤ −40) resent era-2+ transfers. The deal item and the AUKUS summit (D-071) still
+  grant techs.
+- **AI** (`runTechWar`, after research): each AI great power steals with 1.5 % + paranoia/4000 +
+  aggression/4000 a month (about one operation every two months worldwide) from the rival major it dislikes (opinion ≤ 0) with the most valuable
+  stealable tech, and shares its cheapest era ≤ 2 tech with the ally furthest behind at 1 % +
+  loyalty/4000. Decisions and outcomes use hash draws (`hashDraw`), so they never shift the
+  simulation's random stream. AI research picks by branch weight × 1.25 if it unlocks something ÷
+  effective cost.
+- **Screen** (`src/ui/modals/ResearchModal.tsx`, layout in `src/ui/researchLayout.ts`): era columns
+  left to right and a band per branch in its colour; every tech in the first column of its era
+  right of all its prerequisites, so links always run left to right, stacked in lanes. Wheel zoom
+  around the cursor, drag to pan (a drag never clicks), zoom/fit buttons, branch highlight chips
+  and search. Click queues the path, shift-click appends; hovering a tech lights its whole path
+  and opens a card with era, year, framing, effects, unlocks, prerequisites, a cost breakdown
+  (allies, diffusion, stolen credit, export controls), time and path length, and which great
+  powers field it. Side tabs: Queue (reorder, remove, rate breakdown with every factor), Espionage
+  (targets, odds, steal, export controls), Sharing. Production marks locked units; the strike
+  panel adds hypersonic buttons with the interception chance in the tooltip.
+- **Saves** from before this entry: unknown tech ids are dropped, the starting technologies are
+  granted, techs whose prerequisites are missing are removed, the baseline is the loaded world
+  (`migrateResearch`).
+- **Tests:** `src/sim/research.test.ts` (data integrity, eras, starting capability, calibration,
+  ally discount, export controls, sanctions, queue, unlocks, abilities, theft, sharing, AI tech war
+  without RNG use, migration, determinism), `src/ui/research.test.ts` (layout: no overlaps, links
+  left to right, nodes inside their era column; effect labels).
+
