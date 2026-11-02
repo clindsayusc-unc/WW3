@@ -120,6 +120,7 @@ describe('combat', () => {
       morale: 80,
       path: [],
       prevRegion: target,
+      moveProgress: 0,
     };
     g.units[1] = defender;
     for (let i = 0; i < attackerCount; i++) {
@@ -132,6 +133,7 @@ describe('combat', () => {
         morale: 80,
         path: [],
         prevRegion: target,
+        moveProgress: 0,
       };
     }
     const results = runCombat(world, g);
@@ -219,5 +221,6 @@ describe('soak', () => {
     console.log(
       `soak: 120 turns in ${ms.toFixed(0)} ms; wars=${g.wars.length} units=${Object.keys(g.units).length} tension=${g.globalTension.toFixed(0)} detonations=${g.detonations} alive=${Object.values(g.nations).filter((n) => n.alive).length}`,
     );
-  }, 120_000);
+    // Generous: the whole suite runs in parallel on CI runners with few cores.
+  }, 400_000);
 });

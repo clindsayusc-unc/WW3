@@ -428,3 +428,64 @@ of state, which caused the bug. `tests/leaders.test.ts` checks every major, the 
 Iranian cases, internal consistency and that the world/game objects use the effective leader. Saves
 made earlier get their leader names refreshed on load (`refreshLeaders`). All 44 entries were
 re-verified by web search on 2026-11-02.
+
+## D-050 — 2026-11-02 — Real terrain, supply as a level, and movement that costs
+
+Terrain is no longer a latitude heuristic. `scripts/build-geography.ts` reads NOAA ETOPO 2022 (2′
+stride via OPeNDAP) and NASA MODIS IGBP land cover (via GIBS imagery + colormap) over the region-ID
+raster and writes `data/terrain.json`: mean/std/max elevation, a ruggedness index (mean |Δz| to the
+four 3.7 km neighbours), land-cover shares and a `terrain` class (plains, hills, mountains, desert,
+jungle, forest, marsh, urban, arctic, ice; rules in the file). The old `terrain` table in
+`data/units.json` is gone; combat, movement and supply rules live in `src/sim/terrain.ts` and are
+documented in `docs/BALANCE.md`. Supply is now a level 0..1 per region (`RegionState.supply`,
+`supplied` kept as `≥ 0.25` for the UI and old saves): depots are a nation's own regions, supply
+decays per hop by terrain × infrastructure (+ river/mountain crossings), crosses the sea from ports
+through convoy-safe zones (submarines cut it) and is capped by the destination port. Units bank
+movement points (`Unit.moveProgress`) because mountains, jungle and winter cost more than a month.
+Old saves are migrated on load (`refreshLeaders`).
+
+## D-051 — 2026-11-02 — Crossings, oceans, depth and seasons
+
+`data/crossings.json` lists, per adjacent land pair, rivers that run along the border (Natural
+Earth 10m rivers, scalerank ≤ 7), mountain borders (Natural Earth range polygons or ETOPO border
+ruggedness ≥ 120 m) and hand-listed passes (Khyber, Khunjerab, Nathu La, Brenner, Darial, …).
+Attackers pay the crossing penalty only on the hop in; units already inside (a bridgehead) do not;
+the "Combat Engineering & Bridging" tech halves it. Landings require sea control of every zone on
+the route, a shared connected water body (the Caspian is not the Gulf even where a k-means sea zone
+spans both — `waterBodies` in `data/terrain.json`), a distance bound (700 km self-lift, 2,000 km
+with amphibious groups) and lift (two formations per amphibious group per month; marines and
+special forces lift themselves across one zone). Assaults from the sea fight at ×0.5 (×0.7 with sea
+dominance and air superiority) against ×1.3 coastal defence, and live off the beach (35 % supply)
+until a port is taken. Occupiers suffer partisans scaled by depth from their own soil and by the
+size of the occupied country; recovery in occupied territory is a third of the home rate and zero in
+deep winter. Weather per region and month comes from a MERRA-2 2023 climatology
+(`data/climate.json`); winter, monsoon and heat indices drive attack, air, movement and attrition.
+The calibration scenarios in `src/sim/scenarios.test.ts` pin the outcomes; ranges and reasoning
+are in `docs/BALANCE.md`.
+
+## D-052 — 2026-11-02 — Chokepoints as state
+
+Twelve maritime chokepoints (`data/chokepoints.json`) resolve onto sea zones and shore regions.
+`GameState.chokepoints` holds status (open / contested / closed), the closing nation and mines;
+`GameState.oilPrice` is an index derived from closures. A shore controller at war may close a
+strait (`chokepoint` command; the AI closes when an enemy depends on it more than it does); ships
+in the strait may mine or sweep it. Closed straits block hostile fleets and convoys (`stepKind`,
+`seaRoute`, supply); enemy naval dominance in every adjacent zone contests a closure. Economics:
+oil shocks hit importers and reward exporters, listed dependents lose growth, and closing the
+Taiwan Strait or Malacca slows research and raises production costs for semiconductor importers.
+Zone names in `data/regions.meta.json` are still basin + nearest country from D-021 and are
+sometimes odd (the Persian Gulf is "Arabian Sea — Oman"); fixing sea-zone generation is a
+separate task.
+
+## D-053 — 2026-11-02 — Terrain map mode, chokepoint overlay, explained odds
+
+Map mode 7 "Terrain" tints each region by land cover and shades it by elevation (palette texels,
+no new textures). The label canvas draws chokepoint icons (anchor / ! / ✕ in green, amber, red,
+toggled with C). The worker's `odds` reply is now an `OddsReport`: attacker and defender modifier
+lists (terrain, crossing, amphibious assault, weather, supply, home soil, entrenchment, coastal
+defence, mobilisation, quality, tech, front width, air and naval support) with a sentence each, plus
+a route preview (per-step movement cost and supply, months to arrive). The context panel shows the
+region's terrain, relief, land cover, infrastructure, ports, supply, this month's weather and the
+year's climate, crossing features toward the other highlighted region, and chokepoint status with
+close / reopen / mine / clear buttons on the strait's sea zone. `window.ww3` is merged, not
+replaced, by the app so the renderer's `perf()` survives a game start.

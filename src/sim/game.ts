@@ -19,11 +19,13 @@ import { runResearch } from './research';
 import {
   checkCapitulations,
   findPath,
+  runAttrition,
   runCombat,
   runMovement,
   runRecovery,
   runSupply,
 } from './military';
+import { applyChokepointCommand, updateChokepoints } from './geography';
 import { decayRelations, executeProposal } from './diplomacy';
 import { updateTension, canLaunchNuclear, nuclearStrike } from './escalation';
 import { drawEvents, resolvePendingEvent } from './events';
@@ -140,6 +142,10 @@ export function applyCommand(world: World, input: GameState, command: Command): 
     case 'resolveEvent':
       resolvePendingEvent(world, state, command.pendingId, command.choice);
       return state;
+    case 'chokepoint':
+      applyChokepointCommand(world, state, player, command.id, command.action);
+      updateChokepoints(world, state);
+      return state;
     case 'nuclearStrike': {
       const why = canLaunchNuclear(state, player, command.target);
       if (why) throw new Error(why);
@@ -246,12 +252,15 @@ export function endTurn(world: World, state: GameState): GameState {
   runEconomy(world, state);
   runProduction(world, state);
   const techs = runResearch(world, state);
-  // 3. Military resolution.
+  // 3. Military resolution: supply first (it shapes everything), then movement, combat, attrition.
   runSupply(world, state);
   runMovement(world, state);
   const battles = runCombat(world, state);
+  runSupply(world, state);
+  runAttrition(world, state);
   runRecovery(world, state, new Set(battles.map((b) => b.region)));
   checkCapitulations(world, state);
+  updateChokepoints(world, state);
   // 4. Diplomacy drift, escalation, events.
   decayRelations(world, state);
   updateTension(world, state);
@@ -299,6 +308,16 @@ function defaultHeadline(world: World, state: GameState): string {
  */
 export function refreshLeaders(world: World, input: GameState): GameState {
   const state = structuredClone(input);
+  // Saves from before D-050 lack supply levels, movement progress and chokepoints.
+  for (const r of Object.values(state.regions)) {
+    if (typeof r.supply !== 'number') r.supply = r.supplied ? 1 : 0;
+  }
+  for (const u of Object.values(state.units)) if (typeof u.moveProgress !== 'number') u.moveProgress = 0;
+  if (!state.chokepoints) state.chokepoints = {};
+  for (const c of world.chokepoints)
+    if (!state.chokepoints[c.id])
+      state.chokepoints[c.id] = { status: 'open', by: null, mined: false, minedBy: null, since: 0 };
+  if (typeof state.oilPrice !== 'number') state.oilPrice = 1;
   for (const n of Object.values(state.nations)) {
     if (n.leaderFictional) continue;
     const l = world.leaders.get(n.iso3);

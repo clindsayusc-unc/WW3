@@ -4,6 +4,22 @@ import type { GameState } from '../sim/types';
 import type { World } from '../sim/world';
 import { getRelation, isAtWar } from '../sim/query';
 import type { MapMode } from '../state/uiStore';
+import type { TerrainClass } from '../sim/world';
+
+/** Land-cover tints for the terrain map mode. */
+export const TERRAIN_TINT: Record<TerrainClass, string> = {
+  plains: '#9fbf5a',
+  forest: '#2f7a3a',
+  hills: '#a8a060',
+  mountains: '#8c7b6b',
+  desert: '#e3c27a',
+  jungle: '#1f6b34',
+  marsh: '#4f9a8a',
+  urban: '#b8b4c4',
+  arctic: '#cfdbe6',
+  ice: '#eef4fa',
+  sea: '#1e3a5f',
+};
 
 /** Hand-picked accents for the majors; everyone else gets a stable hashed hue. */
 const MAJOR_ACCENTS: Record<string, string> = {
@@ -152,6 +168,20 @@ export function fillPalette(data: Uint8Array, world: World, state: GameState, mo
         }
         const t = Math.log(n + 1) / Math.log(maxUnits + 1);
         write(data, r.id, heat(0.3 + t * 0.7), r.sea ? 0.55 : 0.7);
+        break;
+      }
+      case 'terrain': {
+        if (r.sea) break;
+        // Land-cover tint, shaded by elevation: dark lowlands to bright plateaus and peaks.
+        const tint = tmp.set(TERRAIN_TINT[r.terrain] ?? TERRAIN_TINT.plains);
+        const elevT = Math.min(1, Math.log2(1 + r.elevMean / 200) / Math.log2(1 + 5000 / 200));
+        const shade = 0.55 + 0.7 * elevT;
+        tint.multiplyScalar(shade);
+        // Ruggedness adds a touch of grey (relief), urban share a touch of light.
+        const rug = Math.min(1, r.ruggedness / 300);
+        tint.lerp(new Color('#6b6560'), rug * 0.35);
+        if (r.cover.urban > 0.1) tint.lerp(new Color('#e8e4f0'), Math.min(0.6, r.cover.urban));
+        write(data, r.id, tint, 0.78);
         break;
       }
       case 'tension': {

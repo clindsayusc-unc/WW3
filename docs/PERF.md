@@ -55,3 +55,14 @@ Chrome or Safari and paste the numbers into the log below.
 3. Labels overlay redraws every frame; throttle to every second frame when the camera is still.
 4. Code-split modals (`React.lazy`) and the TopoJSON border fetch (already lazy via `?url`).
 5. KTX2/Basis textures once `toktx` is available in CI (saves ~70% GPU memory).
+
+## Geography pass (D-050–D-053)
+
+- Simulation: ~150 ms per turn early, ~400 ms late-game with 3–4,000 units in Node (soak of 120
+  turns ≈ 42 s in vitest, 160 s before the fixes) after caching `alliesOf` by diplomacy version,
+  indexing naval units per zone and memoising sea balances, lift and landing targets per state with
+  numeric keys. The hot spots are now `runSupply` (one Dijkstra per living nation, allied
+  territory included), `decayRelations` (pre-existing) and the per-unit attrition/recovery loops.
+- Data: +0.85 MB of JSON (`terrain`, `climate`, `crossings`, `infrastructure`, `chokepoints`)
+  bundled with the app; no new textures. The terrain map mode is palette texels only.
+- Overlay: chokepoint icons are 12 canvas draws per frame on the existing label layer.

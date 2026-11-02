@@ -1,5 +1,5 @@
 {
-  "source": "Original game design. Costs, build times and upkeep are stylised abstractions informed by public procurement figures (e.g. CBO/GAO unit-cost reports, SIPRI Arms Transfers) and are not real-world prices. Symbol codes follow MIL-STD-2525C via the MIT-licensed milsymbol library.",
+  "source": "Original game design. Costs, build times and upkeep are stylised abstractions informed by public procurement figures (e.g. CBO/GAO unit-cost reports, SIPRI Arms Transfers) and are not real-world prices. Terrain combat modifiers live in src/sim/terrain.ts (see docs/BALANCE.md). Symbol codes follow MIL-STD-2525C via the MIT-licensed milsymbol library.",
   "asOf": "2026-11-02",
   "estimate": true,
   "units": [
@@ -223,14 +223,5 @@
       "transport": 2,
       "description": "Carries up to two marine or special-operations units for landings on enemy coasts."
     }
-  ],
-  "terrain": {
-    "plains": { "defence": 1.0, "armorBonus": 1.2 },
-    "hills": { "defence": 1.25, "armorBonus": 0.9 },
-    "mountains": { "defence": 1.6, "armorBonus": 0.6 },
-    "desert": { "defence": 0.95, "armorBonus": 1.15 },
-    "jungle": { "defence": 1.4, "armorBonus": 0.6 },
-    "arctic": { "defence": 1.3, "armorBonus": 0.7 },
-    "ice": { "defence": 1.5, "armorBonus": 0.5 }
-  }
+  ]
 }

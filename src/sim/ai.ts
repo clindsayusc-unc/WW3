@@ -19,6 +19,7 @@ import {
 import { availableTechs } from './research';
 import { unitCost, unitUpkeep, buildMonths, monthlyRevenue } from './economy';
 import { estimateOdds, findPath, isFriendly, stepKind } from './military';
+import { amphibiousTargets, invalidateGeoCache } from './geography';
 import { evaluateProposal, executeProposal, PROPOSAL_LABELS } from './diplomacy';
 import { canLaunchNuclear, nuclearStrike, pickStrikeTarget } from './escalation';
 
@@ -60,6 +61,7 @@ function neighboursOf(world: World, state: GameState, iso: Iso3): Set<Iso3> {
 }
 
 export function runAi(world: World, state: GameState): void {
+  invalidateGeoCache(state);
   const ctx: Ctx = { byRegion: new Map(), power: new Map() };
   for (const u of Object.values(state.units)) {
     const list = ctx.byRegion.get(u.region) ?? [];
@@ -173,6 +175,7 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
         unitPower(world, state, b, 'defence') < unitPower(world, state, a, 'defence') ? b : a,
       );
       delete state.units[weakest.id];
+      invalidateGeoCache(state);
       budgetLeft = -1; // no purchases this month
     }
   }
@@ -250,11 +253,7 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
       if (land.length > 0 && isLand(world, region)) {
         // Attack an adjacent enemy region if the odds are good.
         const targets = enemyAdjacent.get(region) ?? [];
-        const amphib = land.some((u) => world.unitTypes.get(u.type)?.amphibious)
-          ? world.regions.get(region)!.neighbours.length > 0
-            ? findAmphibTargets(world, state, region, iso)
-            : []
-          : [];
+        const amphib = findAmphibTargets(world, state, region, iso, land);
         let best: { target: RegionId; ratio: number } | null = null;
         const movers =
           land.length > 1 && targets.length > 0
@@ -503,23 +502,20 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
   }
 }
 
+/** Enemy coastal regions the stack could land in under the amphibious rules (D-051). */
 function findAmphibTargets(
   world: World,
   state: GameState,
   region: RegionId,
   iso: Iso3,
+  land: Unit[],
 ): RegionId[] {
-  const out: RegionId[] = [];
-  const meta = world.regions.get(region)!;
-  for (const z of meta.neighbours) {
-    const zm = world.regions.get(z);
-    if (!zm?.sea) continue;
-    for (const t of zm.neighbours) {
-      const c = state.regions[t]?.controller;
-      if (c && atWar(state, iso, c) && isLand(world, t) && !out.includes(t)) out.push(t);
-    }
-  }
-  return out;
+  if (!(world.regions.get(region)?.coastal ?? false)) return [];
+  const type = land.find((u) => world.unitTypes.get(u.type)?.amphibious)?.type ?? land[0]?.type;
+  return amphibiousTargets(world, state, region, iso, type).filter((t) => {
+    const c = state.regions[t]?.controller;
+    return !!c && atWar(state, iso, c);
+  });
 }
 
 /** AI→AI proposals resolve immediately; AI→player proposals wait for the player's answer. */

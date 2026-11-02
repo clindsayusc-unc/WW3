@@ -192,6 +192,7 @@ export function applyEffect(world: World, state: GameState, ctx: EventContext, e
           morale: 80,
           path: [],
           prevRegion: region,
+          moveProgress: 0,
         };
         state.nextId++;
       }

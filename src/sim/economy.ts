@@ -12,6 +12,7 @@ import {
   worldGdp,
 } from './query';
 import { GOV_REVENUE_SHARE } from './setup';
+import { chokepointGrowthEffect, semiconductorDisruption } from './geography';
 
 export const MOBILIZATION_GROWTH_DRAG = [0, 0.6, 1.8]; // pp of annual growth
 export const MOBILIZATION_PRODUCTION = [1, 1.25, 1.6];
@@ -26,6 +27,9 @@ export interface GrowthBreakdown {
   mobilization: number;
   debt: number;
   events: number;
+  /** Oil shocks and trade disruption from closed or contested chokepoints (D-052). */
+  chokepoints: number;
+  chokepointReasons: string[];
   total: number;
 }
 
@@ -42,7 +46,9 @@ export function growthBreakdown(world: World, state: GameState, iso: Iso3): Grow
   const debtRatio = n.debt / Math.max(1, n.gdp);
   const debt = debtRatio > 1.2 ? -(debtRatio - 1.2) * 2 : 0;
   const events = n.growthMods.reduce((s, m) => s + m.delta, 0);
-  const sum = n.baseGrowth + infra + tech + sanctions + war + mobilization + debt + events;
+  const choke = chokepointGrowthEffect(world, state, iso);
+  const sum =
+    n.baseGrowth + infra + tech + sanctions + war + mobilization + debt + events + choke.value;
   return {
     base: n.baseGrowth,
     infrastructure: infra,
@@ -52,6 +58,8 @@ export function growthBreakdown(world: World, state: GameState, iso: Iso3): Grow
     mobilization,
     debt,
     events,
+    chokepoints: choke.value,
+    chokepointReasons: choke.reasons,
     total: clamp(sum, -15, 12),
   };
 }
@@ -168,7 +176,9 @@ export function unitCost(world: World, state: GameState, iso: Iso3, type: string
   const t = world.unitTypes.get(type);
   if (!t) return Infinity;
   return (
-    (t.costBn * costFactor(n.quality) * (1 + (n.modifiers.productionCost ?? 0))) /
+    (t.costBn *
+      costFactor(n.quality) *
+      (1 + (n.modifiers.productionCost ?? 0) + semiconductorDisruption(world, state, iso))) /
     MOBILIZATION_PRODUCTION[n.mobilization]!
   );
 }
@@ -215,6 +225,7 @@ export function runProduction(world: World, state: GameState): void {
         morale: 85,
         path: [],
         prevRegion: region,
+        moveProgress: 0,
       };
       state.nextId++;
       if (n.iso3 === state.player) {

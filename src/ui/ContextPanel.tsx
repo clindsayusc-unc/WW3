@@ -10,7 +10,8 @@ import { getRelation, unitsIn, isAtWar, atWar } from '../sim/query';
 import { relationLabel } from '../sim/diplomacy';
 import { requestOdds } from '../state/simBridge';
 import { playSound } from './audio';
-import type { Unit } from '../sim/types';
+import type { OddsReport, Unit } from '../sim/types';
+import { ChokepointSection, OddsBreakdown, TerrainSection } from './GeographyPanel';
 
 const world = loadWorld();
 
@@ -20,14 +21,14 @@ export function ContextPanel() {
   const selectedUnits = useUiStore((s) => s.selectedUnitIds);
   const selectUnits = useUiStore((s) => s.selectUnits);
   const hover = useUiStore((s) => s.hoverRegion);
-  const [oddsFor, setOddsFor] = useState<{ target: number; text: string } | null>(null);
+  const [oddsFor, setOddsFor] = useState<OddsReport | null>(null);
   useEffect(() => {
     if (!hover || selectedUnits.length === 0 || hover === selected) return;
-    requestOdds(selectedUnits, hover, (target, _ratio, text) => setOddsFor({ target, text }));
+    requestOdds(selectedUnits, hover, (report) => setOddsFor(report));
   }, [hover, selectedUnits, selected]);
   const odds =
     oddsFor && oddsFor.target === hover && hover !== selected && selectedUnits.length > 0
-      ? oddsFor.text
+      ? oddsFor
       : null;
   if (!game) return null;
   const id = selected ?? hover;
@@ -39,7 +40,7 @@ export function ContextPanel() {
           Hover a region for details. Click to select. Select your units, then right-click a
           destination to move or attack.
         </p>
-        <p className="hint">Scroll to zoom, drag to orbit. Keys 1–6 switch map modes.</p>
+        <p className="hint">Scroll to zoom, drag to orbit. Keys 1–7 switch map modes; C toggles the chokepoint overlay.</p>
       </aside>
     );
   }
@@ -100,19 +101,6 @@ export function ContextPanel() {
               tooltip={`Share of the owner's GDP produced here (${formatPct(meta.populationShare * 100, 1)})${rs.devastation > 0 ? `, reduced ${formatPct(rs.devastation * 100, 0)} by war damage` : ''}.`}
             />
           </div>
-          <div className="row">
-            <Stat
-              label="Terrain"
-              value={meta.terrain}
-              tooltip={`Defence ×${world.terrain[meta.terrain]?.defence ?? 1}, armour ×${world.terrain[meta.terrain]?.armorBonus ?? 1}. Heuristic from elevation and latitude.`}
-            />
-            <Stat
-              label="Supply"
-              value={rs.supplied ? 'Supplied' : 'Cut off'}
-              tooltip="Supplied regions connect to their controller's capital through friendly land. Unsupplied units fight at 60% and lose strength each month."
-              accent={rs.supplied ? undefined : '#f87171'}
-            />
-          </div>
           {meta.capital && (
             <div
               className="tag"
@@ -131,6 +119,11 @@ export function ContextPanel() {
           )}
         </div>
       )}
+      {!meta.sea && <TerrainSection meta={meta} rs={rs} game={game} />}
+      {meta.sea &&
+        (world.chokepointsByZone.get(meta.id) ?? []).map((c) => (
+          <ChokepointSection key={c.id} c={c} game={game} />
+        ))}
       {nation && nationMeta && controller !== game.player && (
         <div className="panel-section">
           <div className="section-title" style={{ color: nationHex(controller!) }}>
@@ -240,7 +233,7 @@ export function ContextPanel() {
           <div className="orders-hint" data-testid="orders-hint">
             <strong>{selectedUnits.length}</strong> selected — right-click a region to move or
             attack.
-            {odds && <div className="odds">Odds: {odds}</div>}
+            {odds && <OddsBreakdown report={odds} />}
             <button className="btn small ghost" onClick={() => selectUnits([])}>
               Clear selection
             </button>

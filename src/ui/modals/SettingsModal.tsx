@@ -66,6 +66,13 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
           Clouds
         </button>
         <button
+          className={`chip toggle ${ui.showChokepoints ? 'on' : ''}`}
+          onClick={ui.toggleChokepoints}
+          data-tip="Icons on the twelve maritime chokepoints showing open, contested or closed (key C)."
+        >
+          Chokepoints (C)
+        </button>
+        <button
           className={`chip toggle ${!ui.muted ? 'on' : ''}`}
           onClick={() => {
             ui.toggleMute();
