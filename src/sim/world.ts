@@ -23,7 +23,26 @@ import economyData from '../../data/economy.json';
 import agendasData from '../../data/agendas.json';
 import unscData from '../../data/unsc.json';
 import chainsData from '../../data/chains.json';
-import type { AgendaId, Iso3, RegionId, Regime, ResourceId, TechId, UnitTypeId } from './types';
+import factionsData from '../../data/factions.json';
+import type { AgendaId, GameState, Iso3, RegionId, Regime, ResourceId, TechId, UnitTypeId } from './types';
+
+/** A party or power faction with a trait profile from its public positions (data/factions.json, D-078). */
+export interface FactionMeta {
+  readonly id: string;
+  readonly name: string;
+  readonly kind: 'party' | 'faction' | 'military';
+  readonly weight: number;
+  readonly position: string;
+  readonly url: string;
+  readonly traits: Traits;
+  /** How far a successor from this faction may stray from its profile, per trait. */
+  readonly spread: number;
+}
+
+export interface NationFactions {
+  readonly incumbent: string;
+  readonly factions: readonly FactionMeta[];
+}
 
 /** A leader's long-term agenda from data/agendas.json (D-071). */
 export interface AgendaMeta {
@@ -432,6 +451,8 @@ export interface World {
   readonly seaComponent: ReadonlyMap<RegionId, number>;
   /** Leader agendas (D-071); nations without an entry get a default from their regime. */
   readonly agendas: ReadonlyMap<Iso3, readonly AgendaMeta[]>;
+  /** Parties and factions per nation with a researched leader (D-078). */
+  readonly factions: ReadonlyMap<Iso3, NationFactions>;
   /** Flashpoint event chains (D-074). */
   readonly chains: readonly ChainMeta[];
   readonly eventById: ReadonlyMap<string, EventMeta>;
@@ -797,8 +818,16 @@ export function loadWorld(): World {
     ]);
   }
 
+  const factions = new Map<Iso3, NationFactions>();
+  for (const n of factionsData.nations as unknown as { iso3: string; incumbent: string; factions: (Omit<FactionMeta, 'spread'> & { spread?: number })[] }[])
+    factions.set(n.iso3, {
+      incumbent: n.incumbent,
+      factions: n.factions.map((f) => ({ ...f, kind: f.kind as FactionMeta['kind'], spread: f.spread ?? 18 })),
+    });
+
   cached = {
     agendas,
+    factions,
     chains,
     eventById: new Map(events.map((e) => [e.id, e])),
     unsc: {
@@ -839,8 +868,13 @@ export function loadWorld(): World {
   return cached;
 }
 
-export function traitsOf(world: World, iso3: Iso3): Traits {
-  return world.leaders.get(iso3)?.traits ?? DEFAULT_TRAITS;
+/**
+ * The traits driving a nation's AI. A fictional successor's generated traits (kept in the game
+ * state, D-078) take precedence over the researched leader's; pass the state wherever a game is
+ * running.
+ */
+export function traitsOf(world: World, iso3: Iso3, state?: GameState): Traits {
+  return state?.nations[iso3]?.leaderTraits ?? world.leaders.get(iso3)?.traits ?? DEFAULT_TRAITS;
 }
 
 export function nationName(world: World, iso3: Iso3 | null | undefined): string {

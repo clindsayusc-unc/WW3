@@ -100,7 +100,7 @@ export function runAi(world: World, state: GameState): void {
 
 function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
   const n = state.nations[iso]!;
-  const t = traitsOf(world, iso);
+  const t = traitsOf(world, iso, state);
   const meta = world.nations.get(iso)!;
   const enemies = enemiesOf(state, iso);
   const atWarNow = enemies.length > 0;
@@ -680,7 +680,7 @@ function strategicOperations(
   mainThreat: Iso3 | null,
 ): void {
   const n = state.nations[iso]!;
-  const t = traitsOf(world, iso);
+  const t = traitsOf(world, iso, state);
   const meta = world.nations.get(iso)!;
   // Missile strikes on the enemy region with the most troops next to our lines, or its industry.
   if (enemies.length > 0 && n.missiles >= SALVO && roll(state) < 0.15 + t.aggression / 400) {

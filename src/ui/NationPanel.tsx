@@ -4,6 +4,7 @@ import { loadWorld } from '../sim/world';
 import { Stat } from './Stat';
 import { formatMoney, formatPct, formatPop } from './format';
 import { LeaderCard, SecondaryOffices } from './LeaderCard';
+import { successorView } from './successorView';
 import { nationHex } from '../render/palette';
 import { dispatch } from '../state/simBridge';
 import { unitUpkeep } from '../sim/economy';
@@ -29,8 +30,8 @@ export function NationPanel() {
   const units = Object.values(game.units).filter((u) => u.owner === game.player).length;
   return (
     <aside className="panel panel-left" data-testid="nation-panel">
-      <LeaderCard nation={meta} leader={leader} accent={nationHex(game.player)} compact />
-      {leader && <SecondaryOffices leader={leader} />}
+      <LeaderCard nation={meta} leader={leader} accent={nationHex(game.player)} compact successor={successorView(world, game, game.player)} />
+      {leader && !game.nations[game.player]!.leaderFictional && <SecondaryOffices leader={leader} />}
       <div className="panel-section">
         <div className="row">
           <Stat

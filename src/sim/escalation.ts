@@ -224,7 +224,7 @@ export function nuclearDecision(world: World, state: GameState, iso: Iso3): Nucl
   if (!n?.alive || n.warheads <= 0) return none('No warheads.');
   const enemies = enemiesOf(state, iso).filter((e) => state.nations[e]?.alive);
   if (enemies.length === 0) return none('Not at war.');
-  const t = traitsOf(world, iso);
+  const t = traitsOf(world, iso, state);
   const held = controlShare(world, state, iso);
   const cap = world.capitalRegion.get(iso);
   const capLost = cap !== undefined && state.regions[cap]?.controller !== iso;
@@ -353,7 +353,7 @@ export function nuclearStrike(
     for (const ret of retaliators) {
       const rn = state.nations[ret];
       if (!rn || rn.warheads <= 0 || !rn.alive) continue;
-      const traits = traitsOf(world, ret);
+      const traits = traitsOf(world, ret, state);
       // Retaliation needs warheads that survived: a weak second strike rarely answers (D-076).
       const ss = secondStrike(world, state, ret, attacker).status;
       const capability = ss === 'assured' ? 1 : ss === 'limited' ? 0.8 : 0.3;

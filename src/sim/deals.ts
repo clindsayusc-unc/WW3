@@ -95,7 +95,7 @@ export function tradableTech(world: World, state: GameState, giver: Iso3, receiv
 }
 
 function moneyWeight(world: World, state: GameState, iso: Iso3): number {
-  const t = traitsOf(world, iso);
+  const t = traitsOf(world, iso, state);
   const n = state.nations[iso]!;
   const poor = n.treasury < monthlyRevenue(n, controlShare(world, state, iso)) * 2 ? 0.3 : 0;
   return 1 + (t.economicPriority - 50) / 150 + 0.5 * agendaWeight(world, iso, 'transactional') + poor;
@@ -176,7 +176,7 @@ interface Valued {
  * counterpart `p`. US$ bn equivalent.
  */
 function valueItem(world: World, state: GameState, e: Iso3, p: Iso3, item: DealItem, dir: 'in' | 'out'): Valued {
-  const t = traitsOf(world, e);
+  const t = traitsOf(world, e, state);
   const n = state.nations[e]!;
   const G = Math.max(10, n.gdp);
   const giver = dir === 'in' ? p : e;

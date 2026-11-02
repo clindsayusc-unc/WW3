@@ -47,8 +47,8 @@ export function agendaClaim(world: World, iso: Iso3, target: Iso3): { weight: nu
   return best;
 }
 
-export function goalWeights(world: World, iso: Iso3): GoalWeights {
-  const t = traitsOf(world, iso);
+export function goalWeights(world: World, iso: Iso3, state?: GameState): GoalWeights {
+  const t = traitsOf(world, iso, state);
   const ag = (id: AgendaId) => agendaWeight(world, iso, id);
   return {
     security: 0.5 + t.paranoia / 100 + 0.3 * ag('regimeSurvival'),
@@ -94,8 +94,8 @@ export function remember(
 }
 
 /** Monthly decay rates from traits: proud, paranoid leaders nurse grievances; pragmatists move on. */
-export function decayRates(world: World, iso: Iso3): { grievance: number; favour: number } {
-  const t = traitsOf(world, iso);
+export function decayRates(world: World, iso: Iso3, state?: GameState): { grievance: number; favour: number } {
+  const t = traitsOf(world, iso, state);
   return {
     grievance: clamp(0.04 + t.pragmatism / 1500 - t.paranoia / 2500 - t.nationalism / 2500, 0.015, 0.1),
     favour: clamp(0.05 + t.paranoia / 2000 - t.allianceLoyalty / 3000, 0.03, 0.12),
@@ -105,7 +105,7 @@ export function decayRates(world: World, iso: Iso3): { grievance: number; favour
 export function decayMemories(world: World, state: GameState): void {
   for (const [holder, list] of Object.entries(state.memory)) {
     if (list.length === 0) continue;
-    const r = decayRates(world, holder);
+    const r = decayRates(world, holder, state);
     for (const m of list) m.weight = Math.round(m.weight * (1 - (m.kind === 'grievance' ? r.grievance : r.favour)) * 100) / 100;
     const kept = list.filter((m) => m.weight >= 0.5 && state.nations[m.about]?.alive !== false);
     if (kept.length !== list.length) state.memory[holder] = kept;

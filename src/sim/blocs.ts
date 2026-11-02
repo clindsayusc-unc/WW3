@@ -77,7 +77,7 @@ function borders(world: World, state: GameState, a: Iso3, b: Iso3): boolean {
  * Article 5 does not oblige a member to fight — each decides "such action as it deems necessary".
  */
 export function obligationWillingness(world: World, state: GameState, ally: Iso3, defender: Iso3, attacker: Iso3, bloc: BlocId | null): number {
-  const t = traitsOf(world, ally);
+  const t = traitsOf(world, ally, state);
   let w =
     t.allianceLoyalty +
     25 * agendaWeight(world, ally, 'alliancePreservation') -

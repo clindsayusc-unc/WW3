@@ -19,7 +19,7 @@ const POOLS: Record<string, NamePool> = {
   },
   slavic: {
     given: ['Dmitri', 'Olga', 'Andrei', 'Irina', 'Sergei', 'Yulia', 'Mykola', 'Oksana', 'Bogdan', 'Vera', 'Taras', 'Nina'],
-    family: ['Voronin', 'Sadovska', 'Melnik', 'Gribov', 'Kravets', 'Orlova', 'Zhukovsky', 'Tarasenko', 'Belov', 'Rudenko', 'Polyakov', 'Yurchenko'],
+    family: ['Voronin', 'Sadovsky', 'Melnik', 'Gribov', 'Kravets', 'Orlov', 'Zhukovsky', 'Tarasenko', 'Belov', 'Rudenko', 'Polyakov', 'Yurchenko'],
   },
   eastAsia: {
     given: ['Wei', 'Jun', 'Mei', 'Hao', 'Li', 'Tao', 'Hiro', 'Yuki', 'Kenji', 'Min-jun', 'Seo-yeon', 'Ji-ho'],
@@ -107,6 +107,15 @@ const COUNTRY_POOL: Record<string, string> = {
   PHL: 'filipino', BRA: 'lusophone', PRT: 'lusophone', AGO: 'lusophone', MOZ: 'lusophone',
 };
 
+/** Slavic surnames agree with the given name's gender (Orlov / Orlova, Zhukovsky / Zhukovskaya). */
+const SLAVIC_FEMALE = new Set(['Olga', 'Irina', 'Yulia', 'Oksana', 'Vera', 'Nina']);
+function agree(given: string, family: string): string {
+  if (!SLAVIC_FEMALE.has(given)) return family;
+  if (/sky$/.test(family)) return family.replace(/sky$/, 'skaya');
+  if (/(ov|ev|in)$/.test(family)) return `${family}a`;
+  return family;
+}
+
 function poolFor(world: World, iso: Iso3): NamePool {
   const c = COUNTRY_POOL[iso];
   if (c && COUNTRY_POOLS[c]) return COUNTRY_POOLS[c]!;
@@ -162,7 +171,7 @@ export function maybeCommander(world: World, state: GameState, owner: Iso3): Com
   const given = pool.given[Math.floor(roll(state) * pool.given.length)]!;
   const family = pool.family[Math.floor(roll(state) * pool.family.length)]!;
   const trait = TRAITS[Math.floor(roll(state) * TRAITS.length)]!;
-  return { name: `${given} ${family}`, trait, fictional: true };
+  return { name: `${given} ${agree(given, family)}`, trait, fictional: true };
 }
 
 /** A generated, fictional name from the nation's regional pool (successors after elections and coups). */
@@ -170,7 +179,7 @@ export function fictionalName(world: World, state: GameState, iso: Iso3): string
   const pool = poolFor(world, iso);
   const given = pool.given[Math.floor(roll(state) * pool.given.length)]!;
   const family = pool.family[Math.floor(roll(state) * pool.family.length)]!;
-  return `${given} ${family}`;
+  return `${given} ${agree(given, family)}`;
 }
 
 /** Attack-side modifier contributed by a commander, if any. */

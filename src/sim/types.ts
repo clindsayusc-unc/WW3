@@ -1,5 +1,6 @@
 import type { YearMonth } from './calendar';
 import type { RngState } from './rng';
+import type { Traits } from './world';
 
 export type Iso3 = string;
 export type RegionId = number;
@@ -207,6 +208,10 @@ export interface NationState {
   leaderSince: number;
   /** The current leader may not stand at the next election (term limits, D-075). */
   leaderTermLimited: boolean;
+  /** Party or faction of the current leader (data/factions.json), D-078. */
+  leaderFaction: string | null;
+  /** Generated traits of a fictional successor; null while the researched leader holds office. */
+  leaderTraits: Traits | null;
 }
 
 // --- Diplomacy AI (D-071) ----------------------------------------------------------------------
