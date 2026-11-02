@@ -2504,3 +2504,9 @@ input[type='range'] {
 .defcon-row {
   padding: 2px 6px;
 }
+.trait-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px 12px;
+  font-size: 12px;
+}

@@ -1021,8 +1021,8 @@ Ukraine collapsed within months on some seeds. Two causes, two fixes:
   recovers or hands over (50/50).
 - **Other successions.** Impeachment (player decision), assassination (world event, 25 % lethal)
   and coups (D-061) all go through `succeedLeader`: a fictional successor, marked `fictional`, with
-  `leaderSince` reset. Traits stay with the office (party or regime line) — the AI personality is
-  static data keyed by nation, and successors are not given invented personalities.
+  `leaderSince` reset. ~~Traits stay with the office (party or regime line).~~ **Superseded by
+  D-078:** successors get their own generated traits from their party or faction profile.
 
 ## D-076 — 2026-11-02 — Escalation ladder, deterrence and the nuclear aftermath
 
@@ -1069,3 +1069,44 @@ the capital of the first nation involved; world events are datelined from the na
 effects name. `GameState.wire` keeps 150 stories. The News screen (N) filters by category, by
 importance or "about us", and by text; priority-3 stories of the last month show as a dismissable
 banner. The old one-line headlines remain for the ticker.
+
+## D-078 — 2026-11-02 — Successor personalities from party and faction profiles
+
+Supersedes the "traits stay with the office" part of D-075. Successors used to inherit their
+predecessor's traits exactly.
+
+- **Data** (`data/factions.json`): for each of the 44 nations with a researched leader, its main
+  parties or power factions (136 in all) — e.g. Republicans / Democrats; CCP leadership / PLA
+  hardliners / economic reformers; Kremlin vertical / siloviki / technocrats / liberal opposition;
+  Principlists / IRGC / pragmatic conservatives / reformists; Labour / Conservatives / Reform UK —
+  each with its kind (party, faction, military), a rough weight (share of support or power), a
+  one-line public position, a cited Wikipedia article (all 136 links checked) and a trait profile:
+  the authors' editorial translation of those positions onto the eight 0–100 traits
+  (`estimate: true`). `incumbent` names the current leader's faction.
+- **State.** `NationState.leaderFaction` and `leaderTraits` (null while the researched leader is in
+  office). `traitsOf(world, iso, state)` returns the successor's traits when there are any; every
+  simulation call site now passes the state (19 of them), so a successor changes how the nation
+  negotiates, votes, aids, plans wars, speaks and decides on nuclear use.
+- **Which faction.** Orderly successions (term limit, health, resignation, impeachment,
+  assassination) keep the leader's faction; an election lost brings the largest civilian
+  opposition faction; a coup brings the military faction (else the most hawkish one); a revolution
+  brings the largest, least paranoid civilian opposition.
+- **Traits.** National baseline = mean of the weight-averaged faction profiles and the researched
+  leader's traits (the strategic culture any government inherits). Successor = 65 % faction profile
+  + 35 % baseline + seeded variation of ±8, clamped to the faction's bounds (profile ± `spread`,
+  default 18). Regime change weights the faction at 75 %, adds a shift — coup: aggression +10, risk
+  +8, pragmatism −10, nationalism +8, paranoia +12, economy −8, loyalty −8, nuclear bar −8;
+  revolution: +4, +6, −6, +6, +8, −6, −10, −4 — widens the variation (±10 / ±12) and the bounds
+  (+12 around the shifted centre). If the draw lands within 12 trait points (sum of absolute
+  differences) of the predecessor, traits are pushed apart inside the bounds: a successor is a new
+  person, not a copy.
+- **Revolutions.** An AI autocracy or hybrid regime with six months of mass protest and stability
+  under 25 falls with 5 % a month; the opposition forms a transitional government.
+- **Fictional and marked.** Successors keep generated names (now from country-specific pools) and
+  `leaderFictional`; the leader card shows a "fictional" chip and the faction, and the diplomacy
+  screen shows every leader's current traits with their origin.
+- **Saves** from before this entry keep their successors' inherited traits (`leaderTraits` null).
+- **Tests** (`src/sim/succession.test.ts`): every nation × every cause produces traits at least 12
+  points from the predecessor and inside the faction's bounds; successors in a running game drive
+  `traitsOf`; determinism; faction choice per cause; coups and revolutions shift further than
+  orderly successions; a term-limited US president is succeeded within the Republican profile.

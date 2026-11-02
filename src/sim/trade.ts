@@ -949,7 +949,7 @@ export function coalitionReply(world: World, state: GameState, leader: Iso3, x: 
   const relT = getRelation(world, state, x, target);
   const dependence = baseVolume(world, x, target) / Math.max(1, state.nations[x]!.gdp);
   const allied = alliesOf(world, state, x).includes(leader);
-  const score = (relL - relT) / 100 + traitsOf(world, x).allianceLoyalty / 200 + (allied ? 0.3 : 0) - dependence * 10;
+  const score = (relL - relT) / 100 + traitsOf(world, x, state).allianceLoyalty / 200 + (allied ? 0.3 : 0) - dependence * 10;
   if (relL < 25 && !allied) return { iso: x, joins: false, reason: `${name} is not close enough to you (relations ${Math.round(relL)}).` };
   if (relT > 0) return { iso: x, joins: false, reason: `${name} has no quarrel with them (relations ${Math.round(relT)}).` };
   if (score >= 0.9) return { iso: x, joins: true, reason: `${name} joins (relations with you ${Math.round(relL)}, with them ${Math.round(relT)}).` };

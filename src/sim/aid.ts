@@ -83,7 +83,7 @@ export function assessAid(
     if (patron < 0.5 || toR < 40 || toE > -40) return { perYear: 0, reason: '' };
     blocF = 0.4;
   }
-  const t = traitsOf(world, donor);
+  const t = traitsOf(world, donor, state);
   const relF = clamp((toR + 20) / 80, 0, 1.25);
   const traitF = clamp(
     0.5 +
@@ -211,7 +211,7 @@ function deliver(
   munitions.set(recipient, (munitions.get(recipient) ?? 0) + mun);
   state.aid.push({ donor, recipient, against: enemy, money, arms, munitions: mun });
   // Aid fatigue: nationalist publics sour on large foreign commitments.
-  const t = traitsOf(world, donor);
+  const t = traitsOf(world, donor, state);
   d.support = clamp(d.support - ((total * 12) / Math.max(1, d.gdp)) * 100 * 0.25 * (t.nationalism / 70), 0, 100);
   remember(state, recipient, donor, 'favour', 0.8, 'military and financial aid');
   if (world.nations.get(donor)?.major || world.nations.get(enemy)?.major) remember(state, enemy, donor, 'grievance', 0.5, 'arming our enemy');

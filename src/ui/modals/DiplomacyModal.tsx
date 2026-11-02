@@ -18,6 +18,7 @@ import { formatMoney } from '../format';
 import { flagEmoji } from '../flags';
 import { nationHex } from '../../render/palette';
 import { LeaderCard } from '../LeaderCard';
+import { successorView } from '../successorView';
 import { playSound } from '../audio';
 import type { ProposalType } from '../../sim/types';
 import { NegotiationPanel } from '../diplomacy/NegotiationPanel';
@@ -186,7 +187,7 @@ export function DiplomacyModal() {
         </div>
         {n && meta && iso && tab === 'negotiate' && (
           <div className="nation-detail">
-            <LeaderCard nation={meta} leader={world.leaders.get(iso)} accent={nationHex(iso)} compact />
+            <LeaderCard nation={meta} leader={world.leaders.get(iso)} accent={nationHex(iso)} compact successor={successorView(world, game, iso)} />
             <NegotiationPanel key={iso} game={game} partner={iso} />
           </div>
         )}
@@ -197,6 +198,7 @@ export function DiplomacyModal() {
               leader={world.leaders.get(iso)}
               accent={nationHex(iso)}
               compact
+              successor={successorView(world, game, iso)}
             />
             <div className="row">
               <Stat

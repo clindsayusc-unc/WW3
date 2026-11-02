@@ -1,7 +1,7 @@
 /** Stylised leader card: flag, abstract generated portrait (no photos), name, title and trait bars (D-042). */
 import { flagEmoji } from './flags';
 import { Stat } from './Stat';
-import type { LeaderMeta, NationMeta } from '../sim/world';
+import type { LeaderMeta, NationMeta, Traits } from '../sim/world';
 import { DEFAULT_TRAITS } from '../sim/world';
 import { Portrait } from './Portrait';
 
@@ -48,9 +48,18 @@ const TRAIT_LABELS: { key: keyof LeaderMeta['traits']; label: string; tip: strin
   },
 ];
 
+/** A fictional successor in office (D-078): replaces the researched leader's name and traits. */
+export interface SuccessorView {
+  name: string;
+  title: string;
+  traits: Traits;
+  faction: string | null;
+}
+
 interface Props {
   nation: NationMeta;
   leader: LeaderMeta | undefined;
+  successor?: SuccessorView | null | undefined;
   accent: string;
   selected?: boolean;
   compact?: boolean;
@@ -100,8 +109,11 @@ export function LeaderCard({
   selected = false,
   compact = false,
   onClick,
+  successor = null,
 }: Props) {
-  const traits = leader?.traits ?? DEFAULT_TRAITS;
+  const traits = successor?.traits ?? leader?.traits ?? DEFAULT_TRAITS;
+  const name = successor?.name ?? leader?.name ?? 'Unknown leader';
+  const title = successor?.title ?? leader?.title ?? 'Leader';
   return (
     <button
       className={`leader-card ${selected ? 'selected' : ''} ${compact ? 'compact' : ''}`}
@@ -111,16 +123,22 @@ export function LeaderCard({
       type="button"
     >
       <div className="leader-top">
-        <Portrait iso3={nation.iso3} accent={accent} name={leader?.name} role={leader?.role} title={leader?.title} />
+        <Portrait iso3={nation.iso3} accent={accent} name={name} role={leader?.role} title={title} military={!!successor && /Military Council/.test(title)} />
         <div className="leader-id">
           <div className="leader-flag">
             {flagEmoji(nation.iso2)} <span className="leader-nation">{nation.name}</span>
           </div>
           <div className="leader-name" data-testid={`leader-name-${nation.iso3}`}>
-            {leader?.name ?? 'Unknown leader'}
+            {name}
+            {successor && (
+              <span className="chip tiny" data-tip="A generated, fictional successor — not a real person. Traits come from the successor's party or faction profile, the national baseline and chance (D-078).">
+                fictional
+              </span>
+            )}
           </div>
-          <div className="leader-title">{leader?.title ?? 'Leader'}</div>
-          {!compact && leader && <SecondaryOffices leader={leader} />}
+          <div className="leader-title">{title}</div>
+          {successor?.faction && <div className="leader-title dim">{successor.faction}</div>}
+          {!compact && leader && !successor && <SecondaryOffices leader={leader} />}
         </div>
       </div>
       {!compact && (
@@ -136,7 +154,7 @@ export function LeaderCard({
           ))}
         </div>
       )}
-      {!compact && leader?.rationale && <p className="leader-rationale">{leader.rationale}</p>}
+      {!compact && !successor && leader?.rationale && <p className="leader-rationale">{leader.rationale}</p>}
     </button>
   );
 }

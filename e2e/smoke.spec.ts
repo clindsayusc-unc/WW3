@@ -601,6 +601,29 @@ test('nuclear aftermath: fallout on the map and the nobody-wins ending', async (
   await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
   await page.getByTestId('start-game').click();
   await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
+  // A fictional successor (D-078): Russia after a security-service coup, with traits the simulation
+  // generated for seed 2027 from the siloviki profile.
+  await page.evaluate(() => {
+    const w = (globalThis as unknown as { ww3: Ww3Hook & { load: (s: unknown) => void } }).ww3;
+    const g = JSON.parse(JSON.stringify(w.game.getState().game)) as { nations: Record<string, Record<string, unknown>> };
+    Object.assign(g.nations.RUS!, {
+      leaderFictional: true,
+      leaderName: 'Andrei Sadovsky',
+      leaderTitle: 'Chair of the Military Council',
+      leaderFaction: 'siloviki',
+      leaderTraits: { aggression: 93, riskTolerance: 73, pragmatism: 32, nationalism: 100, paranoia: 100, economicPriority: 33, allianceLoyalty: 47, nuclearThreshold: 24 },
+    });
+    w.load(g);
+  });
+  await page.getByTestId('nav-diplomacy').click();
+  await page.getByTestId('dip-tab-nations').click();
+  await page.getByTestId('diplomacy-search').fill('Russia');
+  await page.getByTestId('dip-RUS').click();
+  await expect(page.getByTestId('leader-traits')).toBeVisible();
+  await expect(page.getByTestId('modal-diplomacy')).toContainText('Andrei Sadovsky');
+  await expect(page.getByTestId('modal-diplomacy')).toContainText('Siloviki');
+  await shot(page, branchSlug());
+  await page.getByTestId('modal-close').click();
   // A crafted aftermath (D-076): fallout over Moscow, St Petersburg's region and two US regions.
   const craft = (defeat: boolean) =>
     page.evaluate((defeat) => {

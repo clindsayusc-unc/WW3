@@ -264,7 +264,7 @@ export function evaluateProposal(
   to: Iso3,
   type: ProposalType,
 ): Verdict {
-  const t = traitsOf(world, to);
+  const t = traitsOf(world, to, state);
   // The AI judges by what its leader thinks: relations plus remembered grievances and favours (D-071).
   const rel = opinionOf(world, state, to, from);
   const toName = nationName(world, to);

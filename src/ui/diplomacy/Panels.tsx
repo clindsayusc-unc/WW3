@@ -1,7 +1,8 @@
 /** Diplomacy panels (D-071): dispatches, blocs, UN Security Council and leader intelligence. */
 import { useMemo, useState } from 'react';
 import type { BlocId, Dispatch, GameState, Iso3, ResolutionKind, UnVote } from '../../sim/types';
-import { loadWorld, nationName } from '../../sim/world';
+import { loadWorld, nationName, traitsOf, type Traits } from '../../sim/world';
+import { factionOf } from '../../sim/succession';
 import { dispatch } from '../../state/simBridge';
 import { Stat } from '../Stat';
 import { Portrait } from '../Portrait';
@@ -35,6 +36,17 @@ const KIND_CLASS: Record<Dispatch['kind'], string> = {
   offer: 'active',
   communique: '',
 };
+
+const TRAITS: [keyof Traits, string][] = [
+  ['aggression', 'Aggression'],
+  ['riskTolerance', 'Risk'],
+  ['pragmatism', 'Pragmatism'],
+  ['nationalism', 'Nationalism'],
+  ['paranoia', 'Paranoia'],
+  ['economicPriority', 'Economy'],
+  ['allianceLoyalty', 'Loyalty'],
+  ['nuclearThreshold', 'Nuclear bar'],
+];
 
 const AGENDA_LABEL: Record<string, string> = {
   reunification: 'Reunification',
@@ -309,6 +321,8 @@ export function LeaderIntel({ game, iso }: { game: GameState; iso: Iso3 }) {
   const atWarWith = game.wars.find((w) => w.attackers.includes(iso) || w.defenders.includes(iso));
   const enemy = atWarWith ? (atWarWith.attackers.includes(iso) ? atWarWith.defenders[0] : atWarWith.attackers[0]) : null;
   const myAid = game.playerAid[iso] ?? 0;
+  const traits = traitsOf(world, iso, game);
+  const faction = factionOf(world, iso, n.leaderFaction);
   const donors = aidByDonor(game, iso).slice(0, 5);
   const advice = atWarWith && enemy ? assessAid(world, game, me, iso, enemy, atWarWith) : null;
   return (
@@ -330,6 +344,23 @@ export function LeaderIntel({ game, iso }: { game: GameState; iso: Iso3 }) {
           </span>
         ))}
       </div>
+      <div className="section-title">Personality</div>
+      <div className="trait-row" data-testid="leader-traits">
+        {TRAITS.map(([k, label]) => (
+          <Stat
+            key={k}
+            label={label}
+            value={`${traits[k]}`}
+            tooltip={`${label}, 0–100. ${n.leaderFictional ? `Generated for this fictional successor from the ${faction?.name ?? 'governing'} profile (${faction ? faction.traits[k] : '—'}), the national baseline and chance (D-078).` : 'Researched from the leader’s public record (data/leaders.json).'}`}
+            inline
+          />
+        ))}
+      </div>
+      {faction && (
+        <p className="hint" data-tip={faction.url}>
+          {n.leaderFictional ? 'Successor from' : 'Governing faction:'} {faction.name} — {faction.position}
+        </p>
+      )}
       <div className="section-title">What they remember about you</div>
       {memories.length === 0 ? (
         <p className="hint">Nothing notable — yet.</p>

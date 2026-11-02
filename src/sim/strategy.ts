@@ -46,7 +46,7 @@ function sidePower(world: World, state: GameState, iso: Iso3, enemy: Iso3, extra
 
 /** Force ratio a leader needs before attacking. Nuclear-armed targets raise the bar. */
 export function attackThreshold(world: World, state: GameState, iso: Iso3, target: Iso3): number {
-  const t = traitsOf(world, iso);
+  const t = traitsOf(world, iso, state);
   let th = clamp(1.75 - t.riskTolerance / 120 - t.aggression / 400, 1.1, 1.7);
   const deter = deterrentAgainst(world, state, target, iso).status;
   const mine = state.nations[iso]?.warheads ?? 0;
@@ -62,7 +62,7 @@ interface Candidate {
 }
 
 function chooseTarget(world: World, state: GameState, iso: Iso3, neighbours: Set<Iso3>): Candidate | null {
-  const g = goalWeights(world, iso);
+  const g = goalWeights(world, iso, state);
   const pool = new Set<Iso3>(neighbours);
   for (const a of world.agendas.get(iso) ?? []) for (const x of [...a.targets, ...a.sphere]) pool.add(x);
   const coalition = state.coalition && state.coalition.members.includes(iso) ? state.coalition.target : null;
@@ -168,7 +168,7 @@ export function runWarPlans(world: World, state: GameState): void {
     p.odds = sidePower(world, state, iso, p.target, p.coalition) / Math.max(1, sidePower(world, state, p.target, iso));
     p.readiness = clamp(p.odds / p.threshold, 0, 1.5);
     if (atWar(state, iso, p.target)) continue;
-    const t = traitsOf(world, iso);
+    const t = traitsOf(world, iso, state);
     // Warn before striking: the readiness crossing is public.
     if (p.readiness >= 0.85 && !p.warned) {
       p.warned = true;
@@ -189,7 +189,7 @@ export function runWarPlans(world: World, state: GameState): void {
     // Build-up takes time: no attack in the first six months of a plan or before a public warning.
     if (state.turn - p.formed < 6 || !p.warned) continue;
     const claim = agendaClaim(world, iso, p.target).weight;
-    const restraint = Math.min(1, goalWeights(world, iso).restraint);
+    const restraint = Math.min(1, goalWeights(world, iso, state).restraint);
     const chance =
       (t.aggression / 100) * (t.riskTolerance / 100) * 0.05 * (1 + claim) * (coalitionWar ? 1.5 : 1) * (1 - 0.5 * restraint);
     if (roll(state) >= chance) continue;
@@ -293,7 +293,7 @@ function joiners(world: World, state: GameState, target: Iso3, threat: number): 
     if (m === target || m === state.player || !state.nations[m]?.alive) continue;
     if (isAlly(world, state, m, target)) continue;
     if (agendaWeight(world, m, 'nonAlignment') >= 0.8 && threat < 0.4) continue;
-    const bar = 25 + (threat - COALITION_TRIGGER) * 150 + traitsOf(world, m).paranoia / 5;
+    const bar = 25 + (threat - COALITION_TRIGGER) * 150 + traitsOf(world, m, state).paranoia / 5;
     if (opinionOf(world, state, m, target) < bar) out.push(m);
   }
   return out;

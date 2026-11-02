@@ -1,0 +1,2720 @@
+{
+ "source": "Positions of each nation's main parties and power factions as described in their Wikipedia articles (linked per faction, which cite manifestos and reporting) and in the agendas of data/agendas.json. Trait profiles are the authors' editorial translation of those public positions onto the game's 0–100 trait scales.",
+ "asOf": "2026-11-02",
+ "estimate": true,
+ "notes": "One entry per nation with a researched leader (data/leaders.json). 'incumbent' is the faction of the current effective leader. 'weight' is a rough share of support or power used to pick the main opposition. 'spread' (default 18) bounds how far a successor from that faction may stray from its profile. kind 'military' marks the faction that takes over in a coup. Successor traits are generated from these profiles (D-078); real leaders keep their researched traits from data/leaders.json.",
+ "nations": [
+  {
+   "iso3": "USA",
+   "incumbent": "gop",
+   "factions": [
+    {
+     "id": "gop",
+     "name": "Republican Party (America First)",
+     "kind": "party",
+     "weight": 0.48,
+     "position": "Tariffs, border security, transactional alliances, \"peace through strength\".",
+     "url": "https://en.wikipedia.org/wiki/Republican_Party_(United_States)",
+     "traits": {
+      "aggression": 70,
+      "riskTolerance": 72,
+      "pragmatism": 50,
+      "nationalism": 85,
+      "paranoia": 60,
+      "economicPriority": 70,
+      "allianceLoyalty": 30,
+      "nuclearThreshold": 60
+     }
+    },
+    {
+     "id": "dem",
+     "name": "Democratic Party",
+     "kind": "party",
+     "weight": 0.48,
+     "position": "Alliance-centred internationalism, support for Ukraine and NATO, climate and industrial policy.",
+     "url": "https://en.wikipedia.org/wiki/Democratic_Party_(United_States)",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 50,
+      "paranoia": 45,
+      "economicPriority": 70,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 80
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "CHN",
+   "incumbent": "ccp",
+   "factions": [
+    {
+     "id": "ccp",
+     "name": "CCP leadership (Xi line)",
+     "kind": "faction",
+     "weight": 0.6,
+     "position": "Party primacy, \"national rejuvenation\", reunification with Taiwan, security-first development.",
+     "url": "https://en.wikipedia.org/wiki/Xi_Jinping_Thought",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 85,
+      "paranoia": 70,
+      "economicPriority": 75,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 80
+     }
+    },
+    {
+     "id": "pla",
+     "name": "PLA and security hardliners",
+     "kind": "military",
+     "weight": 0.2,
+     "position": "Rapid military modernisation and readiness for a Taiwan contingency.",
+     "url": "https://en.wikipedia.org/wiki/People%27s_Liberation_Army",
+     "traits": {
+      "aggression": 70,
+      "riskTolerance": 55,
+      "pragmatism": 45,
+      "nationalism": 90,
+      "paranoia": 80,
+      "economicPriority": 55,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 70
+     }
+    },
+    {
+     "id": "reform",
+     "name": "Economic reformers and technocrats",
+     "kind": "faction",
+     "weight": 0.2,
+     "position": "Growth, opening up and stable relations with trading partners.",
+     "url": "https://en.wikipedia.org/wiki/Chinese_economic_reform",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 35,
+      "pragmatism": 80,
+      "nationalism": 70,
+      "paranoia": 55,
+      "economicPriority": 90,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 85
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "RUS",
+   "incumbent": "vertical",
+   "factions": [
+    {
+     "id": "vertical",
+     "name": "Kremlin power vertical (United Russia)",
+     "kind": "faction",
+     "weight": 0.55,
+     "position": "Great-power restoration, confrontation with the West, the war in Ukraine.",
+     "url": "https://en.wikipedia.org/wiki/United_Russia",
+     "traits": {
+      "aggression": 80,
+      "riskTolerance": 70,
+      "pragmatism": 45,
+      "nationalism": 90,
+      "paranoia": 85,
+      "economicPriority": 40,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 45
+     }
+    },
+    {
+     "id": "siloviki",
+     "name": "Siloviki (security services and army)",
+     "kind": "military",
+     "weight": 0.25,
+     "position": "Security-service and military elite favouring escalation and mobilisation.",
+     "url": "https://en.wikipedia.org/wiki/Siloviki",
+     "traits": {
+      "aggression": 90,
+      "riskTolerance": 80,
+      "pragmatism": 35,
+      "nationalism": 95,
+      "paranoia": 90,
+      "economicPriority": 30,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 35
+     }
+    },
+    {
+     "id": "technocrats",
+     "name": "Economic technocrats",
+     "kind": "faction",
+     "weight": 0.15,
+     "position": "Macro-stability, sanctions management, reconstruction of trade with Asia.",
+     "url": "https://en.wikipedia.org/wiki/Elvira_Nabiullina",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 45,
+      "pragmatism": 70,
+      "nationalism": 75,
+      "paranoia": 70,
+      "economicPriority": 70,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 60
+     }
+    },
+    {
+     "id": "liberal",
+     "name": "Liberal opposition (in exile)",
+     "kind": "party",
+     "weight": 0.05,
+     "position": "End of the war, rapprochement with Europe, rule of law.",
+     "url": "https://en.wikipedia.org/wiki/Russian_opposition",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 40,
+      "pragmatism": 75,
+      "nationalism": 45,
+      "paranoia": 40,
+      "economicPriority": 80,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 85
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "IND",
+   "incumbent": "bjp",
+   "factions": [
+    {
+     "id": "bjp",
+     "name": "Bharatiya Janata Party",
+     "kind": "party",
+     "weight": 0.55,
+     "position": "Hindu nationalism, strategic autonomy, firm line on Pakistan and China.",
+     "url": "https://en.wikipedia.org/wiki/Bharatiya_Janata_Party",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 50,
+      "pragmatism": 70,
+      "nationalism": 85,
+      "paranoia": 55,
+      "economicPriority": 75,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 80
+     }
+    },
+    {
+     "id": "inc",
+     "name": "Indian National Congress",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Secular centre-left, non-alignment tradition, welfare.",
+     "url": "https://en.wikipedia.org/wiki/Indian_National_Congress",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 60,
+      "paranoia": 45,
+      "economicPriority": 75,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 85
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "GBR",
+   "incumbent": "labour",
+   "factions": [
+    {
+     "id": "labour",
+     "name": "Labour Party",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Centre-left; NATO-first, support for Ukraine, closer EU ties.",
+     "url": "https://en.wikipedia.org/wiki/Labour_Party_(UK)",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 45,
+      "paranoia": 40,
+      "economicPriority": 75,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 85
+     }
+    },
+    {
+     "id": "con",
+     "name": "Conservative Party",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "Centre-right Atlanticism, defence spending, free markets.",
+     "url": "https://en.wikipedia.org/wiki/Conservative_Party_(UK)",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 60,
+      "paranoia": 50,
+      "economicPriority": 75,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 80
+     }
+    },
+    {
+     "id": "reform",
+     "name": "Reform UK",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "National populism, immigration control, scepticism of foreign commitments.",
+     "url": "https://en.wikipedia.org/wiki/Reform_UK",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 55,
+      "pragmatism": 50,
+      "nationalism": 80,
+      "paranoia": 55,
+      "economicPriority": 70,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 75
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "FRA",
+   "incumbent": "ens",
+   "factions": [
+    {
+     "id": "ens",
+     "name": "Renaissance and the centre",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Pro-European centrism, European strategic autonomy, support for Ukraine.",
+     "url": "https://en.wikipedia.org/wiki/Renaissance_(French_political_party)",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 55,
+      "pragmatism": 60,
+      "nationalism": 55,
+      "paranoia": 40,
+      "economicPriority": 60,
+      "allianceLoyalty": 70,
+      "nuclearThreshold": 80
+     }
+    },
+    {
+     "id": "rn",
+     "name": "Rassemblement National",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "National populism, sovereignty, scepticism of NATO integration and EU.",
+     "url": "https://en.wikipedia.org/wiki/National_Rally",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 50,
+      "pragmatism": 50,
+      "nationalism": 85,
+      "paranoia": 60,
+      "economicPriority": 60,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 75
+     }
+    },
+    {
+     "id": "lfi",
+     "name": "La France Insoumise",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Radical left, non-alignment, exit from NATO command.",
+     "url": "https://en.wikipedia.org/wiki/La_France_Insoumise",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 45,
+      "pragmatism": 45,
+      "nationalism": 60,
+      "paranoia": 55,
+      "economicPriority": 55,
+      "allianceLoyalty": 30,
+      "nuclearThreshold": 85
+     }
+    },
+    {
+     "id": "lr",
+     "name": "Les Républicains",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Gaullist right, strong defence, order.",
+     "url": "https://en.wikipedia.org/wiki/The_Republicans_(France)",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 45,
+      "pragmatism": 60,
+      "nationalism": 70,
+      "paranoia": 50,
+      "economicPriority": 65,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 80
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "DEU",
+   "incumbent": "cdu",
+   "factions": [
+    {
+     "id": "cdu",
+     "name": "CDU/CSU",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Christian democracy, Atlanticism, rearmament (Zeitenwende).",
+     "url": "https://en.wikipedia.org/wiki/Christian_Democratic_Union_of_Germany",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 45,
+      "pragmatism": 70,
+      "nationalism": 45,
+      "paranoia": 45,
+      "economicPriority": 80,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 92
+     }
+    },
+    {
+     "id": "spd",
+     "name": "Social Democratic Party",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "Centre-left, cautious on escalation, Ostpolitik tradition.",
+     "url": "https://en.wikipedia.org/wiki/Social_Democratic_Party_of_Germany",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 35,
+      "pragmatism": 70,
+      "nationalism": 40,
+      "paranoia": 40,
+      "economicPriority": 75,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "afd",
+     "name": "Alternative for Germany",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "National populism, opposition to arming Ukraine, Russia-friendly positions.",
+     "url": "https://en.wikipedia.org/wiki/Alternative_for_Germany",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 55,
+      "pragmatism": 45,
+      "nationalism": 85,
+      "paranoia": 65,
+      "economicPriority": 70,
+      "allianceLoyalty": 30,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "greens",
+     "name": "Alliance 90/The Greens",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Values-based foreign policy, strong support for Ukraine.",
+     "url": "https://en.wikipedia.org/wiki/Alliance_90/The_Greens",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 45,
+      "pragmatism": 60,
+      "nationalism": 35,
+      "paranoia": 45,
+      "economicPriority": 70,
+      "allianceLoyalty": 85,
+      "nuclearThreshold": 95
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "JPN",
+   "incumbent": "ldp",
+   "factions": [
+    {
+     "id": "ldp",
+     "name": "Liberal Democratic Party (conservative wing)",
+     "kind": "party",
+     "weight": 0.5,
+     "position": "US alliance, defence build-up, constitutional revision.",
+     "url": "https://en.wikipedia.org/wiki/Liberal_Democratic_Party_(Japan)",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 45,
+      "pragmatism": 60,
+      "nationalism": 75,
+      "paranoia": 55,
+      "economicPriority": 70,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 92
+     }
+    },
+    {
+     "id": "cdp",
+     "name": "Constitutional Democratic Party",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Pacifist constitution, restraint in defence spending.",
+     "url": "https://en.wikipedia.org/wiki/Constitutional_Democratic_Party_of_Japan",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 70,
+      "nationalism": 45,
+      "paranoia": 40,
+      "economicPriority": 75,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "ishin",
+     "name": "Japan Innovation Party",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Reformist centre-right, market reforms, stronger defence.",
+     "url": "https://en.wikipedia.org/wiki/Nippon_Ishin_no_Kai",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 45,
+      "pragmatism": 70,
+      "nationalism": 65,
+      "paranoia": 50,
+      "economicPriority": 80,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 94
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "KOR",
+   "incumbent": "dpk",
+   "factions": [
+    {
+     "id": "dpk",
+     "name": "Democratic Party of Korea",
+     "kind": "party",
+     "weight": 0.5,
+     "position": "Engagement with the North, balanced diplomacy, US alliance maintained.",
+     "url": "https://en.wikipedia.org/wiki/Democratic_Party_(South_Korea,_2015)",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 45,
+      "pragmatism": 75,
+      "nationalism": 55,
+      "paranoia": 50,
+      "economicPriority": 80,
+      "allianceLoyalty": 70,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "ppp",
+     "name": "People Power Party",
+     "kind": "party",
+     "weight": 0.5,
+     "position": "Conservative, firm deterrence of the North, close US and Japan ties.",
+     "url": "https://en.wikipedia.org/wiki/People_Power_Party_(South_Korea)",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 60,
+      "paranoia": 60,
+      "economicPriority": 80,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 88
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "IRN",
+   "incumbent": "principlists",
+   "factions": [
+    {
+     "id": "principlists",
+     "name": "Principlists around the Supreme Leader",
+     "kind": "faction",
+     "weight": 0.45,
+     "position": "Revolutionary ideology, Axis of Resistance, hostility to the US and Israel.",
+     "url": "https://en.wikipedia.org/wiki/Principlists",
+     "traits": {
+      "aggression": 70,
+      "riskTolerance": 60,
+      "pragmatism": 35,
+      "nationalism": 85,
+      "paranoia": 90,
+      "economicPriority": 35,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 55
+     }
+    },
+    {
+     "id": "irgc",
+     "name": "IRGC command",
+     "kind": "military",
+     "weight": 0.3,
+     "position": "Military-security establishment; regional proxies, missile and nuclear programmes.",
+     "url": "https://en.wikipedia.org/wiki/Islamic_Revolutionary_Guard_Corps",
+     "traits": {
+      "aggression": 85,
+      "riskTolerance": 70,
+      "pragmatism": 30,
+      "nationalism": 90,
+      "paranoia": 95,
+      "economicPriority": 30,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 45
+     }
+    },
+    {
+     "id": "pragmatists",
+     "name": "Pragmatic conservatives",
+     "kind": "faction",
+     "weight": 0.15,
+     "position": "Regime continuity with sanctions relief through negotiation.",
+     "url": "https://en.wikipedia.org/wiki/Iranian_principlists",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 45,
+      "pragmatism": 60,
+      "nationalism": 75,
+      "paranoia": 75,
+      "economicPriority": 55,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 70
+     }
+    },
+    {
+     "id": "reformists",
+     "name": "Reformists",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Détente with the West, social liberalisation within the system.",
+     "url": "https://en.wikipedia.org/wiki/Reformists_(Iran)",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 60,
+      "paranoia": 60,
+      "economicPriority": 70,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 80
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "ISR",
+   "incumbent": "likud",
+   "factions": [
+    {
+     "id": "likud",
+     "name": "Likud and right-wing allies",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Security maximalism, pre-emption against Iran and its proxies.",
+     "url": "https://en.wikipedia.org/wiki/Likud",
+     "traits": {
+      "aggression": 80,
+      "riskTolerance": 70,
+      "pragmatism": 50,
+      "nationalism": 85,
+      "paranoia": 80,
+      "economicPriority": 45,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 60
+     }
+    },
+    {
+     "id": "centre",
+     "name": "Centrist security bloc (Eisenkot, Gantz, Lapid)",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Security-focused centrism, hostage deals, US coordination.",
+     "url": "https://en.wikipedia.org/wiki/National_Unity_(Israel)",
+     "traits": {
+      "aggression": 60,
+      "riskTolerance": 55,
+      "pragmatism": 65,
+      "nationalism": 70,
+      "paranoia": 70,
+      "economicPriority": 55,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 75
+     }
+    },
+    {
+     "id": "rz",
+     "name": "Religious Zionists",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Annexationist far right.",
+     "url": "https://en.wikipedia.org/wiki/Religious_Zionist_Party",
+     "traits": {
+      "aggression": 90,
+      "riskTolerance": 80,
+      "pragmatism": 30,
+      "nationalism": 95,
+      "paranoia": 85,
+      "economicPriority": 30,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 50
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "TUR",
+   "incumbent": "akp",
+   "factions": [
+    {
+     "id": "akp",
+     "name": "Justice and Development Party",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Conservative nationalism, assertive regional policy, balancing NATO and Russia.",
+     "url": "https://en.wikipedia.org/wiki/Justice_and_Development_Party_(Turkey)",
+     "traits": {
+      "aggression": 60,
+      "riskTolerance": 60,
+      "pragmatism": 60,
+      "nationalism": 85,
+      "paranoia": 70,
+      "economicPriority": 55,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 85
+     }
+    },
+    {
+     "id": "chp",
+     "name": "Republican People's Party",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Kemalist centre-left, Western orientation, secularism.",
+     "url": "https://en.wikipedia.org/wiki/Republican_People%27s_Party",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 40,
+      "pragmatism": 65,
+      "nationalism": 70,
+      "paranoia": 55,
+      "economicPriority": 65,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "mhp",
+     "name": "Nationalist Movement Party",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Ultranationalist ally of the government.",
+     "url": "https://en.wikipedia.org/wiki/Nationalist_Movement_Party",
+     "traits": {
+      "aggression": 70,
+      "riskTolerance": 60,
+      "pragmatism": 45,
+      "nationalism": 95,
+      "paranoia": 75,
+      "economicPriority": 45,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 80
+     }
+    },
+    {
+     "id": "tsk",
+     "name": "Armed forces officer corps",
+     "kind": "military",
+     "weight": 0.05,
+     "position": "Guardians of the Kemalist state; historically coup-prone.",
+     "url": "https://en.wikipedia.org/wiki/Turkish_Armed_Forces",
+     "traits": {
+      "aggression": 65,
+      "riskTolerance": 55,
+      "pragmatism": 55,
+      "nationalism": 85,
+      "paranoia": 75,
+      "economicPriority": 50,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 85
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "PAK",
+   "incumbent": "pmln",
+   "factions": [
+    {
+     "id": "pmln",
+     "name": "Pakistan Muslim League (N)",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Civilian government aligned with the military, economic stabilisation.",
+     "url": "https://en.wikipedia.org/wiki/Pakistan_Muslim_League_(N)",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 50,
+      "pragmatism": 65,
+      "nationalism": 75,
+      "paranoia": 75,
+      "economicPriority": 70,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 50
+     }
+    },
+    {
+     "id": "army",
+     "name": "Army high command",
+     "kind": "military",
+     "weight": 0.4,
+     "position": "The establishment: security policy toward India and Afghanistan.",
+     "url": "https://en.wikipedia.org/wiki/Pakistan_Army",
+     "traits": {
+      "aggression": 65,
+      "riskTolerance": 60,
+      "pragmatism": 55,
+      "nationalism": 85,
+      "paranoia": 85,
+      "economicPriority": 50,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 45
+     }
+    },
+    {
+     "id": "pti",
+     "name": "Pakistan Tehreek-e-Insaf",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "Populist opposition, anti-establishment, sceptical of the US.",
+     "url": "https://en.wikipedia.org/wiki/Pakistan_Tehreek-e-Insaf",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 55,
+      "pragmatism": 45,
+      "nationalism": 80,
+      "paranoia": 70,
+      "economicPriority": 60,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 55
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "BRA",
+   "incumbent": "pt",
+   "factions": [
+    {
+     "id": "pt",
+     "name": "Workers' Party",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Centre-left, non-alignment, BRICS, social programmes.",
+     "url": "https://en.wikipedia.org/wiki/Workers%27_Party_(Brazil)",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 40,
+      "pragmatism": 65,
+      "nationalism": 55,
+      "paranoia": 40,
+      "economicPriority": 80,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "pl",
+     "name": "Liberal Party (Bolsonaro right)",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Conservative nationalism, alignment with the US right.",
+     "url": "https://en.wikipedia.org/wiki/Liberal_Party_(Brazil,_2006)",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 55,
+      "pragmatism": 50,
+      "nationalism": 75,
+      "paranoia": 55,
+      "economicPriority": 75,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "centrao",
+     "name": "Centrão",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Transactional centre parties.",
+     "url": "https://en.wikipedia.org/wiki/Centr%C3%A3o",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 80,
+      "nationalism": 50,
+      "paranoia": 40,
+      "economicPriority": 80,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 96
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "UKR",
+   "incumbent": "sluha",
+   "factions": [
+    {
+     "id": "sluha",
+     "name": "Servant of the People",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Wartime government; territorial integrity, EU and NATO path.",
+     "url": "https://en.wikipedia.org/wiki/Servant_of_the_People_(political_party)",
+     "traits": {
+      "aggression": 60,
+      "riskTolerance": 70,
+      "pragmatism": 55,
+      "nationalism": 85,
+      "paranoia": 70,
+      "economicPriority": 45,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "es",
+     "name": "European Solidarity",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "National-democratic opposition, harder line on Russia.",
+     "url": "https://en.wikipedia.org/wiki/European_Solidarity",
+     "traits": {
+      "aggression": 65,
+      "riskTolerance": 70,
+      "pragmatism": 50,
+      "nationalism": 90,
+      "paranoia": 75,
+      "economicPriority": 45,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "army",
+     "name": "Army command and veterans",
+     "kind": "military",
+     "weight": 0.3,
+     "position": "Military leadership with growing political weight.",
+     "url": "https://en.wikipedia.org/wiki/Armed_Forces_of_Ukraine",
+     "traits": {
+      "aggression": 70,
+      "riskTolerance": 75,
+      "pragmatism": 50,
+      "nationalism": 90,
+      "paranoia": 75,
+      "economicPriority": 40,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 90
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "TWN",
+   "incumbent": "dpp",
+   "factions": [
+    {
+     "id": "dpp",
+     "name": "Democratic Progressive Party",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Taiwanese identity, deterrence, close US and Japan ties.",
+     "url": "https://en.wikipedia.org/wiki/Democratic_Progressive_Party",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 50,
+      "pragmatism": 55,
+      "nationalism": 80,
+      "paranoia": 75,
+      "economicPriority": 70,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "kmt",
+     "name": "Kuomintang",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Cross-strait dialogue, 1992 Consensus, trade with the mainland.",
+     "url": "https://en.wikipedia.org/wiki/Kuomintang",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 70,
+      "nationalism": 55,
+      "paranoia": 55,
+      "economicPriority": 80,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "tpp",
+     "name": "Taiwan People's Party",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Centrist pragmatism between the two.",
+     "url": "https://en.wikipedia.org/wiki/Taiwan_People%27s_Party",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 60,
+      "paranoia": 60,
+      "economicPriority": 80,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 96
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "PRK",
+   "incumbent": "wpk",
+   "factions": [
+    {
+     "id": "wpk",
+     "name": "Workers' Party leadership",
+     "kind": "faction",
+     "weight": 0.6,
+     "position": "Dynastic rule, nuclear deterrent, \"two hostile states\" doctrine.",
+     "url": "https://en.wikipedia.org/wiki/Workers%27_Party_of_Korea",
+     "traits": {
+      "aggression": 80,
+      "riskTolerance": 70,
+      "pragmatism": 35,
+      "nationalism": 92,
+      "paranoia": 92,
+      "economicPriority": 35,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 40
+     }
+    },
+    {
+     "id": "kpa",
+     "name": "Korean People's Army",
+     "kind": "military",
+     "weight": 0.3,
+     "position": "Military-first politics (Songun).",
+     "url": "https://en.wikipedia.org/wiki/Korean_People%27s_Army",
+     "traits": {
+      "aggression": 90,
+      "riskTolerance": 75,
+      "pragmatism": 25,
+      "nationalism": 95,
+      "paranoia": 95,
+      "economicPriority": 25,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 30
+     }
+    },
+    {
+     "id": "tech",
+     "name": "Economic technocrats",
+     "kind": "faction",
+     "weight": 0.1,
+     "position": "Managed economic opening within the regime.",
+     "url": "https://en.wikipedia.org/wiki/Economy_of_North_Korea",
+     "traits": {
+      "aggression": 60,
+      "riskTolerance": 55,
+      "pragmatism": 50,
+      "nationalism": 85,
+      "paranoia": 85,
+      "economicPriority": 55,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 50
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "SAU",
+   "incumbent": "court",
+   "factions": [
+    {
+     "id": "court",
+     "name": "Royal court of the Crown Prince",
+     "kind": "faction",
+     "weight": 0.6,
+     "position": "Vision 2030, hedging between powers, assertive regional role.",
+     "url": "https://en.wikipedia.org/wiki/Mohammed_bin_Salman",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 60,
+      "pragmatism": 65,
+      "nationalism": 70,
+      "paranoia": 65,
+      "economicPriority": 85,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 80
+     }
+    },
+    {
+     "id": "royals",
+     "name": "Senior royals (conservative)",
+     "kind": "faction",
+     "weight": 0.25,
+     "position": "Traditional consensus rule and caution.",
+     "url": "https://en.wikipedia.org/wiki/House_of_Saud",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 40,
+      "pragmatism": 65,
+      "nationalism": 70,
+      "paranoia": 65,
+      "economicPriority": 70,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 85
+     }
+    },
+    {
+     "id": "sang",
+     "name": "National Guard and armed forces",
+     "kind": "military",
+     "weight": 0.15,
+     "position": "Regime security forces.",
+     "url": "https://en.wikipedia.org/wiki/Saudi_Arabian_National_Guard",
+     "traits": {
+      "aggression": 60,
+      "riskTolerance": 55,
+      "pragmatism": 55,
+      "nationalism": 75,
+      "paranoia": 70,
+      "economicPriority": 65,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 80
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "ARE",
+   "incumbent": "abudhabi",
+   "factions": [
+    {
+     "id": "abudhabi",
+     "name": "Abu Dhabi ruling family",
+     "kind": "faction",
+     "weight": 0.7,
+     "position": "Security-minded statecraft, Abraham Accords, trade hub.",
+     "url": "https://en.wikipedia.org/wiki/Al_Nahyan",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 55,
+      "pragmatism": 75,
+      "nationalism": 60,
+      "paranoia": 60,
+      "economicPriority": 85,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "dubai",
+     "name": "Dubai mercantile establishment",
+     "kind": "faction",
+     "weight": 0.3,
+     "position": "Commerce first, neutrality.",
+     "url": "https://en.wikipedia.org/wiki/Al_Maktoum",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 40,
+      "pragmatism": 85,
+      "nationalism": 55,
+      "paranoia": 50,
+      "economicPriority": 90,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 92
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "EGY",
+   "incumbent": "military",
+   "factions": [
+    {
+     "id": "military",
+     "name": "Military establishment",
+     "kind": "military",
+     "weight": 0.6,
+     "position": "Regime security, economic role of the army, US and Gulf aid.",
+     "url": "https://en.wikipedia.org/wiki/Egyptian_Armed_Forces",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 35,
+      "pragmatism": 65,
+      "nationalism": 75,
+      "paranoia": 75,
+      "economicPriority": 70,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "tech",
+     "name": "Civilian technocrats",
+     "kind": "faction",
+     "weight": 0.3,
+     "position": "IMF reforms and stabilisation.",
+     "url": "https://en.wikipedia.org/wiki/Cabinet_of_Egypt",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 65,
+      "paranoia": 60,
+      "economicPriority": 80,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 92
+     }
+    },
+    {
+     "id": "ikhwan",
+     "name": "Islamist opposition (banned)",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Muslim Brotherhood tradition, outlawed since 2013.",
+     "url": "https://en.wikipedia.org/wiki/Muslim_Brotherhood_in_Egypt",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 55,
+      "pragmatism": 40,
+      "nationalism": 70,
+      "paranoia": 65,
+      "economicPriority": 55,
+      "allianceLoyalty": 35,
+      "nuclearThreshold": 90
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "POL",
+   "incumbent": "ko",
+   "factions": [
+    {
+     "id": "ko",
+     "name": "Civic Coalition",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Pro-European liberal-conservatism, NATO eastern flank, aid to Ukraine.",
+     "url": "https://en.wikipedia.org/wiki/Civic_Coalition_(Poland)",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 60,
+      "paranoia": 70,
+      "economicPriority": 60,
+      "allianceLoyalty": 85,
+      "nuclearThreshold": 92
+     }
+    },
+    {
+     "id": "pis",
+     "name": "Law and Justice",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "National conservatism, strong defence, US alliance, EU-sceptic.",
+     "url": "https://en.wikipedia.org/wiki/Law_and_Justice",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 50,
+      "pragmatism": 55,
+      "nationalism": 85,
+      "paranoia": 80,
+      "economicPriority": 60,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 90
+     }
+    },
+    {
+     "id": "konf",
+     "name": "Confederation",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "Nationalist-libertarian right, sceptical of aid to Ukraine.",
+     "url": "https://en.wikipedia.org/wiki/Confederation_Liberty_and_Independence",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 55,
+      "pragmatism": 45,
+      "nationalism": 90,
+      "paranoia": 75,
+      "economicPriority": 65,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 90
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "ITA",
+   "incumbent": "fdi",
+   "factions": [
+    {
+     "id": "fdi",
+     "name": "Brothers of Italy",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "National conservatism, Atlanticist, supports Ukraine.",
+     "url": "https://en.wikipedia.org/wiki/Brothers_of_Italy",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 40,
+      "pragmatism": 65,
+      "nationalism": 70,
+      "paranoia": 45,
+      "economicPriority": 70,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 92
+     }
+    },
+    {
+     "id": "pd",
+     "name": "Democratic Party",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Pro-European centre-left.",
+     "url": "https://en.wikipedia.org/wiki/Democratic_Party_(Italy)",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 35,
+      "pragmatism": 65,
+      "nationalism": 45,
+      "paranoia": 40,
+      "economicPriority": 70,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "lega",
+     "name": "Lega",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Regionalist-nationalist right, sceptical of sanctions on Russia.",
+     "url": "https://en.wikipedia.org/wiki/Lega_(political_party)",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 45,
+      "pragmatism": 55,
+      "nationalism": 75,
+      "paranoia": 50,
+      "economicPriority": 70,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 92
+     }
+    },
+    {
+     "id": "m5s",
+     "name": "Five Star Movement",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Populist, pacifist leanings.",
+     "url": "https://en.wikipedia.org/wiki/Five_Star_Movement",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 40,
+      "pragmatism": 55,
+      "nationalism": 55,
+      "paranoia": 45,
+      "economicPriority": 65,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 95
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "ESP",
+   "incumbent": "psoe",
+   "factions": [
+    {
+     "id": "psoe",
+     "name": "Spanish Socialist Workers' Party",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Centre-left, pro-EU, below-target defence spending.",
+     "url": "https://en.wikipedia.org/wiki/Spanish_Socialist_Workers%27_Party",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 55,
+      "pragmatism": 60,
+      "nationalism": 40,
+      "paranoia": 40,
+      "economicPriority": 75,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "pp",
+     "name": "People's Party",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Centre-right, Atlanticist.",
+     "url": "https://en.wikipedia.org/wiki/People%27s_Party_(Spain)",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 60,
+      "paranoia": 45,
+      "economicPriority": 75,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "vox",
+     "name": "Vox",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "National conservatism, immigration control.",
+     "url": "https://en.wikipedia.org/wiki/Vox_(political_party)",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 55,
+      "pragmatism": 45,
+      "nationalism": 90,
+      "paranoia": 60,
+      "economicPriority": 70,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 92
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "CAN",
+   "incumbent": "lpc",
+   "factions": [
+    {
+     "id": "lpc",
+     "name": "Liberal Party",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Centrist, trade diversification, NATO and NORAD.",
+     "url": "https://en.wikipedia.org/wiki/Liberal_Party_of_Canada",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 45,
+      "pragmatism": 80,
+      "nationalism": 55,
+      "paranoia": 40,
+      "economicPriority": 85,
+      "allianceLoyalty": 70,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "cpc",
+     "name": "Conservative Party",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Centre-right, defence spending, resource development.",
+     "url": "https://en.wikipedia.org/wiki/Conservative_Party_of_Canada",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 45,
+      "pragmatism": 70,
+      "nationalism": 65,
+      "paranoia": 50,
+      "economicPriority": 80,
+      "allianceLoyalty": 70,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "ndp",
+     "name": "New Democratic Party",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Social democratic left.",
+     "url": "https://en.wikipedia.org/wiki/New_Democratic_Party",
+     "traits": {
+      "aggression": 20,
+      "riskTolerance": 35,
+      "pragmatism": 70,
+      "nationalism": 50,
+      "paranoia": 40,
+      "economicPriority": 75,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 97
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "AUS",
+   "incumbent": "alp",
+   "factions": [
+    {
+     "id": "alp",
+     "name": "Australian Labor Party",
+     "kind": "party",
+     "weight": 0.5,
+     "position": "AUKUS, US alliance, regional diplomacy.",
+     "url": "https://en.wikipedia.org/wiki/Australian_Labor_Party",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 50,
+      "paranoia": 50,
+      "economicPriority": 75,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "coalition",
+     "name": "Liberal–National Coalition",
+     "kind": "party",
+     "weight": 0.5,
+     "position": "Conservative, hawkish on China.",
+     "url": "https://en.wikipedia.org/wiki/Coalition_(Australia)",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 60,
+      "paranoia": 55,
+      "economicPriority": 75,
+      "allianceLoyalty": 85,
+      "nuclearThreshold": 94
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "MEX",
+   "incumbent": "morena",
+   "factions": [
+    {
+     "id": "morena",
+     "name": "Morena",
+     "kind": "party",
+     "weight": 0.6,
+     "position": "Left nationalism, non-intervention (Estrada Doctrine), USMCA trade.",
+     "url": "https://en.wikipedia.org/wiki/Morena_(political_party)",
+     "traits": {
+      "aggression": 20,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 70,
+      "paranoia": 45,
+      "economicPriority": 80,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 97
+     }
+    },
+    {
+     "id": "pan",
+     "name": "National Action Party",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Christian-democratic centre-right, pro-market.",
+     "url": "https://en.wikipedia.org/wiki/National_Action_Party_(Mexico)",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 60,
+      "paranoia": 45,
+      "economicPriority": 85,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 97
+     }
+    },
+    {
+     "id": "pri",
+     "name": "Institutional Revolutionary Party",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Former ruling party, pragmatic centre.",
+     "url": "https://en.wikipedia.org/wiki/Institutional_Revolutionary_Party",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 60,
+      "paranoia": 45,
+      "economicPriority": 80,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 97
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "IDN",
+   "incumbent": "gerindra",
+   "factions": [
+    {
+     "id": "gerindra",
+     "name": "Gerindra",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Nationalist, strong defence, \"free and active\" foreign policy.",
+     "url": "https://en.wikipedia.org/wiki/Gerindra_Party",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 55,
+      "pragmatism": 65,
+      "nationalism": 80,
+      "paranoia": 55,
+      "economicPriority": 75,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 93
+     }
+    },
+    {
+     "id": "pdip",
+     "name": "PDI-P",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Sukarnoist centre-left nationalism.",
+     "url": "https://en.wikipedia.org/wiki/Indonesian_Democratic_Party_of_Struggle",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 45,
+      "pragmatism": 70,
+      "nationalism": 75,
+      "paranoia": 50,
+      "economicPriority": 75,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "tni",
+     "name": "Armed forces (TNI)",
+     "kind": "military",
+     "weight": 0.15,
+     "position": "Military with a growing civilian role.",
+     "url": "https://en.wikipedia.org/wiki/Indonesian_National_Armed_Forces",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 55,
+      "pragmatism": 60,
+      "nationalism": 85,
+      "paranoia": 60,
+      "economicPriority": 65,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 92
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "VNM",
+   "incumbent": "cpv",
+   "factions": [
+    {
+     "id": "cpv",
+     "name": "CPV leadership (security line)",
+     "kind": "faction",
+     "weight": 0.6,
+     "position": "One-party rule, \"bamboo diplomacy\", anti-corruption campaign.",
+     "url": "https://en.wikipedia.org/wiki/Communist_Party_of_Vietnam",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 40,
+      "pragmatism": 75,
+      "nationalism": 80,
+      "paranoia": 65,
+      "economicPriority": 85,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "reform",
+     "name": "Economic reformers",
+     "kind": "faction",
+     "weight": 0.25,
+     "position": "Đổi Mới market reforms, deeper trade integration.",
+     "url": "https://en.wikipedia.org/wiki/%C4%90%E1%BB%95i_M%E1%BB%9Bi",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 85,
+      "nationalism": 70,
+      "paranoia": 55,
+      "economicPriority": 90,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "vpa",
+     "name": "People's Army of Vietnam",
+     "kind": "military",
+     "weight": 0.15,
+     "position": "Defence of South China Sea claims.",
+     "url": "https://en.wikipedia.org/wiki/Vietnam_People%27s_Army",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 85,
+      "paranoia": 70,
+      "economicPriority": 75,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 94
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "PHL",
+   "incumbent": "pfp",
+   "factions": [
+    {
+     "id": "pfp",
+     "name": "Marcos administration (PFP)",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "US alliance, defence of West Philippine Sea claims.",
+     "url": "https://en.wikipedia.org/wiki/Partido_Federal_ng_Pilipinas",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 50,
+      "pragmatism": 60,
+      "nationalism": 70,
+      "paranoia": 55,
+      "economicPriority": 65,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "duterte",
+     "name": "Duterte camp",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Populist, closer to China, sceptical of the US.",
+     "url": "https://en.wikipedia.org/wiki/Rodrigo_Duterte",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 60,
+      "pragmatism": 50,
+      "nationalism": 75,
+      "paranoia": 55,
+      "economicPriority": 60,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "liberal",
+     "name": "Liberal opposition",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Liberal democrats, rule of law.",
+     "url": "https://en.wikipedia.org/wiki/Liberal_Party_(Philippines)",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 65,
+      "paranoia": 50,
+      "economicPriority": 70,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 96
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "THA",
+   "incumbent": "bjt",
+   "factions": [
+    {
+     "id": "bjt",
+     "name": "Bhumjaithai Party",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Conservative-populist, establishment-aligned.",
+     "url": "https://en.wikipedia.org/wiki/Bhumjaithai_Party",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 45,
+      "pragmatism": 70,
+      "nationalism": 65,
+      "paranoia": 50,
+      "economicPriority": 75,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "pp",
+     "name": "People's Party",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Progressive reformist, military reform.",
+     "url": "https://en.wikipedia.org/wiki/People%27s_Party_(Thailand,_2024)",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 40,
+      "pragmatism": 65,
+      "nationalism": 55,
+      "paranoia": 40,
+      "economicPriority": 75,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 97
+     }
+    },
+    {
+     "id": "army",
+     "name": "Royal Thai Army",
+     "kind": "military",
+     "weight": 0.25,
+     "position": "Royalist military establishment; historically coup-prone.",
+     "url": "https://en.wikipedia.org/wiki/Royal_Thai_Army",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 45,
+      "pragmatism": 60,
+      "nationalism": 80,
+      "paranoia": 65,
+      "economicPriority": 65,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 95
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "NGA",
+   "incumbent": "apc",
+   "factions": [
+    {
+     "id": "apc",
+     "name": "All Progressives Congress",
+     "kind": "party",
+     "weight": 0.5,
+     "position": "Governing party; economic reform, regional security.",
+     "url": "https://en.wikipedia.org/wiki/All_Progressives_Congress",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 55,
+      "pragmatism": 60,
+      "nationalism": 65,
+      "paranoia": 55,
+      "economicPriority": 75,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "pdp",
+     "name": "Peoples Democratic Party",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Main opposition, centrist.",
+     "url": "https://en.wikipedia.org/wiki/Peoples_Democratic_Party_(Nigeria)",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 50,
+      "pragmatism": 65,
+      "nationalism": 60,
+      "paranoia": 50,
+      "economicPriority": 75,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "army",
+     "name": "Armed forces",
+     "kind": "military",
+     "weight": 0.15,
+     "position": "Military; history of coups.",
+     "url": "https://en.wikipedia.org/wiki/Nigerian_Armed_Forces",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 60,
+      "pragmatism": 50,
+      "nationalism": 75,
+      "paranoia": 65,
+      "economicPriority": 60,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 94
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "ZAF",
+   "incumbent": "anc",
+   "factions": [
+    {
+     "id": "anc",
+     "name": "African National Congress",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Non-aligned, BRICS, government of national unity.",
+     "url": "https://en.wikipedia.org/wiki/African_National_Congress",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 70,
+      "nationalism": 55,
+      "paranoia": 40,
+      "economicPriority": 75,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 97
+     }
+    },
+    {
+     "id": "da",
+     "name": "Democratic Alliance",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "Liberal, pro-Western market reforms.",
+     "url": "https://en.wikipedia.org/wiki/Democratic_Alliance_(South_Africa)",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 45,
+      "paranoia": 35,
+      "economicPriority": 85,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 97
+     }
+    },
+    {
+     "id": "eff",
+     "name": "Economic Freedom Fighters",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Radical left, anti-Western.",
+     "url": "https://en.wikipedia.org/wiki/Economic_Freedom_Fighters",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 55,
+      "pragmatism": 40,
+      "nationalism": 75,
+      "paranoia": 55,
+      "economicPriority": 60,
+      "allianceLoyalty": 30,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "mk",
+     "name": "uMkhonto weSizwe",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Zuma-aligned populist nationalism.",
+     "url": "https://en.wikipedia.org/wiki/UMkhonto_weSizwe_(political_party)",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 55,
+      "pragmatism": 40,
+      "nationalism": 75,
+      "paranoia": 55,
+      "economicPriority": 55,
+      "allianceLoyalty": 35,
+      "nuclearThreshold": 95
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "ETH",
+   "incumbent": "pp",
+   "factions": [
+    {
+     "id": "pp",
+     "name": "Prosperity Party",
+     "kind": "party",
+     "weight": 0.6,
+     "position": "Centralising nationalism, Red Sea access ambitions.",
+     "url": "https://en.wikipedia.org/wiki/Prosperity_Party",
+     "traits": {
+      "aggression": 65,
+      "riskTolerance": 65,
+      "pragmatism": 50,
+      "nationalism": 85,
+      "paranoia": 70,
+      "economicPriority": 60,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "endf",
+     "name": "National Defense Force",
+     "kind": "military",
+     "weight": 0.25,
+     "position": "Military command after the Tigray war.",
+     "url": "https://en.wikipedia.org/wiki/Ethiopian_National_Defense_Force",
+     "traits": {
+      "aggression": 70,
+      "riskTolerance": 65,
+      "pragmatism": 45,
+      "nationalism": 85,
+      "paranoia": 75,
+      "economicPriority": 50,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "opp",
+     "name": "Ethnic-federalist opposition",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Regional autonomy (TPLF, OLF traditions).",
+     "url": "https://en.wikipedia.org/wiki/Tigray_People%27s_Liberation_Front",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 50,
+      "pragmatism": 55,
+      "nationalism": 70,
+      "paranoia": 55,
+      "economicPriority": 65,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 96
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "ARG",
+   "incumbent": "lla",
+   "factions": [
+    {
+     "id": "lla",
+     "name": "La Libertad Avanza",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Libertarian shock reform, alignment with the US and Israel.",
+     "url": "https://en.wikipedia.org/wiki/La_Libertad_Avanza",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 80,
+      "pragmatism": 45,
+      "nationalism": 55,
+      "paranoia": 50,
+      "economicPriority": 90,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "peronists",
+     "name": "Peronism (Unión por la Patria)",
+     "kind": "party",
+     "weight": 0.4,
+     "position": "Nationalist left, state-led economy, Falklands claim.",
+     "url": "https://en.wikipedia.org/wiki/Union_for_the_Homeland",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 45,
+      "pragmatism": 55,
+      "nationalism": 75,
+      "paranoia": 50,
+      "economicPriority": 70,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "pro",
+     "name": "PRO",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Centre-right, pro-market.",
+     "url": "https://en.wikipedia.org/wiki/Republican_Proposal",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 50,
+      "pragmatism": 65,
+      "nationalism": 55,
+      "paranoia": 45,
+      "economicPriority": 85,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 96
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "SWE",
+   "incumbent": "m",
+   "factions": [
+    {
+     "id": "m",
+     "name": "Moderate Party",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Liberal conservatism, NATO membership.",
+     "url": "https://en.wikipedia.org/wiki/Moderate_Party",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 50,
+      "paranoia": 55,
+      "economicPriority": 70,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "s",
+     "name": "Social Democrats",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Social democratic, now supports NATO.",
+     "url": "https://en.wikipedia.org/wiki/Swedish_Social_Democratic_Party",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 35,
+      "pragmatism": 70,
+      "nationalism": 45,
+      "paranoia": 50,
+      "economicPriority": 70,
+      "allianceLoyalty": 75,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "sd",
+     "name": "Sweden Democrats",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "National conservatism, immigration control.",
+     "url": "https://en.wikipedia.org/wiki/Sweden_Democrats",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 45,
+      "pragmatism": 55,
+      "nationalism": 75,
+      "paranoia": 60,
+      "economicPriority": 65,
+      "allianceLoyalty": 70,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "c",
+     "name": "Centre Party",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Liberal centre.",
+     "url": "https://en.wikipedia.org/wiki/Centre_Party_(Sweden)",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 40,
+      "paranoia": 45,
+      "economicPriority": 75,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 96
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "FIN",
+   "incumbent": "kok",
+   "factions": [
+    {
+     "id": "kok",
+     "name": "National Coalition Party",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Liberal conservatism, NATO, firm line on Russia.",
+     "url": "https://en.wikipedia.org/wiki/National_Coalition_Party",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 40,
+      "pragmatism": 75,
+      "nationalism": 55,
+      "paranoia": 65,
+      "economicPriority": 65,
+      "allianceLoyalty": 85,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "sdp",
+     "name": "Social Democratic Party",
+     "kind": "party",
+     "weight": 0.35,
+     "position": "Social democratic, Nordic security cooperation.",
+     "url": "https://en.wikipedia.org/wiki/Social_Democratic_Party_of_Finland",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 50,
+      "paranoia": 60,
+      "economicPriority": 65,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "ps",
+     "name": "Finns Party",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Nationalist, EU-sceptic, hawkish on Russia.",
+     "url": "https://en.wikipedia.org/wiki/Finns_Party",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 45,
+      "pragmatism": 55,
+      "nationalism": 80,
+      "paranoia": 70,
+      "economicPriority": 65,
+      "allianceLoyalty": 70,
+      "nuclearThreshold": 93
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "NLD",
+   "incumbent": "d66",
+   "factions": [
+    {
+     "id": "d66",
+     "name": "Democrats 66",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Social liberal, pro-EU, Atlanticist.",
+     "url": "https://en.wikipedia.org/wiki/Democrats_66",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 45,
+      "pragmatism": 75,
+      "nationalism": 35,
+      "paranoia": 45,
+      "economicPriority": 75,
+      "allianceLoyalty": 85,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "pvv",
+     "name": "Party for Freedom",
+     "kind": "party",
+     "weight": 0.3,
+     "position": "Populist right, immigration control, EU-sceptic.",
+     "url": "https://en.wikipedia.org/wiki/Party_for_Freedom",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 50,
+      "pragmatism": 45,
+      "nationalism": 80,
+      "paranoia": 60,
+      "economicPriority": 70,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 92
+     }
+    },
+    {
+     "id": "vvd",
+     "name": "People's Party for Freedom and Democracy",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Liberal right, NATO and free trade.",
+     "url": "https://en.wikipedia.org/wiki/People%27s_Party_for_Freedom_and_Democracy",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 45,
+      "pragmatism": 75,
+      "nationalism": 55,
+      "paranoia": 50,
+      "economicPriority": 80,
+      "allianceLoyalty": 85,
+      "nuclearThreshold": 94
+     }
+    },
+    {
+     "id": "glpvda",
+     "name": "GroenLinks–PvdA",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Green-left alliance.",
+     "url": "https://en.wikipedia.org/wiki/GroenLinks%E2%80%93PvdA",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 35,
+      "paranoia": 45,
+      "economicPriority": 70,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 95
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "BLR",
+   "incumbent": "regime",
+   "factions": [
+    {
+     "id": "regime",
+     "name": "Presidential administration",
+     "kind": "faction",
+     "weight": 0.65,
+     "position": "Personal rule, Union State with Russia.",
+     "url": "https://en.wikipedia.org/wiki/Union_State",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 45,
+      "pragmatism": 50,
+      "nationalism": 65,
+      "paranoia": 85,
+      "economicPriority": 50,
+      "allianceLoyalty": 80,
+      "nuclearThreshold": 55
+     }
+    },
+    {
+     "id": "kgb",
+     "name": "Security services (KGB) and army",
+     "kind": "military",
+     "weight": 0.25,
+     "position": "Regime security, alignment with Moscow.",
+     "url": "https://en.wikipedia.org/wiki/State_Security_Committee_of_the_Republic_of_Belarus",
+     "traits": {
+      "aggression": 65,
+      "riskTolerance": 55,
+      "pragmatism": 40,
+      "nationalism": 70,
+      "paranoia": 90,
+      "economicPriority": 40,
+      "allianceLoyalty": 85,
+      "nuclearThreshold": 50
+     }
+    },
+    {
+     "id": "opp",
+     "name": "Democratic opposition (in exile)",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Free elections and a European course.",
+     "url": "https://en.wikipedia.org/wiki/Sviatlana_Tsikhanouskaya",
+     "traits": {
+      "aggression": 20,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 60,
+      "paranoia": 50,
+      "economicPriority": 75,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 90
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "KAZ",
+   "incumbent": "admin",
+   "factions": [
+    {
+     "id": "admin",
+     "name": "Presidential administration (Amanat)",
+     "kind": "faction",
+     "weight": 0.7,
+     "position": "Multi-vector foreign policy, stability, reform from above.",
+     "url": "https://en.wikipedia.org/wiki/Amanat_(political_party)",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 80,
+      "nationalism": 60,
+      "paranoia": 60,
+      "economicPriority": 80,
+      "allianceLoyalty": 55,
+      "nuclearThreshold": 97
+     }
+    },
+    {
+     "id": "security",
+     "name": "Security elite",
+     "kind": "military",
+     "weight": 0.2,
+     "position": "Order and close security ties with Russia.",
+     "url": "https://en.wikipedia.org/wiki/National_Security_Committee_(Kazakhstan)",
+     "traits": {
+      "aggression": 40,
+      "riskTolerance": 40,
+      "pragmatism": 65,
+      "nationalism": 65,
+      "paranoia": 70,
+      "economicPriority": 70,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "reform",
+     "name": "Reformers",
+     "kind": "faction",
+     "weight": 0.1,
+     "position": "Political liberalisation and investment.",
+     "url": "https://en.wikipedia.org/wiki/Politics_of_Kazakhstan",
+     "traits": {
+      "aggression": 20,
+      "riskTolerance": 35,
+      "pragmatism": 80,
+      "nationalism": 55,
+      "paranoia": 50,
+      "economicPriority": 85,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 97
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "QAT",
+   "incumbent": "emir",
+   "factions": [
+    {
+     "id": "emir",
+     "name": "Emiri court",
+     "kind": "faction",
+     "weight": 0.8,
+     "position": "Mediation diplomacy, LNG wealth, US basing.",
+     "url": "https://en.wikipedia.org/wiki/Tamim_bin_Hamad_Al_Thani",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 50,
+      "pragmatism": 85,
+      "nationalism": 55,
+      "paranoia": 55,
+      "economicPriority": 80,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "royals",
+     "name": "Conservative branches of the Al Thani",
+     "kind": "faction",
+     "weight": 0.2,
+     "position": "Traditional, Gulf-solidarity line.",
+     "url": "https://en.wikipedia.org/wiki/House_of_Thani",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 45,
+      "pragmatism": 75,
+      "nationalism": 65,
+      "paranoia": 60,
+      "economicPriority": 75,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 95
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "IRQ",
+   "incumbent": "cf",
+   "factions": [
+    {
+     "id": "cf",
+     "name": "Coordination Framework",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Shia parties close to Iran, balancing Washington.",
+     "url": "https://en.wikipedia.org/wiki/Coordination_Framework",
+     "traits": {
+      "aggression": 35,
+      "riskTolerance": 40,
+      "pragmatism": 60,
+      "nationalism": 65,
+      "paranoia": 70,
+      "economicPriority": 70,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "sadr",
+     "name": "Sadrist Movement",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Iraqi nationalism, against both US and Iranian influence.",
+     "url": "https://en.wikipedia.org/wiki/Sadrist_Movement",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 55,
+      "pragmatism": 45,
+      "nationalism": 80,
+      "paranoia": 70,
+      "economicPriority": 55,
+      "allianceLoyalty": 30,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "pmf",
+     "name": "Popular Mobilization Forces",
+     "kind": "military",
+     "weight": 0.2,
+     "position": "Iran-aligned militias.",
+     "url": "https://en.wikipedia.org/wiki/Popular_Mobilization_Forces",
+     "traits": {
+      "aggression": 60,
+      "riskTolerance": 60,
+      "pragmatism": 40,
+      "nationalism": 75,
+      "paranoia": 80,
+      "economicPriority": 45,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 93
+     }
+    },
+    {
+     "id": "kurds",
+     "name": "Kurdish parties",
+     "kind": "party",
+     "weight": 0.15,
+     "position": "Kurdistan Region autonomy, ties with the West and Turkey.",
+     "url": "https://en.wikipedia.org/wiki/Kurdistan_Democratic_Party",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 55,
+      "paranoia": 65,
+      "economicPriority": 70,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 96
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "SYR",
+   "incumbent": "transition",
+   "factions": [
+    {
+     "id": "transition",
+     "name": "Transitional government (HTS-led)",
+     "kind": "faction",
+     "weight": 0.55,
+     "position": "Consolidation after Assad, sanctions relief, Turkish and Gulf backing.",
+     "url": "https://en.wikipedia.org/wiki/Syrian_transitional_government",
+     "traits": {
+      "aggression": 50,
+      "riskTolerance": 60,
+      "pragmatism": 70,
+      "nationalism": 75,
+      "paranoia": 70,
+      "economicPriority": 65,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "army",
+     "name": "New Syrian Army factions",
+     "kind": "military",
+     "weight": 0.25,
+     "position": "Former rebel commanders integrated into the army.",
+     "url": "https://en.wikipedia.org/wiki/Syrian_Army",
+     "traits": {
+      "aggression": 60,
+      "riskTolerance": 65,
+      "pragmatism": 55,
+      "nationalism": 75,
+      "paranoia": 75,
+      "economicPriority": 55,
+      "allianceLoyalty": 40,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "civic",
+     "name": "Civic and minority groups",
+     "kind": "party",
+     "weight": 0.2,
+     "position": "Pluralism, decentralisation (SDF, Druze, Alawite communities).",
+     "url": "https://en.wikipedia.org/wiki/Syrian_Democratic_Council",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 40,
+      "pragmatism": 70,
+      "nationalism": 65,
+      "paranoia": 55,
+      "economicPriority": 70,
+      "allianceLoyalty": 50,
+      "nuclearThreshold": 97
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "VEN",
+   "incumbent": "psuv",
+   "factions": [
+    {
+     "id": "psuv",
+     "name": "United Socialist Party of Venezuela",
+     "kind": "party",
+     "weight": 0.5,
+     "position": "Chavismo, sovereignty against US pressure, oil revenues.",
+     "url": "https://en.wikipedia.org/wiki/United_Socialist_Party_of_Venezuela",
+     "traits": {
+      "aggression": 45,
+      "riskTolerance": 50,
+      "pragmatism": 60,
+      "nationalism": 80,
+      "paranoia": 80,
+      "economicPriority": 65,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 96
+     }
+    },
+    {
+     "id": "fanb",
+     "name": "Bolivarian Armed Forces",
+     "kind": "military",
+     "weight": 0.25,
+     "position": "The military pillar of the regime.",
+     "url": "https://en.wikipedia.org/wiki/National_Bolivarian_Armed_Forces_of_Venezuela",
+     "traits": {
+      "aggression": 55,
+      "riskTolerance": 55,
+      "pragmatism": 50,
+      "nationalism": 80,
+      "paranoia": 85,
+      "economicPriority": 55,
+      "allianceLoyalty": 45,
+      "nuclearThreshold": 95
+     }
+    },
+    {
+     "id": "opp",
+     "name": "Democratic opposition",
+     "kind": "party",
+     "weight": 0.25,
+     "position": "Democratic transition, rapprochement with the US.",
+     "url": "https://en.wikipedia.org/wiki/Unitary_Platform",
+     "traits": {
+      "aggression": 25,
+      "riskTolerance": 45,
+      "pragmatism": 65,
+      "nationalism": 65,
+      "paranoia": 50,
+      "economicPriority": 80,
+      "allianceLoyalty": 70,
+      "nuclearThreshold": 97
+     }
+    }
+   ]
+  },
+  {
+   "iso3": "NZL",
+   "incumbent": "national",
+   "factions": [
+    {
+     "id": "national",
+     "name": "National Party",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Centre-right, Five Eyes and partners.",
+     "url": "https://en.wikipedia.org/wiki/New_Zealand_National_Party",
+     "traits": {
+      "aggression": 20,
+      "riskTolerance": 40,
+      "pragmatism": 75,
+      "nationalism": 45,
+      "paranoia": 35,
+      "economicPriority": 80,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 98
+     }
+    },
+    {
+     "id": "labour",
+     "name": "Labour Party",
+     "kind": "party",
+     "weight": 0.45,
+     "position": "Centre-left, independent foreign policy tradition.",
+     "url": "https://en.wikipedia.org/wiki/New_Zealand_Labour_Party",
+     "traits": {
+      "aggression": 20,
+      "riskTolerance": 35,
+      "pragmatism": 75,
+      "nationalism": 40,
+      "paranoia": 35,
+      "economicPriority": 75,
+      "allianceLoyalty": 65,
+      "nuclearThreshold": 98
+     }
+    },
+    {
+     "id": "nzf",
+     "name": "New Zealand First",
+     "kind": "party",
+     "weight": 0.1,
+     "position": "Populist nationalism.",
+     "url": "https://en.wikipedia.org/wiki/New_Zealand_First",
+     "traits": {
+      "aggression": 30,
+      "riskTolerance": 40,
+      "pragmatism": 65,
+      "nationalism": 70,
+      "paranoia": 45,
+      "economicPriority": 75,
+      "allianceLoyalty": 60,
+      "nuclearThreshold": 97
+     }
+    }
+   ]
+  }
+ ]
+}

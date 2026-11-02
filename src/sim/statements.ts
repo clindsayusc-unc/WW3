@@ -8,8 +8,8 @@ import type { Dispatch, DispatchKind, GameState, Iso3 } from './types';
 
 export type Tone = Dispatch['tone'];
 
-export function toneOf(world: World, iso: Iso3): Tone {
-  const t = traitsOf(world, iso);
+export function toneOf(world: World, iso: Iso3, state?: GameState): Tone {
+  const t = traitsOf(world, iso, state);
   if (t.aggression >= 65 || t.nationalism >= 85) return 'blunt';
   if (t.paranoia >= 68) return 'cold';
   if (t.pragmatism >= 60) return 'measured';
@@ -91,7 +91,7 @@ export function composeStatement(
   kind: DispatchKind,
   reason: string,
 ): { text: string; tone: Tone } {
-  const tone = toneOf(world, from);
+  const tone = toneOf(world, from, state);
   const list = TEMPLATES[kind][tone];
   const tpl = list[hash(`${state.turn}|${from}|${to}|${kind}`) % list.length]!;
   const text = tpl

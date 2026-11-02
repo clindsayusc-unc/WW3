@@ -490,6 +490,9 @@ function migrateDiplomacy(world: World, state: GameState): void {
     if (typeof n.aidArmsBank !== 'number') n.aidArmsBank = 0;
     if (typeof n.leaderSince !== 'number') n.leaderSince = leaderSinceTurn(world.leaders.get(n.iso3)?.since);
     if (typeof n.leaderTermLimited !== 'boolean') n.leaderTermLimited = !n.leaderFictional && world.politics.get(n.iso3)?.incumbentEligible === false;
+    // D-078: older saves' successors kept the predecessor's traits; they keep them (null → data).
+    if (n.leaderFaction === undefined) n.leaderFaction = world.factions.get(n.iso3)?.incumbent ?? null;
+    if (n.leaderTraits === undefined) n.leaderTraits = null;
   }
 }
 

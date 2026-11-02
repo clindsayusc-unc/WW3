@@ -3,11 +3,12 @@
  * democracies and hybrid regimes, coup risk in autocracies. Only nations with a researched
  * leader (data/politics.json) have domestic politics; minors are AI-only.
  */
-import { nationName, type World } from './world';
+import { nationName, traitsOf, type World } from './world';
 import type { GameState, Iso3, NationState, Regime } from './types';
 import { clamp, controlShare, headline, isAtWar, log, roll } from './query';
 import { DEFAULT_TAX_RATE, inflationAnchor } from './economy';
 import { fictionalName } from './commanders';
+import { factionOf, successorFaction, successorTraits, type SuccessionCause } from './succession';
 
 export const MOBILIZATION_SUPPORT = [0, -3, -8];
 /** Approval below which mass protests begin (repression raises the bar in autocracies). */
@@ -124,14 +125,24 @@ export function scheduleElections(world: World, state: GameState): void {
   }
 }
 
-function replaceLeader(world: World, state: GameState, n: NationState, title: string | null): string {
+function replaceLeader(world: World, state: GameState, n: NationState, title: string | null, cause: SuccessionCause): string {
   const name = fictionalName(world, state, n.iso3);
+  // D-078: a new personality from the successor's party or faction, not a copy of the predecessor.
+  const predecessor = traitsOf(world, n.iso3, state);
+  const faction = successorFaction(world, state, n.iso3, cause);
+  n.leaderTraits = successorTraits(world, state, n.iso3, faction, cause, predecessor);
+  n.leaderFaction = faction?.id ?? n.leaderFaction;
   n.leaderName = name;
   if (title) n.leaderTitle = title;
   n.leaderFictional = true;
   n.leaderSince = state.turn;
   n.leaderTermLimited = false;
   return name;
+}
+
+/** Party or faction name of the current leader, for logs. */
+function factionName(world: World, n: NationState): string {
+  return factionOf(world, n.iso3, n.leaderFaction)?.name ?? 'the governing camp';
 }
 
 const CAUSE_TEXT: Record<string, string> = {
@@ -150,12 +161,12 @@ export function succeedLeader(world: World, state: GameState, iso: Iso3, cause: 
   const n = state.nations[iso];
   if (!n?.alive) return null;
   const before = n.leaderName;
-  const successor = replaceLeader(world, state, n, null);
+  const successor = replaceLeader(world, state, n, null, cause as SuccessionCause);
   const name = nationName(world, iso);
   n.stability = clamp(n.stability - (cause === 'assassination' ? 6 : 2), 0, 100);
   log(state, {
     kind: 'info',
-    text: `${name}: ${before} ${CAUSE_TEXT[cause] ?? 'leaves office'}. ${successor} (fictional) succeeds as ${n.leaderTitle}.`,
+    text: `${name}: ${before} ${CAUSE_TEXT[cause] ?? 'leaves office'}. ${successor} (fictional, ${factionName(world, n)}) succeeds as ${n.leaderTitle}.`,
     nations: [iso],
     alert: iso === state.player || !!world.nations.get(iso)?.major,
   });
@@ -204,7 +215,7 @@ function holdElection(world: World, state: GameState, n: NationState): void {
   n.nextElection = pol.termYears ? state.turn + pol.termYears * 12 : null;
   if (share >= 50 && limited) {
     const before = n.leaderName;
-    const successor = replaceLeader(world, state, n, null);
+    const successor = replaceLeader(world, state, n, null, 'termLimit');
     n.support = clamp(n.support + 3, 0, 100);
     log(state, {
       kind: 'info',
@@ -234,12 +245,12 @@ function holdElection(world: World, state: GameState, n: NationState): void {
     log(state, { kind: 'info', text: `Election lost: ${share.toFixed(1)} % of the vote.`, nations: [n.iso3], alert: true });
     return;
   }
-  const successor = replaceLeader(world, state, n, null);
+  const successor = replaceLeader(world, state, n, null, 'election');
   n.support = 55;
   n.stability = clamp(n.stability + 2, 0, 100);
   log(state, {
     kind: 'info',
-    text: `${name} votes the government out (${share.toFixed(1)} %). ${successor} (fictional) takes office.`,
+    text: `${name} votes the government out (${share.toFixed(1)} %). ${successor} (fictional, ${factionName(world, n)}) takes office.`,
     nations: [n.iso3],
     alert: false,
   });
@@ -256,7 +267,7 @@ function stageCoup(world: World, state: GameState, n: NationState): void {
     log(state, { kind: 'info', text: 'Coup d’état: you have been deposed.', nations: [n.iso3], alert: true });
     return;
   }
-  const junta = replaceLeader(world, state, n, 'Chair of the Military Council');
+  const junta = replaceLeader(world, state, n, 'Chair of the Military Council', 'coup');
   n.stability = clamp(n.stability - 10, 0, 100);
   n.support = 45;
   n.protestMonths = 0;
@@ -299,6 +310,24 @@ export function runDomestic(world: World, state: GameState): void {
           });
         if (n.protestMonths === 1 && world.nations.get(n.iso3)?.major) headline(state, `Mass protests sweep ${name}`);
       }
+    }
+
+    // Revolution (D-078): months of mass protest in a collapsing autocracy or hybrid regime can
+    // topple it; the opposition takes power.
+    if (!isPlayer && pol.regime !== 'democracy' && n.protestMonths >= 6 && n.stability < 25 && roll(state) < 0.05) {
+      const before = n.leaderName;
+      const successor = replaceLeader(world, state, n, 'Head of the Transitional Government', 'revolution');
+      n.protestMonths = 0;
+      n.support = 60;
+      n.stability = clamp(n.stability + 8, 0, 100);
+      log(state, {
+        kind: 'info',
+        text: `Revolution in ${name}: ${before} falls after months of protest; ${successor} (fictional, ${factionName(world, n)}) leads a transitional government.`,
+        nations: [n.iso3],
+        alert: true,
+      });
+      headline(state, `REGIME FALLS IN ${name.toUpperCase()}`);
+      continue;
     }
 
     // Health crises and succession (D-075).

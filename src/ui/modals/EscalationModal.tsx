@@ -167,7 +167,7 @@ export function EscalationModal() {
               const factors = defconFactors(world, game, iso).filter((f) => f.active);
               const ss = secondStrike(world, game, iso);
               const d = iso === game.player ? null : nuclearDecision(world, game, iso);
-              const t = traitsOf(world, iso);
+              const t = traitsOf(world, iso, game);
               return (
                 <div key={iso} className={`defcon-row ${iso === game.player ? 'mine' : ''}`}>
                   <span style={{ color: nationHex(iso) }}>

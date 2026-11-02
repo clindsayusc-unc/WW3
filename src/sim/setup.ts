@@ -162,6 +162,8 @@ export function createGame(world: World, options: NewGameOptions): GameState {
       aidArmsBank: 0,
       leaderSince: leaderSinceTurn(leader?.since),
       leaderTermLimited: world.politics.get(n.iso3)?.incumbentEligible === false,
+      leaderFaction: world.factions.get(n.iso3)?.incumbent ?? null,
+      leaderTraits: null,
     };
   }
 

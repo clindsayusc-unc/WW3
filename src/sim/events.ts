@@ -247,13 +247,13 @@ export function aiChoice(world: World, state: GameState, actor: Iso3, ev: EventM
     const picked = pickWeighted(state, choices, (c) => c.chance ?? 0);
     return picked ? choices.indexOf(picked) : 0;
   }
-  const w = stanceWeights(world, actor);
+  const w = stanceWeights(world, actor, state);
   const picked = pickWeighted(state, choices, (c: EventChoice) => w[c.stance ?? 'hold']);
   return picked ? choices.indexOf(picked) : 0;
 }
 
-export function stanceWeights(world: World, actor: Iso3): Record<'escalate' | 'hold' | 'deescalate', number> {
-  const t = traitsOf(world, actor);
+export function stanceWeights(world: World, actor: Iso3, state?: GameState): Record<'escalate' | 'hold' | 'deescalate', number> {
+  const t = traitsOf(world, actor, state);
   const sq = (x: number) => (x / 100) ** 2;
   return {
     escalate: sq((t.aggression + t.riskTolerance + t.nationalism) / 3) * 0.8,
