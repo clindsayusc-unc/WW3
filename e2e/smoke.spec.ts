@@ -253,7 +253,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await expect(page.getByTestId('research-queue')).toContainText('AI Battle Management');
   await page.getByTestId('tech-md-directed-energy').hover();
   await expect(page.getByTestId('tech-card')).toContainText('Iron Beam');
-  await shot(page, branchSlug());
+  await shot(page, 'research-hover');
   await page.getByTestId('tech-zoom-in').click();
   await page.getByTestId('tech-zoom-out').click();
   await page.getByTestId('tech-fit').click();

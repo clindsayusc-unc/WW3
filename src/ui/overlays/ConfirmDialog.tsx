@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { AlertTriangle, ShieldAlert } from 'lucide-react';
 import { dispatch, setDispatchGate } from '../../state/simBridge';
 import { useGameStore } from '../../state/gameStore';
@@ -39,9 +39,11 @@ export function ConfirmDialog() {
   }, [pending]);
   const Icon = pending?.text.danger ? ShieldAlert : AlertTriangle;
   return (
-    <AnimatePresence>
+    // Entrance only: the dialog leaves the moment it is answered, never waiting on frames (a slow
+    // GPU must not keep an answered dialog on screen).
+    <>
       {pending && (
-        <motion.div className="confirm-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+        <motion.div className="confirm-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
           <motion.div
             className={`confirm-card ${pending.text.danger ? 'danger' : ''}`}
             role="alertdialog"
@@ -50,7 +52,6 @@ export function ConfirmDialog() {
             data-testid="confirm-dialog"
             initial={{ y: 12, scale: 0.97, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
-            exit={{ y: 6, opacity: 0 }}
             transition={{ duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }}
           >
             <div className="confirm-head">
@@ -77,6 +78,6 @@ export function ConfirmDialog() {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
