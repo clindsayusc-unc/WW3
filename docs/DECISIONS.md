@@ -1460,3 +1460,40 @@ worker turn time are hardware-independent and are what this pass optimised again
   on Linux but not on a case-insensitive macOS volume, where `./AudioSettings` resolved to the `.ts`
   file; the first macOS CI build failed on it. The settings module is now `audioPrefs.ts`, and
   `tests/data.test.ts` fails on any two modules whose names differ only by case.
+
+## D-085 — 2026-11-03 — The 2026 Iran war is still on when the campaign opens
+
+Checked against reporting on 3 November 2026 (sources in `docs/DATA_SOURCES.md`). The data had
+described the US-Israeli war on Iran as "ended in a fragile ceasefire" under the Islamabad
+Memorandum. That was out of date: the memorandum (17 June) collapsed on 8 July, the US reinstated
+its naval blockade of Iranian ports, Iran has all but closed the Strait of Hormuz (≈ 10 % of
+pre-war transits), the US struck Qeshm Island on 2 November, and Brent is ≈ US$105. Qatar and
+Pakistan are mediating talks; no ceasefire is in force. Mojtaba Khamenei remains Supreme Leader and
+Pezeshkian president, so `data/leaders.json` was already correct.
+
+- **Starting war.** `data/forces.json` `startingWars` entries are now objects
+  (`attackers`, `defenders`, `since`, optional per-nation `mobilization`, `warWeariness`,
+  `defcon`). USA + Israel vs Iran since turn −11 (28 February 2026), one coalition war, so a US–Iran
+  peace also ends Israel's part (Israel has no separate truce with Iran and is planning joint strikes
+  with the US). The US is not mobilised (0); Iran is on a war footing (2, DEFCON 2). Russia–Ukraine
+  `since` is corrected from −34 to −59 (24 February 2022), which moves the UN anniversary check to
+  February.
+- **Hormuz closed at start.** `startingChokepoints` in `data/forces.json` sets Hormuz `closed` by
+  Iran. Kept in the hand-maintained forces file, not the generated `chokepoints.json`. The normal
+  rules then apply: the closure lapses the month Iran is out of every war, and turns `contested` when
+  US sea dominance covers both sides of the strait (a stand-in for the escorted convoys).
+- **Oil index baseline.** `oilPrice` 1.00 now means "all straits open", the pre-war 2025 market
+  (Brent ≈ US$69, EIA), not "January 2027". Setup computes the index from the starting closures
+  (`oilIndex`), so the campaign opens at ×1.60 ≈ US$110, close to the observed ≈ US$105.
+- **Calibration.** Trade and shortage penalties are still zero on turn 0 (the IMF baseline already
+  reflects the war). One fix was needed: the shortage term floored its reference at 0.05 in both the
+  numerator and the denominator, so a Gulf importer cut off on turn 0 started with a penalty; the
+  floor now guards only the division. The chokepoint growth effects (Gulf trade loss, oil-import bill,
+  exporter windfall) do apply from turn 1, as with any closure. Reopening the strait therefore gives a
+  real recovery. Some of that cost may double-count the IMF forecast; we accept that so that ending
+  the closure matters.
+- **Escalation.** With two majors at war, the January 2027 world starts on rung 4 (great powers at
+  war), not 3.
+- **Flashpoint.** `iran-israel-gulf` tension rises from 70 to 80. Its description and events now
+  describe talks rather than a ceasefire; the US decision event ("A deal with Iran on the table")
+  can end the war (`peace` USA–IRN).

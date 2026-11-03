@@ -1,6 +1,6 @@
 {
   "source": "Editorial assessment of bilateral relations as of November 2026 based on public reporting (alliances, treaties, sanctions regimes, active conflicts; see docs/DATA_SOURCES.md); fictional game values",
-  "asOf": "2026-11-02",
+  "asOf": "2026-11-03",
   "estimate": true,
   "scale": "-100 active war; -80..-60 hostile/sanctions; -40..-20 rivalry; 0 neutral; 20..40 friendly; 60..80 allies; 90+ special relationship",
   "defaultByBloc": {
@@ -64,7 +64,7 @@
       "a": "USA",
       "b": "IRN",
       "value": -85,
-      "reason": "2026 war ended by fragile Islamabad Memorandum ceasefire"
+      "reason": "At war since Feb 2026; ceasefire collapsed 8 July; blockade and talks"
     },
     {
       "a": "USA",
@@ -502,7 +502,7 @@
       "a": "IRN",
       "b": "ISR",
       "value": -95,
-      "reason": "Direct war in 2026; ceasefire holds tenuously"
+      "reason": "Co-belligerents in the 2026 war; no ceasefire since July"
     },
     {
       "a": "IRN",
@@ -514,7 +514,7 @@
       "a": "IRN",
       "b": "PAK",
       "value": 40,
-      "reason": "Islamabad mediated 2026 ceasefire; border security issues"
+      "reason": "Islamabad mediated 2026 ceasefire and talks; border security issues"
     },
     {
       "a": "IRN",
@@ -1996,13 +1996,13 @@
       "a": "IRN",
       "b": "ARE",
       "value": -35,
-      "reason": "Hormuz disruption hit Emirati trade"
+      "reason": "Hormuz closure and tanker attacks hit Emirati trade"
     },
     {
       "a": "IRN",
       "b": "QAT",
       "value": 20,
-      "reason": "Qatar co-mediated memorandum; gas field shared"
+      "reason": "Qatar mediates US-Iran talks; gas field shared"
     },
     {
       "a": "IRN",

@@ -221,11 +221,12 @@ describe('sanctions', () => {
 
 describe('fiscal and domestic', () => {
   it('war bonds raise cash and debt and need a war or mobilisation', () => {
-    let g = newGame('USA');
+    // Britain is at peace and unmobilised in January 2027 (the US is at war with Iran, D-085).
+    let g = newGame('GBR');
     expect(() => applyCommand(world, g, { type: 'issueWarBonds' })).toThrow(/war|mobil/i);
     g = applyCommand(world, g, { type: 'setMobilization', level: 1 });
-    const before = g.nations['USA']!;
-    const after = applyCommand(world, g, { type: 'issueWarBonds' }).nations['USA']!;
+    const before = g.nations['GBR']!;
+    const after = applyCommand(world, g, { type: 'issueWarBonds' }).nations['GBR']!;
     expect(after.treasury - before.treasury).toBeCloseTo(before.gdp * 0.015, 3);
     expect(after.debt - before.debt).toBeCloseTo(before.gdp * 0.015, 3);
     expect(after.warBondCooldown).toBe(6);

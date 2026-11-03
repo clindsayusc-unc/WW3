@@ -8,6 +8,7 @@ import { isoYearMonth } from './calendar';
 import { seedRng } from './rng';
 import { relationKey, type World } from './world';
 import { makeUnit } from './query';
+import { oilIndex } from './geography';
 import { maybeCommander } from './commanders';
 import { RESOURCE_IDS } from './types';
 import { econZero, emptyBalances, runTrade } from './trade';
@@ -15,8 +16,10 @@ import { scheduleElections, supportBreakdown } from './domestic';
 import { recordHistory } from './economy';
 import type {
   Budget,
+  Defcon,
   GameState,
   Iso3,
+  MobilizationLevel,
   NationState,
   NewGameOptions,
   RegionId,
@@ -65,6 +68,25 @@ export function qualityOf(spendBn: number, personnel: number): number {
  * Abstract starting constellation and missile stock from defence spending (D-059). These are game
  * abstractions, not counts of real satellites or missiles.
  */
+/** One entry of `startingWars` in data/forces.json. */
+interface StartingWar {
+  readonly attackers: Iso3[];
+  readonly defenders: Iso3[];
+  /** Turn the war began, relative to January 2027 = 0 (negative: before the campaign). */
+  readonly since: number;
+  readonly score?: number;
+  readonly mobilization?: Record<string, MobilizationLevel>;
+  readonly warWeariness?: Record<string, number>;
+  readonly defcon?: Record<string, Defcon>;
+}
+
+/** One entry of `startingChokepoints` in data/forces.json. */
+interface StartingChokepoint {
+  readonly id: string;
+  readonly status: 'closed' | 'contested';
+  readonly by: Iso3;
+}
+
 export function startingSatellites(spendBn: number, warheads: number): number {
   return clamp(Math.round(spendBn / 40) + (warheads > 0 ? 2 : 0), 0, 16);
 }
@@ -301,22 +323,33 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     const r = regions[o.region];
     if (r) r.controller = o.controller;
   }
-  for (const [a, b] of forcesData.startingWars) {
+  // Wars already under way in January 2027 (data/forces.json; D-085).
+  for (const w of forcesData.startingWars as StartingWar[]) {
+    const sides = [...w.attackers, ...w.defenders];
+    if (!sides.every((x) => nations[x])) continue;
     state.wars.push({
       id: state.nextId++,
-      attackers: [a!],
-      defenders: [b!],
-      since: -34,
-      score: 10,
+      attackers: [...w.attackers],
+      defenders: [...w.defenders],
+      since: w.since,
+      score: w.score ?? 10,
     });
-    state.relations[relationKey(a!, b!)] = -100;
-    nations[a!]!.mobilization = 1;
-    nations[b!]!.mobilization = 2;
-    nations[a!]!.warWeariness = 30;
-    nations[b!]!.warWeariness = 35;
-    nations[a!]!.defcon = 3;
-    nations[b!]!.defcon = 3;
+    for (const a of w.attackers) for (const d of w.defenders) state.relations[relationKey(a, d)] = -100;
+    for (const x of sides) {
+      const n = nations[x]!;
+      const attacker = w.attackers.includes(x);
+      n.mobilization = w.mobilization?.[x] ?? (attacker ? 1 : 2);
+      n.warWeariness = w.warWeariness?.[x] ?? (attacker ? 30 : 35);
+      n.defcon = w.defcon?.[x] ?? 3;
+    }
   }
+  // Straits already closed in January 2027 (data/forces.json `startingChokepoints`; D-085). The
+  // closure persists only while its closer stays at war (updateChokepoints).
+  for (const c of forcesData.startingChokepoints as StartingChokepoint[]) {
+    if (!state.chokepoints[c.id] || !nations[c.by]) continue;
+    state.chokepoints[c.id] = { status: c.status, by: c.by, mined: false, minedBy: null, since: 0 };
+  }
+  state.oilPrice = oilIndex(world, state);
 
   placeStartingForces(world, state);
 

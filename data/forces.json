@@ -1,6 +1,6 @@
 {
-  "source": "Approximate order of battle abstracted from IISS Military Balance 2025 (via Wikipedia 'List of aircraft carriers in service', 'List of submarines by country', navy articles) and public fleet lists; counts are game formations (carrier strike groups, destroyer/frigate groups of ~6 hulls, submarine flotillas of ~6 boats, amphibious ready groups), not hull counts. Land and air formations are derived in src/sim/setup.ts from active personnel and defence spending in data/nations.json.",
-  "asOf": "2026-11-02",
+  "source": "Approximate order of battle abstracted from IISS Military Balance 2025 (via Wikipedia 'List of aircraft carriers in service', 'List of submarines by country', navy articles) and public fleet lists; counts are game formations (carrier strike groups, destroyer/frigate groups of ~6 hulls, submarine flotillas of ~6 boats, amphibious ready groups), not hull counts. Land and air formations are derived in src/sim/setup.ts from active personnel and defence spending in data/nations.json. Starting wars and the starting closure of the Strait of Hormuz (startingWars, startingChokepoints) follow Wikipedia '2026 Iran war' and '2026 Iran war ceasefire', Al Jazeera, CNN and Kpler shipping data as of 3 November 2026 (see startingWarsNote and docs/DATA_SOURCES.md).",
+  "asOf": "2026-11-03",
   "estimate": true,
   "navies": {
     "USA": {
@@ -341,7 +341,21 @@
     }
   },
   "bombers": { "USA": 6, "RUS": 4, "CHN": 4 },
-  "startingWars": [["RUS", "UKR"]],
+  "startingWarsNote": "since = turn the war began relative to January 2027 = 0. Russia–Ukraine: full-scale invasion 24 February 2022. US/Israel–Iran: the 2026 Iran war began 28 February 2026; the April ceasefire and the 17 June Islamabad Memorandum collapsed on 8 July 2026 and no new ceasefire was in force on 3 November 2026 (US naval blockade reinstated, IRGC attacks on Hormuz shipping, US 'defensive' strikes on Qeshm Island on 2 November) — Wikipedia '2026 Iran war' and '2026 Iran war ceasefire'; Al Jazeera 2026-11-02; CNN 2026-11-02. The United States has not mobilised reserves for it (mobilization 0); Iran is on a full war footing.",
+  "startingWars": [
+    { "attackers": ["RUS"], "defenders": ["UKR"], "since": -59 },
+    {
+      "attackers": ["USA", "ISR"],
+      "defenders": ["IRN"],
+      "since": -11,
+      "score": 15,
+      "mobilization": { "USA": 0, "ISR": 1, "IRN": 2 },
+      "warWeariness": { "USA": 25, "ISR": 30, "IRN": 45 },
+      "defcon": { "USA": 3, "ISR": 3, "IRN": 2 }
+    }
+  ],
+  "startingChokepointsNote": "Strait of Hormuz: closed to most commercial shipping by Iran since the 8 July 2026 ceasefire collapse; Kpler recorded 5 commodity-vessel transits on 31 October and none on 1 November 2026, roughly a tenth of the pre-war ~85 ships a day (Sigmalive/Kpler 2026-11-02; hormuz.now AIS tracker 2026-11-02). US Navy escorts some tankers through; the game models the convoys as the US contesting the strait once it holds sea dominance on both sides.",
+  "startingChokepoints": [{ "id": "hormuz", "status": "closed", "by": "IRN" }],
   "startingOccupation": [
     {
       "region": 251,

@@ -786,8 +786,11 @@ export function runTrade(world: World, state: GameState, calibrate = false): voi
     let price = 0;
     for (const res of world.resources) {
       const b = n.resources[res.id];
-      const ref = Math.max(0.05, n.resourceRef[res.id] ?? 1);
-      shortage -= res.gdpWeight * Math.max(0, ref - b.satisfaction) / ref;
+      // Shortfall against the calibrated reference; the 0.05 floor only guards the division, so a
+      // nation already cut off at calibration (e.g. behind a closed Hormuz) starts at zero penalty.
+      const raw = n.resourceRef[res.id] ?? 1;
+      const ref = Math.max(0.05, raw);
+      shortage -= res.gdpWeight * Math.max(0, raw - b.satisfaction) / ref;
       price -= (b.imports * res.worldValueUsdBn * ((state.economy.prices[res.id] ?? 1) - 1)) / gdp * 100 * 0.4;
     }
     n.econ = {

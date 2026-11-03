@@ -341,7 +341,9 @@ describe('espionage and sharing', () => {
     applyShareTech(world, g, 'USA', 'GBR', 'missiles-hypersonic-glide');
     expect(g.nations['GBR']!.techs).toContain('missiles-hypersonic-glide');
     expect(g.nations['GBR']!.modifiers.strikePower ?? 0).toBeGreaterThan(0.1);
-    expect(canShareTech(world, g, 'USA', 'IRN', 'md-counter-uas')).toMatch(/allies/);
+    expect(canShareTech(world, g, 'USA', 'PAK', 'md-counter-uas')).toMatch(/allies/);
+    // The US and Iran are at war when the campaign opens (D-085).
+    expect(canShareTech(world, g, 'USA', 'IRN', 'md-counter-uas')).toBe('You are at war.');
   });
 
   it('AI powers steal and share over time without touching the simulation RNG', () => {

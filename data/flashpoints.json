@@ -1,6 +1,6 @@
 {
   "source": "Editorial assessment of nine geopolitical flashpoints as of November 2026 based on public reporting (see docs/DATA_SOURCES.md); starting tension values and scripted events are fictional game content",
-  "asOf": "2026-11-02",
+  "asOf": "2026-11-03",
   "estimate": true,
   "flashpoints": [
     {
@@ -868,8 +868,8 @@
         ["IRN", "YEM"],
         ["ISR", "USA", "SAU", "ARE"]
       ],
-      "tension": 70,
-      "description": "A US-Israeli air campaign against Iran from February 2026 ended in a fragile ceasefire framed by the Pakistan- and Qatar-mediated Islamabad Memorandum, with Hormuz shipping disrupted and periodic exchanges of fire since. Gaza and Lebanon ceasefires are holding unevenly, and Israel's October 2026 election produced no clear majority.",
+      "tension": 80,
+      "description": "The US-Israeli war on Iran that began on 28 February 2026 killed Supreme Leader Ali Khamenei; his son Mojtaba succeeded him. An April ceasefire and the Pakistan-mediated Islamabad Memorandum of 17 June collapsed on 8 July after Iran attacked shipping in Hormuz. A low-intensity war has run on since: a US naval blockade of Iranian ports, IRGC attacks that have all but closed the Strait of Hormuz, and limited US strikes, with Brent above US$100. Qatar and Pakistan are mediating talks on Iran's plan to reopen the strait in exchange for lifting the blockade, while Washington weighs renewed strikes after its November midterms. The Lebanon ceasefire holds unevenly, and Israel's October 2026 election produced no clear majority.",
       "events": [
         {
           "id": "ig-hormuz-incident",
@@ -899,8 +899,8 @@
         },
         {
           "id": "ig-ceasefire-exchange",
-          "title": "Ceasefire strained by exchange of fire",
-          "text": "Israeli aircraft strike a suspected launch site and Iranian-aligned forces respond with drones; both sides say the ceasefire still stands. Mediators in Islamabad and Doha urge restraint.",
+          "title": "Talks strained by exchange of fire",
+          "text": "US aircraft strike IRGC missile batteries on an island in the strait and Iran answers with drones against a Gulf base; both sides say the talks continue. Mediators in Doha and Islamabad urge restraint.",
           "scope": "world",
           "weight": 5,
           "once": false,
@@ -908,15 +908,15 @@
           "conditions": [{ "type": "flashpointMin", "id": "iran-israel-gulf", "value": 55 }],
           "choices": [
             {
-              "label": "Ceasefire holds, barely",
-              "tooltip": "Each exchange erodes the memorandum.",
+              "label": "Talks survive, barely",
+              "tooltip": "Each exchange erodes the mediators' bid for a settlement.",
               "effects": [
                 { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 4 },
                 { "type": "relation", "a": "IRN", "b": "ISR", "delta": -3 },
                 { "type": "relation", "a": "IRN", "b": "USA", "delta": -3 },
                 {
                   "type": "news",
-                  "text": "Strikes and drone fire test Iran ceasefire; mediators call for restraint"
+                  "text": "US strikes and Iranian drone fire test Iran talks; mediators call for restraint"
                 }
               ]
             }
@@ -924,8 +924,8 @@
         },
         {
           "id": "ig-memorandum-renewal",
-          "title": "Islamabad Memorandum up for renewal",
-          "text": "The ceasefire framework with Iran expires within weeks. {PLAYER} must decide whether to extend it and ease the naval blockade, let it lapse, or extend it while keeping the pressure on.",
+          "title": "A deal with Iran on the table",
+          "text": "Qatari and Pakistani mediators deliver Tehran's plan: reopen the Strait of Hormuz and resume nuclear talks in return for lifting the naval blockade and a halt to strikes. {PLAYER} must accept it, reject it and resume a full air campaign, or keep the blockade on and keep talking.",
           "scope": "player",
           "weight": 5,
           "once": false,
@@ -936,9 +936,10 @@
           ],
           "choices": [
             {
-              "label": "Extend and ease the blockade",
-              "tooltip": "Big drop in tension and a thaw with Tehran; Israel is unhappy.",
+              "label": "Accept: end the war and lift the blockade",
+              "tooltip": "Peace with Iran, so its closure of Hormuz lapses and oil falls; big drop in tension; Israel is unhappy.",
               "effects": [
+                { "type": "peace", "a": "USA", "b": "IRN" },
                 { "type": "flashpoint", "id": "iran-israel-gulf", "delta": -10 },
                 { "type": "tension", "delta": -3 },
                 { "type": "relation", "a": "USA", "b": "IRN", "delta": 10 },
@@ -948,7 +949,7 @@
               ]
             },
             {
-              "label": "Let it lapse and resume strikes",
+              "label": "Reject it and resume a full air campaign",
               "tooltip": "Return to open hostilities with Iran; very costly and destabilising.",
               "effects": [
                 { "type": "flashpoint", "id": "iran-israel-gulf", "delta": 15 },
@@ -959,13 +960,13 @@
                 { "type": "relation", "a": "USA", "b": "ISR", "delta": 5 },
                 {
                   "type": "news",
-                  "text": "Ceasefire framework with Iran lapses; US resumes strikes"
+                  "text": "US rejects Iran's plan and resumes a full air campaign"
                 }
               ]
             },
             {
-              "label": "Extend but keep the blockade",
-              "tooltip": "Buys time without concessions.",
+              "label": "Keep the blockade and keep talking",
+              "tooltip": "Buys time without concessions; the strait stays shut.",
               "effects": [
                 { "type": "flashpoint", "id": "iran-israel-gulf", "delta": -3 },
                 { "type": "relation", "a": "USA", "b": "IRN", "delta": 3 }

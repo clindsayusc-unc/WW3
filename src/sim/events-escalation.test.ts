@@ -202,9 +202,12 @@ describe('news wire', () => {
 });
 
 describe('escalation ladder and DEFCON', () => {
-  it('the World of 2027 starts on the limited-war rung; peace brings it down', () => {
+  it('the World of 2027 starts with great powers at war; peace brings it down', () => {
     const g = fresh('BRA');
     expect(ESCALATION_LADDER).toHaveLength(7);
+    // Russia–Ukraine and the US/Israel–Iran war (D-085): the US and Iran are both majors.
+    expect(escalationRung(world, g).index).toBe(4);
+    makePeace(world, g, 'USA', 'IRN', 'statusQuo');
     expect(escalationRung(world, g).index).toBe(3);
     makePeace(world, g, 'RUS', 'UKR', 'statusQuo');
     expect(escalationRung(world, g).index).toBeLessThan(3);

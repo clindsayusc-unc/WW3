@@ -550,13 +550,21 @@ export function updateChokepoints(world: World, state: GameState): void {
     }
     state.chokepoints[c.id] = s;
   }
+  state.oilPrice = oilIndex(world, state);
+}
+
+/**
+ * Oil-price index implied by the current chokepoint closures: 1 = all straits open, the pre-war
+ * 2025 market (Brent ≈ US$69/bbl, EIA). Hormuz closed at the start puts it at 1.6 ≈ US$110 (D-085).
+ */
+export function oilIndex(world: World, state: GameState): number {
   let oil = 1;
   for (const c of world.chokepoints) {
     const s = state.chokepoints[c.id];
     if (!s || s.status === 'open') continue;
     oil += c.oilShock * (s.status === 'contested' ? 0.5 : 1);
   }
-  state.oilPrice = Math.round(oil * 100) / 100;
+  return Math.round(oil * 100) / 100;
 }
 
 /** Growth-rate exposure (pp of annual growth) of a nation to the current chokepoint closures. */
