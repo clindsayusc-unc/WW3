@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 
 const SHOTS = 'docs/screenshots';
@@ -903,33 +903,4 @@ test('tutorial: five guided months, every screen, readability (D-080)', async ({
   await page.evaluate(() => (globalThis as unknown as { ww3: { ui: { getState: () => { setPrefs: (p: object) => void } } } }).ww3.ui.getState().setPrefs({ uiScale: 1 }));
   expect(small, small.slice(0, 10).join('\n')).toEqual([]);
   expect(errors).toEqual([]);
-});
-
-test('performance probe: 20 s camera sweep', async ({ page }) => {
-  test.skip(!process.env.PERF, 'set PERF=1 to run the performance sweep');
-  await page.goto('/');
-  await expect(page.getByTestId('loading')).toBeHidden({ timeout: 120_000 });
-  await page.getByTestId('menu-new').click();
-  await page.getByTestId('scenario-next').click();
-  await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
-  await startGame(page);
-  await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
-  await page.waitForTimeout(3000);
-  const result = await page.evaluate(() =>
-    (globalThis as unknown as { ww3: { perf: (s: number) => Promise<unknown> } }).ww3.perf(20),
-  );
-  console.log('PERF_RESULT ' + JSON.stringify(result));
-  mkdirSync('docs', { recursive: true });
-  writeFileSync(
-    'docs/perf-last-run.json',
-    JSON.stringify(
-      {
-        ...(result as object),
-        userAgent: await page.evaluate(() => navigator.userAgent),
-        at: new Date().toISOString(),
-      },
-      null,
-      2,
-    ),
-  );
 });

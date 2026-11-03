@@ -17,6 +17,7 @@ import { useLevels } from './levels';
 import { useGameStore } from '../state/gameStore';
 import { atWar } from '../sim/query';
 import type { GameState } from '../sim/types';
+import { useDispose } from './useDispose';
 
 interface FrontGeometry {
   /** lat, lon pairs per segment vertex (2 per segment). */
@@ -110,6 +111,7 @@ export function FrontLines() {
       }),
     [],
   );
+  useDispose(lineMat, glowMat);
   const lines = useMemo(() => {
     const geo = new LineSegmentsGeometry();
     const l = new LineSegments2(geo, lineMat);

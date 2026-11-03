@@ -95,8 +95,10 @@ export const GLOBE_FRAG = /* glsl */ `
   varying float vHeight;
 
   float decodeId(vec4 texel) {
-    return floor(texel.r * 255.0 + 0.5) + floor(texel.g * 255.0 + 0.5) * 256.0;
+    return floor(texel.r * 255.0 + 0.5) + mod(floor(texel.g * 255.0 + 0.5), 128.0) * 256.0;
   }
+  // Land flag: bit 7 of the high byte (D-082).
+  float landOf(vec4 texel) { return step(0.25, texel.g); }
   float decodeCountry(float id) {
     vec4 c = texture2D(countryIndex, vec2((id + 0.5) / 2048.0, 0.5));
     return floor(c.r * 255.0 + 0.5) + floor(c.g * 255.0 + 0.5) * 256.0;
@@ -113,7 +115,7 @@ export const GLOBE_FRAG = /* glsl */ `
 
     vec4 idTexel = texture2D(idMap, vUv);
     float id = decodeId(idTexel);
-    float land = idTexel.b;
+    float land = landOf(idTexel);
     vec4 attr = texture2D(regionAttr, vec2((id + 0.5) / 2048.0, 0.5));
     float devast = attr.r;
     float burning = attr.g;
@@ -253,7 +255,7 @@ export const GLOBE_FRAG = /* glsl */ `
     float cL = decodeCountry(decodeId(tL));
     float cD = decodeCountry(decodeId(tD));
     float countryEdge = step(0.5, abs(c0 - cR) + abs(c0 - cU) + abs(c0 - cL) + abs(c0 - cD));
-    float seaEdge = step(0.5, abs(land - tR.b) + abs(land - tU.b) + abs(land - tL.b) + abs(land - tD.b));
+    float seaEdge = step(0.5, abs(land - landOf(tR)) + abs(land - landOf(tU)) + abs(land - landOf(tL)) + abs(land - landOf(tD)));
     float countryLine = countryEdge * (1.0 - seaEdge) * land;
     float regionLine = regionEdge * land * regionBorderAlpha;
     float seaLine = regionEdge * (1.0 - land) * regionBorderAlpha * 0.5 * overlayStrength;

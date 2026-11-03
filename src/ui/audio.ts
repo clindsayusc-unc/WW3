@@ -76,6 +76,7 @@ function tone(
   gain: number,
   slide = 0,
   at = 0,
+  attack = Math.min(0.02, dur / 4),
 ): void {
   const g = audioGraph();
   if (!g || useUiStore.getState().muted) return;
@@ -87,7 +88,7 @@ function tone(
   o.frequency.setValueAtTime(freq, t0);
   if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, freq + slide), t0 + dur);
   env.gain.setValueAtTime(0.0001, t0);
-  env.gain.exponentialRampToValueAtTime(gain, t0 + Math.min(0.02, dur / 4));
+  env.gain.exponentialRampToValueAtTime(gain, t0 + attack);
   env.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
   o.connect(env).connect(effects);
   o.start(t0);
@@ -136,6 +137,136 @@ export function playSound(name: SoundName): void {
       tone(44, 3, 'sine', 0.3, -12);
       tone(44.6, 3, 'sine', 0.25, -12);
       tone(66, 2.2, 'triangle', 0.08, -20, 0.4);
+      break;
+  }
+}
+
+/**
+ * Alert stingers (D-084): short musical phrases for the moments that matter, built from the same
+ * clean sine and triangle tones, in D minor to sit under the score. The score ducks beneath them.
+ */
+export type StingerKind =
+  | 'nuclear'
+  | 'war'
+  | 'defeat'
+  | 'victory'
+  | 'capitulation'
+  | 'defcon'
+  | 'capture'
+  | 'peace'
+  | 'research'
+  | 'event';
+
+/** Highest first: only the most important stinger of a month plays. */
+export const STINGER_PRIORITY: readonly StingerKind[] = [
+  'nuclear',
+  'defeat',
+  'victory',
+  'war',
+  'capitulation',
+  'defcon',
+  'capture',
+  'peace',
+  'research',
+  'event',
+];
+
+/** Notes (Hz) used below: D minor around D3–D5. */
+const N = {
+  D2: 73.42,
+  A2: 110,
+  D3: 146.83,
+  F3: 174.61,
+  A3: 220,
+  C4: 261.63,
+  D4: 293.66,
+  E4: 329.63,
+  F4: 349.23,
+  Fs4: 369.99,
+  G4: 392,
+  A4: 440,
+  Bb4: 466.16,
+  C5: 523.25,
+  D5: 587.33,
+  F5: 698.46,
+  A5: 880,
+};
+
+let duck: ((depth?: number, seconds?: number) => void) | null = null;
+/** music.ts registers its ducking here (keeps this module free of the music import cycle). */
+export function setStingerDuck(fn: (depth?: number, seconds?: number) => void): void {
+  duck = fn;
+}
+
+export function playStinger(kind: StingerKind): void {
+  if (useUiStore.getState().muted) return;
+  duck?.(kind === 'research' || kind === 'event' ? 0.6 : 0.3, kind === 'nuclear' ? 5 : 2.5);
+  switch (kind) {
+    case 'nuclear':
+      playSound('nuclear');
+      // A thin, dissonant high tritone that slowly falls away above the sub swell.
+      tone(N.A5, 3.5, 'sine', 0.025, -60, 0.6, 1.2);
+      tone(622.25, 3.5, 'sine', 0.02, -45, 0.7, 1.2);
+      break;
+    case 'war':
+      // Low open fifths swelling like brass, a drum hit, and a minor third answering above.
+      tone(140, 0.5, 'sine', 0.2, -85);
+      tone(N.D2, 2.4, 'triangle', 0.09, 0, 0.02, 0.25);
+      tone(N.A2, 2.4, 'triangle', 0.07, 0, 0.02, 0.25);
+      tone(N.D3, 2.2, 'triangle', 0.06, 0, 0.05, 0.3);
+      tone(N.F4, 1.4, 'triangle', 0.045, 0, 0.55, 0.08);
+      tone(N.D4, 1.8, 'triangle', 0.045, 0, 0.95, 0.08);
+      break;
+    case 'defcon':
+      // Three falling staccato notes over a pulse: the clock ticking toward the brink.
+      tone(N.A4, 0.22, 'triangle', 0.06);
+      tone(N.F4, 0.22, 'triangle', 0.06, 0, 0.26);
+      tone(N.D4, 0.6, 'triangle', 0.065, 0, 0.52);
+      tone(N.D2, 1.2, 'sine', 0.12, 0, 0.52, 0.05);
+      break;
+    case 'capitulation':
+      tone(N.A3, 0.9, 'triangle', 0.06, 0, 0, 0.06);
+      tone(N.D3, 1.8, 'triangle', 0.06, 0, 0.45, 0.1);
+      tone(N.D2, 2, 'sine', 0.1, 0, 0.45, 0.2);
+      break;
+    case 'capture':
+      tone(N.D4, 0.3, 'triangle', 0.05);
+      tone(N.A4, 0.7, 'triangle', 0.05, 0, 0.18);
+      tone(110, 0.4, 'sine', 0.1, -40);
+      break;
+    case 'peace':
+      // D major: a warm resolution, the only major chord in the game's palette.
+      tone(N.D4, 2.4, 'sine', 0.05, 0, 0, 0.3);
+      tone(N.Fs4, 2.4, 'sine', 0.04, 0, 0.12, 0.3);
+      tone(N.A4, 2.4, 'sine', 0.04, 0, 0.24, 0.3);
+      tone(N.D5, 2.2, 'sine', 0.025, 0, 0.36, 0.3);
+      break;
+    case 'research':
+      tone(N.D5, 0.25, 'sine', 0.04);
+      tone(N.F5, 0.25, 'sine', 0.04, 0, 0.09);
+      tone(N.A5, 0.6, 'sine', 0.04, 0, 0.18);
+      break;
+    case 'event':
+      // Two soft bell strikes (fundamental plus a quiet octave).
+      tone(N.A4, 1.2, 'sine', 0.05);
+      tone(N.A5, 0.8, 'sine', 0.015);
+      tone(N.E4, 1.4, 'sine', 0.05, 0, 0.28);
+      tone(659.25, 0.9, 'sine', 0.015, 0, 0.28);
+      break;
+    case 'victory':
+      tone(N.D4, 0.3, 'triangle', 0.06);
+      tone(N.Fs4, 0.3, 'triangle', 0.06, 0, 0.18);
+      tone(N.A4, 0.3, 'triangle', 0.06, 0, 0.36);
+      tone(N.D5, 2.6, 'triangle', 0.06, 0, 0.54, 0.05);
+      tone(N.D3, 2.8, 'sine', 0.08, 0, 0.54, 0.2);
+      tone(N.A3, 2.8, 'sine', 0.05, 0, 0.54, 0.2);
+      break;
+    case 'defeat':
+      tone(N.D5, 0.5, 'triangle', 0.05);
+      tone(N.Bb4, 0.5, 'triangle', 0.05, 0, 0.4);
+      tone(N.G4, 0.5, 'triangle', 0.05, 0, 0.8);
+      tone(N.D4, 3, 'triangle', 0.05, 0, 1.2, 0.1);
+      tone(N.D2, 3.2, 'sine', 0.12, 0, 1.2, 0.3);
       break;
   }
 }

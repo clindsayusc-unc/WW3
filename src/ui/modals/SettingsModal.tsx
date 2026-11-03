@@ -11,9 +11,11 @@ import {
   loadSlot,
   saveSlot,
   deleteSlot,
+  savesLocation,
   type SaveMeta,
 } from '../../state/saves';
 import { loadGame } from '../../state/simBridge';
+import { toggleFullscreen } from '../../state/native';
 import { playSound } from '../audio';
 import { AudioSettingsPanel } from '../AudioSettings';
 import { AccessibilitySettings } from '../AccessibilitySettings';
@@ -27,9 +29,11 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
   const [saves, setSaves] = useState<SaveMeta[]>([]);
   const [name, setName] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
+  const [savesDir, setSavesDir] = useState<string | null>(null);
   const refresh = () => listSaves().then(setSaves);
   useEffect(() => {
     void refresh();
+    void savesLocation().then(setSavesDir);
   }, []);
   return (
     <Modal icon={<ScreenIcon id="settings" />} title="Settings" subtitle="Accessibility, graphics, audio and saves." testId="modal-settings">
@@ -43,6 +47,14 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
         </button>
         <button className={`chip toggle ${ui.showClouds ? 'on' : ''}`} onClick={ui.toggleClouds}>
           Clouds
+        </button>
+        <button
+          className="chip"
+          onClick={() => void toggleFullscreen().catch(() => undefined)}
+          data-tip="Fill the screen with the game, or return to a window (F11, or Ctrl ⌘ F on a Mac)."
+          data-testid="fullscreen-toggle"
+        >
+          Fullscreen (F11)
         </button>
         <button
           className={`chip toggle ${ui.showChokepoints ? 'on' : ''}`}
@@ -105,6 +117,11 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
             }}
           />
         </div>
+      )}
+      {savesDir && (
+        <p className="hint" data-testid="saves-dir">
+          Save files are kept in <code>{savesDir}</code>.
+        </p>
       )}
       <div className="save-list">
         {saves.length === 0 && <p className="hint">No saves yet. The game autosaves every turn.</p>}

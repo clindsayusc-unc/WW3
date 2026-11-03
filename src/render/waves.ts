@@ -84,6 +84,6 @@ export function makeWaveNormal(): DataTexture {
   t.generateMipmaps = true;
   t.anisotropy = 4;
   t.needsUpdate = true;
-  noteTexture(SIZE, SIZE, true);
+  noteTexture(SIZE, SIZE, true, 4, 'waves');
   return t;
 }

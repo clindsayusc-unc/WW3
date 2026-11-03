@@ -1,0 +1,48 @@
+name: native
+
+# Builds the native macOS app (Apple Silicon) with Tauri v2, uploads the unsigned .app and .dmg,
+# then verifies the packaged app: launch, 20 unattended turns, peak memory under 1.5 GB (D-083).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  macos:
+    runs-on: macos-14 # Apple Silicon (M1) runner
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+      - name: Build World War 3.app and .dmg (unsigned, ad-hoc)
+        run: npm run tauri build -- --target aarch64-apple-darwin
+      - name: Collect bundles
+        run: |
+          mkdir -p out
+          B=src-tauri/target/aarch64-apple-darwin/release/bundle
+          ditto -c -k --keepParent "$B/macos/World War 3.app" "out/World War 3.app.zip"
+          cp "$B"/dmg/*.dmg out/
+          ls -la out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ww3-macos-arm64
+          path: out/
+      - name: Verify the packaged app (20 turns, memory budget)
+        run: |
+          scripts/native-verify.sh "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/World War 3.app" 20
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-verify-macos
+          path: docs/native-verify-darwin.json
+          if-no-files-found: ignore

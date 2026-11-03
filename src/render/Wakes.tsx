@@ -20,6 +20,7 @@ import { buildStacks } from './Units';
 import { useLevels } from './levels';
 import { useGameStore } from '../state/gameStore';
 import { loadWorld } from '../sim/world';
+import { useDispose } from './useDispose';
 
 const world = loadWorld();
 const ANIM_SECONDS = 1.4;
@@ -103,6 +104,7 @@ export function Wakes() {
       }),
     [tex],
   );
+  useDispose(material, tex);
   const mesh = useMemo(() => {
     const m = new Mesh(new BufferGeometry(), material);
     m.renderOrder = 4;

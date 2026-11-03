@@ -3,11 +3,48 @@ import { useUiStore } from '../state/uiStore';
 import { applyVolumes, playSound, saveAudioSettings } from './audio';
 import { Stat } from './Stat';
 import type { AudioSettings as Settings } from './audioSettings';
+import { useEffect, useState } from 'react';
+import { nowPlaying, PLAYLISTS, type Track } from './music';
+
+/** Credit line for the track playing now (CC0, but credit is courteous and asked for). */
+function NowPlaying({ on }: { on: boolean }) {
+  const [track, setTrack] = useState<Track | null>(null);
+  useEffect(() => {
+    const id = window.setInterval(() => setTrack(nowPlaying()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const all = PLAYLISTS.flat()
+    .map((t) => `“${t.title}” by ${t.author}`)
+    .join(', ');
+  return (
+    <span
+      className="hint"
+      data-testid="now-playing"
+      data-tip={`Score: ${all}. All CC0 from OpenGameArt.org.`}
+    >
+      {on && track
+        ? `♪ “${track.title}” — ${track.author} (CC0)`
+        : 'Score: CC0 tracks from OpenGameArt.org'}
+    </span>
+  );
+}
 
 const SLIDERS: { key: 'master' | 'effects' | 'music'; label: string; tip: string }[] = [
-  { key: 'master', label: 'Master', tip: 'Overall volume. The mute switch sets it to silence without losing this value.' },
-  { key: 'effects', label: 'Effects', tip: 'Interface clicks, orders, alerts, battles. All synthesised from clean tones; no noise.' },
-  { key: 'music', label: 'Music', tip: 'The ambient bed: slow minor-key pads, a sub bass and sparse piano notes, generated live. Tension rises slightly at DEFCON 2 and 1.' },
+  {
+    key: 'master',
+    label: 'Master',
+    tip: 'Overall volume. The mute switch sets it to silence without losing this value.',
+  },
+  {
+    key: 'effects',
+    label: 'Effects',
+    tip: 'Interface clicks, orders, battles and the alert stingers (war, DEFCON, capitulation, peace, research, events). All synthesised from clean tones; the score ducks under the stingers.',
+  },
+  {
+    key: 'music',
+    label: 'Music',
+    tip: 'The ambient score: CC0 tracks (credits in Settings and docs/DATA_SOURCES.md) that follow your DEFCON — calm at 5 to 3, tense at 2, crisis at 1 — crossfading as tension changes.',
+  },
 ];
 
 export function AudioSettingsPanel() {
@@ -49,6 +86,7 @@ export function AudioSettingsPanel() {
         >
           Music {audio.musicOn ? 'on' : 'off'}
         </button>
+        <NowPlaying on={audio.musicOn} />
         <button
           className={`chip toggle ${!muted ? 'on' : ''}`}
           data-testid="toggle-mute"

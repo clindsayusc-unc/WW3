@@ -21,6 +21,7 @@ import { useUiStore } from '../state/uiStore';
 import { alliesOf, atWar } from '../sim/query';
 import { estimateStack } from '../sim/intel';
 import type { GameState, Unit } from '../sim/types';
+import { useDispose } from './useDispose';
 
 const world = loadWorld();
 const MAX_INSTANCES = 1500;
@@ -158,6 +159,7 @@ export function Units() {
       }),
     [atlas],
   );
+  useDispose(material);
   const mesh = useMemo(() => {
     const geo = new PlaneGeometry(1, 1);
     geo.setAttribute('iPos', new InstancedBufferAttribute(new Float32Array(MAX_INSTANCES * 3), 3));

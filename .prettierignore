@@ -7,3 +7,5 @@ data/regions.topo.json
 data/regions.meta.json
 data/cities.json
 docs/perf-last-run.json
+src-tauri/target
+src-tauri/gen

@@ -16,7 +16,7 @@
  *   - data/cities.json         national capitals and major cities with region ids
  *   - public/textures/regions-id.png   4096×2048 equirectangular region-ID map
  *                              (R = id & 255, G = id >> 8, B = 255 on land, 0 on water)
- *   - public/textures/ocean-mask.png   2048×1024 grayscale land/ocean mask
+ *   - assets/textures/ocean-mask.png   2048×1024 grayscale land/ocean mask
  *
  * Deterministic: the only randomness is a seeded mulberry32 used for sea-zone seeding.
  */
@@ -1059,7 +1059,7 @@ async function main(): Promise<void> {
   await sharp(mask, { raw: { width: W, height: H, channels: 1 } })
     .resize(W / 2, H / 2, { kernel: 'lanczos3' })
     .png({ compressionLevel: 9 })
-    .toFile(join(ROOT, 'public', 'textures', 'ocean-mask.png'));
+    .toFile(join(ROOT, 'assets', 'textures', 'ocean-mask.png'));
 
   const source =
     'Natural Earth 1:10m Admin 1 – States, Provinces and 1:50m Admin 0 – Countries and 1:10m Populated Places (public domain, naturalearthdata.com, v5.1.1 via github.com/nvkelso/natural-earth-vector); terrain guess from NASA Blue Marble GEBCO topography (public domain). Regions merged by scripts/build-map.ts.';

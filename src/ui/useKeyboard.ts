@@ -3,12 +3,19 @@ import { MAP_MODES, useUiStore } from '../state/uiStore';
 import { useGameStore } from '../state/gameStore';
 import { dispatch, undoLast } from '../state/simBridge';
 import { playSound } from './audio';
+import { toggleFullscreen } from '../state/native';
 
 /** Global shortcuts (listed in src/ui/shortcuts.ts and the `?` overlay, D-080). */
 export function useKeyboard(): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const ui = useUiStore.getState();
+      // Fullscreen works on every screen: F11, or Ctrl+⌘+F as in every Mac app (D-083).
+      if (e.key === 'F11' || (e.ctrlKey && e.metaKey && e.key.toLowerCase() === 'f')) {
+        e.preventDefault();
+        void toggleFullscreen().catch(() => undefined);
+        return;
+      }
       if (ui.screen !== 'game') return;
       const target = e.target as HTMLElement | null;
       if (

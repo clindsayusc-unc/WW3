@@ -22,6 +22,7 @@ import { useGameStore } from '../state/gameStore';
 import { loadWorld } from '../sim/world';
 import { atWar } from '../sim/query';
 import type { GameState } from '../sim/types';
+import { useDispose } from './useDispose';
 
 const world = loadWorld();
 
@@ -173,6 +174,7 @@ export function Arrows() {
       }),
     [],
   );
+  useDispose(material);
   const mesh = useMemo(() => {
     const m = new Mesh(new BufferGeometry(), material);
     m.renderOrder = 4;

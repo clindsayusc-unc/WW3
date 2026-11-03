@@ -22,6 +22,7 @@ import { burningRegions } from './palette';
 import { useGameStore } from '../state/gameStore';
 import { loadWorld } from '../sim/world';
 import { SUN } from './sun';
+import { useDispose } from './useDispose';
 
 const world = loadWorld();
 
@@ -224,6 +225,7 @@ export function Fires() {
       }),
     [sun, smokeTex],
   );
+  useDispose(fireMat, smokeMat, smokeTex);
   const fires = useMemo(() => {
     const p = new Points(new BufferGeometry(), fireMat);
     p.renderOrder = 5;

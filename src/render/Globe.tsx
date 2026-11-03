@@ -12,7 +12,13 @@ import {
   ShaderMaterial,
   SRGBColorSpace,
   Texture,
-  TextureLoader,
+  CompressedTexture,
+  type CompressedTextureMipmap,
+  DataTexture,
+  NoColorSpace,
+  RedFormat,
+  UnsignedByteType,
+  type WebGLRenderer,
   Vector2,
   Vector3,
   Vector4,
@@ -30,6 +36,8 @@ import { createCountryIndex, createPalette, createRegionAttr, type RegionIdMap }
 import { fillCountryIndex, fillPalette, fillRegionAttr } from './palette';
 import { latLonToVec3, sunDirection } from './geo';
 import { atmosphereTables, atmosphereUniforms, RT, type AtmosphereTables } from './atmosphere';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import type { HeightMap } from './terrainHeight';
 import { makeWaveNormal } from './waves';
 import { terrainDisplacement } from './displacement';
 import { useLevels } from './levels';
@@ -37,7 +45,7 @@ import { useGameStore } from '../state/gameStore';
 import { useUiStore } from '../state/uiStore';
 import { loadWorld } from '../sim/world';
 import { generateStorms } from '../sim/storms';
-import { noteTexture } from './perf';
+import { forgetTexture, noteTexture, noteTextureBytes } from './perf';
 import { SUN } from './sun';
 
 export interface GlobeTextures {
@@ -51,46 +59,123 @@ export interface GlobeTextures {
   atmosphere: AtmosphereTables;
 }
 
-const loader = new TextureLoader();
-function tex(url: string, srgb: boolean, aniso: number): Promise<Texture> {
-  return new Promise((resolve, reject) =>
-    loader.load(
-      url,
-      (t) => {
-        t.colorSpace = srgb ? SRGBColorSpace : t.colorSpace;
-        t.wrapS = RepeatWrapping;
-        t.minFilter = LinearMipmapLinearFilter;
-        t.magFilter = LinearFilter;
-        t.anisotropy = aniso;
-        t.generateMipmaps = true;
-        noteTexture(t.image.width, t.image.height, true);
-        resolve(t);
-      },
-      undefined,
-      () => reject(new Error(`texture ${url}`)),
-    ),
-  );
+/**
+ * Basis Universal transcoder (three/examples, MIT). With no transcoder path set, the loader
+ * resolves its bundled JS + WASM through `import.meta.url`, so Vite ships them in dist/assets and
+ * the native app works offline.
+ */
+let ktx2: KTX2Loader | null = null;
+function ktx2Loader(gl: WebGLRenderer): KTX2Loader {
+  if (!ktx2) ktx2 = new KTX2Loader().setWorkerLimit(2).detectSupport(gl);
+  return ktx2;
 }
 
-export async function loadGlobeTextures(aniso: number): Promise<GlobeTextures> {
-  const [day, night, normal, clouds, bathy, height] = await Promise.all([
-    tex('/textures/earth-day.jpg', true, aniso),
-    tex('/textures/earth-night.jpg', true, aniso),
-    tex('/textures/earth-normal.jpg', false, aniso),
-    tex('/textures/earth-clouds.jpg', false, 2),
-    tex('/textures/earth-bathy.jpg', false, 2),
-    tex('/textures/earth-height.jpg', false, 2),
-  ]);
+/** Sum of the transcoded mip levels: exactly what is uploaded to the GPU. */
+function mipBytes(t: CompressedTexture): number {
+  let b = 0;
+  for (const m of t.mipmaps as { data: ArrayBufferView }[]) b += m.data.byteLength;
+  return b;
+}
+
+/**
+ * Loads a KTX2 texture (D-082). `reduce` drops the top mip level (a quarter of the memory) for
+ * the Low preset. After the upload the CPU copy of the mip chain is released.
+ */
+async function ktx(
+  gl: WebGLRenderer,
+  name: string,
+  srgb: boolean,
+  reduce: boolean,
+): Promise<CompressedTexture> {
+  const t = (await ktx2Loader(gl).loadAsync(
+    `${import.meta.env.BASE_URL}textures/${name}.ktx2`,
+  )) as CompressedTexture;
+  const mips = t.mipmaps as CompressedTextureMipmap[];
+  if (reduce && mips.length > 1 && mips[0]!.width >= 4096) {
+    t.mipmaps = mips.slice(1);
+    t.image = { width: mips[1]!.width, height: mips[1]!.height } as typeof t.image;
+  }
+  t.colorSpace = srgb ? SRGBColorSpace : NoColorSpace;
+  t.wrapS = RepeatWrapping;
+  t.minFilter = LinearMipmapLinearFilter;
+  t.magFilter = LinearFilter;
+  t.name = name;
+  const key = `${name}-${t.uuid}`;
+  noteTextureBytes(key, mipBytes(t));
+  t.onUpdate = () => {
+    for (const m of t.mipmaps as { data: ArrayBufferView }[]) m.data = new Uint8Array(0);
+  };
+  t.addEventListener('dispose', () => forgetTexture(key));
+  return t;
+}
+
+/** The height map as a one-channel texture from the CPU copy (no second decode, 1 byte/texel). */
+function heightTexture(map: HeightMap): DataTexture {
+  const t = new DataTexture(map.data, map.width, map.height, RedFormat, UnsignedByteType);
+  t.wrapS = RepeatWrapping;
+  t.minFilter = LinearMipmapLinearFilter;
+  t.magFilter = LinearFilter;
+  t.generateMipmaps = true;
+  t.flipY = true;
+  t.unpackAlignment = 1;
+  t.needsUpdate = true;
+  const key = `height-${t.uuid}`;
+  noteTexture(map.width, map.height, true, 1, key);
+  t.addEventListener('dispose', () => forgetTexture(key));
+  return t;
+}
+
+/**
+ * Loads the globe's textures. `reduced` (Low preset) halves the 4096-px maps. Bathymetry and the
+ * height map are 2048 px already.
+ */
+export async function loadGlobeTextures(
+  gl: WebGLRenderer,
+  heightMap: HeightMap,
+  reduced: boolean,
+): Promise<GlobeTextures> {
+  const [day, night, normal, clouds, bathy] = await Promise.all([
+    ktx(gl, 'earth-day', true, reduced),
+    ktx(gl, 'earth-night', true, reduced),
+    ktx(gl, 'earth-normal', false, reduced),
+    ktx(gl, 'earth-clouds', false, reduced),
+    ktx(gl, 'earth-bathy', false, reduced),
+  ]).finally(() => {
+    // The transcoder workers each keep a WASM heap sized for a 4096-px texture; nothing else is
+    // loaded until the preset changes, so end them now (a new loader is made on demand).
+    ktx2?.dispose();
+    ktx2 = null;
+  });
   return {
     day,
     night,
     normal,
     clouds,
     bathy,
-    height,
-    waves: makeWaveNormal(),
+    height: heightTexture(heightMap),
+    waves: (waves ??= makeWaveNormal()),
     atmosphere: atmosphereTables(),
   };
+}
+
+let waves: Texture | null = null;
+
+/** Frees every GPU texture of a set (used when the Low preset swaps resolutions). */
+export function disposeGlobeTextures(t: GlobeTextures): void {
+  // The wave normal map and the atmosphere tables are shared by every set and stay resident.
+  for (const tex of [t.day, t.night, t.normal, t.clouds, t.bathy, t.height]) tex.dispose();
+}
+
+/** Applies the preset's anisotropic filtering to the colour maps (no reload needed). */
+export function setAnisotropy(t: GlobeTextures, aniso: number): void {
+  for (const tex of [t.day, t.night, t.normal]) {
+    if (tex.anisotropy !== aniso) {
+      tex.anisotropy = aniso;
+      // Compressed textures re-upload their (released) mip data on needsUpdate; anisotropy is a
+      // sampler parameter, so only refresh the uncompressed ones.
+      if (!(tex as CompressedTexture).isCompressedTexture) tex.needsUpdate = true;
+    }
+  }
 }
 
 interface Props {
@@ -220,6 +305,18 @@ export function Globe({ textures, idMap, segments }: Props) {
   const clouds = useMemo(() => cloudMaterial(0, 0.88), [textures, sun]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const clouds2 = useMemo(() => cloudMaterial(1, 0.55), [textures, sun]);
+
+  // Materials made here are not owned by React: free their GPU programs and uniforms when they
+  // are replaced (a texture-set swap) or the globe unmounts (D-082).
+  useEffect(() => () => material.dispose(), [material]);
+  useEffect(() => () => atmosphere.dispose(), [atmosphere]);
+  useEffect(
+    () => () => {
+      clouds.dispose();
+      clouds2.dispose();
+    },
+    [clouds, clouds2],
+  );
 
   // Recompile when an effect level changes (rare: settings or the auto-scaler).
   useEffect(() => {

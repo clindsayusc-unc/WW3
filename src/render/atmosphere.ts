@@ -221,7 +221,7 @@ export function atmosphereTables(): AtmosphereTables {
     t.minFilter = LinearFilter;
     t.generateMipmaps = false;
     t.needsUpdate = true;
-    noteTexture(w, h, false);
+    noteTexture(w, h, false, 8, `atmosphere-${w}x${h}`);
     return t;
   };
   tables = {
