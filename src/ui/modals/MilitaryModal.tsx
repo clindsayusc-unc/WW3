@@ -4,6 +4,7 @@
  */
 import { useMemo, useState } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { dispatch } from '../../state/simBridge';
@@ -116,7 +117,7 @@ export function MilitaryModal() {
     playSound('order');
   };
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="military" />}
       title="Military"
       subtitle={`${mine.length} formations, upkeep ${formatMoney(unitUpkeep(world, game, me))} per month. ${my.missiles} missiles, ${my.satellites} satellites.`}
       wide
@@ -332,7 +333,7 @@ export function MilitaryModal() {
             </div>
             <div className="row">
               <Stat label="Satellites" value={`${my.satellites}`} tooltip="Reconnaissance satellites. 1–2 lift your global intelligence by one level, 5 or more by two. Orbital debris degrades and destroys them." />
-              <Stat label="Debris" value={`${Math.round(game.debris)}`} tooltip="Orbital debris index 0–100: every ASAT strike adds 12 per satellite destroyed; it decays by 1 a month and each month destroys a satellite with probability debris ÷ 400 per satellite." accent={game.debris >= 30 ? '#f87171' : undefined} />
+              <Stat label="Debris" value={`${Math.round(game.debris)}`} tooltip="Orbital debris index 0–100: every ASAT strike adds 12 per satellite destroyed; it decays by 1 a month and each month destroys a satellite with probability debris ÷ 400 per satellite." accent={game.debris >= 30 ? 'var(--bad)' : undefined} />
             </div>
             <div className="choke-actions">
               <button className="btn small" disabled={!!canLaunchSatellite(game, me)} data-testid="launch-satellite" data-tip={canLaunchSatellite(game, me) ?? `Launch a satellite for ${formatMoney(satelliteCost(game, me))} (cheaper with Reusable Launch Cadence).`} onClick={() => op({ type: 'launchSatellite' })}>
@@ -348,7 +349,7 @@ export function MilitaryModal() {
           <div className="row wrap">
             <Stat label="Satellites" value={`${my.satellites}`} tooltip="Your constellation; see Operations to launch more." />
             <Stat label="Effective" value={effectiveSatellites(game, me).toFixed(1)} tooltip="Satellites after orbital debris degrades their sensors (−40 % at a debris index of 60 or more)." />
-            <Stat label="Global bonus" value={`+${globalIntelBonus(game, me)}`} tooltip="Intelligence levels added everywhere: satellites (+1 at 1.5, +2 at 5), ISR technologies (up to +2), minus 2 while cyber-blinded." accent={my.blinded > 0 ? '#f87171' : undefined} />
+            <Stat label="Global bonus" value={`+${globalIntelBonus(game, me)}`} tooltip="Intelligence levels added everywhere: satellites (+1 at 1.5, +2 at 5), ISR technologies (up to +2), minus 2 while cyber-blinded." accent={my.blinded > 0 ? 'var(--bad)' : undefined} />
             {my.blinded > 0 && (
               <span className="tag" data-tip="An enemy cyber operation is jamming your satellite downlinks.">
                 ⚠ Blinded {my.blinded} mo

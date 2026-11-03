@@ -1,5 +1,6 @@
 /** Battle report (D-059): forces, losses and the full modifier breakdown of one battle. */
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { loadWorld, nationName } from '../../sim/world';
@@ -60,7 +61,7 @@ export function BattleReportModal() {
   const report = game.battleReports.find((b) => b.id === id) ?? game.battleReports[0];
   if (!report) {
     return (
-      <Modal title="Battle report" testId="modal-battle">
+      <Modal icon={<ScreenIcon id="battle" />} title="Battle report" testId="modal-battle">
         <p className="hint">No battles were fought last month.</p>
       </Modal>
     );
@@ -68,7 +69,7 @@ export function BattleReportModal() {
   const meta = world.regions.get(report.region)!;
   const others = game.battleReports.filter((b) => b.id !== report.id);
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="battle" />}
       title={`${report.domain === 'sea' ? 'Naval battle in the' : 'Battle of'} ${meta.name}`}
       subtitle={`${formatMonth(dateForTurn(report.turn))} · ${OUTCOME[report.outcome].label}`}
       wide
@@ -111,7 +112,7 @@ export function BattleReportModal() {
           label="Outcome"
           value={OUTCOME[report.outcome].label}
           tooltip={OUTCOME[report.outcome].tip}
-          accent={report.outcome === 'attackerWins' ? '#f87171' : report.outcome === 'defenderHolds' ? '#4ade80' : undefined}
+          accent={report.outcome === 'attackerWins' ? 'var(--bad)' : report.outcome === 'defenderHolds' ? 'var(--good)' : undefined}
         />
         <Stat
           label="Odds"
@@ -123,7 +124,7 @@ export function BattleReportModal() {
             label="Air superiority"
             value={`${Math.round(report.airSuperiority * 100)}%`}
             tooltip="Attacker's share of the air over the battle: fighters and drones on superiority, carriers and air-defence brigades in range, cut by terrain and weather. ×0.85 at 0 %, ×1.15 at 100 % for the attack; mirrored for the defence."
-            accent={report.airSuperiority >= 0.6 ? '#f87171' : report.airSuperiority <= 0.4 ? '#4ade80' : undefined}
+            accent={report.airSuperiority >= 0.6 ? 'var(--bad)' : report.airSuperiority <= 0.4 ? 'var(--good)' : undefined}
           />
         )}
         {report.captured && (

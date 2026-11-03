@@ -141,7 +141,7 @@ export function BlocsPanel({ game }: { game: GameState }) {
                   label="Cohesion"
                   value={`${Math.round(b.cohesion)}`}
                   tooltip={`0–100: relations among the largest members, a shared adversary, wars between members, recent departures and transactional leaders. Drifting toward ${Math.round(target)}. Above 45 summits warm relations; below 40 unhappy members may walk out.`}
-                  accent={b.cohesion < 40 ? '#f87171' : b.cohesion >= 65 ? '#4ade80' : undefined}
+                  accent={b.cohesion < 40 ? 'var(--bad)' : b.cohesion >= 65 ? 'var(--good)' : undefined}
                 />
               </div>
               <div className="dim">{BLOC_NAMES[id]}</div>
@@ -274,7 +274,7 @@ export function UnPanel({ game }: { game: GameState }) {
           label="Forecast"
           value={`${yes}/15${vetoes.length ? ' · veto' : ''}`}
           tooltip={`Projected yes votes from each member's opinion of you and of the target, the target's legitimacy, bloc solidarity and non-alignment.${vetoes.length ? ` Expected veto: ${vetoes.map((v) => nationName(world, v.m)).join(', ')}.` : ''} Nine and no veto needed.`}
-          accent={vetoes.length || yes < 9 ? '#f87171' : '#4ade80'}
+          accent={vetoes.length || yes < 9 ? 'var(--bad)' : 'var(--good)'}
         />
         <button
           className="btn"
@@ -332,7 +332,7 @@ export function LeaderIntel({ game, iso }: { game: GameState; iso: Iso3 }) {
           label="Their opinion of you"
           value={`${Math.round(opinion)}`}
           tooltip="Relations plus everything this leader remembers about you (favours minus grievances). This is what the AI uses to judge your deals and votes."
-          accent={opinion < -30 ? '#f87171' : opinion > 30 ? '#4ade80' : undefined}
+          accent={opinion < -30 ? 'var(--bad)' : opinion > 30 ? 'var(--good)' : undefined}
         />
         <Stat label="Legitimacy" value={`${Math.round(n.legitimacy)}`} tooltip="Their international standing, 0–100 (UN votes, aggression, vetoes). Low legitimacy makes their resolutions fail and their deals harder." />
       </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { dispatch } from '../../state/simBridge';
 import { loadWorld, nationName, type TechMeta } from '../../sim/world';
@@ -19,6 +20,8 @@ const BRANCH = new Map(world.branches.map((b) => [b.id, b]));
 const ERA = new Map(world.eras.map((e) => [e.id, e]));
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 1.6;
+/** Below this zoom the tree text would render under 12 px: it becomes a coloured overview and the hover card carries the text (D-080). */
+const COMPACT_BELOW = 0.95;
 
 type Side = 'queue' | 'espionage' | 'sharing';
 
@@ -46,8 +49,8 @@ export function ResearchModal() {
     const el = viewport.current;
     if (!el) return;
     setSize({ w: el.clientWidth, h: el.clientHeight });
-    // Open at a readable zoom on the present (era I–II); the fit button shows the whole tree.
-    setView({ x: 0, y: 0, z: Math.max(fitZoom(el.clientWidth, el.clientHeight), 0.62) });
+    // Open at full size on the present (era I–II); the fit button shows the whole tree as an overview.
+    setView({ x: 0, y: 0, z: 1 });
     const ro = new ResizeObserver(() => setSize({ w: el.clientWidth, h: el.clientHeight }));
     ro.observe(el);
     return () => ro.disconnect();
@@ -121,7 +124,7 @@ export function ResearchModal() {
   })();
 
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="research" />}
       title="Research"
       subtitle={`${rp.toFixed(0)} research points a month. ${current ? `Researching ${current.name}: ${Math.round(me.researchPoints)}/${currentCost} RP, about ${months(currentCost - me.researchPoints, rp)} months left.` : 'Click any technology to research it — missing prerequisites are queued automatically.'}`}
       wide
@@ -132,7 +135,12 @@ export function ResearchModal() {
           <Stat
             label="Rate"
             value={`${rp.toFixed(0)} RP/mo`}
-            tooltip={`10 × √(research spending of $${me.finances.research.toFixed(1)} bn a month) = ${rate.base.toFixed(0)}, then ${rate.factors.map((f) => `${f.label} ×${f.factor.toFixed(2)}`).join(', ') || 'no modifiers'}.`}
+            tooltip={`Research points a month: 10 × √(research spending of $${me.finances.research.toFixed(1)} bn a month), then each factor below.`}
+            breakdown={[
+              { label: 'Spending', value: `${rate.base.toFixed(0)} RP`, tip: 'Raise the research share of the budget to go faster; points grow with the square root of spending.' },
+              ...rate.factors.map((f) => ({ label: f.label, value: `×${f.factor.toFixed(2)}`, tip: f.detail, tone: f.factor < 0.995 ? ('bad' as const) : f.factor > 1.005 ? ('good' as const) : ('neutral' as const) })),
+            ]}
+            testId="research-rate"
           />
           <Stat label="Banked" value={`${Math.round(me.researchPoints)} RP`} tooltip="Points accumulate while no project is selected and carry over between projects." />
           <Stat label="Fielded" value={`${me.techs.length}/${world.techList.length}`} tooltip="Technologies your nation fields, including those it started with in January 2027." />
@@ -180,7 +188,7 @@ export function ResearchModal() {
             onPointerUp={onUp}
             data-testid="tech-tree"
           >
-            <div className="tech-canvas" style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.z})`, width: LAYOUT.width, height: LAYOUT.height }}>
+            <div className={`tech-canvas ${view.z < COMPACT_BELOW ? 'compact' : ''}`} style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.z})`, width: LAYOUT.width, height: LAYOUT.height }}>
               {LAYOUT.eras.map((e, i) => {
                 const meta = ERA.get(e.era)!;
                 return (
@@ -462,7 +470,7 @@ function QueuePanel({ game, rp, rate }: { game: GameState; rp: number; rate: Ret
       <div className="factor-list">
         <Stat label="Spending" value={`${rate.base.toFixed(0)} RP`} tooltip={`10 × √(monthly research spending, $${me.finances.research.toFixed(1)} bn). Raise the research share of the budget to go faster.`} />
         {rate.factors.map((f) => (
-          <Stat key={f.label} label={f.label} value={`×${f.factor.toFixed(2)}`} tooltip={f.detail} accent={f.factor < 0.995 ? '#f87171' : f.factor > 1.005 ? '#4ade80' : undefined} />
+          <Stat key={f.label} label={f.label} value={`×${f.factor.toFixed(2)}`} tooltip={f.detail} accent={f.factor < 0.995 ? 'var(--bad)' : f.factor > 1.005 ? 'var(--good)' : undefined} />
         ))}
         <Stat
           label="Export controls"

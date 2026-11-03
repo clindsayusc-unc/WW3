@@ -1,5 +1,6 @@
 /** Escalation ladder (D-076): global tension gauge, the seven rungs, DEFCON and deterrence per power. */
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { loadWorld, nationName, traitsOf } from '../../sim/world';
 import {
@@ -76,7 +77,7 @@ export function EscalationModal() {
   const rung = escalationRung(world, game);
   const me = game.nations[game.player]!;
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="escalation" />}
       title="Escalation"
       subtitle={`Global tension ${Math.round(game.globalTension)}. ${ESCALATION_LADDER[rung.index]!.name}: ${rung.why}`}
       wide
@@ -98,7 +99,7 @@ export function EscalationModal() {
               label="Detonations"
               value={`${game.detonations}`}
               tooltip="Nuclear detonations so far. Eight is a full exchange: the game ends for everyone."
-              accent={game.detonations ? '#f87171' : undefined}
+              accent={game.detonations ? 'var(--bad)' : undefined}
             />
             <Stat
               label="Cooling"
@@ -200,9 +201,9 @@ export function EscalationModal() {
                     tooltip={`${ss.survivable} warheads would survive a disarming first strike (90 % at sea, 30 % on land). ≥ 50 is an assured second strike, ≥ 10 a limited one. Enemy missile defence reduces what gets through.`}
                     accent={
                       ss.status === 'assured'
-                        ? '#4ade80'
+                        ? 'var(--good)'
                         : ss.status === 'limited'
-                          ? '#fbbf24'
+                          ? 'var(--warn)'
                           : undefined
                     }
                     inline
@@ -222,7 +223,7 @@ export function EscalationModal() {
                         ? `Leader's nuclear threshold ${t.nuclearThreshold}/100 (higher is safer). ${d.reason} The AI considers use only at DEFCON 1 when desperation (lost territory, a lost capital, nuclear attack) passes its threshold, raised by 20 against an assured enemy second strike.`
                         : 'Nuclear release requires DEFCON 1 and two confirmations.'
                     }
-                    accent={d?.consider ? '#f87171' : undefined}
+                    accent={d?.consider ? 'var(--bad)' : undefined}
                     inline
                   />
                 </div>

@@ -3,8 +3,15 @@ import type { RegionId, ResourceId } from '../sim/types';
 import type { EffectKey, EffectLevels, Level } from '../render/quality';
 import { levelsForPreset } from '../render/quality';
 import { DEFAULT_AUDIO, type AudioSettings } from '../ui/audioSettings';
+import { loadPrefs, savePrefs, clampScale, type UiPrefs } from '../ui/prefs';
 
 export type Screen = 'menu' | 'game';
+/** Tutorial progress (D-080): the current step and the game turn it began on. */
+export interface TutorialState {
+  active: boolean;
+  step: number;
+  startedTurn: number;
+}
 export type DiplomacyTab = 'nations' | 'negotiate' | 'dispatches' | 'blocs' | 'un';
 export type Modal =
   | null
@@ -21,6 +28,7 @@ export type Modal =
   | 'economy'
   | 'escalation'
   | 'news'
+  | 'shortcuts'
   | 'end';
 export type MapMode =
   | 'political'
@@ -149,6 +157,12 @@ interface UiStore {
   showChokepoints: boolean;
   cameraDistance: number;
   fps: number;
+  /** Readability and onboarding preferences (D-080). */
+  prefs: UiPrefs;
+  /** Tutorial progress: active flag and the index of the current step (D-080). */
+  tutorial: TutorialState;
+  setPrefs: (patch: Partial<UiPrefs>) => void;
+  setTutorial: (patch: Partial<TutorialState>) => void;
   setScreen: (s: Screen) => void;
   setModal: (m: Modal) => void;
   setMapMode: (m: MapMode) => void;
@@ -205,6 +219,16 @@ export const useUiStore = create<UiStore>((set) => ({
   showChokepoints: true,
   cameraDistance: 3,
   fps: 60,
+  prefs: loadPrefs(),
+  tutorial: { active: false, step: 0, startedTurn: 0 },
+  setPrefs: (patch) =>
+    set((s) => {
+      const prefs = { ...s.prefs, ...patch };
+      prefs.uiScale = clampScale(prefs.uiScale);
+      savePrefs(prefs);
+      return { prefs };
+    }),
+  setTutorial: (patch) => set((s) => ({ tutorial: { ...s.tutorial, ...patch } })),
   setScreen: (screen) => set({ screen }),
   setModal: (modal) => set({ modal }),
   setMapMode: (mapMode) => set({ mapMode }),

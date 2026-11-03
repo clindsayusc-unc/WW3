@@ -797,9 +797,17 @@ export type WorkerRequest =
   | { readonly kind: 'new'; readonly options: NewGameOptions }
   | { readonly kind: 'load'; readonly state: GameState }
   | { readonly kind: 'command'; readonly command: Command }
-  | { readonly kind: 'odds'; readonly unitIds: number[]; readonly target: RegionId };
+  | { readonly kind: 'odds'; readonly unitIds: number[]; readonly target: RegionId }
+  /** Restore the state before the last undoable order of this turn (D-080). */
+  | { readonly kind: 'undo' };
 
 export type WorkerResponse =
-  | { readonly kind: 'state'; readonly state: GameState; readonly ms: number }
+  | {
+      readonly kind: 'state';
+      readonly state: GameState;
+      readonly ms: number;
+      /** Orders that can still be undone this turn, newest last (labels for the UI). */
+      readonly undo: readonly string[];
+    }
   | { readonly kind: 'odds'; readonly report: OddsReport }
   | { readonly kind: 'error'; readonly message: string };

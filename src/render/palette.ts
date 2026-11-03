@@ -85,6 +85,35 @@ function write(data: Uint8Array, id: number, color: Color, alpha: number): void 
   data[i + 3] = Math.round(Math.min(1, Math.max(0, alpha)) * 255);
 }
 
+/**
+ * Colourblind-safe ramps (D-080): viridis for sequential data, blue–grey–orange for relations,
+ * Okabe–Ito hues for categories. Every one stays distinguishable under protanopia,
+ * deuteranopia and tritanopia, and reads by lightness alone.
+ */
+const VIRIDIS = ['#440154', '#3b528b', '#21918c', '#5ec962', '#fde725'].map((h) => new Color(h));
+function viridis(t: number): Color {
+  const x = Math.min(1, Math.max(0, t)) * (VIRIDIS.length - 1);
+  const i = Math.min(VIRIDIS.length - 2, Math.floor(x));
+  return tmp.copy(VIRIDIS[i]!).lerp(VIRIDIS[i + 1]!, x - i);
+}
+const CB_HOSTILE = new Color('#e69f00');
+const CB_NEUTRAL = new Color('#8a8f98');
+const CB_FRIENDLY = new Color('#0072b2');
+const CB_WAR = new Color('#cc79a7');
+function diverging(t: number): Color {
+  return t < 0.5 ? tmp.copy(CB_HOSTILE).lerp(CB_NEUTRAL, t * 2) : tmp.copy(CB_NEUTRAL).lerp(CB_FRIENDLY, (t - 0.5) * 2);
+}
+const CB_BLOCS: Record<string, string> = {
+  NATO: '#0072b2',
+  CSTO: '#d55e00',
+  SCO: '#e69f00',
+  EU: '#f0e442',
+  BRICS: '#009e73',
+  GCC: '#56b4e9',
+  AUKUS: '#cc79a7',
+  Quad: '#cc79a7',
+};
+
 function heat(t: number): Color {
   // dark blue → cyan → yellow → red
   const x = Math.min(1, Math.max(0, t));
@@ -99,8 +128,10 @@ export function fillPalette(
   state: GameState,
   mode: MapMode,
   resource: ResourceId = 'oil',
+  colourblind = false,
 ): void {
   data.fill(0);
+  const ramp = colourblind ? viridis : heat;
   const player = state.player;
   const unitCount = new Map<number, number>();
   for (const u of Object.values(state.units))
@@ -136,7 +167,7 @@ export function fillPalette(
         if (r.sea || !controller) break;
         const blocs = world.nations.get(controller)?.blocs ?? [];
         const hit = BLOC_COLORS.find(([b]) => blocs.includes(b));
-        if (hit) write(data, r.id, tmp.set(hit[1]), 0.6);
+        if (hit) write(data, r.id, tmp.set(colourblind ? CB_BLOCS[hit[0]]! : hit[1]), 0.6);
         else write(data, r.id, tmp.set('#64748b'), 0.25);
         break;
       }
@@ -148,7 +179,8 @@ export function fillPalette(
         }
         const rel = getRelation(world, state, player, controller);
         const t = (rel + 100) / 200;
-        tmp.setRGB(1 - t, t, 0.15);
+        if (colourblind) diverging(t);
+        else tmp.setRGB(1 - t, t, 0.15);
         if (
           isAtWar(state, player) &&
           state.wars.some(
@@ -157,7 +189,7 @@ export function fillPalette(
               (w.defenders.includes(player) && w.attackers.includes(controller)),
           )
         )
-          tmp.set('#ff2d2d');
+          tmp.copy(colourblind ? CB_WAR : new Color('#ff2d2d'));
         write(data, r.id, tmp, 0.6);
         break;
       }
@@ -165,7 +197,7 @@ export function fillPalette(
         if (r.sea) break;
         const g = gdpByRegion.get(r.id) ?? 0;
         const t = g <= 0 ? 0 : Math.min(1, Math.log10(g + 1) / 3.8);
-        write(data, r.id, heat(t), 0.65);
+        write(data, r.id, ramp(t), 0.65);
         break;
       }
       case 'military': {
@@ -175,7 +207,7 @@ export function fillPalette(
           break;
         }
         const t = Math.log(n + 1) / Math.log(maxUnits + 1);
-        write(data, r.id, heat(0.3 + t * 0.7), r.sea ? 0.55 : 0.7);
+        write(data, r.id, ramp(0.3 + t * 0.7), r.sea ? 0.55 : 0.7);
         break;
       }
       case 'resources': {
@@ -184,13 +216,14 @@ export function fillPalette(
         if (r.sea || !controller) break;
         const b = state.nations[controller]?.resources?.[resource];
         if (!b || b.demand <= 0) break;
-        if (b.satisfaction < 0.9) write(data, r.id, tmp.setRGB(0.95, 0.15, 0.12), 0.55 + 0.3 * (1 - b.satisfaction));
+        if (b.satisfaction < 0.9)
+          write(data, r.id, colourblind ? tmp.copy(CB_WAR) : tmp.setRGB(0.95, 0.15, 0.12), 0.55 + 0.3 * (1 - b.satisfaction));
         else if (b.production >= b.demand) {
           const t = Math.min(1, (b.production / b.demand - 1) / 4);
-          write(data, r.id, tmp.setRGB(0.2, 0.55 + 0.4 * t, 0.3), 0.35 + 0.4 * t);
+          write(data, r.id, colourblind ? tmp.copy(CB_FRIENDLY).lerp(new Color('#56b4e9'), t) : tmp.setRGB(0.2, 0.55 + 0.4 * t, 0.3), 0.35 + 0.4 * t);
         } else {
           const dep = Math.min(1, b.imports / b.demand);
-          write(data, r.id, tmp.setRGB(0.95, 0.75 - 0.35 * dep, 0.2), 0.25 + 0.4 * dep);
+          write(data, r.id, colourblind ? tmp.copy(new Color('#f0e442')).lerp(CB_HOSTILE, dep) : tmp.setRGB(0.95, 0.75 - 0.35 * dep, 0.2), 0.25 + 0.4 * dep);
         }
         break;
       }
@@ -213,13 +246,14 @@ export function fillPalette(
           // Sea control (D-059): the controlling fleet's colour, amber when contested.
           const zc = zoneControl(world, state, r.id);
           if (zc.controller) write(data, r.id, nationColor(zc.controller), 0.5);
-          else if (zc.contested) write(data, r.id, tmp.set('#f59e0b'), 0.55);
+          else if (zc.contested) write(data, r.id, tmp.set(colourblind ? '#f0e442' : '#f59e0b'), 0.55);
           break;
         }
         if (!controller) break;
         const s = rs.supply;
-        // red (0) → amber (0.5) → green (1); depots brighter and whiter.
-        if (s < 0.5) tmp.setRGB(0.9, 0.2 + s * 1.3, 0.15);
+        // red (0) → amber (0.5) → green (1), or viridis dark → bright; depots brighter and whiter.
+        if (colourblind) viridis(s);
+        else if (s < 0.5) tmp.setRGB(0.9, 0.2 + s * 1.3, 0.15);
         else tmp.setRGB(0.9 - (s - 0.5) * 1.5, 0.85, 0.2);
         if (isDepot(world, controller, r.id)) tmp.lerp(new Color('#ffffff'), 0.35);
         write(data, r.id, tmp, 0.7);
@@ -233,7 +267,7 @@ export function fillPalette(
         const atWarNow = isAtWar(state, controller);
         if (atWarNow) t = Math.max(t, 0.9);
         if (t <= 0.05) write(data, r.id, tmp.set('#1e3a5f'), 0.25);
-        else write(data, r.id, heat(t), 0.4 + t * 0.4);
+        else write(data, r.id, ramp(t), 0.4 + t * 0.4);
         break;
       }
     }

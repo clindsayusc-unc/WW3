@@ -34,6 +34,17 @@ export const ROUTE_COLOR: Record<TradeStatus, string> = {
   war: '#ef4444',
 };
 
+/** Okabe–Ito route colours for the colourblind palette (D-080). */
+export const ROUTE_COLOR_CB: Record<TradeStatus, string> = {
+  open: '#56b4e9',
+  rerouted: '#f0e442',
+  contested: '#e69f00',
+  cut: '#d55e00',
+  sanctioned: '#cc79a7',
+  embargoed: '#d55e00',
+  war: '#d55e00',
+};
+
 const VERT = /* glsl */ `
   attribute float aT;
   attribute float aSide;
@@ -128,6 +139,7 @@ function appendRoute(
   r: TradeRoute,
   highlight: boolean,
   buf: { pos: number[]; t: number[]; side: number[]; len: number[]; flow: number[]; alpha: number[]; col: number[]; idx: number[] },
+  colors: Record<TradeStatus, string> = ROUTE_COLOR,
 ): void {
   const raw = routePoints(r);
   if (raw.length < 2) return;
@@ -143,7 +155,7 @@ function appendRoute(
   const gdpA = world.nations.get(r.a)?.gdpUsdBn ?? 0;
   const gdpB = world.nations.get(r.b)?.gdpUsdBn ?? 0;
   const flow = stopped ? 0 : gdpA >= gdpB ? 1 : -1;
-  const color = new Color(ROUTE_COLOR[r.status]);
+  const color = new Color(colors[r.status]);
   const alpha = highlight ? 0.95 : 0.5;
   const base = buf.pos.length / 3;
   const up = new Vector3();
@@ -175,6 +187,7 @@ function appendRoute(
 export function TradeRoutes() {
   const game = useGameStore((s) => s.game);
   const mapMode = useUiStore((s) => s.mapMode);
+  const colourblind = useUiStore((s) => s.prefs.palette === 'colourblind');
   const material = useMemo(
     () =>
       new ShaderMaterial({
@@ -204,7 +217,7 @@ export function TradeRoutes() {
     const routes = [...game.economy.routes].sort(
       (x, y) => Number(x.a === game.player || x.b === game.player) - Number(y.a === game.player || y.b === game.player),
     );
-    for (const r of routes) appendRoute(r, r.a === game.player || r.b === game.player, buf);
+    for (const r of routes) appendRoute(r, r.a === game.player || r.b === game.player, buf, colourblind ? ROUTE_COLOR_CB : ROUTE_COLOR);
     const geo = new BufferGeometry();
     geo.setAttribute('position', new Float32BufferAttribute(buf.pos, 3));
     geo.setAttribute('aT', new Float32BufferAttribute(buf.t, 1));
@@ -216,7 +229,7 @@ export function TradeRoutes() {
     geo.setIndex(buf.idx);
     mesh.geometry.dispose();
     mesh.geometry = geo;
-  }, [game, mapMode, mesh]);
+  }, [game, mapMode, mesh, colourblind]);
   useFrame((_, dt) => {
     if (!mesh.visible) return;
     material.uniforms.time!.value = (material.uniforms.time!.value as number) + dt;

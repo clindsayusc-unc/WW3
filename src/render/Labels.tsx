@@ -152,7 +152,7 @@ export function Labels() {
           y + 0.5,
         );
         if (dist < 2.6) {
-          ctx.font = '600 10px Inter, system-ui, sans-serif';
+          ctx.font = '600 12px Inter, system-ui, sans-serif';
           ctx.letterSpacing = '0.04em';
           const label = `${c.name.toUpperCase()}${s.status !== 'open' ? ` · ${s.status.toUpperCase()}` : ''}${s.mined ? ' · MINED' : ''}`;
           ctx.lineWidth = 3;
@@ -206,12 +206,12 @@ export function Labels() {
       if (x < -50 || y < -20 || x > size.width + 50 || y > size.height + 20) continue;
       const isCountry = it.kind === 'country';
       const fontSize = isCountry
-        ? Math.max(10, Math.min(15, 9 + it.priority * 1.2))
+        ? Math.max(12, Math.min(16, 10 + it.priority * 1.2))
         : it.kind === 'capital'
-          ? 12
-          : 11;
+          ? 13
+          : 12;
       const sea = it.kind === 'seaNamed';
-      ctx.font = `${sea ? 'italic ' : ''}${isCountry ? 700 : it.kind === 'capital' ? 600 : 400} ${sea ? 10 : fontSize}px Inter, system-ui, sans-serif`;
+      ctx.font = `${sea ? 'italic ' : ''}${isCountry ? 700 : it.kind === 'capital' ? 600 : 400} ${sea ? 12 : fontSize}px Inter, system-ui, sans-serif`;
       if (isCountry) ctx.letterSpacing = '0.14em';
       else if (sea) ctx.letterSpacing = '0.2em';
       else ctx.letterSpacing = '0em';

@@ -2,6 +2,7 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { NEWS_CATEGORIES } from '../../sim/news';
@@ -48,7 +49,7 @@ export function NewsModal() {
   }, [game, cat, scope, query]);
   if (!game) return null;
   return (
-    <Modal title="WW3 Wire" subtitle="Wire stories generated from the month's events. Breaking news also appears as a banner." wide testId="modal-news">
+    <Modal icon={<ScreenIcon id="news" />} title="WW3 Wire" subtitle="Wire stories generated from the month's events. Breaking news also appears as a banner." wide testId="modal-news">
       <div className="news-filters">
         <div className="seg">
           <button className={`seg-btn ${cat === 'all' ? 'active' : ''}`} onClick={() => setCat('all')} data-tip="Every category." data-testid="news-cat-all">

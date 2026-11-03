@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { GraphicsSettings } from '../GraphicsSettings';
@@ -15,6 +16,7 @@ import {
 import { loadGame } from '../../state/simBridge';
 import { playSound } from '../audio';
 import { AudioSettingsPanel } from '../AudioSettings';
+import { AccessibilitySettings } from '../AccessibilitySettings';
 import { loadWorld } from '../../sim/world';
 
 const world = loadWorld();
@@ -30,7 +32,9 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
     void refresh();
   }, []);
   return (
-    <Modal title="Settings" subtitle="Graphics, audio and saves." testId="modal-settings">
+    <Modal icon={<ScreenIcon id="settings" />} title="Settings" subtitle="Accessibility, graphics, audio and saves." testId="modal-settings">
+      <div className="section-title">Accessibility &amp; guidance</div>
+      <AccessibilitySettings />
       <GraphicsSettings />
       <div className="section-title">Display</div>
       <div className="chips">

@@ -1,34 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { useUiStore } from '../state/uiStore';
-import { dispatch } from '../state/simBridge';
+import { dispatch, undoLast } from '../state/simBridge';
+import { ScreenIcon } from './icons';
+import { ALERT_ICON } from './iconMaps';
+import { Info, Undo2 } from 'lucide-react';
 import { loadWorld } from '../sim/world';
 import { playSound } from './audio';
 import type { LogEntry } from '../sim/types';
 
 const world = loadWorld();
-const KIND_ICON: Record<string, string> = {
-  war: '⚔',
-  peace: '🕊',
-  battle: '💥',
-  capture: '🏳',
-  diplomacy: '🤝',
-  economy: '📉',
-  research: '🔬',
-  event: '📰',
-  nuclear: '☢',
-  production: '🏭',
-  capitulation: '🏴',
-  strike: '🚀',
-  cyber: '💻',
-  space: '🛰',
-  intel: '🕵',
-  info: 'ℹ',
-};
 
 export function BottomBar() {
   const game = useGameStore((s) => s.game);
   const busy = useGameStore((s) => s.busy);
+  const undo = useGameStore((s) => s.undo);
   const fly = useUiStore((s) => s.fly);
   const select = useUiStore((s) => s.select);
   const setModal = useUiStore((s) => s.setModal);
@@ -73,23 +59,42 @@ export function BottomBar() {
             data-tip={a.kind === 'battle' ? 'Click to open the battle report.' : 'Click to fly to the location.'}
             data-testid={a.kind === 'battle' ? 'alert-battle' : undefined}
           >
-            <span className="alert-icon">{KIND_ICON[a.kind] ?? '•'}</span>
+            <span className="alert-icon">{(() => {
+              const I = ALERT_ICON[a.kind] ?? Info;
+              return <I size={14} aria-hidden="true" />;
+            })()}</span>
             <span className="alert-text">{a.text}</span>
           </button>
         ))}
       </div>
       <div className="turn-controls">
-        <button
-          className="btn ghost"
-          onClick={() => {
-            setModal('summary');
-            playSound('open');
-          }}
-          data-tip="Last month's summary (S)"
-          data-testid="nav-summary"
-        >
-          Summary
-        </button>
+        <div className="turn-row">
+          <button
+            className="btn ghost"
+            onClick={() => {
+              setModal('summary');
+              playSound('open');
+            }}
+            data-tip="Last month's intelligence briefing (S)"
+            data-testid="nav-summary"
+          >
+            <ScreenIcon id="summary" size={15} />
+            Briefing
+          </button>
+          <button
+            className="btn ghost"
+            disabled={undo.length === 0 || busy}
+            onClick={() => {
+              undoLast();
+              playSound('click');
+            }}
+            data-tip={undo.length ? `Undo: ${undo[undo.length - 1]} (Ctrl+Z). ${undo.length} order${undo.length === 1 ? '' : 's'} can be taken back this turn; wars, strikes and diplomacy cannot.` : 'Nothing to undo this turn. Moves, production, research and budget orders can be taken back until you end the turn.'}
+            data-testid="undo"
+          >
+            <Undo2 size={15} aria-hidden="true" />
+            Undo{undo.length ? ` (${undo.length})` : ''}
+          </button>
+        </div>
         <button
           className={`end-turn ${busy ? 'busy' : ''}`}
           disabled={!canEnd}
