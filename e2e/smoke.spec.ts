@@ -775,6 +775,10 @@ test('tutorial: five guided months, every screen, readability (D-080)', async ({
   await rows.nth(Math.min((await rows.count()) - 1, 4)).hover();
   await expect(id('tooltip-1')).toBeVisible(); // the nested tooltip with the sources
   await look('tutorial-03-nested-tooltip');
+  // Move off the tooltips before clicking on: with the Iran war and Hormuz lines (D-085) the
+  // nested tooltip can overlap the tutorial card.
+  await page.mouse.move(5, 5);
+  await expect(id('tooltip')).toBeHidden();
   await next();
   await step('nation');
   await next();
