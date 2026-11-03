@@ -198,6 +198,21 @@ describe('chokepoints', () => {
     expect(h.chokepoints['hormuz']!.status).toBe('open');
     expect(h.oilPrice).toBe(1);
   });
+  it('January 2027 opens with the US/Israel–Iran war under way and Hormuz closed by Iran (D-085)', () => {
+    const g = game('USA');
+    const war = g.wars.find((w) => w.defenders.includes('IRN'));
+    expect(war?.attackers).toEqual(['USA', 'ISR']);
+    expect(war!.since).toBe(-11); // 28 February 2026
+    expect(g.chokepoints['hormuz']).toMatchObject({ status: 'closed', by: 'IRN' });
+    expect(g.oilPrice).toBeCloseTo(1.6, 5); // ≈ US$110 against the 2025 baseline of ≈ US$69
+    expect(g.wars.find((w) => w.attackers.includes('RUS'))!.since).toBe(-59); // 24 February 2022
+    // Peace with Iran ends the closure and the oil shock.
+    const h = structuredClone(g);
+    h.wars = h.wars.filter((w) => w !== war && !w.defenders.includes('IRN'));
+    updateChokepoints(world, h);
+    expect(h.chokepoints['hormuz']!.status).toBe('open');
+    expect(h.oilPrice).toBe(1);
+  });
   it('closing the Taiwan Strait or Malacca disrupts East Asian trade and semiconductors', () => {
     const g = game('CHN');
     g.wars.push({ id: 999, attackers: ['CHN'], defenders: ['TWN'], since: 0, score: 0 });

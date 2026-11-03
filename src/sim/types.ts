@@ -680,7 +680,7 @@ export interface GameState {
   strikes: Strike[];
   detonations: number;
   chokepoints: Record<string, ChokepointState>;
-  /** Oil price index, 1 = January 2027; rises while chokepoints are closed. */
+  /** Oil price index, 1 = all straits open (pre-war 2025 market); rises while chokepoints are closed. */
   oilPrice: number;
   resolutionPassed: boolean;
   victory: Victory | null;

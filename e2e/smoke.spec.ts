@@ -288,15 +288,15 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.getByTestId('mil-tab-intel').click();
   await page.getByTestId('modal-close').click();
 
-  // Battle odds in the Zagros: declare war on Iran, select the capital garrison and hover
-  // Kermanshah (mountains) to see the full modifier breakdown.
-  await page.getByTestId('nav-diplomacy').click();
-  await page.getByTestId('diplomacy-search').fill('Iran');
-  await page.getByTestId('dip-IRN').click();
-  await page.getByTestId('act-declareWar').click();
-  await confirm(page);
-  await page.getByTestId('modal-close').click();
-  await expect(page.getByTestId('alerts')).toContainText('declares war on Iran');
+  // Battle odds in the Zagros: the US starts at war with Iran (D-085), so select the capital
+  // garrison and hover Kermanshah (mountains) to see the full modifier breakdown.
+  expect(
+    await page.evaluate(() => {
+      const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
+      const g = w.game.getState().game as unknown as { wars: { attackers: string[]; defenders: string[] }[] };
+      return g.wars.some((x) => x.attackers.includes('USA') && x.defenders.includes('IRN'));
+    }),
+  ).toBe(true);
   const kermanshah = await page.evaluate(() => {
     const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
     w.ui.getState().select(w.capital('USA')!);
@@ -775,6 +775,10 @@ test('tutorial: five guided months, every screen, readability (D-080)', async ({
   await rows.nth(Math.min((await rows.count()) - 1, 4)).hover();
   await expect(id('tooltip-1')).toBeVisible(); // the nested tooltip with the sources
   await look('tutorial-03-nested-tooltip');
+  // Move off the tooltips before clicking on: with the Iran war and Hormuz lines (D-085) the
+  // nested tooltip can overlap the tutorial card.
+  await page.mouse.move(5, 5);
+  await expect(id('tooltip')).toBeHidden();
   await next();
   await step('nation');
   await next();
@@ -881,14 +885,14 @@ test('tutorial: five guided months, every screen, readability (D-080)', async ({
   // Irreversible actions ask first; cancelling changes nothing.
   await id('nav-diplomacy').click();
   await id('dip-tab-nations').click();
-  await id('diplomacy-search').fill('Iran');
-  await id('dip-IRN').click();
+  await id('diplomacy-search').fill('Venezuela');
+  await id('dip-VEN').click();
   await id('act-declareWar').click();
-  await expect(id('confirm-dialog')).toContainText('Declare war on Iran?');
+  await expect(id('confirm-dialog')).toContainText('Declare war on Venezuela?');
   await look('confirm-war');
   await id('confirm-cancel').click();
   await page.keyboard.press('Escape');
-  await expect(id('alerts')).not.toContainText('declares war on Iran');
+  await expect(id('alerts')).not.toContainText('declares war on Venezuela');
   // Readability: the colourblind palette and a 125 % UI scale.
   await id('nav-settings').click();
   await id('palette-colourblind').click();

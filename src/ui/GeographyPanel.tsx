@@ -328,7 +328,7 @@ export function ChokepointSection({ c, game }: { c: ChokepointMeta; game: GameSt
         <Stat
           label="Oil price"
           value={`×${game.oilPrice.toFixed(2)}`}
-          tooltip="World oil price index (1.00 in January 2027). Each closed chokepoint adds its oil shock; importers lose growth, exporters gain."
+          tooltip={`World oil price index: 1.00 = all straits open, the pre-war 2025 market (Brent about US$69/bbl, EIA); now about US$${Math.round(69 * game.oilPrice)}/bbl. Each closed chokepoint adds its oil shock (half while contested); importers lose growth, exporters gain. The campaign opens with Hormuz closed by Iran (x1.60; Brent was about US$105 on 3 Nov 2026).`}
           accent={game.oilPrice > 1.15 ? 'var(--bad)' : undefined}
         />
       </div>
