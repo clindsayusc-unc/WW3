@@ -15,6 +15,7 @@ import {
   adjustRelation,
   alliesOf,
   makeUnit,
+  militaryPower,
 } from './query';
 import { declareWar, imposeSanction, liftSanction, makePeace } from './diplomacy';
 import { succeedLeader } from './domestic';
@@ -240,7 +241,7 @@ export function applyEffect(world: World, state: GameState, ctx: EventContext, e
  * `chance` are drawn by chance; otherwise each choice's stance is weighted by the actor's traits:
  * escalation by aggression and risk tolerance, de-escalation by pragmatism and caution.
  */
-export function aiChoice(world: World, state: GameState, actor: Iso3, ev: EventMeta): number {
+export function aiChoice(world: World, state: GameState, actor: Iso3, ev: EventMeta, ctx?: EventContext): number {
   const choices = ev.choices;
   if (choices.length <= 1) return 0;
   if (choices.some((c) => typeof c.chance === 'number')) {
@@ -248,8 +249,30 @@ export function aiChoice(world: World, state: GameState, actor: Iso3, ev: EventM
     return picked ? choices.indexOf(picked) : 0;
   }
   const w = stanceWeights(world, actor, state);
-  const picked = pickWeighted(state, choices, (c: EventChoice) => w[c.stance ?? 'hold']);
+  const picked = pickWeighted(state, choices, (c: EventChoice) => w[c.stance ?? 'hold'] * (ctx ? warPrudence(world, state, actor, ctx, c) : 1));
   return picked ? choices.indexOf(picked) : 0;
+}
+
+/**
+ * Leaders do not pick a choice that starts a war they would plainly lose (D-081). Self-play found
+ * Iran answering a Gulf incident by declaring war on the United States in a third of all-AI games,
+ * which brought every NATO member in under Article 5. A choice whose effects have the chooser
+ * declare war has its weight scaled by (own strength ÷ the target side's)², floor 0.03.
+ */
+export function warPrudence(world: World, state: GameState, actor: Iso3, ctx: EventContext, choice: EventChoice): number {
+  let f = 1;
+  for (const e of choice.effects) {
+    if (e.type !== 'war') continue;
+    const a = resolveIso(ctx, e.a);
+    const b = resolveIso(ctx, e.b);
+    if (a !== actor || !b || !state.nations[b]?.alive) continue;
+    const mine = militaryPower(world, state, actor);
+    let theirs = militaryPower(world, state, b);
+    for (const x of alliesOf(world, state, b)) if (x !== actor) theirs += militaryPower(world, state, x);
+    const ratio = mine / Math.max(1, theirs);
+    if (ratio < 1) f *= Math.max(0.03, ratio * ratio);
+  }
+  return f;
 }
 
 export function stanceWeights(world: World, actor: Iso3, state?: GameState): Record<'escalate' | 'hold' | 'deescalate', number> {
@@ -264,7 +287,7 @@ export function stanceWeights(world: World, actor: Iso3, state?: GameState): Rec
 
 /** Who decides a chain step: the player when listed, else the first living candidate. */
 export function chainActor(state: GameState, ev: EventMeta): Iso3 | null {
-  if (ev.actor.includes(state.player) && state.nations[state.player]?.alive) return state.player;
+  if (!state.observer && ev.actor.includes(state.player) && state.nations[state.player]?.alive) return state.player;
   return ev.actor.find((a) => state.nations[a]?.alive) ?? null;
 }
 
@@ -285,11 +308,11 @@ function playChainEvent(world: World, state: GameState, ev: EventMeta, target: I
   if (!actor) return; // every candidate is gone: the chain ends
   const ctx: EventContext = { player: actor, target: target ?? (ev.target && state.nations[ev.target]?.alive ? ev.target : null) };
   state.eventsFired[`${ev.id}:${actor}`] = state.turn;
-  if (actor === state.player) {
+  if (actor === state.player && !state.observer) {
     if (!state.pendingEvents.some((p) => p.eventId === ev.id)) state.pendingEvents.push(pendingFor(world, ev, ctx, state));
     return;
   }
-  const idx = aiChoice(world, state, actor, ev);
+  const idx = aiChoice(world, state, actor, ev, ctx);
   const choice = ev.choices[idx]!;
   for (const e of choice.effects) applyEffect(world, state, ctx, e);
   log(state, {
@@ -423,7 +446,7 @@ export function drawEvents(world: World, state: GameState): void {
   runChains(world, state);
   // Player-scope: one event with 40% chance (higher in crisis).
   const pChance = 0.35 + state.globalTension / 400 + (isAtWar(state, player) ? 0.1 : 0);
-  if (state.pendingEvents.length < 2 && roll(state) < pChance) {
+  if (!state.observer && state.pendingEvents.length < 2 && roll(state) < pChance) {
     const candidates: { ev: EventMeta; ctx: EventContext }[] = [];
     for (const ev of world.events) {
       if (ev.scope !== 'player' || ev.weight <= 0) continue;
@@ -477,7 +500,7 @@ export function drawEvents(world: World, state: GameState): void {
     const chosen = pickWeighted(state, candidates, (c) => c.ev.weight);
     if (chosen) {
       state.eventsFired[`${chosen.ev.id}:${chosen.ctx.player}`] = state.turn;
-      const choice = chosen.ev.choices[aiChoice(world, state, chosen.ctx.player, chosen.ev)];
+      const choice = chosen.ev.choices[aiChoice(world, state, chosen.ctx.player, chosen.ev, chosen.ctx)];
       if (choice) for (const e of choice.effects) applyEffect(world, state, chosen.ctx, e);
       const text = substitute(world, chosen.ctx, chosen.ev.text);
       const outcome = choice && chosen.ev.choices.length > 1 ? ` ${substitute(world, chosen.ctx, choice.label)}.` : '';

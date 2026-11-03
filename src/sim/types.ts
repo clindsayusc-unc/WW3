@@ -646,6 +646,8 @@ export interface GameState {
   rng: RngState;
   readonly scenario: string;
   readonly player: Iso3;
+  /** Headless self-play (scripts/selfplay.ts): the AI also runs the nominal player nation. */
+  readonly observer?: boolean;
   /** Turn index, starting at 0. */
   turn: number;
   date: YearMonth;
@@ -722,6 +724,8 @@ export interface GameState {
   nuclearLog: NuclearRecord[];
   /** World GDP at the start (for the end-of-game statistics). */
   worldGdpStart: number;
+  /** Each great power's January 2027 position, for the Deterrence victory's standing (D-081). */
+  standingStart?: Record<Iso3, { readonly gdp: number; readonly regions: number; readonly turn: number }>;
 }
 
 export interface WorldEconomy {
@@ -791,6 +795,8 @@ export interface NewGameOptions {
   readonly seed: number;
   readonly player: Iso3;
   readonly scenario: 'world-2027' | 'taiwan-crisis';
+  /** All-AI game: the player nation is run by the AI too (balance runs). */
+  readonly observer?: boolean;
 }
 
 export type WorkerRequest =

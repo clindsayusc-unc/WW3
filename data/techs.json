@@ -14,25 +14,29 @@
       "id": 2,
       "name": "Near term",
       "years": "2028–2030",
-      "description": "Programmes in prototype or early production in 2026; plausible to field this decade."
+      "description": "Programmes in prototype or early production in 2026; plausible to field this decade.",
+      "gate": 10
     },
     {
       "id": 3,
       "name": "Mid term",
       "years": "2031–2033",
-      "description": "Announced programmes and demonstrated laboratory technology that could be fielded in the early 2030s."
+      "description": "Announced programmes and demonstrated laboratory technology that could be fielded in the early 2030s.",
+      "gate": 8
     },
     {
       "id": 4,
       "name": "Long term",
       "years": "2034–2036",
-      "description": "Roadmap targets of the leading powers for the mid-2030s."
+      "description": "Roadmap targets of the leading powers for the mid-2030s.",
+      "gate": 6
     },
     {
       "id": 5,
       "name": "Frontier",
       "years": "2037–2040",
-      "description": "Speculative technology at the edge of published forecasts."
+      "description": "Speculative technology at the edge of published forecasts.",
+      "gate": 5
     }
   ],
   "branches": [
@@ -179,7 +183,7 @@
       "tier": 2,
       "year": 2028,
       "name": "Autonomous Logistics",
-      "cost": 260,
+      "cost": 300,
       "requires": [
         "ai-predictive-maintenance"
       ],
@@ -202,7 +206,7 @@
       "tier": 2,
       "year": 2030,
       "name": "AI Battle Management",
-      "cost": 320,
+      "cost": 370,
       "requires": [
         "ai-isr-fusion",
         "semi-ai-accelerators"
@@ -232,7 +236,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Swarm Command",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "ai-command-systems",
         "drones-loitering-munitions"
@@ -256,7 +260,7 @@
       "tier": 3,
       "year": 2032,
       "name": "AI Combat Pilot",
-      "cost": 460,
+      "cost": 640,
       "requires": [
         "ai-command-systems"
       ],
@@ -275,7 +279,7 @@
       "tier": 4,
       "year": 2035,
       "name": "Sixth-Generation Air Dominance",
-      "cost": 900,
+      "cost": 1480,
       "requires": [
         "ai-pilot",
         "energy-adaptive-engines",
@@ -302,7 +306,7 @@
       "tier": 4,
       "year": 2034,
       "name": "Predictive Intelligence",
-      "cost": 820,
+      "cost": 1350,
       "requires": [
         "ai-command-systems",
         "semi-quantum-computing"
@@ -330,7 +334,7 @@
       "tier": 5,
       "year": 2038,
       "name": "Strategic AI",
-      "cost": 1500,
+      "cost": 2780,
       "requires": [
         "ai-predictive-intelligence",
         "semi-angstrom-nodes"
@@ -444,7 +448,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Collaborative Combat Aircraft",
-      "cost": 340,
+      "cost": 390,
       "requires": [
         "drones-loitering-munitions",
         "ai-isr-fusion"
@@ -470,7 +474,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Robotic Combat Vehicles",
-      "cost": 320,
+      "cost": 370,
       "requires": [
         "drones-fpv-mass",
         "ai-autonomous-logistics"
@@ -494,7 +498,7 @@
       "tier": 3,
       "year": 2033,
       "name": "Autonomous Drone Swarms",
-      "cost": 520,
+      "cost": 730,
       "requires": [
         "ai-swarm-command",
         "drones-fpv-mass"
@@ -520,7 +524,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Extra-Large Undersea Drones",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "drones-naval-usv",
         "ai-autonomous-logistics"
@@ -540,7 +544,7 @@
       "tier": 4,
       "year": 2035,
       "name": "Drone Motherships",
-      "cost": 880,
+      "cost": 1450,
       "requires": [
         "drones-swarms",
         "drones-undersea"
@@ -568,7 +572,7 @@
       "tier": 5,
       "year": 2039,
       "name": "Autonomous Brigades",
-      "cost": 1400,
+      "cost": 2590,
       "requires": [
         "drones-motherships",
         "drones-ground-robotics"
@@ -689,7 +693,7 @@
       "tier": 2,
       "year": 2028,
       "name": "Long-Range Precision Fires",
-      "cost": 260,
+      "cost": 300,
       "requires": [
         "missiles-precision-strike"
       ],
@@ -712,7 +716,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Hypersonic Cruise Missiles",
-      "cost": 340,
+      "cost": 390,
       "requires": [
         "missiles-hypersonic-glide"
       ],
@@ -735,7 +739,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Low-Cost Cruise Missiles",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "missiles-cruise-mass",
         "energy-war-economy"
@@ -759,7 +763,7 @@
       "tier": 3,
       "year": 2032,
       "name": "Strategic Forces Modernisation",
-      "cost": 560,
+      "cost": 780,
       "requires": [
         "missiles-cruise-mass",
         "space-resilient-pnt"
@@ -779,7 +783,7 @@
       "tier": 4,
       "year": 2034,
       "name": "Orbital Glide Bombardment",
-      "cost": 860,
+      "cost": 1420,
       "requires": [
         "missiles-hypersonic-glide",
         "space-heavy-lift"
@@ -803,7 +807,7 @@
       "tier": 5,
       "year": 2038,
       "name": "Hypersonic Swarm Salvos",
-      "cost": 1400,
+      "cost": 2590,
       "requires": [
         "missiles-scramjet",
         "missiles-mass-production",
@@ -895,7 +899,7 @@
       "tier": 2,
       "year": 2028,
       "name": "Directed-Energy Air Defence",
-      "cost": 300,
+      "cost": 340,
       "requires": [
         "md-counter-uas",
         "energy-grid-storage"
@@ -927,7 +931,7 @@
       "tier": 2,
       "year": 2030,
       "name": "Glide-Phase Interceptors",
-      "cost": 360,
+      "cost": 410,
       "requires": [
         "md-theatre-interceptors"
       ],
@@ -950,7 +954,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Space-Based Sensor Layer",
-      "cost": 520,
+      "cost": 730,
       "requires": [
         "md-theatre-interceptors",
         "space-isr-constellation"
@@ -984,7 +988,7 @@
       "tier": 3,
       "year": 2032,
       "name": "High-Power Microwave Defence",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "md-directed-energy"
       ],
@@ -1007,7 +1011,7 @@
       "tier": 4,
       "year": 2034,
       "name": "Integrated Air & Missile Defence",
-      "cost": 860,
+      "cost": 1420,
       "requires": [
         "md-space-sensor-layer",
         "ai-command-systems"
@@ -1031,7 +1035,7 @@
       "tier": 4,
       "year": 2036,
       "name": "Space-Based Interceptors",
-      "cost": 1000,
+      "cost": 1650,
       "requires": [
         "md-integrated-air-missile",
         "space-heavy-lift"
@@ -1055,7 +1059,7 @@
       "tier": 5,
       "year": 2039,
       "name": "Homeland Shield",
-      "cost": 1600,
+      "cost": 2960,
       "requires": [
         "md-space-interceptors",
         "md-high-power-microwave"
@@ -1146,7 +1150,7 @@
       "tier": 2,
       "year": 2028,
       "name": "AI Influence Operations",
-      "cost": 260,
+      "cost": 300,
       "requires": [
         "cyber-offensive-ops"
       ],
@@ -1169,7 +1173,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Post-Quantum Cryptography",
-      "cost": 280,
+      "cost": 320,
       "requires": [
         "cyber-national-cert"
       ],
@@ -1192,7 +1196,7 @@
       "tier": 2,
       "year": 2030,
       "name": "Autonomous Cyber Operations",
-      "cost": 340,
+      "cost": 390,
       "requires": [
         "cyber-offensive-ops",
         "ai-decision-support"
@@ -1220,7 +1224,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Quantum-Secure Communications",
-      "cost": 520,
+      "cost": 730,
       "requires": [
         "cyber-pqc",
         "space-isr-constellation"
@@ -1246,7 +1250,7 @@
       "tier": 3,
       "year": 2032,
       "name": "Cognitive Electronic Warfare",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "cyber-ew-dominance",
         "ai-command-systems"
@@ -1274,7 +1278,7 @@
       "tier": 4,
       "year": 2035,
       "name": "Strategic Cyber Deterrence",
-      "cost": 880,
+      "cost": 1450,
       "requires": [
         "cyber-ai-cyber",
         "cyber-infowar"
@@ -1298,7 +1302,7 @@
       "tier": 5,
       "year": 2038,
       "name": "Quantum Codebreaking",
-      "cost": 1500,
+      "cost": 2780,
       "requires": [
         "cyber-strategic",
         "semi-fault-tolerant-quantum"
@@ -1412,7 +1416,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Proliferated LEO Networks",
-      "cost": 320,
+      "cost": 370,
       "requires": [
         "space-launch-cadence"
       ],
@@ -1439,7 +1443,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Space Domain Awareness",
-      "cost": 300,
+      "cost": 340,
       "requires": [
         "space-counterspace"
       ],
@@ -1466,7 +1470,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Super-Heavy Launch",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "space-proliferated-leo"
       ],
@@ -1493,7 +1497,7 @@
       "tier": 3,
       "year": 2033,
       "name": "Manoeuvrable Satellites",
-      "cost": 520,
+      "cost": 730,
       "requires": [
         "space-domain-awareness",
         "space-heavy-lift"
@@ -1517,7 +1521,7 @@
       "tier": 4,
       "year": 2035,
       "name": "Cislunar Operations",
-      "cost": 900,
+      "cost": 1480,
       "requires": [
         "space-heavy-lift"
       ],
@@ -1544,7 +1548,7 @@
       "tier": 5,
       "year": 2039,
       "name": "Orbital Industry",
-      "cost": 1500,
+      "cost": 2780,
       "requires": [
         "space-cislunar",
         "energy-autonomous-factories"
@@ -1631,7 +1635,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Small Modular Reactors",
-      "cost": 300,
+      "cost": 340,
       "requires": [
         "energy-grid-storage"
       ],
@@ -1658,7 +1662,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Critical-Mineral Independence",
-      "cost": 320,
+      "cost": 370,
       "requires": [
         "energy-war-economy"
       ],
@@ -1681,7 +1685,7 @@
       "tier": 2,
       "year": 2030,
       "name": "Adaptive-Cycle Engines",
-      "cost": 340,
+      "cost": 390,
       "requires": [
         "energy-war-economy"
       ],
@@ -1700,7 +1704,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Mobile Microreactors",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "energy-smr"
       ],
@@ -1727,7 +1731,7 @@
       "tier": 3,
       "year": 2032,
       "name": "Solid-State Batteries",
-      "cost": 480,
+      "cost": 670,
       "requires": [
         "energy-grid-storage",
         "energy-critical-minerals"
@@ -1755,7 +1759,7 @@
       "tier": 4,
       "year": 2035,
       "name": "Lights-Out Factories",
-      "cost": 900,
+      "cost": 1480,
       "requires": [
         "energy-war-economy",
         "ai-autonomous-logistics"
@@ -1779,7 +1783,7 @@
       "tier": 5,
       "year": 2039,
       "name": "Fusion Pilot Plant",
-      "cost": 1700,
+      "cost": 3140,
       "requires": [
         "energy-microreactors",
         "semi-fault-tolerant-quantum"
@@ -1897,7 +1901,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Ångström-Era Logic",
-      "cost": 360,
+      "cost": 410,
       "requires": [
         "semi-advanced-nodes"
       ],
@@ -1920,7 +1924,7 @@
       "tier": 2,
       "year": 2030,
       "name": "Sovereign EUV Lithography",
-      "cost": 380,
+      "cost": 440,
       "requires": [
         "semi-mature-nodes"
       ],
@@ -1943,7 +1947,7 @@
       "tier": 2,
       "year": 2029,
       "name": "Quantum Sensing",
-      "cost": 300,
+      "cost": 340,
       "requires": [
         "semi-advanced-packaging"
       ],
@@ -1966,7 +1970,7 @@
       "tier": 3,
       "year": 2031,
       "name": "Quantum Advantage",
-      "cost": 540,
+      "cost": 760,
       "requires": [
         "semi-ai-accelerators"
       ],
@@ -1989,7 +1993,7 @@
       "tier": 3,
       "year": 2033,
       "name": "Neuromorphic & Photonic Chips",
-      "cost": 520,
+      "cost": 730,
       "requires": [
         "semi-angstrom-nodes"
       ],
@@ -2016,7 +2020,7 @@
       "tier": 4,
       "year": 2035,
       "name": "Fault-Tolerant Quantum Computers",
-      "cost": 950,
+      "cost": 1570,
       "requires": [
         "semi-quantum-computing"
       ],
@@ -2043,7 +2047,7 @@
       "tier": 5,
       "year": 2038,
       "name": "Post-Silicon Electronics",
-      "cost": 1400,
+      "cost": 2590,
       "requires": [
         "semi-neuromorphic",
         "semi-euv"

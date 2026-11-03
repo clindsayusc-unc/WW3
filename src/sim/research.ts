@@ -21,6 +21,15 @@ export const ALLY_DISCOUNT_MAX = 0.3;
 export const DIFFUSION_DISCOUNT = 0.1;
 /** Export controls raise a controlled branch's cost by this × the controllers' share of world GDP. */
 export const EXPORT_CONTROL_PENALTY = 1.2;
+/**
+ * Researching a technology before its plausible fielding year (`year` in data/techs.json) costs this
+ * much more per year early (D-081): the science, the industrial base and the test ranges are not
+ * there yet. Paces a focused great power to the frontier era around 2038–2040.
+ */
+export const PREMATURE_PREMIUM = 0.45;
+
+/** The in-game year as a fraction (January 2027 = 2027.0). */
+export const gameYear = (state: GameState): number => 2027 + state.turn / 12;
 
 export interface ResearchFactor {
   readonly label: string;
@@ -67,16 +76,39 @@ export function researchPointsPerMonth(world: World, state: GameState, iso: Iso3
 
 /** Share of world GDP held by nations that sanction or export-control `iso`'s technology access. */
 export function exportControlShare(state: GameState, iso: Iso3): number {
+  const suffix = `>${iso}`;
+  const senders = new Set<Iso3>();
+  for (const list of [state.sanctions, state.techControls ?? []])
+    for (const k of list) if (k.endsWith(suffix)) senders.add(k.slice(0, k.length - suffix.length));
   let total = 0;
   let cut = 0;
-  const controls = state.techControls ?? [];
   for (const n of Object.values(state.nations)) {
     if (!n.alive) continue;
     total += n.gdp;
-    if (n.iso3 === iso) continue;
-    if (isSanctioned(state, n.iso3, iso) || controls.includes(`${n.iso3}>${iso}`)) cut += n.gdp;
+    if (n.iso3 !== iso && senders.has(n.iso3)) cut += n.gdp;
   }
   return total > 0 ? cut / total : 0;
+}
+
+/**
+ * Technologies fielded by nations holding half the world's output, computed once per state object
+ * (one month's resolution mutates a single clone, so a tech finished this month diffuses next month).
+ */
+const diffusionCache = new WeakMap<GameState, Set<TechId>>();
+function diffusedTechs(state: GameState): Set<TechId> {
+  let set = diffusionCache.get(state);
+  if (set) return set;
+  const knowing = new Map<TechId, number>();
+  let total = 0;
+  for (const o of Object.values(state.nations)) {
+    if (!o.alive) continue;
+    total += o.gdp;
+    for (const id of o.techs) knowing.set(id, (knowing.get(id) ?? 0) + o.gdp);
+  }
+  set = new Set<TechId>();
+  for (const [id, g] of knowing) if (total > 0 && g / total >= 0.5) set.add(id);
+  diffusionCache.set(state, set);
+  return set;
 }
 
 export interface TechCost {
@@ -89,31 +121,27 @@ export interface TechCost {
   readonly credit: number;
   /** Cost multiplier from export controls (1 = none). */
   readonly exportControl: number;
+  /** Cost multiplier for researching ahead of the plausible fielding year (1 = on time). */
+  readonly premature: number;
   readonly total: number;
 }
 
 export function techCostBreakdown(world: World, state: GameState, iso: Iso3, techId: TechId): TechCost {
   const t = world.techs.get(techId);
   const n = state.nations[iso];
-  if (!t || !n) return { base: Infinity, sharingAllies: [], allyDiscount: 0, diffusionDiscount: 0, credit: 0, exportControl: 1, total: Infinity };
+  if (!t || !n) return { base: Infinity, sharingAllies: [], allyDiscount: 0, diffusionDiscount: 0, credit: 0, exportControl: 1, premature: 1, total: Infinity };
   const sharingAllies = alliesOf(world, state, iso).filter(
     (a) => state.nations[a]?.techs.includes(techId) && !isSanctioned(state, a, iso) && !(state.techControls ?? []).includes(`${a}>${iso}`),
   );
   const allyDiscount = Math.min(ALLY_DISCOUNT_MAX, ALLY_DISCOUNT * sharingAllies.length);
-  let knowing = 0;
-  let total = 0;
-  for (const o of Object.values(state.nations)) {
-    if (!o.alive) continue;
-    total += o.gdp;
-    if (o.techs.includes(techId)) knowing += o.gdp;
-  }
-  const diffusionDiscount = total > 0 && knowing / total >= 0.5 ? DIFFUSION_DISCOUNT : 0;
+  const diffusionDiscount = diffusedTechs(state).has(techId) ? DIFFUSION_DISCOUNT : 0;
   const credit = clamp(n.techCredit?.[techId] ?? 0, 0, 0.6);
   const exportControl = CONTROLLED_BRANCHES.includes(t.branch)
     ? 1 + EXPORT_CONTROL_PENALTY * exportControlShare(state, iso) * (1 - clamp(n.modifiers.sanctionResistance ?? 0, 0, 0.8))
     : 1;
-  const mult = Math.max(0.35, 1 - allyDiscount - diffusionDiscount - credit) * exportControl;
-  return { base: t.cost, sharingAllies, allyDiscount, diffusionDiscount, credit, exportControl, total: Math.round(t.cost * mult) };
+  const premature = 1 + PREMATURE_PREMIUM * Math.max(0, t.year - gameYear(state));
+  const mult = Math.max(0.35, 1 - allyDiscount - diffusionDiscount - credit) * exportControl * premature;
+  return { base: t.cost, sharingAllies, allyDiscount, diffusionDiscount, credit, exportControl, premature, total: Math.round(t.cost * mult) };
 }
 
 export function techCost(world: World, state: GameState, iso: Iso3, techId: TechId): number {
@@ -124,9 +152,36 @@ export function techCost(world: World, state: GameState, iso: Iso3, techId: Tech
 
 export const prerequisitesMet = (t: TechMeta, n: NationState): boolean => t.requires.every((r) => n.techs.includes(r));
 
+/** Technologies of the previous era (or later) needed before researching `t`'s era (0 for era I). */
+export function eraGate(world: World, t: TechMeta): number {
+  return world.eras.find((e) => e.id === t.era)?.gate ?? 0;
+}
+
+/** How many technologies of era `era − 1` or later the nation fields (counting `extra` too). */
+export function foundationCount(world: World, techs: readonly TechId[], era: number, extra: Iterable<TechId> = []): number {
+  let k = 0;
+  const seen = new Set<TechId>();
+  for (const id of [...techs, ...extra]) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    if ((world.techs.get(id)?.era ?? 0) >= era - 1) k++;
+  }
+  return k;
+}
+
+/**
+ * The era gate (D-081): each era needs a broad base in the one before it — the frontier cannot be
+ * reached down a single branch. Self-play found a four-tech beeline to era V for the US.
+ */
+export const eraGateMet = (world: World, t: TechMeta, n: NationState): boolean =>
+  t.era <= 1 || foundationCount(world, n.techs, t.era) >= eraGate(world, t);
+
+/** Prerequisites and the era gate. */
+export const canResearch = (world: World, t: TechMeta, n: NationState): boolean => prerequisitesMet(t, n) && eraGateMet(world, t, n);
+
 export function availableTechs(world: World, state: GameState, iso: Iso3): string[] {
   const n = state.nations[iso]!;
-  return world.techList.filter((t) => !n.techs.includes(t.id) && prerequisitesMet(t, n)).map((t) => t.id);
+  return world.techList.filter((t) => !n.techs.includes(t.id) && canResearch(world, t, n)).map((t) => t.id);
 }
 
 export function hasAbility(world: World, state: GameState, iso: Iso3, ability: string): boolean {
@@ -151,17 +206,31 @@ export const unitAvailable = (world: World, state: GameState, iso: Iso3, type: s
 export function pathTo(world: World, n: NationState, techId: TechId): TechId[] {
   const out: TechId[] = [];
   const seen = new Set<TechId>();
+  const byCost = (a: TechId, b: TechId) => {
+    const ta = world.techs.get(a)!;
+    const tb = world.techs.get(b)!;
+    return ta.era - tb.era || ta.cost - tb.cost || (a < b ? -1 : 1);
+  };
   const visit = (id: TechId) => {
     if (seen.has(id) || n.techs.includes(id)) return;
     seen.add(id);
     const t = world.techs.get(id);
     if (!t) return;
-    const reqs = [...t.requires].sort((a, b) => {
-      const ta = world.techs.get(a)!;
-      const tb = world.techs.get(b)!;
-      return ta.era - tb.era || ta.cost - tb.cost || (a < b ? -1 : 1);
-    });
-    for (const r of reqs) visit(r);
+    for (const r of [...t.requires].sort(byCost)) visit(r);
+    // The era gate: add the cheapest technologies of the previous era until the base is broad enough.
+    const gate = t.era > 1 ? eraGate(world, t) : 0;
+    while (gate > 0 && foundationCount(world, n.techs, t.era, out) < gate) {
+      const next = world.techList
+        .filter((x) => x.era === t.era - 1 && !n.techs.includes(x.id) && !seen.has(x.id))
+        .map((x) => x.id)
+        .sort((a, b) => {
+          // Fewest missing prerequisites first, then cheapest.
+          const missing = (id: TechId) => world.techs.get(id)!.requires.filter((r) => !n.techs.includes(r) && !out.includes(r)).length;
+          return missing(a) - missing(b) || byCost(a, b);
+        })[0];
+      if (!next) break;
+      visit(next);
+    }
     out.push(id);
   };
   visit(techId);
@@ -186,7 +255,7 @@ export function advanceQueue(world: World, state: GameState, iso: Iso3): void {
   const n = state.nations[iso]!;
   n.researchQueue = n.researchQueue.filter((id) => !n.techs.includes(id) && world.techs.has(id) && id !== n.researchCurrent);
   if (n.researchCurrent) return;
-  const i = n.researchQueue.findIndex((id) => prerequisitesMet(world.techs.get(id)!, n));
+  const i = n.researchQueue.findIndex((id) => canResearch(world, world.techs.get(id)!, n));
   if (i < 0) return;
   n.researchCurrent = n.researchQueue[i]!;
   n.researchQueue.splice(i, 1);
