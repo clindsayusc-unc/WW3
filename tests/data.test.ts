@@ -43,15 +43,32 @@ describe('score tracks (D-084)', () => {
     const { existsSync, readFileSync } = await import('node:fs');
     // Read the playlist from source text: the module itself needs the DOM.
     const src = readFileSync('src/ui/music.ts', 'utf8');
-    const tracks = [
-      ...src.matchAll(/file: '([^']+)', title: '([^']+)', author: '([^']+)'/g),
-    ].map((m) => ({ file: m[1]!, title: m[2]!, author: m[3]! }));
+    const tracks = [...src.matchAll(/file: '([^']+)', title: '([^']+)', author: '([^']+)'/g)].map(
+      (m) => ({ file: m[1]!, title: m[2]!, author: m[3]! }),
+    );
     expect(tracks.length).toBeGreaterThanOrEqual(3);
     const credits = readFileSync('docs/DATA_SOURCES.md', 'utf8');
     for (const t of tracks) {
       expect(existsSync(`public/audio/music/${t.file}`), t.file).toBe(true);
       expect(credits, t.title).toContain(t.title);
       expect(credits, t.author).toContain(t.author);
+    }
+  });
+});
+
+describe('source tree (D-083)', () => {
+  it('has no module names that differ only by case (macOS file systems are case-insensitive)', async () => {
+    const { readdirSync } = await import('node:fs');
+    const files = readdirSync('src', { recursive: true }) as string[];
+    const seen = new Map<string, string>();
+    for (const f of files) {
+      if (!/\.(ts|tsx)$/.test(f)) continue;
+      const key = f
+        .replace(/\.(test\.)?tsx?$/, (m) => (m.includes('test') ? '.test' : ''))
+        .toLowerCase();
+      const prev = seen.get(key);
+      expect(prev === undefined || prev === f, `${prev} vs ${f}`).toBe(true);
+      seen.set(key, f);
     }
   });
 });

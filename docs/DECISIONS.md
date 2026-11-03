@@ -1456,3 +1456,7 @@ worker turn time are hardware-independent and are what this pass optimised again
   month, only the most important one plays (`stingerFor`, pure and tested), and the score ducks
   beneath it (to 30 %, back over 2.5 s; 5 s for nuclear). Orders within a month never trigger one.
 - The three sliders remain Master, Music and Effects (stingers are effects).
+- **Case-only file name collision.** `src/ui/audioSettings.ts` and `src/ui/AudioSettings.tsx` built
+  on Linux but not on a case-insensitive macOS volume, where `./AudioSettings` resolved to the `.ts`
+  file; the first macOS CI build failed on it. The settings module is now `audioPrefs.ts`, and
+  `tests/data.test.ts` fails on any two modules whose names differ only by case.

@@ -2,7 +2,7 @@
 import { useUiStore } from '../state/uiStore';
 import { applyVolumes, playSound, saveAudioSettings } from './audio';
 import { Stat } from './Stat';
-import type { AudioSettings as Settings } from './audioSettings';
+import type { AudioSettings as Settings } from './audioPrefs';
 import { useEffect, useState } from 'react';
 import { nowPlaying, PLAYLISTS, type Track } from './music';
 
