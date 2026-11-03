@@ -4,6 +4,7 @@
  */
 import { useMemo, useState } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { dispatch } from '../../state/simBridge';
@@ -56,10 +57,10 @@ const TABS: { id: Tab; label: string; tip: string }[] = [
 ];
 
 const STATUS_INFO: Record<TradeStatus, { label: string; color: string }> = {
-  open: { label: 'open', color: '#4ade80' },
-  rerouted: { label: 'rerouted', color: '#fbbf24' },
+  open: { label: 'open', color: 'var(--good)' },
+  rerouted: { label: 'rerouted', color: 'var(--warn)' },
   contested: { label: 'contested', color: '#fb923c' },
-  cut: { label: 'cut', color: '#f87171' },
+  cut: { label: 'cut', color: 'var(--bad)' },
   sanctioned: { label: 'sanctioned', color: '#f472b6' },
   embargoed: { label: 'embargoed', color: '#ef4444' },
   war: { label: 'war', color: '#ef4444' },
@@ -197,11 +198,11 @@ function Overview({ game, me }: { game: GameState; me: Iso3 }) {
     <div className="econ-overview">
       <div className="kpi-row" data-testid="econ-kpis">
         <Stat label="GDP" value={formatMoney(n.gdp)} tooltip={`Annual output. Potential output (full employment) is ${formatMoney(n.potentialGdp)}; the gap is ${formatPct(g.gap * 100, 1, true)}.`} />
-        <Stat label="Growth" value={formatPct(n.growth, 1, true)} tooltip="Annualised real growth last month; the breakdown below shows every cause." accent={n.growth < 0 ? '#f87171' : undefined} />
-        <Stat label="Inflation" value={formatPct(n.inflation, 1)} tooltip={`Consumer prices, % a year. Moving 15 % a month toward ${formatPct(infl.target, 1)}: anchor ${infl.anchor.toFixed(1)}, demand ${sign(infl.overheating)}, deficits ${sign(infl.deficit)}, mobilisation ${sign(infl.mobilization)}, import prices ${sign(infl.prices)}, shortages ${sign(infl.shortages)}, sanctions ${sign(infl.sanctions)}.`} accent={n.inflation > 15 ? '#f87171' : n.inflation > 6 ? '#fbbf24' : undefined} />
-        <Stat label="Debt" value={formatPct(debtPct, 0)} tooltip={`Public debt ${formatMoney(n.debt)}. Markets add a premium above ${formatPct(Math.max(90, (world.nations.get(me)?.debtToGdpPct ?? 60)), 0)} of GDP; default comes at ${formatPct(defaultThreshold(world, me) * 100, 0)}. Inflation erodes it in real terms.`} accent={debtPct > 150 ? '#f87171' : undefined} />
+        <Stat label="Growth" value={formatPct(n.growth, 1, true)} tooltip="Annualised real growth last month; the breakdown below shows every cause." accent={n.growth < 0 ? 'var(--bad)' : undefined} />
+        <Stat label="Inflation" value={formatPct(n.inflation, 1)} tooltip={`Consumer prices, % a year. Moving 15 % a month toward ${formatPct(infl.target, 1)}: anchor ${infl.anchor.toFixed(1)}, demand ${sign(infl.overheating)}, deficits ${sign(infl.deficit)}, mobilisation ${sign(infl.mobilization)}, import prices ${sign(infl.prices)}, shortages ${sign(infl.shortages)}, sanctions ${sign(infl.sanctions)}.`} accent={n.inflation > 15 ? 'var(--bad)' : n.inflation > 6 ? 'var(--warn)' : undefined} />
+        <Stat label="Debt" value={formatPct(debtPct, 0)} tooltip={`Public debt ${formatMoney(n.debt)}. Markets add a premium above ${formatPct(Math.max(90, (world.nations.get(me)?.debtToGdpPct ?? 60)), 0)} of GDP; default comes at ${formatPct(defaultThreshold(world, me) * 100, 0)}. Inflation erodes it in real terms.`} accent={debtPct > 150 ? 'var(--bad)' : undefined} />
         <Stat label="Interest" value={formatPct(n.interestRate, 1)} tooltip={`Average rate on the debt, drifting toward ${formatPct(ir.target, 1)}: base ${ir.base}, inflation ${sign(ir.inflation)}, debt premium ${sign(ir.debtPremium)}, past default ${sign(ir.defaultPremium)}, sanctions ${sign(ir.sanctions)}. Interest this month ${formatMoney(n.finances.interest)}.`} />
-        <Stat label="Cycle" value={n.recession ? 'Recession' : g.gap < -0.02 ? 'Recovery' : g.gap > 0.02 ? 'Overheating' : 'Expansion'} tooltip={`Six consecutive months of contraction is a recession; it ends when growth tops 0.5 %. Months of contraction in a row: ${n.negativeMonths}. Output gap ${formatPct(g.gap * 100, 1, true)}.`} accent={n.recession ? '#f87171' : undefined} />
+        <Stat label="Cycle" value={n.recession ? 'Recession' : g.gap < -0.02 ? 'Recovery' : g.gap > 0.02 ? 'Overheating' : 'Expansion'} tooltip={`Six consecutive months of contraction is a recession; it ends when growth tops 0.5 %. Months of contraction in a row: ${n.negativeMonths}. Output gap ${formatPct(g.gap * 100, 1, true)}.`} accent={n.recession ? 'var(--bad)' : undefined} />
       </div>
       <div className="econ-charts">
         <LineChart title="GDP" tip="Annual output, US$." samples={samples} pick={(s) => s.gdp} fmt={(v) => formatMoney(v)} color="#38bdf8" testId="chart-gdp" />
@@ -314,9 +315,9 @@ function TradeTab({ game, me }: { game: GameState; me: Iso3 }) {
     <div>
       <div className="kpi-row">
         <Stat label="Listed trade" value={formatMoney(total)} tooltip="Two-way goods trade with your largest partners this year (data: national customs statistics, approximately 2024; most rows are estimates)." />
-        <Stat label="Lost vs 2027" value={formatMoney(n.econ.tradeLost)} tooltip="Trade that wars, sanctions, embargoes and cut sea routes have removed since January 2027 (negative: trade gained through new agreements)." accent={n.econ.tradeLost > 1 ? '#f87171' : undefined} />
+        <Stat label="Lost vs 2027" value={formatMoney(n.econ.tradeLost)} tooltip="Trade that wars, sanctions, embargoes and cut sea routes have removed since January 2027 (negative: trade gained through new agreements)." accent={n.econ.tradeLost > 1 ? 'var(--bad)' : undefined} />
         <Stat label="Growth effect" value={`${sign(n.econ.tradeEffect, 2)} pp`} tooltip="0.6 pp of annual growth per 1 % of GDP of trade lost." />
-        <Stat label="Secondary penalties" value={formatMoney(n.econ.secondaryLost)} tooltip="Trade you lose because you defy another power's secondary sanctions." accent={n.econ.secondaryLost > 0 ? '#f87171' : undefined} />
+        <Stat label="Secondary penalties" value={formatMoney(n.econ.secondaryLost)} tooltip="Trade you lose because you defy another power's secondary sanctions." accent={n.econ.secondaryLost > 0 ? 'var(--bad)' : undefined} />
         <button className="btn small" onClick={() => setMapMode('economy')} data-tip="Show trade routes as flowing arcs on the globe (map mode 4)." data-testid="show-trade-map">
           Show on map
         </button>
@@ -364,14 +365,14 @@ function ResourcesTab({ game, me }: { game: GameState; me: Iso3 }) {
                 <span style={{ color: RESOURCE_COLOR[r] }} data-tip={`${meta.description} Source: ${meta.source}`}>
                   {meta.name}
                 </span>
-                <Stat value={formatPct(b.satisfaction * 100, 0)} tooltip={`Share of your demand met by home production plus imports. Below 100 % the shortfall slows units and research that need it and costs growth (${meta.gdpWeight} pp at a total shortage).`} accent={b.satisfaction < 0.9 ? '#f87171' : '#4ade80'} inline />
+                <Stat value={formatPct(b.satisfaction * 100, 0)} tooltip={`Share of your demand met by home production plus imports. Below 100 % the shortfall slows units and research that need it and costs growth (${meta.gdpWeight} pp at a total shortage).`} accent={b.satisfaction < 0.9 ? 'var(--bad)' : 'var(--good)'} inline />
               </div>
               <Meter value={b.satisfaction} color={RESOURCE_COLOR[r]} tip={`Supply ${formatPct(b.satisfaction * 100, 0)} of demand.`} />
               <div className="res-rows">
                 <Stat label="Production" value={formatPct(b.production * 100, 1)} tooltip={`Your output, % of world output at the start (${toUnits(b.production)} of ${meta.unit}). Falls with occupation and war damage.`} inline />
                 <Stat label="Demand" value={formatPct(b.demand * 100, 1)} tooltip={`What your economy and armed forces consume, % of world output (${toUnits(b.demand)}). Grows with GDP and mobilisation.`} inline />
                 <Stat label={net >= 0 ? 'Exports' : 'Imports'} value={formatPct((net >= 0 ? b.exports : b.imports) * 100, 1)} tooltip={net >= 0 ? 'Sold abroad this month (% of world output). Earnings count toward growth.' : 'Bought abroad this month (% of world output), along open trade routes from partners not sanctioning you.'} inline />
-                <Stat label="Price" value={`×${price.toFixed(2)}`} tooltip={`World price index (1 = January 2027): moves toward (demand ÷ delivered)^1.6. World shortage ${formatPct((game.economy.shortage[r] ?? 0) * 100, 1)}.`} accent={price > 1.2 ? '#f87171' : undefined} inline />
+                <Stat label="Price" value={`×${price.toFixed(2)}`} tooltip={`World price index (1 = January 2027): moves toward (demand ÷ delivered)^1.6. World shortage ${formatPct((game.economy.shortage[r] ?? 0) * 100, 1)}.`} accent={price > 1.2 ? 'var(--bad)' : undefined} inline />
               </div>
               <div className="res-suppliers">
                 {sup.length === 0 ? (
@@ -395,7 +396,7 @@ function ResourcesTab({ game, me }: { game: GameState; me: Iso3 }) {
           return (
             <span key={t} className="throttle">
               <span>{world.unitTypes.get(t)?.name}</span>
-              <Stat value={formatPct(v * 100, 0)} tooltip={`Build speed of a ${world.unitTypes.get(t)?.name}: inputs ${Object.entries(world.unitInputs.get(t) ?? {}).map(([k, w]) => `${world.resourceById.get(k as ResourceId)?.name} ${Math.round((w ?? 0) * 100)} %`).join(', ')}. Shortages slow the line (to 25 % at worst) and raise its cost.`} accent={v < 0.95 ? '#f87171' : undefined} inline />
+              <Stat value={formatPct(v * 100, 0)} tooltip={`Build speed of a ${world.unitTypes.get(t)?.name}: inputs ${Object.entries(world.unitInputs.get(t) ?? {}).map(([k, w]) => `${world.resourceById.get(k as ResourceId)?.name} ${Math.round((w ?? 0) * 100)} %`).join(', ')}. Shortages slow the line (to 25 % at worst) and raise its cost.`} accent={v < 0.95 ? 'var(--bad)' : undefined} inline />
             </span>
           );
         })}
@@ -404,7 +405,7 @@ function ResourcesTab({ game, me }: { game: GameState; me: Iso3 }) {
           return (
             <span key={b} className="throttle">
               <span>{world.branches.find((x) => x.id === b)?.name}</span>
-              <Stat value={formatPct(v * 100, 0)} tooltip={`Research speed in this branch from input shortages (to 40 % at worst).`} accent={v < 0.95 ? '#f87171' : undefined} inline />
+              <Stat value={formatPct(v * 100, 0)} tooltip={`Research speed in this branch from input shortages (to 40 % at worst).`} accent={v < 0.95 ? 'var(--bad)' : undefined} inline />
             </span>
           );
         })}
@@ -534,9 +535,9 @@ function DomesticTab({ game, me }: { game: GameState; me: Iso3 }) {
     <div className="econ-two">
       <div>
         <div className="kpi-row">
-          <Stat label="Approval" value={`${Math.round(n.support)}`} tooltip={`Public support for your government, 0–100, moving 12 % a month toward ${Math.round(sb.target)}. Below ${regime ? PROTEST_THRESHOLD[regime] : 30} (with stability under 55) people take to the streets.`} accent={n.support < 35 ? '#f87171' : undefined} />
+          <Stat label="Approval" value={`${Math.round(n.support)}`} tooltip={`Public support for your government, 0–100, moving 12 % a month toward ${Math.round(sb.target)}. Below ${regime ? PROTEST_THRESHOLD[regime] : 30} (with stability under 55) people take to the streets.`} accent={n.support < 35 ? 'var(--bad)' : undefined} />
           <Stat label="Stability" value={`${Math.round(n.stability)}`} tooltip="Public order, 0–100. Below 10 for three months the regime collapses." />
-          <Stat label="Protests" value={n.protestMonths > 0 ? `${n.protestMonths} mo` : 'None'} tooltip="Months of mass protests in a row: each costs 1 stability; from the third month they also cost growth." accent={n.protestMonths > 0 ? '#f87171' : undefined} />
+          <Stat label="Protests" value={n.protestMonths > 0 ? `${n.protestMonths} mo` : 'None'} tooltip="Months of mass protests in a row: each costs 1 stability; from the third month they also cost growth." accent={n.protestMonths > 0 ? 'var(--bad)' : undefined} />
           <Stat label="Regime" value={regime ? regime[0]!.toUpperCase() + regime.slice(1) : 'n/a'} tooltip="EIU Democracy Index 2024 category. Democracies face elections; autocracies face coups; hybrid regimes both, more mildly." />
         </div>
         <LineChart title="Approval" tip="Public support, 0–100." samples={samples} pick={(s) => s.support} fmt={(v) => `${Math.round(v)}`} color="#a78bfa" range={[0, 100]} testId="chart-support" />
@@ -550,13 +551,13 @@ function DomesticTab({ game, me }: { game: GameState; me: Iso3 }) {
         ) : (
           <div className="election" data-testid="election">
             <Stat label="When" value={formatMonthShort(dateForTurn(n.nextElection!))} tooltip={`${left} months from now. Losing ends your game.`} />
-            <Stat label="Polls" value={formatPct(share, 1)} tooltip={`Projected vote share: 50 + 0.7 × (approval − 50)${regime === 'hybrid' ? ' + 10 incumbency (hybrid regime)' : ' + 1 incumbency'}, ±3 on the day.`} accent={share < 50 ? '#f87171' : '#4ade80'} />
-            <Stat label="Chance to stay" value={formatPct(chance * 100, 0)} tooltip="Probability of winning at today's polls." accent={chance < 0.5 ? '#f87171' : undefined} />
+            <Stat label="Polls" value={formatPct(share, 1)} tooltip={`Projected vote share: 50 + 0.7 × (approval − 50)${regime === 'hybrid' ? ' + 10 incumbency (hybrid regime)' : ' + 1 incumbency'}, ±3 on the day.`} accent={share < 50 ? 'var(--bad)' : 'var(--good)'} />
+            <Stat label="Chance to stay" value={formatPct(chance * 100, 0)} tooltip="Probability of winning at today's polls." accent={chance < 0.5 ? 'var(--bad)' : undefined} />
             {chance < 0.5 && <div className="reply danger-text">You are projected to lose. Losing the election ends your game: raise approval before polling day.</div>}
           </div>
         )}
         <div className="section-title">Coup risk</div>
-        <Stat value={formatPct(coup.total * 100, 2)} tooltip={`Monthly probability that the army moves against you: low approval ${formatPct(coup.support * 100, 2)}, low stability ${formatPct(coup.stability * 100, 2)}, battlefield defeat ${formatPct(coup.defeat * 100, 2)}, neglected army ${formatPct(coup.army * 100, 2)}, recession ${formatPct(coup.recession * 100, 2)}, protests ${formatPct(coup.protests * 100, 2)} — ×${coup.regimeFactor} for your regime. A coup ends your game.`} accent={coup.total >= 0.01 ? '#f87171' : undefined} />
+        <Stat value={formatPct(coup.total * 100, 2)} tooltip={`Monthly probability that the army moves against you: low approval ${formatPct(coup.support * 100, 2)}, low stability ${formatPct(coup.stability * 100, 2)}, battlefield defeat ${formatPct(coup.defeat * 100, 2)}, neglected army ${formatPct(coup.army * 100, 2)}, recession ${formatPct(coup.recession * 100, 2)}, protests ${formatPct(coup.protests * 100, 2)} — ×${coup.regimeFactor} for your regime. A coup ends your game.`} accent={coup.total >= 0.01 ? 'var(--bad)' : undefined} />
         <p className="hint">{regime === 'democracy' ? 'Democracies do not face coups in this simulation.' : 'Keep approval above 35, stability above 30 and the military budget above 8 % to keep the generals loyal.'}</p>
       </div>
     </div>
@@ -570,7 +571,7 @@ export function EconomyModal() {
   const me = game.player;
   const n = game.nations[me]!;
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="economy" />}
       title="Economy"
       subtitle={`${formatMoney(n.gdp)} economy, ${formatPct(n.growth, 1, true)} growth, ${formatPct(n.inflation, 1)} inflation, approval ${Math.round(n.support)}. Charts begin in January 2027.`}
       wide

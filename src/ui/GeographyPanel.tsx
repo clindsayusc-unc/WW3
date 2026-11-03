@@ -128,7 +128,7 @@ export function TerrainSection({
           value={rs.controller ? formatPct(rs.supply * 100, 0) : '—'}
           tooltip={`Supply reaching the controller here${rs.controller && depotKind(world, rs.controller, meta.id) ? ` — a depot (${depotKind(world, rs.controller, meta.id)})` : ''}. Depots are capitals, industrial regions and major ports; supply spreads from them through owned and allied land and controlled sea zones, losing a share at every region, sea zone, river and mountain; home regions linked to the capital never drop below 55 %. Enemy interdiction wings and bombed infrastructure${rs.infraDamage > 0 ? ` (${Math.round(rs.infraDamage * 100)} % damaged here)` : ''} cut it further. Below ${Math.round(SUPPLY_THRESHOLD * 100)} % units are cut off: they fight at half strength and lose 4 strength and 4 morale a month.`}
           accent={
-            rs.supply < SUPPLY_THRESHOLD ? '#f87171' : rs.supply < 0.6 ? '#fbbf24' : undefined
+            rs.supply < SUPPLY_THRESHOLD ? 'var(--bad)' : rs.supply < 0.6 ? 'var(--warn)' : undefined
           }
         />
       </div>
@@ -138,7 +138,7 @@ export function TerrainSection({
             label={`Weather (${MONTH[game.date.month - 1]})`}
             value={describeWeather(w)}
             tooltip={`${w.tempC.toFixed(0)} °C mean, ${w.precipMm} mm rain this month (MERRA-2 2023). Winter ${formatPct(w.winter * 100, 0)}: attack ×${(1 - 0.35 * w.winter).toFixed(2)}, movement ×${(1 + 0.8 * w.winter).toFixed(2)}, ${(8 * w.winter).toFixed(0)} strength/month attrition for troops off their own soil. Monsoon ${formatPct(w.monsoon * 100, 0)}: attack ×${(1 - 0.3 * w.monsoon).toFixed(2)}, air ×${(1 - 0.45 * w.monsoon).toFixed(2)}. Heat ${formatPct(w.heat * 100, 0)}: attack ×${(1 - 0.15 * w.heat).toFixed(2)}, ${(4 * w.heat).toFixed(0)} attrition.`}
-            accent={w.winter + w.monsoon + w.heat > 0.5 ? '#fbbf24' : undefined}
+            accent={w.winter + w.monsoon + w.heat > 0.5 ? 'var(--warn)' : undefined}
           />
           <Stat
             label="Year"
@@ -202,7 +202,7 @@ export function BreakdownRows({ title, mods }: { title: string; mods: Modifier[]
               <span
                 style={{
                   width: `${width}%`,
-                  background: good ? '#4ade80' : bad ? '#f87171' : '#94a3b8',
+                  background: good ? 'var(--good)' : bad ? 'var(--bad)' : '#94a3b8',
                 }}
               />
             </span>
@@ -223,9 +223,17 @@ export function OddsBreakdown({ report }: { report: OddsReport }) {
   const target = world.regions.get(report.target);
   return (
     <div className="odds" data-testid="odds-breakdown">
-      <div data-tip="Attack power ÷ defence power, with every multiplier below applied — the same numbers the battle will use.">
-        Odds: <strong>{report.text}</strong>
-      </div>
+      <Stat
+        label="Odds"
+        value={report.text}
+        tooltip="Attack power ÷ defence power, with every multiplier applied — the same numbers the battle will use."
+        breakdown={[
+          ...report.attacker.map((m) => ({ label: `Attacker · ${m.label}`, value: `×${m.factor.toFixed(2)}`, tip: m.detail, tone: m.factor > 1.001 ? ('good' as const) : m.factor < 0.999 ? ('bad' as const) : ('neutral' as const) })),
+          ...report.defender.map((m) => ({ label: `Defender · ${m.label}`, value: `×${m.factor.toFixed(2)}`, tip: m.detail, tone: m.factor > 1.001 ? ('bad' as const) : m.factor < 0.999 ? ('good' as const) : ('neutral' as const) })),
+        ]}
+        testId="odds-headline"
+        inline
+      />
       {report.intel < 4 && (
         <div
           className="hint"
@@ -266,7 +274,7 @@ export function OddsBreakdown({ report }: { report: OddsReport }) {
                   value={`supply ${Math.round((report.path!.supply[i] ?? 0) * 100)}%`}
                   tooltip="Supply level the unit would have there, as things stand now: decays with every region, sea zone and crossing from the nearest depot or port."
                   inline
-                  accent={(report.path!.supply[i] ?? 0) < SUPPLY_THRESHOLD ? '#f87171' : undefined}
+                  accent={(report.path!.supply[i] ?? 0) < SUPPLY_THRESHOLD ? 'var(--bad)' : undefined}
                 />
               </span>
             </div>
@@ -321,7 +329,7 @@ export function ChokepointSection({ c, game }: { c: ChokepointMeta; game: GameSt
           label="Oil price"
           value={`×${game.oilPrice.toFixed(2)}`}
           tooltip="World oil price index (1.00 in January 2027). Each closed chokepoint adds its oil shock; importers lose growth, exporters gain."
-          accent={game.oilPrice > 1.15 ? '#f87171' : undefined}
+          accent={game.oilPrice > 1.15 ? 'var(--bad)' : undefined}
         />
       </div>
       <p

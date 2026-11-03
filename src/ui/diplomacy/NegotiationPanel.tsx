@@ -196,7 +196,7 @@ export function NegotiationPanel({ game, partner }: { game: GameState; partner: 
               label="Acceptance"
               value={`${pct}%`}
               tooltip={`How likely ${leader} is to say yes, from the net value of the package to ${nationName(world, partner)} (${Number.isFinite(verdict.score) ? `${verdict.score.toFixed(1)} bn-equivalent` : 'a hard refusal'}). Above 50 % the deal is accepted; the AI decides by the same numbers you see.`}
-              accent={pct >= 50 ? '#4ade80' : pct >= 25 ? '#fbbf24' : '#f87171'}
+              accent={pct >= 50 ? 'var(--good)' : pct >= 25 ? 'var(--warn)' : 'var(--bad)'}
             />
           </div>
           <div className="likelihood-bar" data-tip={`Acceptance likelihood ${pct}%. The marker shows the 50 % line.`}>
@@ -211,7 +211,7 @@ export function NegotiationPanel({ game, partner }: { game: GameState; partner: 
                 <Stat
                   value={`${l.value >= 0 ? '+' : '−'}${Math.abs(l.value).toFixed(1)}`}
                   tooltip={`Value of this line to ${nationName(world, partner)} in US$ bn-equivalent, weighted by ${leader}'s traits, agenda and memory.`}
-                  accent={l.value >= 0 ? '#4ade80' : '#f87171'}
+                  accent={l.value >= 0 ? 'var(--good)' : 'var(--bad)'}
                   inline
                 />
               </div>

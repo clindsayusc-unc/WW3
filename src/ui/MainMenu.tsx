@@ -21,6 +21,7 @@ export function MainMenu({ onStart }: { onStart: () => void }) {
   const [step, setStep] = useState<Step>('home');
   const [scenario, setScenario] = useState<'world-2027' | 'taiwan-crisis'>('world-2027');
   const [pick, setPick] = useState<string>('USA');
+  const [withTutorial, setWithTutorial] = useState<boolean | null>(null);
   const [auto, setAuto] = useState<{ state: GameState; savedAt: number } | null>(null);
   const [saves, setSaves] = useState<SaveMeta[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -32,6 +33,8 @@ export function MainMenu({ onStart }: { onStart: () => void }) {
   const start = () => {
     playSound('endTurn');
     newGame({ seed: (Date.now() % 100000) + 1, player: pick, scenario });
+    const tutorial = withTutorial ?? !ui.prefs.tutorialDone;
+    useUiStore.getState().setTutorial({ active: tutorial, step: 0, startedTurn: 0 });
     onStart();
   };
   const resume = (s: GameState) => {
@@ -181,6 +184,15 @@ export function MainMenu({ onStart }: { onStart: () => void }) {
               <button className="btn ghost" onClick={() => setStep('scenario')}>
                 Back
               </button>
+              <label className="toggle-row" data-tip="Five guided months with your (fictional) chief of staff, highlighting each part of the screen. Press H in game to replay it.">
+                <input
+                  type="checkbox"
+                  checked={withTutorial ?? !ui.prefs.tutorialDone}
+                  onChange={(e) => setWithTutorial(e.target.checked)}
+                  data-testid="tutorial-toggle"
+                />
+                Tutorial
+              </label>
               <button className="btn primary big" onClick={start} data-testid="start-game">
                 Begin — {formatMonth({ year: 2027, month: 1 })}
               </button>

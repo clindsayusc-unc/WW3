@@ -126,6 +126,18 @@ async function playTurns(page: Page, n: number, onEvent?: () => Promise<void>): 
   }
 }
 
+/** Start the game; existing tests play without the tutorial (it has its own test, D-080). */
+async function startGame(page: Page, tutorial = false) {
+  const toggle = page.getByTestId('tutorial-toggle');
+  if ((await toggle.isChecked()) !== tutorial) await toggle.click();
+  await page.getByTestId('start-game').click();
+}
+/** Irreversible actions ask first (D-080). */
+async function confirm(page: Page) {
+  await expect(page.getByTestId('confirm-dialog')).toBeVisible();
+  await page.getByTestId('confirm-ok').click();
+  await expect(page.getByTestId('confirm-dialog')).toBeHidden();
+}
 async function shot(page: Page, name: string) {
   mkdirSync(SHOTS, { recursive: true });
   await page.waitForTimeout(1500);
@@ -170,7 +182,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await shot(page, 'leader-select-gbr');
   await grid.getByTestId('leader-USA').click();
   await shot(page, 'leader-select');
-  await page.getByTestId('start-game').click();
+  await startGame(page);
 
   await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
   await expect(page.getByTestId('hud')).toContainText('January 2027');
@@ -282,6 +294,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.getByTestId('diplomacy-search').fill('Iran');
   await page.getByTestId('dip-IRN').click();
   await page.getByTestId('act-declareWar').click();
+  await confirm(page);
   await page.getByTestId('modal-close').click();
   await expect(page.getByTestId('alerts')).toContainText('declares war on Iran');
   const kermanshah = await page.evaluate(() => {
@@ -315,6 +328,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   );
   await expect(page.getByTestId('strike-section')).toBeVisible();
   await page.getByTestId('strike-military').click();
+  await confirm(page);
   await expect(page.getByTestId('alerts')).toContainText('cruise missiles', { timeout: 10_000 });
   await shot(page, 'missile-strike');
   await page.evaluate(() =>
@@ -332,6 +346,7 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await page.getByTestId('diplomacy-search').fill('Cuba');
   await page.getByTestId('dip-CUB').click();
   await page.getByTestId('act-declareWar').click();
+  await confirm(page);
   await page.getByTestId('modal-close').click();
   await expect(page.getByTestId('alerts')).toContainText('declares war on Cuba');
   const move = await page.evaluate(() => {
@@ -502,7 +517,7 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await page.getByTestId('scenario-taiwan').click();
   await page.getByTestId('scenario-next').click();
   await page.getByTestId('leader-grid').getByTestId('leader-CHN').click();
-  await page.getByTestId('start-game').click();
+  await startGame(page);
   await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
   // Set a research project and a budget so the economy loop is exercised.
   await page.getByTestId('nav-research').click();
@@ -515,6 +530,7 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await page.getByTestId('diplomacy-search').fill('Taiwan');
   await page.getByTestId('dip-TWN').click();
   await page.getByTestId('act-declareWar').click();
+  await confirm(page);
   await page.getByTestId('modal-close').click();
   await expect(page.getByTestId('alerts')).toContainText('declares war on Taiwan');
   const taipei = await page.evaluate(() => {
@@ -619,7 +635,7 @@ test('nuclear aftermath: fallout on the map and the nobody-wins ending', async (
   await page.getByTestId('scenario-world').click();
   await page.getByTestId('scenario-next').click();
   await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
-  await page.getByTestId('start-game').click();
+  await startGame(page);
   await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
   // A fictional successor (D-078): Russia after a security-service coup, with traits the simulation
   // generated for seed 2027 from the siloviki profile.
@@ -682,6 +698,213 @@ test('nuclear aftermath: fallout on the map and the nobody-wins ending', async (
   expect(errors).toEqual([]);
 });
 
+/** Every visible text node rendered below 12 px on screen (CSS size × any scale transform). */
+const SMALL_TEXT = `(() => {
+  const out = [];
+  const root = document.querySelector('[data-testid="ui-root"]') || document.body;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n;
+  while ((n = walker.nextNode())) {
+    if (!n.textContent.trim()) continue;
+    const el = n.parentElement;
+    if (!el) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0 || r.bottom < 0 || r.top > innerHeight) continue;
+    const cs = getComputedStyle(el);
+    if (cs.visibility === 'hidden' || Number(cs.opacity) === 0) continue;
+    let k = 1;
+    for (let a = el; a; a = a.parentElement) {
+      const m = getComputedStyle(a).transform.match(/matrix\\(([^,]+),/);
+      if (m) k *= Number(m[1]);
+    }
+    const px = parseFloat(cs.fontSize) * k;
+    if (px < 11.95) out.push(px.toFixed(1) + 'px "' + n.textContent.trim().slice(0, 30) + '"');
+  }
+  return out;
+})()`;
+async function smallText(page: Page): Promise<string[]> {
+  return (await page.evaluate(SMALL_TEXT)) as string[];
+}
+
+test('tutorial: five guided months, every screen, readability (D-080)', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(m.text());
+  });
+  const id = (t: string) => page.getByTestId(t);
+  const small: string[] = [];
+  const look = async (name: string) => {
+    await shot(page, name);
+    small.push(...(await smallText(page)).map((x) => `${name}: ${x}`));
+  };
+  /** Wait for a tutorial step, answering any decision event that arrives first. */
+  const step = async (sid: string) => {
+    for (let k = 0; k < 240; k++) {
+      if (await id('event-modal').isVisible().catch(() => false)) {
+        await expect(id('tutorial-paused')).toBeVisible();
+        await id('choice-0').click();
+      }
+      if (await id(`tutorial-step-${sid}`).isVisible().catch(() => false)) return;
+      await page.waitForTimeout(250);
+    }
+    throw new Error(`tutorial step ${sid} never appeared`);
+  };
+  const next = () => id('tutorial-next').click();
+  await page.goto('/');
+  await expect(id('loading')).toBeHidden({ timeout: 120_000 });
+  await look('menu');
+  await id('menu-new').click();
+  await id('scenario-world').click();
+  await id('scenario-next').click();
+  await id('leader-grid').getByTestId('leader-USA').click();
+  await expect(id('tutorial-toggle')).toBeChecked(); // on by default for a first game
+  await startGame(page, true);
+  await expect(id('hud')).toBeVisible({ timeout: 60_000 });
+  // Month 1.
+  await step('welcome');
+  await look('tutorial-01-welcome');
+  await next();
+  await step('topbar');
+  await look('tutorial-02-topbar');
+  await next();
+  await step('growth');
+  await id('hud-growth').hover();
+  await expect(id('tooltip')).toContainText('Trend');
+  const rows = page.locator('[data-testid="tooltip"] .bd-nest');
+  await rows.nth(Math.min((await rows.count()) - 1, 4)).hover();
+  await expect(id('tooltip-1')).toBeVisible(); // the nested tooltip with the sources
+  await look('tutorial-03-nested-tooltip');
+  await next();
+  await step('nation');
+  await next();
+  await step('mapmodes');
+  await page.keyboard.press('3');
+  await step('select');
+  await page.evaluate(() => {
+    const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
+    w.ui.getState().select(w.capital('USA')!);
+  });
+  await step('advisor');
+  await expect(id('advice-0')).toBeVisible();
+  await look(branchSlug());
+  await next();
+  await step('budget-open');
+  await id('nav-budget').click();
+  await step('budget-inside');
+  await look('tutorial-04-budget');
+  await page.keyboard.press('Escape');
+  await step('end-1');
+  await id('end-turn').click();
+  // Month 2: the briefing and research.
+  await step('briefing');
+  await id('nav-summary').click();
+  await step('research-open');
+  await expect(id('briefing-bluf')).toBeVisible();
+  await expect(id('briefing-relations')).toBeVisible();
+  await look('briefing');
+  await id('nav-research').click(); // the nav works with any screen open
+  await step('research-queue');
+  await id('tech-cyber-pqc').dispatchEvent('click');
+  await step('end-2');
+  await page.keyboard.press('Escape');
+  await id('end-turn').click();
+  // Month 3: production and undo.
+  await step('production-open');
+  await id('nav-production').click();
+  await step('production-build');
+  await id('build-infantry').click();
+  await step('undo');
+  await expect(id('undo')).toContainText('Undo (1)');
+  await page.keyboard.press('Control+z');
+  await expect(id('undo')).toContainText('Undo');
+  await expect(id('undo')).toBeDisabled();
+  await look('tutorial-05-undo');
+  await next();
+  await step('military-open');
+  await id('nav-military').click();
+  await step('end-3');
+  await page.keyboard.press('Escape');
+  await id('end-turn').click();
+  // Month 4: diplomacy and the economy.
+  await step('diplomacy-open');
+  await id('nav-diplomacy').click();
+  await step('diplomacy-inside');
+  await look('tutorial-06-diplomacy');
+  await next();
+  await step('economy-open');
+  await id('nav-economy').click();
+  await step('end-4');
+  await page.keyboard.press('Escape');
+  await id('end-turn').click();
+  // Month 5: escalation, shortcuts, settings.
+  await step('tension');
+  await id('hud-tension').click();
+  await step('shortcuts');
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('?');
+  await step('settings');
+  await expect(id('modal-shortcuts')).toBeVisible();
+  await look('shortcuts');
+  await page.keyboard.press('Escape');
+  await next();
+  await step('farewell');
+  await look('tutorial-07-farewell');
+  await id('tutorial-finish').click();
+  await expect(id('tutorial')).toBeHidden();
+  // Every screen and tab.
+  const screens: [string, string, string[]][] = [
+    ['nav-economy', 'econ-tab', ['overview', 'budget', 'trade', 'resources', 'sanctions', 'domestic']],
+    ['nav-military', 'mil-tab', ['overview', 'air', 'operations', 'intel']],
+    ['nav-diplomacy', 'dip-tab', ['nations', 'negotiate', 'dispatches', 'blocs', 'un']],
+    ['nav-research', 'research-tab', ['queue', 'espionage', 'sharing']],
+  ];
+  for (const [nav, prefix, tabs] of screens) {
+    await id(nav).click();
+    for (const t of tabs) {
+      await id(`${prefix}-${t}`).click();
+      await look(`screen-${nav.slice(4)}-${t}`);
+    }
+    await page.keyboard.press('Escape');
+  }
+  for (const nav of ['nav-budget', 'nav-production', 'nav-settings']) {
+    await id(nav).click();
+    await look(`screen-${nav.slice(4)}`);
+    await page.keyboard.press('Escape');
+  }
+  await page.keyboard.press('x');
+  await look('screen-escalation');
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('n');
+  await look('screen-news');
+  await page.keyboard.press('Escape');
+  // Irreversible actions ask first; cancelling changes nothing.
+  await id('nav-diplomacy').click();
+  await id('dip-tab-nations').click();
+  await id('diplomacy-search').fill('Iran');
+  await id('dip-IRN').click();
+  await id('act-declareWar').click();
+  await expect(id('confirm-dialog')).toContainText('Declare war on Iran?');
+  await look('confirm-war');
+  await id('confirm-cancel').click();
+  await page.keyboard.press('Escape');
+  await expect(id('alerts')).not.toContainText('declares war on Iran');
+  // Readability: the colourblind palette and a 125 % UI scale.
+  await id('nav-settings').click();
+  await id('palette-colourblind').click();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('3');
+  await look('colourblind-relations');
+  await page.keyboard.press('8');
+  await look('colourblind-supply');
+  await page.keyboard.press('1');
+  await page.evaluate(() => (globalThis as unknown as { ww3: { ui: { getState: () => { setPrefs: (p: object) => void } } } }).ww3.ui.getState().setPrefs({ uiScale: 1.25, palette: 'default' }));
+  await look('ui-scale-125');
+  await page.evaluate(() => (globalThis as unknown as { ww3: { ui: { getState: () => { setPrefs: (p: object) => void } } } }).ww3.ui.getState().setPrefs({ uiScale: 1 }));
+  expect(small, small.slice(0, 10).join('\n')).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
 test('performance probe: 20 s camera sweep', async ({ page }) => {
   test.skip(!process.env.PERF, 'set PERF=1 to run the performance sweep');
   await page.goto('/');
@@ -689,7 +912,7 @@ test('performance probe: 20 s camera sweep', async ({ page }) => {
   await page.getByTestId('menu-new').click();
   await page.getByTestId('scenario-next').click();
   await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
-  await page.getByTestId('start-game').click();
+  await startGame(page);
   await expect(page.getByTestId('hud')).toBeVisible({ timeout: 60_000 });
   await page.waitForTimeout(3000);
   const result = await page.evaluate(() =>

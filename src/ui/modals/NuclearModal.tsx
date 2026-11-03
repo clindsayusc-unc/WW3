@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { dispatch } from '../../state/simBridge';
@@ -24,7 +25,7 @@ export function NuclearModal() {
   const why = t ? canLaunchNuclear(game, game.player, t) : 'No enemy.';
   const region = t ? pickStrikeTarget(world, game, t) : null;
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="nuclear" />}
       title="Nuclear Release"
       subtitle={`DEFCON ${me.defcon}. ${me.warheads} warheads. This cannot be undone.`}
       testId="modal-nuclear"
@@ -46,7 +47,7 @@ export function NuclearModal() {
             label="Their retaliation"
             value={deterrentAgainst(world, game, t, game.player).status}
             tooltip="The target's (or its nuclear allies') surviving warheads against your missile defence. Assured: retaliation is near-certain and devastating."
-            accent={deterrentAgainst(world, game, t, game.player).status === 'assured' ? '#f87171' : undefined}
+            accent={deterrentAgainst(world, game, t, game.player).status === 'assured' ? 'var(--bad)' : undefined}
           />
         </div>
       )}

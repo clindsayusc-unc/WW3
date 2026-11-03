@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { dispatch } from '../../state/simBridge';
@@ -129,7 +130,7 @@ export function DiplomacyModal() {
   };
   const resolutionOk = alliesOf(world, game, me).length >= 2;
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="diplomacy" />}
       title="Diplomacy"
       subtitle="Relations run from −100 (war) to +100 (special relationship). Every reply explains itself."
       wide
@@ -205,7 +206,7 @@ export function DiplomacyModal() {
                 label="Relations"
                 value={`${Math.round(rel)}`}
                 tooltip={`${relationLabel(rel)}. Baseline from blocs and treaties; recent actions decay toward it at 0.5/month.`}
-                accent={rel < -30 ? '#f87171' : rel > 30 ? '#4ade80' : undefined}
+                accent={rel < -30 ? 'var(--bad)' : rel > 30 ? 'var(--good)' : undefined}
               />
               <Stat label="GDP" value={formatMoney(n.gdp)} tooltip="Annual GDP." />
               <Stat

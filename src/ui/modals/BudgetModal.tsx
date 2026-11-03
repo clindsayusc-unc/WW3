@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { dispatch } from '../../state/simBridge';
 import { Stat } from '../Stat';
@@ -66,7 +67,7 @@ export function BudgetModal() {
     playSound('accept');
   };
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="budget" />}
       title="National Budget"
       subtitle={`Monthly revenue ${formatMoney(revenue)} = ${me.taxRate}% of GDP ÷ 12 (set taxes in the Economy screen), scaled by territory you still control.`}
       testId="modal-budget"

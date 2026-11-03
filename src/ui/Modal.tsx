@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useUiStore } from '../state/uiStore';
 import { playSound } from './audio';
@@ -13,6 +14,8 @@ interface ModalProps {
   testId?: string;
   onClose?: () => void;
   footer?: ReactNode;
+  /** A lucide icon shown before the title. */
+  icon?: ReactNode;
 }
 
 export function Modal({
@@ -24,6 +27,7 @@ export function Modal({
   testId,
   onClose,
   footer,
+  icon,
 }: ModalProps) {
   const close = () => {
     playSound('close');
@@ -49,12 +53,15 @@ export function Modal({
         aria-label={title}
       >
         <header className="modal-header">
-          <div>
-            <h2>{title}</h2>
+          <div className="modal-title">
+            <h2>
+              {icon && <span className="modal-icon">{icon}</span>}
+              {title}
+            </h2>
             {subtitle && <p className="modal-subtitle">{subtitle}</p>}
           </div>
           <button className="icon-btn" onClick={close} aria-label="Close" data-testid="modal-close">
-            ✕
+            <X size={18} aria-hidden="true" />
           </button>
         </header>
         <div className="modal-body">{children}</div>

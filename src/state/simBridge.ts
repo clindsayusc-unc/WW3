@@ -18,7 +18,7 @@ function ensureWorker(): Worker {
   worker = new Worker(new URL('../sim/worker.ts', import.meta.url), { type: 'module' });
   worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
     const msg = event.data;
-    if (msg.kind === 'state') useGameStore.getState().setGame(msg.state, msg.ms);
+    if (msg.kind === 'state') useGameStore.getState().setGame(msg.state, msg.ms, msg.undo);
     else if (msg.kind === 'odds') oddsListener?.(msg.report);
     else useGameStore.getState().setError(msg.message);
   };
@@ -40,9 +40,25 @@ export function loadGame(state: GameState): void {
   send({ kind: 'load', state });
 }
 
-export function dispatch(command: Command): void {
+/**
+ * A gate that may hold a command back for confirmation (D-080): it returns true when it has taken
+ * the command (the UI shows a dialog and re-dispatches with `confirmed`).
+ */
+let gate: ((command: Command) => boolean) | null = null;
+export function setDispatchGate(g: ((command: Command) => boolean) | null): void {
+  gate = g;
+}
+
+export function dispatch(command: Command, opts: { confirmed?: boolean } = {}): void {
+  if (!opts.confirmed && gate?.(command)) return;
   if (command.type === 'endTurn') useGameStore.getState().setBusy(true);
   send({ kind: 'command', command });
+}
+
+/** Take back the last undoable order of this turn (D-080). */
+export function undoLast(): void {
+  if (useGameStore.getState().undo.length === 0) return;
+  send({ kind: 'undo' });
 }
 
 export function requestOdds(

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { MAP_MODES, useUiStore } from '../state/uiStore';
 import { useGameStore } from '../state/gameStore';
-import { dispatch } from '../state/simBridge';
+import { dispatch, undoLast } from '../state/simBridge';
 import { playSound } from './audio';
 
-/** Global shortcuts: Enter = end turn, 1–7 map modes, B/P/R/D/M/E screens, Esc closes, L labels, C chokepoints. */
+/** Global shortcuts (listed in src/ui/shortcuts.ts and the `?` overlay, D-080). */
 export function useKeyboard(): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -17,6 +17,16 @@ export function useKeyboard(): void {
       )
         return;
       const game = useGameStore.getState().game;
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undoLast();
+        return;
+      }
+      if (e.key === '?') {
+        ui.setModal(ui.modal === 'shortcuts' ? null : 'shortcuts');
+        playSound('open');
+        return;
+      }
       if (e.key === 'Escape') {
         if (ui.modal) ui.setModal(null);
         else ui.select(null);
@@ -57,6 +67,8 @@ export function useKeyboard(): void {
         playSound('open');
         return;
       }
+      if (k === 'a' && !e.metaKey && !e.ctrlKey) ui.setPrefs({ advisor: !ui.prefs.advisor });
+      if (k === 'h' && !e.metaKey && !e.ctrlKey) ui.setTutorial({ active: true, step: 0 });
       if (k === 'l') ui.toggleLabels();
       if (k === 'c') ui.toggleChokepoints();
     };

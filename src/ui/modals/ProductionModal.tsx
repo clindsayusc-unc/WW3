@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal } from '../Modal';
+import { ScreenIcon } from '../icons';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { dispatch } from '../../state/simBridge';
@@ -32,7 +33,7 @@ export function ProductionModal() {
     playSound('order');
   };
   return (
-    <Modal
+    <Modal icon={<ScreenIcon id="production" />}
       title="Production"
       subtitle={`Treasury ${formatMoney(me.treasury)}. Units are placed in the chosen region; naval units appear in its adjacent sea zone.`}
       wide

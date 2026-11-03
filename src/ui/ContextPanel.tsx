@@ -142,7 +142,7 @@ export function ContextPanel() {
             label="Zone"
             value={zc.controller ? nationName(world, zc.controller) : zc.contested ? 'Contested' : 'Open water'}
             tooltip="The fleet holding the zone with a clear margin (at least twice every fleet at war with it, allies pooled). Control gates landings, convoys and blockades; contested zones let no one's convoys through safely."
-            accent={zc.controller ? nationHex(zc.controller) : zc.contested ? '#fbbf24' : undefined}
+            accent={zc.controller ? nationHex(zc.controller) : zc.contested ? 'var(--warn)' : undefined}
           />
         </div>
       )}
@@ -230,7 +230,7 @@ export function ContextPanel() {
                     : 'Peace'
               }
               tooltip="Whether this nation is fighting you or anyone else."
-              accent={atWar(game, game.player, controller!) ? '#f87171' : undefined}
+              accent={atWar(game, game.player, controller!) ? 'var(--bad)' : undefined}
             />
           </div>
           <p

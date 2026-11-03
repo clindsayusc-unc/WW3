@@ -3,11 +3,13 @@ import { MAP_MODES, useUiStore } from '../state/uiStore';
 import { formatMoney, formatMonth, formatPct, DEFCON_LABEL } from './format';
 import { Stat } from './Stat';
 import { loadWorld } from '../sim/world';
-import { growthBreakdown } from '../sim/economy';
 import { playSound } from './audio';
 import { flagEmoji } from './flags';
 import { RESOURCE_IDS } from '../sim/types';
 import { RESOURCE_COLOR } from './economyInfo';
+import { ScreenIcon } from './icons';
+import { HelpCircle } from 'lucide-react';
+import { approvalRows, growthRows } from './breakdowns';
 
 const world = loadWorld();
 
@@ -19,9 +21,6 @@ export function Hud() {
   if (!game) return null;
   const me = game.nations[game.player]!;
   const meta = world.nations.get(game.player)!;
-  const g = growthBreakdown(world, game, game.player);
-  const pp = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}`;
-  const growthTip = `Annualised growth. Trend ${g.base.toFixed(1)}%, infrastructure ${pp(g.infrastructure)}, tech ${pp(g.tech)}, taxes ${pp(g.tax)}, trade ${pp(g.trade)}, resources ${pp(g.resources)}, financial sanctions ${pp(g.sanctions)}, war ${pp(g.war)}, mobilisation ${pp(g.mobilization)}, debt ${pp(g.debt)}, inflation ${pp(g.inflation)}, recovery ${pp(g.recovery)}, events ${pp(g.events)}, chokepoints ${pp(g.chokepoints)}.${me.recession ? ' The economy is in recession.' : ''} Open the Economy screen (E) for the full picture.`;
   const left = me.nextElection !== null ? me.nextElection - game.turn : null;
   const recent = game.dispatches.filter((d) => d.turn >= game.turn - 1);
   const fresh = recent.length;
@@ -38,7 +37,7 @@ export function Hud() {
         <span className="brand-flag">{flagEmoji(meta.iso2)}</span>
         <span className="brand-nation">{meta.name}</span>
       </div>
-      <div className="topbar-stats">
+      <div className="topbar-stats" data-testid="topbar-stats">
         <Stat
           label="Date"
           value={formatMonth(game.date)}
@@ -57,27 +56,31 @@ export function Hud() {
         <Stat
           label="Growth"
           value={formatPct(me.growth, 1, true)}
-          tooltip={growthTip}
-          accent={me.growth < 0 ? '#f87171' : me.growth > 2.5 ? '#4ade80' : undefined}
+          tooltip={`Annualised growth, the sum of the causes below.${me.recession ? ' The economy is in recession.' : ''} Open the Economy screen (E) for the full picture.`}
+          breakdown={growthRows(world, game, game.player)}
+          testId="hud-growth"
+          accent={me.growth < 0 ? 'var(--bad)' : me.growth > 2.5 ? 'var(--good)' : undefined}
         />
         <Stat
           label="Inflation"
           value={formatPct(me.inflation, 1)}
           tooltip={`Consumer prices, % a year. Pushed up by deficits, mobilisation, import prices, shortages and sanctions; it erodes debt but drains approval. Interest on the debt ${formatPct(me.interestRate, 1)}.`}
-          accent={me.inflation > 15 ? '#f87171' : me.inflation > 6 ? '#fbbf24' : undefined}
+          accent={me.inflation > 15 ? 'var(--bad)' : me.inflation > 6 ? 'var(--warn)' : undefined}
         />
         <Stat
           label="Approval"
           value={`${Math.round(me.support)}`}
           tooltip={`Public support for your government, 0–100: growth, prices, taxes, social spending, war weariness and shortages.${me.protestMonths > 0 ? ` Protests for ${me.protestMonths} months.` : ''}${left !== null ? ` Next election in ${left} months — losing it ends the game.` : ''}${me.coupRisk > 0.005 ? ` Coup risk ${(me.coupRisk * 100).toFixed(1)}% a month.` : ''}`}
-          accent={me.support < 35 ? '#f87171' : me.support < 45 ? '#fbbf24' : undefined}
+          accent={me.support < 35 ? 'var(--bad)' : me.support < 45 ? 'var(--warn)' : undefined}
           className={left !== null && left <= 6 ? 'warn' : ''}
+          breakdown={approvalRows(world, game, game.player)}
+          testId="hud-approval"
         />
         <Stat
           label="Stability"
           value={`${Math.round(me.stability)}`}
           tooltip={`Public order, 0–100. Rises with social spending, growth and peace; falls with war weariness, mobilisation, debt and lost territory. Below 10 for three months means regime collapse. War weariness ${Math.round(me.warWeariness)}.`}
-          accent={me.stability < 30 ? '#f87171' : me.stability < 50 ? '#fbbf24' : undefined}
+          accent={me.stability < 30 ? 'var(--bad)' : me.stability < 50 ? 'var(--warn)' : undefined}
         />
         <button className="stat-button" onClick={() => open('escalation')} data-testid="hud-tension">
           <Stat
@@ -112,7 +115,8 @@ export function Hud() {
             data-tip={`${label} (${key})`}
             data-testid={`nav-${id}`}
           >
-            {label}
+            <ScreenIcon id={id} size={15} />
+            <span className="nav-label">{label}</span>
           </button>
         ))}
         <button
@@ -124,18 +128,23 @@ export function Hud() {
           data-tip={`Diplomatic wire: statements from world leaders. ${fresh} new this month${toMe ? `, ${toMe} addressed to you` : ''}.`}
           data-testid="nav-dispatches"
         >
-          Wire
+          <ScreenIcon id="wire" size={15} />
+          <span className="nav-label">Wire</span>
           {fresh > 0 ? (
             <Stat value={fresh} tooltip={`${fresh} statements this month${toMe ? `, ${toMe} addressed to you` : ''}.`} className={`nav-badge ${toMe ? 'hot' : ''}`} inline />
           ) : null}
         </button>
+        <button className="nav-btn icon-only" onClick={() => open('shortcuts')} data-tip="Keyboard shortcuts (?)" data-testid="nav-shortcuts" aria-label="Keyboard shortcuts">
+          <HelpCircle size={16} aria-hidden="true" />
+        </button>
         <button
-          className="nav-btn"
+          className="nav-btn icon-only"
           onClick={() => open('settings')}
-          data-tip="Settings, saves and quality"
+          data-tip="Settings, accessibility, saves and quality"
           data-testid="nav-settings"
+          aria-label="Settings"
         >
-          ⚙
+          <ScreenIcon id="settings" size={16} />
         </button>
       </nav>
       <Stat

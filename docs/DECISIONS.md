@@ -1202,3 +1202,75 @@ Supersedes the "40 techs for v1" part of D-027; the brief's ~80 are in.
   without RNG use, migration, determinism), `src/ui/research.test.ts` (layout: no overlaps, links
   left to right, nodes inside their era column; effect labels).
 
+
+## D-080 — 2026-11-03 — Onboarding, advisor, design system and readability
+
+The game should be approachable on the first evening and feel premium after the hundredth turn.
+
+- **Design system** (`src/styles.css` `:root`). Tokens for type (`--text-xs` 12 px … `--text-5xl`
+  56 px), spacing (2/4/6/8/12/16/20/24/32 px), radii (4/8/14/pill), motion (`--ease-out`,
+  120/200/350 ms), elevation and surfaces. Every font size, gap, padding, margin and radius in the
+  style sheet was mechanically mapped onto the nearest token (10 → 12, 14 → 12, 18 → 16 for
+  spacing; every font size ≤ 12 → 12 px). `tests/typeScale.test.ts` fails on any raw or sub-12 px
+  font size; the canvas map labels went from 10–11 px to 12–16 px. Icons are
+  [Lucide](https://lucide.dev) (ISC licence — functionally MIT; recorded in DATA_SOURCES), one per
+  screen and alert kind (`src/ui/iconMaps.ts`), replacing the emoji. Modals take an `icon`; the
+  nav shows icon + label and collapses to icons (tooltips keep the names) through a container query
+  on the scaled UI root when the effective width is under 1,720 px. The top bar now sits above modal
+  backdrops, so screens switch directly from the nav.
+- **UI scale** (Settings → Accessibility, 85–150 %). Everything except the globe lives in
+  `.ui-root`, sized `100vw / s × 100vh / s` and `transform: scale(s)`: the transform makes it the
+  containing block of every `position: fixed` panel, so layout is computed at the effective size and
+  scaled crisply, and the WebGL canvas keeps its own resolution. Code that reads screen coordinates
+  (tooltips, tutorial spotlight, research tree) divides by the scale.
+- **Text ≥ 12 px everywhere.** The research tree's zoomed-out overview would draw node text under
+  12 px, so below ×0.95 zoom it becomes a coloured block diagram (text hidden) and the hover card
+  carries the words; it now opens at ×1. The tutorial e2e measures every visible text node (CSS size
+  × all scale transforms) on every screen it visits and fails below 12 px.
+- **Colourblind-safe palettes** (`prefs.palette`). Map modes switch to viridis (economy, military,
+  tension, supply), a blue–grey–orange diverging ramp for relations with reddish purple for war,
+  Okabe–Ito hues for blocs, resources and trade routes. `:root[data-palette='colourblind']` swaps the
+  UI's `--good/--bad/--warn` to sky blue / orange / yellow; hard-coded green/red accents in the UI
+  were replaced by those variables.
+- **Tooltips** (`src/ui/overlays/TooltipLayer.tsx`). One JS layer replaces the CSS `::after`
+  tooltips (which clipped at screen edges): it serves every `data-tip` and every `<Tip>`, clamps to
+  the screen, and lets rich tooltips take the pointer so their rows open nested tooltips (three
+  levels). `<Stat breakdown>` renders an itemised cause table whose rows carry their own sources:
+  growth (trend, trade → the partners whose volume changed, sanctions → who sanctions you, war →
+  wars and occupied share, technology → techs researched since 2027, events, chokepoints),
+  approval, research rate and battle odds (`src/ui/breakdowns.ts`, unit-tested: the growth rows sum
+  to the growth breakdown).
+- **Undo** (`src/sim/undo.ts`, worker). Orders whose outcome is known in advance — moves, air
+  missions, production, research, budget, taxes, mobilisation, disbanding, aid — push the state
+  before them (≤ 20) onto a stack in the worker; anything that rolls dice or informs another
+  government (war, strikes, cyber, theft, proposals, votes) and ending the turn clear it, so undo can
+  never take back a revealed outcome (no save-scumming a failed theft). Ctrl+Z or the Undo button,
+  which names the order it would undo. States are immutable, so keeping them costs only memory.
+- **Confirmations** (`src/ui/confirmText.ts`, `ConfirmDialog`). A gate in `simBridge.dispatch`
+  holds back irreversible commands — war, sanctions, embargoes, secondary sanctions, demands,
+  missile and hypersonic strikes, cyber operations, ASAT, research theft, closing or mining a strait,
+  leaving a bloc, export controls — and asks with a specific consequence (war names the target's
+  treaty partners). Switchable in Settings. Nuclear release keeps its own two-step arm/confirm.
+- **Advisor** (`src/sim/advisor.ts`, pure and tested). Every month the fictional chief of staff,
+  Col. Iris Halden, ranks rule-based recommendations with the reason in numbers — economy (idle
+  research, a looming election with low approval, stability, recession, deficit, inflation,
+  shortages, research budget), military (enemy at the capital, units cut off, idle air wings,
+  deterring a stronger hostile power, idle treasury), diplomacy (unanswered proposals, a pending
+  Security Council vote, a weary war, a hot flashpoint, a defensive pact with the strongest
+  friendly power, a trade agreement with a big partner). The top three take the best of each
+  category first. The dock sits under the context panel ("Go" opens the right screen, preselecting
+  the nation or flying to the region); A folds it.
+- **Tutorial** (`src/ui/tutorial`). 27 steps over the first five months, on by default for a first
+  game (menu toggle; H replays it; Settings can restart it). Each step spotlights an element by
+  `data-testid` (a dimmed overlay with a pulsing ring, pointer-transparent so the real control
+  works) and either waits for Next or completes itself when its task is done (switch map mode,
+  select a region, open a screen, queue research, build a unit, end the turn). A pending decision
+  event pauses it with a note. Col. Halden is fictional (rule 6), drawn with the same generic
+  portrait as everyone and labelled so.
+- **Shortcuts overlay** (`?`): `src/ui/shortcuts.ts` is the single list the overlay renders
+  (tested for duplicates). New keys: Ctrl+Z undo, A advisor, H tutorial, ? shortcuts.
+- **Briefing**. The monthly summary became an intelligence briefing: a classification band, a
+  generated bottom line, key indicators each with a 24-month sparkline and delta (GDP, growth,
+  approval, treasury, inflation, debt), a diverging bar chart of relations with every great power,
+  operations, headlines and the full log folded away. Charts are inline SVG (`src/ui/charts.tsx`).
+- **Prefs** live in `localStorage` (`ww3.prefs`, parsed defensively, unit-tested).

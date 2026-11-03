@@ -20,6 +20,11 @@ import { BattleReportModal } from './ui/modals/BattleReportModal';
 import { EscalationModal } from './ui/modals/EscalationModal';
 import { BreakingBanner, NewsModal } from './ui/modals/NewsModal';
 import { EndScreen } from './ui/modals/EndScreen';
+import { ShortcutsModal } from './ui/modals/ShortcutsModal';
+import { TooltipLayer } from './ui/overlays/TooltipLayer';
+import { ConfirmDialog } from './ui/overlays/ConfirmDialog';
+import { TutorialOverlay } from './ui/tutorial/TutorialOverlay';
+import { AdvisorPanel } from './ui/AdvisorPanel';
 import { useGameStore } from './state/gameStore';
 import { loadGame } from './state/simBridge';
 import { useUiStore } from './state/uiStore';
@@ -37,7 +42,13 @@ export function App() {
   const game = useGameStore((s) => s.game);
   const error = useGameStore((s) => s.error);
   const dismissedEnd = useUiStore((s) => s.modal === 'end');
+  const prefs = useUiStore((s) => s.prefs);
+  const tutorialActive = useUiStore((s) => s.tutorial.active);
   useKeyboard();
+  // Readability preferences (D-080): the palette switches semantic colours on the document root.
+  useEffect(() => {
+    document.documentElement.dataset.palette = prefs.palette;
+  }, [prefs.palette]);
   useEffect(() => {
     const q = loadQuality();
     useUiStore.getState().setQuality(q);
@@ -90,6 +101,12 @@ export function App() {
   return (
     <>
       <Scene />
+      <div
+        className="ui-root"
+        style={{ ['--ui-scale' as string]: prefs.uiScale }}
+        data-advisor={screen === 'game' && game ? (prefs.advisor ? 'open' : 'closed') : 'none'}
+        data-testid="ui-root"
+      >
       {screen === 'menu' && <MainMenu onStart={() => setScreen('game')} />}
       {screen === 'game' && game && (
         <>
@@ -97,6 +114,7 @@ export function App() {
           <MapModeBar />
           <NationPanel />
           <ContextPanel />
+          <AdvisorPanel />
           <BottomBar />
           {game.nations[game.player]!.defcon === 1 &&
             game.nations[game.player]!.warheads > 0 &&
@@ -123,10 +141,12 @@ export function App() {
             {modal === 'battle' && <BattleReportModal key="battle" />}
             {modal === 'escalation' && <EscalationModal key="escalation" />}
             {modal === 'news' && <NewsModal key="news" />}
+            {modal === 'shortcuts' && <ShortcutsModal key="shortcuts" />}
           </AnimatePresence>
           {!modal && <BreakingBanner />}
           {game.pendingEvents.length > 0 && !modal && <EventModal />}
           {ended && <EndScreen onMainMenu={toMenu} onContinue={() => setModal('end')} />}
+          {tutorialActive && <TutorialOverlay />}
         </>
       )}
       {screen === 'game' && !game && (
@@ -134,7 +154,7 @@ export function App() {
           <div className="loading-title">Preparing the world…</div>
         </div>
       )}
-      {screen === 'game' && game && !musicOn && !musicHintShown && (
+      {screen === 'game' && game && !musicOn && !musicHintShown && !tutorialActive && !modal && (
         <div className="toast hint-toast" role="status" data-testid="music-hint">
           <span>Music is off. Turn on the ambient bed in Settings (⚙) → Music.</span>
           <button
@@ -162,6 +182,9 @@ export function App() {
           {error}
         </div>
       )}
+      <ConfirmDialog />
+      <TooltipLayer />
+      </div>
     </>
   );
 }
