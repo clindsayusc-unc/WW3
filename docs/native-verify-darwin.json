@@ -1,0 +1,212 @@
+{
+  "os": "Darwin",
+  "at": "2026-11-03T06:45:51.399Z",
+  "elapsedSeconds": 54,
+  "peakProcessMB": 747,
+  "budgetMB": 1536,
+  "memorySamplesMB": [
+    4,
+    12,
+    36,
+    53,
+    212,
+    334,
+    503,
+    571,
+    657,
+    612,
+    650,
+    648,
+    676,
+    683,
+    683,
+    685,
+    700,
+    666,
+    676,
+    668,
+    667,
+    670,
+    667,
+    684,
+    731,
+    677,
+    702,
+    717,
+    693,
+    696,
+    710,
+    694,
+    689,
+    747,
+    688,
+    692,
+    698,
+    721,
+    696
+  ],
+  "app": {
+    "ok": true,
+    "error": null,
+    "nation": "USA",
+    "turnsRequested": 20,
+    "turnsPlayed": 20,
+    "finalDate": "2028-09",
+    "seconds": 48.834,
+    "workerTurnMs": {
+      "mean": 403.3000000000002,
+      "p95": 490,
+      "max": 490
+    },
+    "fpsSamples": [
+      28,
+      5,
+      23,
+      20,
+      23,
+      28,
+      30,
+      23,
+      24,
+      20,
+      24,
+      24,
+      23,
+      20,
+      24,
+      28,
+      29,
+      30,
+      19,
+      21
+    ],
+    "gpuTextureMB": 52.958457946777344,
+    "globeLoaded": true,
+    "assetError": null,
+    "errors": [],
+    "jsHeapMB": null,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)",
+    "turns": [
+      {
+        "turn": 1,
+        "workerMs": 490,
+        "wallMs": 669,
+        "events": 0
+      },
+      {
+        "turn": 2,
+        "workerMs": 337,
+        "wallMs": 606.9999999999982,
+        "events": 1
+      },
+      {
+        "turn": 3,
+        "workerMs": 388,
+        "wallMs": 712.9999999999982,
+        "events": 1
+      },
+      {
+        "turn": 4,
+        "workerMs": 486,
+        "wallMs": 648,
+        "events": 0
+      },
+      {
+        "turn": 5,
+        "workerMs": 404,
+        "wallMs": 637,
+        "events": 1
+      },
+      {
+        "turn": 6,
+        "workerMs": 426,
+        "wallMs": 656,
+        "events": 1
+      },
+      {
+        "turn": 7,
+        "workerMs": 400,
+        "wallMs": 777,
+        "events": 1
+      },
+      {
+        "turn": 8,
+        "workerMs": 391,
+        "wallMs": 771,
+        "events": 1
+      },
+      {
+        "turn": 9,
+        "workerMs": 400,
+        "wallMs": 625,
+        "events": 1
+      },
+      {
+        "turn": 10,
+        "workerMs": 376,
+        "wallMs": 399,
+        "events": 0
+      },
+      {
+        "turn": 11,
+        "workerMs": 376.00000000000364,
+        "wallMs": 715,
+        "events": 1
+      },
+      {
+        "turn": 12,
+        "workerMs": 343,
+        "wallMs": 374,
+        "events": 0
+      },
+      {
+        "turn": 13,
+        "workerMs": 410,
+        "wallMs": 623,
+        "events": 1
+      },
+      {
+        "turn": 14,
+        "workerMs": 458,
+        "wallMs": 679,
+        "events": 1
+      },
+      {
+        "turn": 15,
+        "workerMs": 361,
+        "wallMs": 423,
+        "events": 0
+      },
+      {
+        "turn": 16,
+        "workerMs": 433,
+        "wallMs": 809,
+        "events": 1
+      },
+      {
+        "turn": 17,
+        "workerMs": 436.9999999999927,
+        "wallMs": 868,
+        "events": 1
+      },
+      {
+        "turn": 18,
+        "workerMs": 317,
+        "wallMs": 608,
+        "events": 1
+      },
+      {
+        "turn": 19,
+        "workerMs": 390,
+        "wallMs": 804,
+        "events": 1
+      },
+      {
+        "turn": 20,
+        "workerMs": 443.0000000000073,
+        "wallMs": 807,
+        "events": 1
+      }
+    ]
+  }
+}
