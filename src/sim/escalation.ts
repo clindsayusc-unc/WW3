@@ -259,8 +259,11 @@ export function nuclearDecision(world: World, state: GameState, iso: Iso3): Nucl
   };
 }
 
-/** Monthly probability that an AI leader who is considering nuclear use actually launches. */
-export const AI_LAUNCH_CHANCE = 0.25;
+/**
+ * Monthly probability that an AI leader who is considering nuclear use actually launches. Lowered
+ * from 0.25 by the self-play balance pass (D-081): at 0.25, 10 % of all-AI games saw nuclear use.
+ */
+export const AI_LAUNCH_CHANCE = 0.12;
 
 export function canLaunchNuclear(state: GameState, iso: Iso3, target: Iso3): string | null {
   const n = state.nations[iso];

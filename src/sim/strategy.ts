@@ -51,7 +51,9 @@ export function attackThreshold(world: World, state: GameState, iso: Iso3, targe
   const deter = deterrentAgainst(world, state, target, iso).status;
   const mine = state.nations[iso]?.warheads ?? 0;
   if (deter === 'assured') th *= 2.2;
-  else if (deter === 'limited') th *= mine > 0 ? 1.3 : 1.8;
+  // A limited deterrent still makes a nuclear-armed attacker pause (D-081: India–Pakistan wars
+  // were the commonest road to nuclear use in self-play at ×1.3).
+  else if (deter === 'limited') th *= mine > 0 ? 1.6 : 1.8;
   return th;
 }
 
@@ -82,7 +84,7 @@ function chooseTarget(world: World, state: GameState, iso: Iso3, neighbours: Set
     // rules a target out; a coalition shares the nuclear risk among its members.
     const deter = deterrentAgainst(world, state, x, iso).status;
     if (deter === 'assured') score -= isCoalitionTarget ? 35 : 90;
-    else if (deter === 'limited') score -= (state.nations[iso]?.warheads ?? 0) > 0 ? 25 : 45;
+    else if (deter === 'limited') score -= (state.nations[iso]?.warheads ?? 0) > 0 ? 35 : 45;
     score *= 0.6 + g.expansion + (isCoalitionTarget ? g.security * 0.5 : 0);
     const bar = 70 + g.restraint * 25;
     if (score < bar || (best && score <= best.score)) continue;

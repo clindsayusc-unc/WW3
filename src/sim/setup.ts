@@ -1,5 +1,6 @@
 /** New-game construction: nations, regions, starting forces, relations, wars (D-023). */
 import { grantStartingTechs } from './research';
+import { standingStart } from './victory';
 import { initBlocs } from './blocs';
 import { initUn } from './un';
 import forcesData from '../../data/forces.json';
@@ -194,6 +195,7 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     rng: seedRng(seed),
     scenario,
     player,
+    ...(options.observer ? { observer: true } : {}),
     turn: 0,
     date: START_DATE,
     isoDate: isoYearMonth(START_DATE),
@@ -322,6 +324,7 @@ export function createGame(world: World, options: NewGameOptions): GameState {
   // January 2027 technology (data/tech-start.json) before the economy is calibrated (D-079).
   grantStartingTechs(world, state);
   initEconomy(world, state);
+  state.standingStart = standingStart(world, state);
 
   state.log.push({
     turn: 0,

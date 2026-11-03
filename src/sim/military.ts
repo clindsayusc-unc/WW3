@@ -820,8 +820,12 @@ export function runSupply(world: World, state: GameState): void {
     while (i > 0) {
       const p = (i - 1) >> 1;
       if (heapV[p]! >= heapV[i]!) break;
-      [heapV[p], heapV[i]] = [heapV[i]!, heapV[p]!];
-      [heapId[p], heapId[i]] = [heapId[i]!, heapId[p]!];
+      const tv = heapV[p]!;
+      heapV[p] = heapV[i]!;
+      heapV[i] = tv;
+      const ti = heapId[p]!;
+      heapId[p] = heapId[i]!;
+      heapId[i] = ti;
       i = p;
     }
   };
@@ -839,8 +843,12 @@ export function runSupply(world: World, state: GameState): void {
       if (l < heapV.length && heapV[l]! > heapV[m]!) m = l;
       if (r < heapV.length && heapV[r]! > heapV[m]!) m = r;
       if (m === i) break;
-      [heapV[m], heapV[i]] = [heapV[i]!, heapV[m]!];
-      [heapId[m], heapId[i]] = [heapId[i]!, heapId[m]!];
+      const tv = heapV[m]!;
+      heapV[m] = heapV[i]!;
+      heapV[i] = tv;
+      const ti = heapId[m]!;
+      heapId[m] = heapId[i]!;
+      heapId[i] = ti;
       i = m;
     }
   };
@@ -1007,11 +1015,21 @@ export function runRecovery(world: World, state: GameState, fought: Set<RegionId
 }
 
 export function checkCapitulations(world: World, state: GameState): void {
+  // Land regions each nation controls (one pass).
+  const held = new Map<Iso3, number>();
+  for (const r of Object.values(state.regions)) if (r.controller && isLand(world, r.id)) held.set(r.controller, (held.get(r.controller) ?? 0) + 1);
   for (const n of Object.values(state.nations)) {
     if (!n.alive) continue;
     const cap = world.capitalRegion.get(n.iso3);
     if (cap === undefined) continue;
     const capCtrl = state.regions[cap]?.controller;
+    // A state left with no territory at all by a peace has ceased to exist: it capitulates to whoever
+    // holds its capital (D-081; self-play found Lebanon surviving for years with no land after a peace
+    // left Israel holding all of it). At war, the three-month rule below applies as before.
+    if ((held.get(n.iso3) ?? 0) === 0 && capCtrl && capCtrl !== n.iso3 && state.nations[capCtrl]?.alive && !atWar(state, n.iso3, capCtrl)) {
+      capitulate(world, state, n.iso3, capCtrl);
+      continue;
+    }
     if (!capCtrl || capCtrl === n.iso3 || !atWar(state, n.iso3, capCtrl)) {
       n.capitalLostMonths = 0;
       continue;

@@ -92,7 +92,7 @@ export function runAi(world: World, state: GameState): void {
   for (const n of Object.values(state.nations))
     if (n.alive) ctx.power.set(n.iso3, militaryPower(world, state, n.iso3));
   for (const n of Object.values(state.nations)) {
-    if (!n.alive || n.iso3 === state.player) continue;
+    if (!n.alive || (n.iso3 === state.player && !state.observer)) continue;
     aiNation(world, state, ctx, n.iso3);
   }
   // Expire stale proposals to the player.
@@ -174,7 +174,10 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
       // Weighted by the leader's priorities, cheaper first (allies' and stolen work lower the cost),
       // with a premium for technologies that unlock new units or abilities.
       const unlocks = tech.unlocks.units.length + tech.unlocks.abilities.length > 0 ? 1.25 : 1;
-      const w = ((BRANCH_WEIGHTS[tech.branch]?.(t) ?? 1) * unlocks * 100) / Math.max(40, techCost(world, state, iso, id));
+      // Great powers climb towards the frontier rather than finishing every early technology first
+      // (D-081: with the era gate and dearer late eras, self-play AIs never left era III).
+      const climb = meta.major ? 1 + 0.5 * (tech.era - 1) : 1;
+      const w = ((BRANCH_WEIGHTS[tech.branch]?.(t) ?? 1) * unlocks * climb * 100) / Math.max(40, techCost(world, state, iso, id));
       if (w > bestScore) {
         bestScore = w;
         best = id;
@@ -221,14 +224,23 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
   while (queued < 3 && n.production.length < 8 && cap !== undefined) {
     let type: string;
     const r = roll(state);
-    if (coastal && seaUnits < landUnits / 6 && r < 0.25)
-      type = r < 0.1 ? 'attackSub' : 'destroyerGroup';
-    else if (airUnits < landUnits / 5 && r < 0.45) type = r < 0.35 ? 'fighter' : 'drone';
-    else if (atWarNow) type = r < 0.6 ? 'mechanized' : r < 0.8 ? 'armored' : 'artillery';
-    else type = r < 0.5 ? 'infantry' : r < 0.8 ? 'mechanized' : 'airDefense';
-    // Researched successors replace the older types part of the time (D-079); the sub-choice
-    // reuses the same draw so nations without the technology see an unchanged random stream.
+    // A second, independent choice from the same draw (no extra random numbers).
     const sub = (r * 7.31) % 1;
+    // Balance pass (D-081): self-play showed the AI never built bombers, carriers, ballistic-missile
+    // or amphibious ships, marines or special forces. Great powers with a fleet now add capital
+    // ships, nuclear powers their SSBNs, and a small share of land orders are marines or SOF.
+    if (coastal && seaUnits < landUnits / 6 && r < 0.25) {
+      if (r < 0.08) type = 'attackSub';
+      else if (meta.major && seaUnits >= 4 && r >= 0.2) {
+        // Spread over [0.2, 0.25) directly: `sub` is correlated with `r` on so narrow a band.
+        const k = (r - 0.2) / 0.05;
+        type = n.warheads >= 100 && k < 0.3 ? 'missileSub' : k < 0.7 ? 'carrierGroup' : 'amphibiousGroup';
+      }
+      else type = 'destroyerGroup';
+    } else if (airUnits < landUnits / 5 && r < 0.45) type = r < 0.3 ? 'fighter' : r < 0.4 || !meta.major ? 'drone' : 'bomber';
+    else if (atWarNow) type = r < 0.55 ? 'mechanized' : r < 0.75 ? 'armored' : r < 0.93 ? 'artillery' : coastal && sub < 0.5 ? 'marines' : 'specialForces';
+    else type = r < 0.45 ? 'infantry' : r < 0.75 ? 'mechanized' : r < 0.94 ? 'airDefense' : coastal && sub < 0.5 ? 'marines' : 'specialForces';
+    // Researched successors replace the older types part of the time (D-079).
     if (type === 'fighter' && sub < 0.55 && unitAvailable(world, state, iso, 'fighter6')) type = 'fighter6';
     else if (type === 'fighter' && sub < 0.8 && unitAvailable(world, state, iso, 'loyalWingman')) type = 'loyalWingman';
     else if (type === 'drone' && sub < 0.5 && unitAvailable(world, state, iso, 'droneSwarm')) type = 'droneSwarm';
@@ -777,7 +789,7 @@ function propose(
   text: string,
   deal?: Deal,
 ): void {
-  if (to === state.player) {
+  if (to === state.player && !state.observer) {
     if (
       state.proposals.length >= 4 ||
       state.proposals.some((p) => p.from === from && p.type === type)

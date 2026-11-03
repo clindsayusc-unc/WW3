@@ -331,6 +331,8 @@ export interface EraMeta {
   readonly name: string;
   readonly years: string;
   readonly description: string;
+  /** Technologies of the previous era (or later) a nation must field before researching this era's (D-081). */
+  readonly gate?: number;
 }
 
 export interface AbilityMeta {

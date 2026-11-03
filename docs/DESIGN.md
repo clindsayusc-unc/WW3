@@ -50,7 +50,7 @@ Global tension meter and per-nation DEFCON 5→1. Escalation ladder: posturing �
 Monthly event deck mixing scripted flashpoint events and procedural ones (elections, coups, disasters, cyberattacks, market crashes, tech breakthroughs). Choices with trade-offs. A news ticker with generated headlines from in-game events.
 
 ## Victory and defeat
-Victory: Hegemony (control or ally-dominate a set share of world GDP and population), Deterrence (survive to 2040 as top power without nuclear war), Diplomatic (lead the dominant bloc and pass a world-order resolution), Conquest (capitulate all rival majors). Defeat: capitulation, regime collapse, or global nuclear war.
+Victory: Hegemony (control or ally-dominate a set share of world GDP and population), Deterrence (reach 2040 without nuclear war as the great power that gained most standing — output against its own trend, and territory; D-081), Diplomatic (lead the dominant bloc and pass a world-order resolution), Conquest (capitulate all rival majors). Defeat: capitulation, regime collapse, or global nuclear war.
 
 ## UI and presentation
 Dark military-intelligence aesthetic: near-black panels, crisp sans-serif + monospace numerals, one accent colour per nation, subtle scanline/grain only on overlays. Top bar: date, treasury, GDP, stability, tension, DEFCON. Left: nation and leader panel. Right: context panel for selected region/unit. Bottom: end turn, alerts, news ticker. Map modes: political, alliance, relations, economic, resources, military, supply, tension. Every number has a tooltip explaining its cause. Keyboard shortcuts. Smooth camera with fly-to on alerts.

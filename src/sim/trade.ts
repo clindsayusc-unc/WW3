@@ -833,12 +833,17 @@ export function researchThroughput(world: World, state: GameState, iso: Iso3, br
 
 /** Share of world GDP held by nations sanctioning or embargoing `iso`. */
 export function sanctionGdpShare(state: GameState, iso: Iso3): number {
+  // Senders first (one pass over the lists), then the nations in their usual order.
+  const suffix = `>${iso}`;
+  const senders = new Set<Iso3>();
+  for (const k of state.sanctions) if (k.endsWith(suffix)) senders.add(k.slice(0, k.length - suffix.length));
+  for (const k of state.embargoes) if (k.endsWith(suffix)) senders.add(k.slice(0, k.length - suffix.length));
   let total = 0;
   let cut = 0;
   for (const n of Object.values(state.nations)) {
     if (!n.alive) continue;
     total += n.gdp;
-    if (n.iso3 !== iso && (isSanctioned(state, n.iso3, iso) || isEmbargoed(state, n.iso3, iso))) cut += n.gdp;
+    if (n.iso3 !== iso && senders.has(n.iso3)) cut += n.gdp;
   }
   return total > 0 ? cut / total : 0;
 }

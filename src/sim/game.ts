@@ -29,7 +29,7 @@ import { econZero, emptyBalances, runTrade } from './trade';
 import { runDomestic, scheduleElections } from './domestic';
 import { leaderSinceTurn, startingInterest } from './setup';
 import { RESOURCE_IDS } from './types';
-import { advanceQueue, queueResearch, runResearch, startingTechList, unitLockReason, recomputeModifiers, CALIBRATED_KEYS } from './research';
+import { advanceQueue, eraGate, eraGateMet, queueResearch, runResearch, startingTechList, unitLockReason, recomputeModifiers, CALIBRATED_KEYS } from './research';
 import { applyShareTech, applyStealTech, runTechWar, setTechControls } from './techwar';
 import {
   checkCapitulations,
@@ -57,7 +57,7 @@ import { decayRelations, executeProposal } from './diplomacy';
 import { updateTension, canLaunchNuclear, nuclearStrike, runNuclearAftermath } from './escalation';
 import { drawEvents, resolvePendingEvent } from './events';
 import { runAi } from './ai';
-import { checkVictory } from './victory';
+import { checkVictory, standingStart } from './victory';
 import { writeWire } from './news';
 import { executeDeal, proposeDeal } from './deals';
 import { runStrategy } from './strategy';
@@ -137,6 +137,8 @@ export function applyCommand(world: World, input: GameState, command: Command): 
       if (me.techs.includes(tech.id)) return state;
       if (!tech.requires.every((r) => me.techs.includes(r)))
         throw new Error('Prerequisites not met');
+      if (!eraGateMet(world, tech, me))
+        throw new Error(`Needs ${eraGate(world, tech)} technologies of the previous era first`);
       me.researchCurrent = tech.id;
       me.researchQueue = me.researchQueue.filter((id) => id !== tech.id);
       return state;
@@ -530,6 +532,8 @@ function migrateDiplomacy(world: World, state: GameState): void {
   state.nuclearWinter ??= 0;
   state.nuclearLog ??= [];
   state.worldGdpStart ??= world.nationList.reduce((s, n) => s + n.gdpUsdBn, 0);
+  // D-081: saves from before the standing victory measure from the turn they are loaded.
+  state.standingStart ??= standingStart(world, state);
   for (const r of Object.values(state.regions)) if (typeof r.fallout !== 'number') r.fallout = 0;
   for (const n of Object.values(state.nations)) {
     if (typeof n.legitimacy !== 'number') n.legitimacy = 50;

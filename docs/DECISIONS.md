@@ -1274,3 +1274,73 @@ The game should be approachable on the first evening and feel premium after the 
   approval, treasury, inflation, debt), a diverging bar chart of relations with every great power,
   operations, headlines and the full log folded away. Charts are inline SVG (`src/ui/charts.tsx`).
 - **Prefs** live in `localStorage` (`ww3.prefs`, parsed defensively, unit-tested).
+
+## D-081 — 2026-11-03 — Self-play balance pass
+
+A headless runner (`scripts/selfplay.ts`, `npm run selfplay`) plays complete all-AI games from
+January 2027 to January 2040 on worker threads and writes metrics and charts to `docs/balance/`.
+Fifty seeded games before and fifty after the changes below; the numbers are in `docs/BALANCE.md`.
+
+- **Observer mode** (`NewGameOptions.observer`, `GameState.observer`): the AI also runs the nominal
+  player (Tuvalu in self-play), AI→player proposals resolve like any AI pair, and player-scope events
+  are not drawn (world events and chains run as usual). A normal game is unchanged.
+- **Victory for any nation** (`victoryFor`): the player's victory check, factored so the runner can
+  score every great power each month. The Diplomatic victory stays player-only (only the player can
+  table the World Order Resolution).
+- **Deterrence by standing** (supersedes the Deterrence clause of D-031). "Top GDP in 2040" made the
+  United States the winner of 45 of 50 all-AI games and was out of reach for 12 of the 14 playable
+  powers whatever they did. The Deterrence victory now goes, in January 2040 and with no nuclear
+  detonation, to the great power with the most **standing**: 0.5 × ln(effective output ÷ its own
+  trend output) + 0.5 × ln((regions held + 10) ÷ (regions held in 2027 + 10)). The ten-region damping
+  stops one region more or less from swinging a small state (Israel, Pakistan) far more than a large
+  one. The trend is the economy's own
+  trend growth (`trendGrowth`), so India's faster trend does not hand it the win, and starting
+  positions are recorded at game creation (`GameState.standingStart`; older saves measure from the
+  turn they are loaded). A military-share term was tried and dropped: nations that start lightly
+  armed and rearm (Germany: 2.9 % → 7.5 % of great-power strength) won 45 of 50 games on it — a
+  cheap strategy, not an achievement. Re-scoring the finished games of intermediate runs under each
+  candidate formula picked the weights (`docs/BALANCE.md`). In the final 50 games eight great powers
+  win; Germany, France, the UK, Japan, Russia and Iran never do, because the AI leaves their
+  economies 7–18 % under trend (importers' resource and trade shocks from recurring Gulf wars;
+  Russia's and Iran's war and sanctions). That is the target this pass does not meet; fixing it is a
+  retune of the D-061 resource-shock model, left for its own pass.
+- **Research pacing.** The tree was shallow: the US could reach an era-V technology down a single
+  four-technology path in about two years. Three changes, calibrated with the runner's
+  focused-research probe (the player at 30 % research, auto-queueing toward the frontier):
+  1. **Era gate** (`techs.json` `eras[].gate`; `eraGateMet`, `canResearch`): researching an era-N
+     technology needs 10 / 8 / 6 / 5 technologies of era N−1 or later for eras II–V. `pathTo` adds
+     the cheapest missing ones, so one click still queues a complete path; the research card lists the
+     gate with the count fielded. Sharing and stolen designs still require only prerequisites.
+  2. **Base costs** of eras II–V × 1.15 / 1.4 / 1.65 / 1.85 (era averages ≈ 135 / 362 / 699 / 1,475 /
+     2,776 RP).
+  3. **Ahead-of-its-time premium** (`PREMATURE_PREMIUM` = 0.45): +45 % per year before a
+     technology's plausible fielding `year`. It uses data the tree already had and paces the frontier
+     to its historical window without making on-time research dearer. Shown in the cost tooltip.
+  Result: a focused US reaches era V in late 2037, China in mid-2038 (before: 2035 as reported for broad
+  research; 2028 for the runner's probe on the old tree). A focused US fields 41 technologies after
+  five years (the old tree: 45–49 for the probe, 53 in the reported game).
+  The AI's research choice now weights great powers' projects by 1 + 0.5 × (era − 1) so they climb
+  toward the frontier instead of finishing every early technology first.
+- **Nuclear restraint.** 10 % of all-AI games saw a detonation (2 % a full exchange), most often an
+  India–Pakistan war started by India against Pakistan's limited deterrent. `AI_LAUNCH_CHANCE`
+  0.25 → 0.12 a month once desperation passes the threshold; a nuclear-armed attacker facing a
+  *limited* deterrent needs ×1.6 the usual force ratio (was ×1.3) and scores the target 35 lower
+  (was 25).
+- **Event wars the chooser would plainly lose.** In a third of the games Iran answered the Gulf
+  incident chain ("fast boats swarm a destroyer") by attacking the escort — a declaration of war on
+  the United States that brought every NATO member in under Article 5 and kept Europe at war, and
+  Hormuz contested, for years. `warPrudence` scales an AI's event choice whose effects have it
+  declare war by (its strength ÷ the target side's)², floor 0.03; the stance weights are otherwise
+  unchanged and the random draw is the same one.
+- **Order of battle.** The AI never built bombers, carriers, ballistic-missile or amphibious ships,
+  marines or special forces. Great powers now buy bombers (a share of air orders), and those with
+  four or more ships add carriers, amphibious groups and — with ≥ 100 warheads — SSBNs (which count
+  toward an assured second strike); 6–7 % of land orders are marines (coastal) or special forces.
+- **Landless states.** A nation left holding no land by a peace (Lebanon after an Israeli occupation,
+  17 of 50 games) stayed alive for years with nothing; it now capitulates to whoever holds its
+  capital. At war the three-month capital rule (D-047) still applies.
+- **Turn time.** Research costs looped over every nation per nation (sanctioners' and export
+  controllers' share, diffusion): now one pass over the sanction lists and a per-state diffusion set.
+  The supply search's binary heap swapped via array destructuring (an allocation per swap); now plain
+  temporaries. The sums keep their order, so results are identical, except that the diffusion set is
+  computed once per month: a technology finished this month counts toward diffusion next month.

@@ -5,7 +5,7 @@ import { useGameStore } from '../../state/gameStore';
 import { dispatch } from '../../state/simBridge';
 import { loadWorld, nationName, type TechMeta } from '../../sim/world';
 import type { GameState, Iso3 } from '../../sim/types';
-import { pathTo, researchBreakdown, techCostBreakdown, prerequisitesMet, exportControlShare } from '../../sim/research';
+import { pathTo, researchBreakdown, techCostBreakdown, canResearch, eraGate, foundationCount, exportControlShare, PREMATURE_PREMIUM } from '../../sim/research';
 import { canStealTech, canShareTech, shareableTechs, stealCost, stealOdds, stealableTechs, STEAL_CREDIT } from '../../sim/techwar';
 import { alliesOf, getRelation } from '../../sim/query';
 import { Stat } from '../Stat';
@@ -242,7 +242,7 @@ export function ResearchModal() {
               {world.techList.map((t) => {
                 const p = LAYOUT.pos.get(t.id)!;
                 const done = me.techs.includes(t.id);
-                const available = !done && prerequisitesMet(t, me);
+                const available = !done && canResearch(world, t, me);
                 const active = me.researchCurrent === t.id;
                 const qn = queued.get(t.id);
                 const color = BRANCH.get(t.branch)!.color;
@@ -317,12 +317,15 @@ function HoverCard({ t, game, rp, pos, pathLen }: { t: TechMeta; game: GameState
   const path = pathTo(world, me, t.id);
   const pathCost = path.reduce((s, id) => s + techCostBreakdown(world, game, game.player, id).total, 0);
   const fielders = world.majors.filter((iso) => game.nations[iso]?.techs.includes(t.id));
+  const gate = t.era > 1 ? eraGate(world, t) : 0;
+  const base = foundationCount(world, me.techs, t.era);
   const costTip = [
     `Base ${c.base} RP`,
     c.allyDiscount > 0 ? `−${Math.round(c.allyDiscount * 100)} % shared by allies (${c.sharingAllies.map((a) => nationName(world, a)).join(', ')})` : null,
     c.diffusionDiscount > 0 ? `−${Math.round(c.diffusionDiscount * 100)} % proven: nations with half the world's output field it` : null,
     c.credit > 0 ? `−${Math.round(c.credit * 100)} % stolen or shared designs` : null,
     c.exportControl > 1.001 ? `×${c.exportControl.toFixed(2)} export controls on chips and AI against you` : null,
+    c.premature > 1.001 ? `×${c.premature.toFixed(2)} ahead of its time: plausible from ${t.year}; +${Math.round(PREMATURE_PREMIUM * 100)} % for each year earlier` : null,
   ]
     .filter(Boolean)
     .join('; ');
@@ -373,7 +376,7 @@ function HoverCard({ t, game, rp, pos, pathLen }: { t: TechMeta; game: GameState
           </ul>
         </div>
       )}
-      {t.requires.length > 0 && (
+      {(t.requires.length > 0 || gate > 0) && (
         <div className="tech-card-section">
           <div className="tech-card-label">Requires</div>
           <ul>
@@ -382,6 +385,17 @@ function HoverCard({ t, game, rp, pos, pathLen }: { t: TechMeta; game: GameState
                 {me.techs.includes(r) ? '✓' : '✗'} {world.techs.get(r)?.name}
               </li>
             ))}
+            {gate > 0 && (
+              <li className={base >= gate ? 'ok' : 'missing'}>
+                {base >= gate ? '✓' : '✗'}{' '}
+                <Stat
+                  value={`${base}/${gate}`}
+                  tooltip={`Era gate: researching an era ${['I', 'II', 'III', 'IV', 'V'][t.era - 1]} technology needs ${gate} technologies of era ${['I', 'II', 'III', 'IV', 'V'][t.era - 2]} or later; you field ${base}. Each era needs a broad base in the one before it — the frontier cannot be reached down a single branch. Clicking queues the cheapest ones missing.`}
+                  inline
+                />{' '}
+                technologies of era {['I', 'II', 'III', 'IV', 'V'][t.era - 2]} or later
+              </li>
+            )}
           </ul>
         </div>
       )}
