@@ -4,7 +4,7 @@
  * sawtooth waves). The ambient music bed lives in music.ts and plays on the music bus.
  */
 import { useUiStore } from '../state/uiStore';
-import type { AudioSettings } from './audioSettings';
+import type { AudioSettings } from './audioPrefs';
 
 export {
   AUDIO_KEY,
@@ -13,8 +13,8 @@ export {
   loadAudioSettings,
   parseAudioSettings,
   saveAudioSettings,
-} from './audioSettings';
-export type { AudioSettings } from './audioSettings';
+} from './audioPrefs';
+export type { AudioSettings } from './audioPrefs';
 
 export type SoundName =
   | 'click'

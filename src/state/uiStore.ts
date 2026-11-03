@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { RegionId, ResourceId } from '../sim/types';
 import type { EffectKey, EffectLevels, Level } from '../render/quality';
 import { levelsForPreset } from '../render/quality';
-import { DEFAULT_AUDIO, type AudioSettings } from '../ui/audioSettings';
+import { DEFAULT_AUDIO, type AudioSettings } from '../ui/audioPrefs';
 import { loadPrefs, savePrefs, clampScale, type UiPrefs } from '../ui/prefs';
 
 export type Screen = 'menu' | 'game';
