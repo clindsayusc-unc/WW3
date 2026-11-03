@@ -1344,3 +1344,115 @@ Fifty seeded games before and fifty after the changes below; the numbers are in 
   The supply search's binary heap swapped via array destructuring (an allocation per swap); now plain
   temporaries. The sums keep their order, so results are identical, except that the diffusion set is
   computed once per month: a technology finished this month counts toward diffusion next month.
+
+## D-082 — 2026-11-03 — Performance pass: KTX2, on-demand rendering, adaptive DPR, lazy screens
+
+Measured with `npm run perf` (`e2e/perf.spec.ts`, numbers in `docs/PERF.md`). The container has no
+Mac and no GPU, so frame times are SwiftShader's; draw calls, triangles, texture bytes, heap and
+worker turn time are hardware-independent and are what this pass optimised against.
+
+- **KTX2 / Basis Universal for every large texture** (supersedes the JPEG fallback of D-022). An
+  encoder is now available as an npm package (`ktx2-encoder`, MIT, a WASM build of basis_universal),
+  so `scripts/build-ktx2.ts` encodes the five colour maps: UASTC + RDO + Zstandard for the day map
+  and the normal map (artefacts would show on the hero surface and in the lighting), ETC1S for night
+  lights, clouds and bathymetry. Each file carries a full mip chain and is flipped at encode time
+  (compressed textures cannot be flipped at upload). At run time `KTX2Loader` transcodes to ASTC 4×4
+  or BC7 (1 byte/texel) where available, else ETC2/BC1, else RGBA. The JPEG sources moved to
+  `assets/textures/` so they no longer ship. On disk 4.5 MB → 8.9 MB; on the GPU 225 MB → 65 MB.
+  The loader's transcoder workers are ended once a set has loaded (each keeps a WASM heap sized for
+  a 4096-px image), and the CPU copy of each mip chain is released after upload.
+- **Low preset loads half-resolution maps** by dropping the top mip level of each 4096-px KTX2
+  (33 MB on the GPU). Switching to or from Low loads the other set and disposes the previous one.
+- **Region-ID map packed into RG8** (id low byte, id high byte with the land flag in bit 7; ids stay
+  under 2,048): 33.5 → 16.8 MB. The height map's GPU copy is an R8 texture made from the CPU copy
+  the renderer already decodes (11 → 2.8 MB, one image decode instead of two).
+- **On-demand rendering with a cadence scheduler** (`Scene.tsx`, `quality.ts` `cadenceFor`).
+  `frameloop="demand"`; a requestAnimationFrame loop invalidates at the cadence that fits: every
+  display frame while the player interacts or something moves (camera flight, drag, inertia,
+  strike cam, missile arcs — `activity.ts` `keepAwake`), 30 fps after 8 s without input, 15 fps
+  after a minute, 20 fps under a modal, nothing while the window is hidden (`document.hidden`, which
+  WKWebView also reports when the app is minimised or on another Space). The globe's own slow
+  motion (clouds, waves, storms) reads fine at 15–30 fps; a 2 ms tolerance keeps the throttled
+  rates at exact divisors of a 60 Hz display. The dynamic-resolution governor ignores throttled
+  frames (they are slow on purpose).
+- **Adaptive DPR cap** (`dprCap`): the lowest of the preset's maximum, the display's DPR and a pixel
+  budget (High 3.6 MP, Medium 2.2 MP, Low 1.2 MP). A Retina 1440 × 900 window on High starts at
+  DPR 1.65 instead of 2 (5.2 MP); the auto-scaler then settles as before (the M3 baseline settled at
+  1.3). The settled DPR is saved per preset so the next session starts there, and the cap follows
+  window resizes and display changes. `preserveDrawingBuffer` is off: on Apple's tile-based GPUs it
+  forces the frame to be copied out every frame.
+- **Draw calls.** The scene is already instanced (one `InstancedMesh` for every unit stack, one
+  canvas atlas for the symbols); a frame at High was ≈ 27 calls, most of them post-processing. The
+  two border line sets are merged into one draw call (kind attribute; the draw range stops before
+  the region borders while they are faded out), and bloom uses 6 mip levels on High and 5 on
+  Medium instead of 8 (six fewer passes). Now 22 calls at High.
+- **GPU resources are disposed.** Materials made with `useMemo` were never freed; `useDispose`
+  frees them (and their textures) when replaced or unmounted. Strike arcs and flashes freed their
+  geometry but leaked one material per arc and per flash; they now dispose both.
+- **Lazy screens.** Every modal (budget, production, research, diplomacy, military, economy,
+  briefing, settings, nuclear, battle report, escalation, shortcuts), the end screen and the
+  tutorial are `React.lazy` chunks (≈ 160 kB of JS no longer parsed at startup). The news modal stays
+  in the main chunk because the breaking-news banner shares its module.
+- **Autosave is debounced** (1.5 s): orders arrive in bursts and each write serialises the whole
+  state.
+- The perf probe now sums draw calls and triangles over every pass of a frame (`info.autoReset` off
+  during the sweep), counts only display frames that drew something, accounts textures by their real
+  uploaded bytes, and the profile also plays 20 turns, recording worker turn time and the summed
+  PSS of the browser's processes.
+
+## D-083 — 2026-11-03 — Native macOS app with Tauri v2
+
+- **Shell.** `src-tauri/` is a minimal Tauri v2 app (Rust): one window titled "World War 3",
+  1440 × 900 (min 1100 × 700), the space colour as background so no white flash on launch, the
+  Vite `dist/` embedded (fonts, textures, KTX2 transcoder and music included), so it runs offline.
+  Bundle targets `app` and `dmg`, minimum macOS 12, ad-hoc signed (`signingIdentity: "-"`): Apple
+  silicon refuses to run code with no signature at all, and an ad-hoc signature avoids the
+  "damaged app" message that a stripped linker signature can cause. It is not notarised; the README
+  explains how to open it (Privacy & Security → Open Anyway, or remove the quarantine flag).
+- **Saves in the app data folder.** Rust commands `save_write` / `save_read` / `save_list` /
+  `save_delete` / `saves_path` keep each save as `<name>.save.json` plus a small
+  `<name>.meta.json` for the load list, in `~/Library/Application Support/game.ww3.worldwar3/saves`.
+  Writes go through a temporary file and a rename. Names are sanitised to `[A-Za-z0-9 ._-]`, max 64,
+  no leading dot, so a save name can never escape the folder. The browser build keeps IndexedDB
+  (`src/state/saves.ts` picks the backend with `isTauri()`). Custom commands rather than the fs
+  plugin: no file-system permission scope to get wrong.
+- **Fullscreen**: F11 or Ctrl+⌘+F (the macOS convention) and a Settings button; the native window
+  via a `toggle_fullscreen` command, the Fullscreen API in a browser.
+- **CSP.** Scripts only from the app; `'wasm-unsafe-eval'` and `'unsafe-eval'` because WebKit (tested
+  with WebKitGTK 2.52) does not honour `'wasm-unsafe-eval'` for the Basis transcoder's WASM in a blob
+  worker — without `'unsafe-eval'` the globe textures never load and no error is surfaced. The app
+  loads no remote content, so the exposure is limited to the bundled code.
+- **Icon.** An original design (`assets/icon/icon.svg`): an abstract night globe with a graticule,
+  soft invented land shapes and one amber trajectory arc. No flags, insignia or real-world emblems.
+  `tauri icon` generates the `.icns`, `.ico` and PNGs.
+- **Verification mode.** `WW3_AUTOPLAY=<turns>` makes the frontend start a game, end that many turns
+  (first choice of every event), fly the camera between theatres, and hand a report (turns, worker
+  times, fps, texture MB, errors) to the shell, which writes it to `WW3_AUTOPLAY_REPORT` and quits.
+  `scripts/native-verify.sh` launches the packaged app this way and samples memory every second:
+  on macOS `phys_footprint` (Activity Monitor's "Memory") of the app plus the `com.apple.WebKit.*`
+  processes it started, on Linux the PSS of the process tree. It fails at 1.5 GB.
+- **Builds.** A macOS `.app`/`.dmg` cannot be produced on Linux, and this project's development
+  container is Linux. `.github/workflows/native.yml` builds on GitHub's Apple-silicon runner
+  (`macos-14`), uploads the unsigned `.app` (zipped) and `.dmg`, then runs `native-verify.sh` on the
+  bundle. Locally on a Mac: `npm run tauri build`. The Linux build of the same shell
+  (`npm run tauri build -- --no-bundle`) was used here to verify the shell, the CSP, saves and the
+  autoplay run end to end on WebKitGTK.
+
+## D-084 — 2026-11-03 — Ambient score tracks and alert stingers
+
+- **Score.** Four CC0 tracks from OpenGameArt (credits and links in `docs/DATA_SOURCES.md` and in
+  Settings → Audio): calm "Observing the Star" (yd) and "Tragic Ambient Main Menu" (HaelDB) at DEFCON
+  5–3, tense "Sirens in Darkness" (The Cynic Project) at 2, crisis "Bleeding Out" (HaelDB) at 1.
+  Transcoded to 96 kbps stereo MP3 (MP3 is the one compressed format both WKWebView and Chromium's
+  open-source build decode) and loudness-normalised to −20 LUFS; 7.5 MB in all. Two `<audio>`
+  elements stream them through `MediaElementSource` nodes into the existing Music bus (D-060), so
+  Master, Music and mute apply unchanged; tracks crossfade over 4 s, the calm playlist cycles, single
+  tracks loop. Streaming keeps memory flat (no decoded PCM buffers). If a track cannot be decoded the
+  procedural bed of D-060 (`musicBed.ts`) takes over for the session. Music stays off by default.
+- **Stingers.** `playStinger` adds short phrases in D minor from the same clean sine/triangle tones:
+  war (open fifths swelling like brass over a drum hit), nuclear (the D-060 swell plus a falling
+  dissonant tritone), DEFCON drop (three falling staccato notes over a pulse), capitulation, capture,
+  peace (the game's only major chord), research breakthrough, event, victory and defeat. Once per
+  month, only the most important one plays (`stingerFor`, pure and tested), and the score ducks
+  beneath it (to 30 %, back over 2.5 s; 5 s for nuclear). Orders within a month never trigger one.
+- The three sliders remain Master, Music and Effects (stingers are effects).

@@ -21,6 +21,7 @@ import { useGameStore } from '../state/gameStore';
 import { useUiStore } from '../state/uiStore';
 import { loadWorld } from '../sim/world';
 import type { TradeRoute, TradeStatus } from '../sim/types';
+import { useDispose } from './useDispose';
 
 const world = loadWorld();
 
@@ -138,7 +139,16 @@ function smoothPath(pts: Vector3[]): Vector3[] {
 function appendRoute(
   r: TradeRoute,
   highlight: boolean,
-  buf: { pos: number[]; t: number[]; side: number[]; len: number[]; flow: number[]; alpha: number[]; col: number[]; idx: number[] },
+  buf: {
+    pos: number[];
+    t: number[];
+    side: number[];
+    len: number[];
+    flow: number[];
+    alpha: number[];
+    col: number[];
+    idx: number[];
+  },
   colors: Record<TradeStatus, string> = ROUTE_COLOR,
 ): void {
   const raw = routePoints(r);
@@ -168,7 +178,11 @@ function appendRoute(
     const right = up.crossVectors(p, tangent).normalize();
     const h = 1.004 + lift * Math.sin(Math.PI * s);
     for (const sd of [-1, 1]) {
-      const q = p.clone().add(right.clone().multiplyScalar(width * sd)).normalize().multiplyScalar(h);
+      const q = p
+        .clone()
+        .add(right.clone().multiplyScalar(width * sd))
+        .normalize()
+        .multiplyScalar(h);
       buf.pos.push(q.x, q.y, q.z);
       buf.t.push(s);
       buf.side.push(sd);
@@ -201,6 +215,7 @@ export function TradeRoutes() {
       }),
     [],
   );
+  useDispose(material);
   const mesh = useMemo(() => {
     const m = new Mesh(new BufferGeometry(), material);
     m.renderOrder = 5;
@@ -212,12 +227,29 @@ export function TradeRoutes() {
     const show = mapMode === 'economy' && !!game;
     mesh.visible = show;
     if (!show || !game) return;
-    const buf = { pos: [], t: [], side: [], len: [], flow: [], alpha: [], col: [], idx: [] } as Parameters<typeof appendRoute>[2];
+    const buf = {
+      pos: [],
+      t: [],
+      side: [],
+      len: [],
+      flow: [],
+      alpha: [],
+      col: [],
+      idx: [],
+    } as Parameters<typeof appendRoute>[2];
     // Player routes last so they draw on top.
     const routes = [...game.economy.routes].sort(
-      (x, y) => Number(x.a === game.player || x.b === game.player) - Number(y.a === game.player || y.b === game.player),
+      (x, y) =>
+        Number(x.a === game.player || x.b === game.player) -
+        Number(y.a === game.player || y.b === game.player),
     );
-    for (const r of routes) appendRoute(r, r.a === game.player || r.b === game.player, buf, colourblind ? ROUTE_COLOR_CB : ROUTE_COLOR);
+    for (const r of routes)
+      appendRoute(
+        r,
+        r.a === game.player || r.b === game.player,
+        buf,
+        colourblind ? ROUTE_COLOR_CB : ROUTE_COLOR,
+      );
     const geo = new BufferGeometry();
     geo.setAttribute('position', new Float32BufferAttribute(buf.pos, 3));
     geo.setAttribute('aT', new Float32BufferAttribute(buf.t, 1));

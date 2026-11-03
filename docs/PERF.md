@@ -2,13 +2,13 @@
 
 **Target hardware:** Apple M3, 8 GB unified memory.
 
-| Budget               | Limit                                            | Status (feat/playable-v1)                                                                                             |
-| -------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| Frame rate           | 60 fps sustained on the globe view               | **59.4 fps avg on the M3 (Chrome, DPR 1.3)** after Prompt 2 — the real-hardware baseline in the log below; every effect has a Low/Medium/High level and the auto-scaler caps them (D-055) |
-| Process memory (RAM) | < 1.5 GB                                         | JS heap 179 MB after a 20 s sweep on the M3 (82 MB headless)                                                          |
-| GPU texture memory   | < 400 MB                                         | ≈ 225 MB (RGBA8 + mipmaps, computed at upload; + height map 11 MB, wave map 0.3 MB, atmosphere tables 0.6 MB)         |
-| Single texture size  | ≤ 4096 px on its longest side; prefer KTX2/Basis | All ≤ 4096×2048; JPG/PNG (no KTX2 encoder available, D-022)                                                           |
-| Main thread          | No simulation work; the sim runs in a Web Worker | Yes — `src/sim/worker.ts`; a turn takes ~150 ms in the worker                                                         |
+| Budget               | Limit                                            | Status (feat/perf-native, D-082/D-083)                                                                                                           |
+| -------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Frame rate           | 60 fps sustained on the globe view               | M3 baseline 59.4 fps at DPR 1.3 (Prompt 2). This pass lowers GPU work per frame (fewer passes, DPR capped by pixel budget, KTX2 sampling); **not re-measured on the M3** — see "How to measure on the Mac" |
+| Process memory (RAM) | < 1.5 GB                                         | Native app, 20 turns: **1,244 MB peak** (Linux WebKitGTK build, software GL, PSS of app + WebKit processes). Chromium, 20 turns: 1,421 MB peak (SwiftShader). macOS figure comes from the `native` CI job |
+| GPU texture memory   | < 400 MB                                         | **65 MB** (KTX2, was 225 MB); 33 MB on Low                                                                                                       |
+| Single texture size  | ≤ 4096 px on its longest side; prefer KTX2/Basis | All ≤ 4096 × 2048; the five colour maps are KTX2 (UASTC/ETC1S); ID and height maps stay lossless PNG/JPEG (read on the CPU) — tested in `tests/data.test.ts` |
+| Main thread          | No simulation work; the sim runs in a Web Worker | Yes — worker turn 403 ms mean, 593 ms p95 over 20 turns (headless Chromium, this container)                                                     |
 
 ## Rules of thumb
 
@@ -30,11 +30,25 @@
 npm run perf
 ```
 
-runs the Playwright test `performance probe` (set `PERF=1`), which starts a game as the USA, sweeps
-the camera through eight stops for 20 seconds and writes `docs/perf-last-run.json` with average and
-p95 frame time, fps, JS heap, texture count and estimated texture megabytes. In the browser the same
-probe is `window.ww3.perf(20)` (returns a promise) from the dev-tools console — run it on the M3 in
-Chrome or Safari and paste the numbers into the log below.
+runs `e2e/perf.spec.ts` (`PERF=1`; `PERF_SECONDS` sets the sweep length, default 15): it starts a
+game as the USA, then at **Low, Medium and High** sweeps the camera through eight stops and records
+frame time (avg, p95), **draw calls and triangles per frame** (summed over every pass, scene and
+post-processing), JS heap, GPU texture MB (bytes actually uploaded, by format), DPR and canvas size;
+then it plays **20 turns** recording the worker's turn time and the summed PSS of the browser's
+processes after each. Output: `docs/perf-last-run.json`. In a browser the sweep alone is
+`window.ww3.perf(20)`; `window.ww3.drawList()` lists every drawable in the scene.
+
+### How to measure on the Mac (M3)
+
+The development container is Linux with no GPU, so frame times here come from a software
+rasteriser and say nothing about the M3. On the Mac:
+
+1. `npm run perf` with Chrome installed (`PW_CHROMIUM_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`
+   uses the real GPU; drop the SwiftShader flags in `playwright.config.ts` for this run).
+2. `npm run tauri build && npm run native:verify` — the packaged app, 20 turns, phys_footprint of the
+   app and its WebKit processes (what Activity Monitor shows). The `native` CI job does the same on
+   an Apple-silicon runner after every push to `main`.
+3. Paste both into the log below.
 
 ## Log
 
@@ -53,18 +67,43 @@ Chrome or Safari and paste the numbers into the log below.
 | 2026-11-02 | feat/research-tree | No new textures or draw calls; the research screen is ~81 DOM nodes + one SVG of ~110 links inside a CSS-transformed canvas (zoom/pan touch only the transform). Simulation: `scripts/soak.ts 36` ≈ 363 ms/turn in Node (2,300 units by turn 36). Research adds one cost breakdown per nation per month (allies cached, one pass over nations) and the AI technology war runs only on hash-drawn months | Starting technologies raise modifiers from turn 0 but add no per-turn work. |
 | 2026-11-03 | feat/balance | No rendering changes. Simulation: `scripts/soak.ts 156 USA` 326 → 278 ms/turn (idle, one thread, Xeon 2.1 GHz vCPU); self-play (`npm run selfplay`, 3 workers) 331 ms mean, 602 ms p95 per AI turn, ≈ 110 MB heap per worker, 593 MB RSS in all | Research costs no longer loop over every nation per nation (sanction and export-control shares, diffusion); the supply heap swaps without allocating. See `docs/BALANCE.md` (D-081). |
 
+| 2026-11-03 | feat/perf-native (before) | Headless Chromium 156 + SwiftShader, 1440 × 900, 12 s sweeps. **Low** 57 ms/frame, 3.2 calls, 5 k tris, DPR 0.6; **Medium** 355 ms, 25.6 calls, 44 k tris, DPR 1.0; **High** 1,844 ms, 26.7 calls, 104 k tris, DPR 1.8 (2591 × 1619 canvas). Textures 225 MB at every level; JS heap 81–87 MB. 20 turns: worker 414 ms mean / 654 ms p95; browser PSS 1,080 MB at start, 1,288 MB peak | Baseline for this pass. |
+| 2026-11-03 | feat/perf-native (after) | Same setup. **Low** 78 ms, 3.8 calls, 7 k tris, 33 MB textures; **Medium** 251 ms, 16.1 calls, 16 k tris, 65 MB; **High** 259 ms, 19.0 calls, 51 k tris (sweep average; a still High frame at DPR 1 is 22 calls, 108 k tris), 65 MB, DPR capped at 1.65 and settling at 0.9 in software. JS heap 65–75 MB. 20 turns: worker 403 ms mean / 593 ms p95; browser PSS 1,045 MB at start, 1,421 MB peak | Frame times are SwiftShader's (the High gain is mostly the DPR cap). Software GL keeps decompressed copies of compressed textures, so the 160 MB texture saving barely shows in process memory here; on the M3 the textures stay compressed in unified memory. |
+| 2026-11-03 | feat/perf-native (native) | `npm run native:verify` on the Linux build of the Tauri app (WebKitGTK 2.52, Mesa llvmpipe under Xvfb): **20/20 turns, peak 1,244 MB** (PSS of the app + WebKit web and network processes), worker 569 ms mean / 1,028 ms p95, 65 MB textures, no errors; 106 s | Same shell and frontend as the macOS bundle; macOS numbers come from the `native` CI job (`docs/native-verify-darwin.json` artifact). |
+
+## Native and performance pass (D-082 – D-084)
+
+- **Textures:** KTX2 for the five colour maps (UASTC day/normal, ETC1S night/clouds/bathymetry),
+  region IDs packed RG8, height map R8 from the CPU copy: 225 → 65 MB (33 MB on Low, which drops
+  the top mip). Transcoder workers end after loading; CPU mip copies are released after upload.
+- **Draw calls:** ≈ 9 scene objects (one instanced mesh for all units, one merged border set, two
+  front-line sets, globe, two cloud shells, atmosphere, stars) plus post-processing; bloom levels
+  8 → 6 (High) / 5 (Medium). 26.7 → 22 calls on a still High frame.
+- **Frame pacing:** on-demand rendering; full rate while anything moves, 30 fps after 8 s idle,
+  15 fps after 60 s, 20 fps under a modal, none while hidden or minimised.
+- **DPR:** capped by a pixel budget per preset (High 3.6 MP, Medium 2.2, Low 1.2) and by the
+  display; resumes from the last settled DPR. No `preserveDrawingBuffer`.
+- **Lazy screens:** 14 screens split into chunks (≈ 163 kB not parsed at startup).
+- **Disposal:** layer materials/textures freed on replace/unmount; strike materials no longer leak;
+  switching to/from Low disposes the previous texture set.
+- **Audio:** the score streams from `<audio>` elements (no decoded PCM in memory); 7.5 MB of MP3 on
+  disk.
+
 ## Known hot spots / next steps
 
-1. Measure on the actual M3 (Chrome and Safari) and record fps at full globe, Europe (dist 1.5) and
-   Taiwan (dist 1.2). If below 60 the auto-scaler will first lower the DPR, then cap effects at
+1. Measure this branch on the actual M3 (Chrome, Safari and the native app; see "How to measure on
+   the Mac") and record fps at full globe, Europe (dist 1.5) and Taiwan (dist 1.2). If below 60 the auto-scaler will first lower the DPR, then cap effects at
    Medium (one cloud layer's shadow, one wave octave) and Low (no aerial perspective, no smoke or
    wakes); record which cap it settles on. The largest per-pixel costs on High are the two
    atmosphere table lookups (4 taps) and the second wave octave.
 2. Globe shader: 5 ID-map taps + 4 country-index taps per pixel for borders. Could be replaced by a
    precomputed border texture (one tap).
-3. Labels overlay redraws every frame; throttle to every second frame when the camera is still.
-4. Code-split modals (`React.lazy`) and the TopoJSON border fetch (already lazy via `?url`).
-5. KTX2/Basis textures once `toktx` is available in CI (saves ~70% GPU memory).
+3. Labels overlay redraws every rendered frame; the cadence scheduler now limits that when idle.
+4. ~~Code-split modals~~ (done, D-082). The world data chunk (1.6 MB) and the worker (1.8 MB) are the
+   remaining large bundles.
+5. ~~KTX2/Basis textures~~ (done, D-082).
+6. The main thread keeps two full GameState copies (`game`, `previous`); the worker posts the whole
+   state per command. Diffs would cut both memory and structured-clone time.
 
 ## Geography pass (D-050–D-053)
 

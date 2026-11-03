@@ -169,8 +169,25 @@ export class DynamicResolution {
   private capCooldown = 0;
   /** 2 = no cap, 1 = medium at most, 0 = low. */
   cap = 2;
-  constructor(private settings: QualitySettings) {
-    this.dpr = settings.maxDpr;
+  /** `maxDpr` overrides the preset's maximum (the window's pixel-budget cap); `start` resumes
+   * from the DPR settled on last session. */
+  constructor(
+    private settings: QualitySettings,
+    start?: number,
+  ) {
+    this.dpr = Math.min(settings.maxDpr, start ?? settings.maxDpr);
+  }
+  get current(): number {
+    return this.dpr;
+  }
+  /** Lowers or raises the ceiling (window resized); returns the new DPR if it had to change. */
+  setMax(maxDpr: number): number | null {
+    this.settings = { ...this.settings, maxDpr: Math.max(this.settings.minDpr, maxDpr) };
+    if (this.dpr > this.settings.maxDpr + 1e-6) {
+      this.dpr = this.settings.maxDpr;
+      return this.dpr;
+    }
+    return null;
   }
   reset(settings: QualitySettings): void {
     this.settings = settings;
@@ -216,4 +233,77 @@ export class DynamicResolution {
   get frameMs(): number {
     return this.ema;
   }
+}
+
+/**
+ * Pixel budget per preset (device pixels drawn per frame, D-082). The M3 baseline settled at
+ * DPR 1.3 in a 1440 × 900 window (≈ 2.2 MP) on High; a Retina display at DPR 2 would be 5.2 MP,
+ * most of it wasted on a globe that is soft by nature. The cap keeps the auto-scaler from
+ * starting far above what it will settle on.
+ */
+export const PIXEL_BUDGET: Record<Quality, number> = { low: 1.2e6, medium: 2.2e6, high: 3.6e6 };
+
+/**
+ * Highest DPR worth rendering at for this window: the preset's maximum, the display's own DPR
+ * and the pixel budget, whichever is lowest; never below the preset's floor (pure, tested).
+ */
+export function dprCap(
+  quality: Quality,
+  cssWidth: number,
+  cssHeight: number,
+  deviceDpr: number,
+): number {
+  const q = QUALITY[quality];
+  const area = Math.max(1, cssWidth * cssHeight);
+  const budget = Math.sqrt(PIXEL_BUDGET[quality] / area);
+  const cap = Math.min(q.maxDpr, Math.max(1, deviceDpr), budget);
+  return Math.round(Math.max(q.minDpr, cap) * 20) / 20;
+}
+
+/** The DPR the auto-scaler settled on last time, per preset, so a new session starts there. */
+export function loadSettledDpr(quality: Quality): number | null {
+  try {
+    const v = Number(localStorage.getItem(`ww3.dpr.${quality}`));
+    return Number.isFinite(v) && v > 0 ? v : null;
+  } catch {
+    return null;
+  }
+}
+export function saveSettledDpr(quality: Quality, dpr: number): void {
+  try {
+    localStorage.setItem(`ww3.dpr.${quality}`, dpr.toFixed(2));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Render cadence (D-082): full speed while the player interacts, slower when nothing happens. */
+export type Cadence = 'full' | 'idle' | 'deepIdle' | 'covered' | 'hidden';
+
+/** Target frame interval (ms) per cadence; 0 = every display frame, Infinity = no frames. */
+export const CADENCE_MS: Record<Cadence, number> = {
+  full: 0,
+  idle: 1000 / 30,
+  deepIdle: 1000 / 15,
+  covered: 1000 / 20,
+  hidden: Infinity,
+};
+
+/** Seconds without input before the globe drops to the idle and deep-idle cadences. */
+export const IDLE_AFTER_S = 8;
+export const DEEP_IDLE_AFTER_S = 60;
+
+/** Which cadence applies (pure, tested). `busy` = camera moving or a strike animating. */
+export function cadenceFor(o: {
+  hidden: boolean;
+  covered: boolean;
+  busy: boolean;
+  idleSeconds: number;
+}): Cadence {
+  if (o.hidden) return 'hidden';
+  if (o.busy) return 'full';
+  if (o.covered) return 'covered';
+  if (o.idleSeconds >= DEEP_IDLE_AFTER_S) return 'deepIdle';
+  if (o.idleSeconds >= IDLE_AFTER_S) return 'idle';
+  return 'full';
 }

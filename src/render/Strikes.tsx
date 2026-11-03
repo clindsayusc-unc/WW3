@@ -6,6 +6,7 @@
  */
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { keepAwake } from './activity';
 import {
   AdditiveBlending,
   BufferGeometry,
@@ -196,7 +197,13 @@ export function strikesForTurn(
     const defence = s.kind === 'missile' ? (s.intercepted ?? 0) / Math.max(1, launched) : 0;
     const arcs = s.kind === 'missile' ? Math.min(3, launched) : 1;
     for (let i = 0; i < arcs; i++)
-      out.push({ from: s.from, to: s.to, nuclear: false, defence, seed: s.to * 131 + s.from * 17 + i });
+      out.push({
+        from: s.from,
+        to: s.to,
+        nuclear: false,
+        defence,
+        seed: s.to * 131 + s.from * 17 + i,
+      });
   }
   return out;
 }
@@ -348,6 +355,7 @@ export function Strikes() {
 
   useFrame(() => {
     const now = performance.now();
+    if (arcs.current.length || flashes.current.length) keepAwake(now);
     for (const a of [...arcs.current]) {
       const t = (now - a.start) / a.duration;
       if (t < 0) {
@@ -359,6 +367,8 @@ export function Strikes() {
       if (t > end + 0.8) {
         group.remove(a.line, a.head);
         a.line.geometry.dispose();
+        (a.line.material as ShaderMaterial).dispose();
+        (a.head.material as SpriteMaterial).dispose();
         arcs.current.splice(arcs.current.indexOf(a), 1);
         continue;
       }
@@ -390,6 +400,7 @@ export function Strikes() {
       }
       if (t > 1) {
         group.remove(f.sprite);
+        (f.sprite.material as SpriteMaterial).dispose();
         flashes.current.splice(flashes.current.indexOf(f), 1);
         continue;
       }

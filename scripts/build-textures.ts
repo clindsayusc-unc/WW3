@@ -4,7 +4,8 @@
  *
  *   node scripts/build-textures.ts [--cache DIR]
  *
- * Outputs in public/textures/:
+ * Outputs: the colour sources in assets/textures/ (encoded to KTX2 in public/textures/ by
+ * scripts/build-ktx2.ts, D-082) and the height map in public/textures/ (read on the CPU too):
  *   earth-day.jpg     4096×2048  NASA Blue Marble Next Generation (August 2004)
  *   earth-night.jpg   4096×2048  NASA Black Marble 2016 (city lights)
  *   earth-normal.jpg  4096×2048  tangent-space normal map derived from GEBCO_08 elevation
@@ -14,8 +15,7 @@
  *
  *   --only height     build just the listed outputs (comma-separated: day,night,clouds,bathy,normal,height)
  *
- * KTX2/Basis output is not produced because no encoder is available in the build container
- * (see docs/DECISIONS.md D-022); the loader falls back to these JPGs.
+ * Run `node --import tsx scripts/build-ktx2.ts` afterwards to refresh the KTX2 files.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -29,6 +29,7 @@ const CACHE =
     ? (args[cacheArg + 1] as string)
     : join(ROOT, '.cache', 'nasa');
 const OUT = join(ROOT, 'public', 'textures');
+const SRC_OUT = join(ROOT, 'assets', 'textures');
 
 const A = 'https://assets.science.nasa.gov/content/dam/science/esd/eo/images';
 const E = 'https://eoimages.gsfc.nasa.gov/images/imagerecords';
@@ -106,6 +107,7 @@ async function normalMap(
 
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true });
+  mkdirSync(SRC_OUT, { recursive: true });
   const onlyArg = args.indexOf('--only');
   const only = new Set(
     onlyArg >= 0 && args[onlyArg + 1]
@@ -117,28 +119,28 @@ async function main(): Promise<void> {
     await sharp(await src('day'))
       .resize(4096, 2048, { kernel: 'lanczos3' })
       .jpeg({ quality: 88, mozjpeg: true })
-      .toFile(join(OUT, 'earth-day.jpg'));
+      .toFile(join(SRC_OUT, 'earth-day.jpg'));
   if (only.has('night'))
     await sharp(await src('night'))
       .resize(4096, 2048, { kernel: 'lanczos3' })
       .jpeg({ quality: 82, mozjpeg: true })
-      .toFile(join(OUT, 'earth-night.jpg'));
+      .toFile(join(SRC_OUT, 'earth-night.jpg'));
   if (only.has('clouds'))
     await sharp(await src('clouds'))
       .greyscale()
       .resize(4096, 2048, { kernel: 'lanczos3' })
       .jpeg({ quality: 80, mozjpeg: true })
-      .toFile(join(OUT, 'earth-clouds.jpg'));
+      .toFile(join(SRC_OUT, 'earth-clouds.jpg'));
   if (only.has('bathy'))
     await sharp(await src('bathymetry'))
       .resize(2048, 1024, { kernel: 'lanczos3' })
       .jpeg({ quality: 80, mozjpeg: true })
-      .toFile(join(OUT, 'earth-bathy.jpg'));
+      .toFile(join(SRC_OUT, 'earth-bathy.jpg'));
   if (only.has('normal')) {
     const normal = await normalMap(await src('elevation'), 4096, 2048, 6);
     await sharp(normal, { raw: { width: 4096, height: 2048, channels: 3 } })
       .jpeg({ quality: 90, mozjpeg: true, chromaSubsampling: '4:4:4' })
-      .toFile(join(OUT, 'earth-normal.jpg'));
+      .toFile(join(SRC_OUT, 'earth-normal.jpg'));
   }
   if (only.has('height'))
     // Height map for vertex displacement and the snow line; greyscale, sea level = 0.
@@ -155,8 +157,9 @@ async function main(): Promise<void> {
     'earth-normal.jpg',
     'earth-height.jpg',
   ]) {
-    if (!existsSync(join(OUT, f))) continue;
-    const m = await sharp(join(OUT, f)).metadata();
+    const dir = f === 'earth-height.jpg' ? OUT : SRC_OUT;
+    if (!existsSync(join(dir, f))) continue;
+    const m = await sharp(join(dir, f)).metadata();
     console.log(`${f} ${m.width}x${m.height} ${(m.size ?? 0) / 1e6} MB`);
   }
 }

@@ -74,44 +74,67 @@ function loadBorders(): Promise<BorderSets> {
   return cached;
 }
 
+// One draw call for both border sets (D-082): country borders and coasts first, inner region
+// borders after them, told apart by a per-vertex kind. When region borders are faded out the draw
+// range stops at the end of the country set, so their vertices cost nothing.
 const LINE_VERT = /* glsl */ `
   attribute float height;
+  attribute float kind;
   uniform float uDisplace;
+  varying float vKind;
   void main() {
+    vKind = kind;
     vec3 p = position * (1.0 + height * uDisplace);
     gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
   }
 `;
 const LINE_FRAG = /* glsl */ `
   precision highp float;
-  uniform vec3 uColor;
-  uniform float uOpacity;
-  void main() { gl_FragColor = vec4(uColor, uOpacity); }
+  uniform vec3 uCountryColor;
+  uniform vec3 uRegionColor;
+  uniform float uCountryOpacity;
+  uniform float uRegionOpacity;
+  varying float vKind;
+  void main() {
+    bool region = vKind > 0.5;
+    float a = region ? uRegionOpacity : uCountryOpacity;
+    if (a < 0.005) discard;
+    gl_FragColor = vec4(region ? uRegionColor : uCountryColor, a);
+  }
 `;
 
-function makeLines(
-  positions: Float32Array,
-  heights: Float32Array,
-  color: string,
-  order: number,
-): LineSegments {
+function makeLines(sets: BorderSets): { obj: LineSegments; countryVertices: number } {
+  const nc = sets.countries.length / 3;
+  const nr = sets.regions.length / 3;
+  const pos = new Float32Array((nc + nr) * 3);
+  pos.set(sets.countries, 0);
+  pos.set(sets.regions, nc * 3);
+  const hs = new Float32Array(nc + nr);
+  hs.set(sets.countriesHeight, 0);
+  hs.set(sets.regionsHeight, nc);
+  const kind = new Float32Array(nc + nr);
+  kind.fill(1, nc);
   const geo = new BufferGeometry();
-  geo.setAttribute('position', new Float32BufferAttribute(positions, 3));
-  geo.setAttribute('height', new Float32BufferAttribute(heights, 1));
+  geo.setAttribute('position', new Float32BufferAttribute(pos, 3));
+  geo.setAttribute('height', new Float32BufferAttribute(hs, 1));
+  geo.setAttribute('kind', new Float32BufferAttribute(kind, 1));
   const mat = new ShaderMaterial({
     vertexShader: LINE_VERT,
     fragmentShader: LINE_FRAG,
     uniforms: {
-      uColor: { value: new Color(color) },
-      uOpacity: { value: 0.35 },
+      uCountryColor: { value: new Color('#e6edf7') },
+      uRegionColor: { value: new Color('#cbd5e1') },
+      uCountryOpacity: { value: 0.35 },
+      uRegionOpacity: { value: 0 },
       uDisplace: { value: 0 },
     },
     transparent: true,
     depthWrite: false,
   });
   const obj = new LineSegments(geo, mat);
-  obj.renderOrder = order;
-  return obj;
+  obj.renderOrder = 3;
+  obj.name = 'borders';
+  return { obj, countryVertices: nc };
 }
 
 export function Borders() {
@@ -125,36 +148,27 @@ export function Borders() {
       alive = false;
     };
   }, []);
-  const countries = useMemo(
-    () => (sets ? makeLines(sets.countries, sets.countriesHeight, '#e6edf7', 3) : null),
-    [sets],
-  );
-  const regions = useMemo(
-    () => (sets ? makeLines(sets.regions, sets.regionsHeight, '#cbd5e1', 3) : null),
-    [sets],
+  const lines = useMemo(() => (sets ? makeLines(sets) : null), [sets]);
+  useEffect(
+    () => () => {
+      lines?.obj.geometry.dispose();
+      (lines?.obj.material as ShaderMaterial | undefined)?.dispose();
+    },
+    [lines],
   );
   const dist = useUiStore((s) => s.cameraDistance);
   useEffect(() => {
-    if (countries)
-      (countries.material as ShaderMaterial).uniforms.uOpacity!.value = Math.max(
-        0.2,
-        Math.min(0.75, (2.8 - dist) * 0.45),
-      );
-    if (regions) {
-      const a = Math.max(0, Math.min(0.4, (1.9 - dist) * 0.6));
-      (regions.material as ShaderMaterial).uniforms.uOpacity!.value = a;
-      regions.visible = a > 0.01;
-    }
-  }, [dist, countries, regions]);
+    if (!lines) return;
+    const u = (lines.obj.material as ShaderMaterial).uniforms;
+    u.uCountryOpacity!.value = Math.max(0.2, Math.min(0.75, (2.8 - dist) * 0.45));
+    const a = Math.max(0, Math.min(0.4, (1.9 - dist) * 0.6));
+    u.uRegionOpacity!.value = a;
+    lines.obj.geometry.setDrawRange(0, a > 0.01 ? Infinity : lines.countryVertices);
+  }, [dist, lines]);
   useFrame(({ camera }) => {
+    if (!lines) return;
     const d = terrainDisplacement(camera.position.length(), currentLevels().terrain);
-    if (countries) (countries.material as ShaderMaterial).uniforms.uDisplace!.value = d;
-    if (regions) (regions.material as ShaderMaterial).uniforms.uDisplace!.value = d;
+    (lines.obj.material as ShaderMaterial).uniforms.uDisplace!.value = d;
   });
-  return (
-    <>
-      {countries && <primitive object={countries} />}
-      {regions && <primitive object={regions} />}
-    </>
-  );
+  return lines ? <primitive object={lines.obj} /> : null;
 }

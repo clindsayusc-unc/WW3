@@ -19,6 +19,7 @@ export const SHORTCUTS: readonly Shortcut[] = [
   { keys: ['N'], action: 'The WW3 Wire (news)', group: 'Screens' },
   { keys: ['X'], action: 'Escalation ladder', group: 'Screens' },
   { keys: ['Esc'], action: 'Close the screen, or clear the selection', group: 'Screens' },
+  { keys: ['F11'], action: 'Fullscreen on or off (also Ctrl ⌘ F on a Mac)', group: 'Screens' },
   { keys: ['1'], action: 'Political map', group: 'Map' },
   { keys: ['2'], action: 'Blocs map', group: 'Map' },
   { keys: ['3'], action: 'Relations map', group: 'Map' },

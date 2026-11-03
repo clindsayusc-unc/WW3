@@ -137,6 +137,9 @@ interface UiStore {
   battleReportId: number | null;
   flyTo: FlyTarget | null;
   quality: Quality;
+  /** Set when the globe's textures failed to load (shown on the loading screen). */
+  assetError: string | null;
+  setAssetError: (message: string) => void;
   /** Per-effect Low/Medium/High (D-055); the preset resets all of them. */
   effects: EffectLevels;
   /** Auto-scaler cap on every effect level: 2 none, 1 medium, 0 low. */
@@ -206,6 +209,8 @@ export const useUiStore = create<UiStore>((set) => ({
   battleReportId: null,
   flyTo: null,
   quality: 'high',
+  assetError: null,
+  setAssetError: (assetError) => set({ assetError }),
   effects: levelsForPreset('high'),
   autoCap: 2,
   strikeCam: true,

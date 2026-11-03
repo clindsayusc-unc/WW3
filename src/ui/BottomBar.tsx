@@ -6,7 +6,8 @@ import { ScreenIcon } from './icons';
 import { ALERT_ICON } from './iconMaps';
 import { Info, Undo2 } from 'lucide-react';
 import { loadWorld } from '../sim/world';
-import { playSound } from './audio';
+import { playSound, playStinger } from './audio';
+import { stingerFor } from './stingers';
 import type { LogEntry } from '../sim/types';
 
 const world = loadWorld();
@@ -19,11 +20,11 @@ export function BottomBar() {
   const select = useUiStore((s) => s.select);
   const setModal = useUiStore((s) => s.setModal);
   const tickerRef = useRef<HTMLDivElement>(null);
+  // One stinger for the month just resolved, the most important one (D-084).
   useEffect(() => {
     if (!game) return;
-    const alerts = game.log.filter((l) => l.turn === game.turn - 1 && l.alert);
-    if (alerts.some((a) => a.kind === 'war' || a.kind === 'nuclear' || a.kind === 'capitulation'))
-      playSound('alert');
+    const kind = stingerFor(useGameStore.getState().previous, game);
+    if (kind) playStinger(kind);
   }, [game]);
   if (!game) return null;
   const alerts = game.log

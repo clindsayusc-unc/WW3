@@ -2,7 +2,14 @@
  * Loads the region-ID map (public/textures/regions-id.png, RG8 ids + B land flag) into a
  * CPU-side Uint16Array for picking and a GPU DataTexture for the globe shader (D-034).
  */
-import { DataTexture, LinearFilter, NearestFilter, RGBAFormat, UnsignedByteType } from 'three';
+import {
+  DataTexture,
+  LinearFilter,
+  NearestFilter,
+  RGBAFormat,
+  RGFormat,
+  UnsignedByteType,
+} from 'three';
 import { noteTexture } from './perf';
 
 export interface RegionIdMap {
@@ -27,20 +34,24 @@ export function loadRegionIdMap(url = '/textures/regions-id.png'): Promise<Regio
       ctx.drawImage(img, 0, 0);
       const data = ctx.getImageData(0, 0, img.width, img.height).data;
       const ids = new Uint16Array(img.width * img.height);
-      for (let i = 0; i < ids.length; i++) ids[i] = data[i * 4]! | (data[i * 4 + 1]! << 8);
-      const texture = new DataTexture(
-        new Uint8Array(data.buffer),
-        img.width,
-        img.height,
-        RGBAFormat,
-        UnsignedByteType,
-      );
+      // GPU copy packed into two bytes per texel (D-082): R = id low byte, G = id high byte with
+      // the land flag in bit 7 (ids stay below 2,048). Half the memory of the RGBA upload.
+      const packed = new Uint8Array(img.width * img.height * 2);
+      for (let i = 0; i < ids.length; i++) {
+        const lo = data[i * 4]!;
+        const hi = data[i * 4 + 1]!;
+        ids[i] = lo | (hi << 8);
+        packed[i * 2] = lo;
+        packed[i * 2 + 1] = hi | (data[i * 4 + 2]! > 127 ? 128 : 0);
+      }
+      const texture = new DataTexture(packed, img.width, img.height, RGFormat, UnsignedByteType);
+      texture.unpackAlignment = 2;
       texture.magFilter = NearestFilter;
       texture.minFilter = NearestFilter;
       texture.generateMipmaps = false;
       texture.flipY = true;
       texture.needsUpdate = true;
-      noteTexture(img.width, img.height, false);
+      noteTexture(img.width, img.height, false, 2, 'regions-id');
       resolve({ width: img.width, height: img.height, ids, texture });
     };
     img.onerror = () => reject(new Error(`Failed to load ${url}`));

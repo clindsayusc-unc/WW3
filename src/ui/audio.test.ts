@@ -18,3 +18,41 @@ describe('audio settings (D-060)', () => {
     expect(musicIntensityFor(1)).toBe(2);
   });
 });
+
+describe('score and stingers (D-084)', () => {
+  it('cycles calm tracks and loops single-track playlists', async () => {
+    const { nextTrack, PLAYLISTS } = await import('./music');
+    expect(PLAYLISTS).toHaveLength(3);
+    expect(nextTrack(2, 0)).toBe(1);
+    expect(nextTrack(2, 1)).toBe(0);
+    expect(nextTrack(1, 0)).toBe(0);
+  });
+  it('plays one stinger a month, the most important', async () => {
+    const { stingerFor } = await import('./stingers');
+    type S = Parameters<typeof stingerFor>[1];
+    const state = (turn: number, defcon: number, log: object[] = [], extra: object = {}): S =>
+      ({
+        turn,
+        player: 'USA',
+        nations: { USA: { defcon } },
+        log,
+        victory: null,
+        defeat: null,
+        ...extra,
+      }) as unknown as S;
+    const a = state(3, 4);
+    // Orders within a month never trigger one.
+    expect(stingerFor(a, state(3, 2))).toBeNull();
+    expect(stingerFor(null, a)).toBeNull();
+    expect(stingerFor(a, state(4, 4))).toBeNull();
+    expect(stingerFor(a, state(4, 3))).toBe('defcon');
+    const log = [
+      { turn: 3, kind: 'research', alert: true },
+      { turn: 3, kind: 'war', alert: true },
+      { turn: 2, kind: 'nuclear', alert: true },
+      { turn: 3, kind: 'nuclear' },
+    ];
+    expect(stingerFor(a, state(4, 3, log))).toBe('war');
+    expect(stingerFor(a, state(4, 4, [], { defeat: { kind: 'capitulation' } }))).toBe('defeat');
+  });
+});

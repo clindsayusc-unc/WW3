@@ -5,6 +5,7 @@
  */
 import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
+import { keepAwake } from './activity';
 import { Ray, Sphere, Vector3, type PerspectiveCamera } from 'three';
 import { latLonToVec3, vec3ToLatLon } from './geo';
 import { regionAt, type RegionIdMap } from './regionIds';
@@ -281,6 +282,19 @@ export function CameraRig({ idMap }: Props) {
     const now = performance.now();
     const w = gl.domElement.clientWidth;
     const h = gl.domElement.clientHeight;
+    // Moving camera (flight, strike cam, drag, inertia, the menu's orbit): full frame rate.
+    if (
+      s.strike ||
+      s.flight ||
+      s.dragging ||
+      ui.screen === 'menu' ||
+      Math.abs(s.vLat) > 1e-4 ||
+      Math.abs(s.vLon) > 1e-4 ||
+      Math.abs(s.tDist - s.dist) > 1e-4 * s.dist ||
+      Math.abs(s.tLat - s.lat) > 1e-3 ||
+      Math.abs(s.tLon - s.lon) > 1e-3
+    )
+      keepAwake(now);
 
     // --- strike cam: chase the missile head, then linger on the impact
     if (s.strike) {

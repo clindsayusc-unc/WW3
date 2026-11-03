@@ -1,0 +1,268 @@
+{
+  "os": "Linux",
+  "at": "2026-11-03T06:16:53.658Z",
+  "elapsedSeconds": 106,
+  "peakProcessMB": 1244,
+  "budgetMB": 1536,
+  "memorySamplesMB": [
+    7,
+    351,
+    706,
+    886,
+    910,
+    1010,
+    1019,
+    1019,
+    1163,
+    1153,
+    1134,
+    1134,
+    1190,
+    1156,
+    1154,
+    1108,
+    1144,
+    1139,
+    1139,
+    1137,
+    1137,
+    1128,
+    1128,
+    1141,
+    1141,
+    1206,
+    1188,
+    1227,
+    1207,
+    1222,
+    1129,
+    1129,
+    1128,
+    1126,
+    1133,
+    1136,
+    1136,
+    1167,
+    1136,
+    1176,
+    1159,
+    1159,
+    1180,
+    1171,
+    1171,
+    1167,
+    1166,
+    1162,
+    1178,
+    1176,
+    1176,
+    1177,
+    1177,
+    1177,
+    1201,
+    1167,
+    1167,
+    1188,
+    1183,
+    1183,
+    1159,
+    1159,
+    1159,
+    1208,
+    1197,
+    1205,
+    1232,
+    1211,
+    1208,
+    1180,
+    1180,
+    1190,
+    1173,
+    1173,
+    1181,
+    1181,
+    1222,
+    1217,
+    1217,
+    1211,
+    1211,
+    1223,
+    1214,
+    1234,
+    1189,
+    1224,
+    1214,
+    1214,
+    1244,
+    1221,
+    1221,
+    1238,
+    1229,
+    1229,
+    1229
+  ],
+  "app": {
+    "ok": true,
+    "error": null,
+    "nation": "USA",
+    "turnsRequested": 20,
+    "turnsPlayed": 20,
+    "finalDate": "2028-09",
+    "seconds": 104.835,
+    "workerTurnMs": {
+      "mean": 568.900000000001,
+      "p95": 1028,
+      "max": 1028
+    },
+    "fpsSamples": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "gpuTextureMB": 64.95851135253906,
+    "globeLoaded": true,
+    "assetError": null,
+    "errors": [],
+    "jsHeapMB": null,
+    "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/60.5 Safari/605.1.15",
+    "turns": [
+      {
+        "turn": 1,
+        "workerMs": 1028,
+        "wallMs": 2807.999999999999,
+        "events": 0
+      },
+      {
+        "turn": 2,
+        "workerMs": 710.9999999999982,
+        "wallMs": 2346.000000000002,
+        "events": 1
+      },
+      {
+        "turn": 3,
+        "workerMs": 503,
+        "wallMs": 2902,
+        "events": 1
+      },
+      {
+        "turn": 4,
+        "workerMs": 544,
+        "wallMs": 2190.0000000000036,
+        "events": 0
+      },
+      {
+        "turn": 5,
+        "workerMs": 382.00000000000364,
+        "wallMs": 754,
+        "events": 1
+      },
+      {
+        "turn": 6,
+        "workerMs": 497.99999999999636,
+        "wallMs": 2843,
+        "events": 1
+      },
+      {
+        "turn": 7,
+        "workerMs": 528,
+        "wallMs": 3028,
+        "events": 1
+      },
+      {
+        "turn": 8,
+        "workerMs": 545,
+        "wallMs": 1957,
+        "events": 1
+      },
+      {
+        "turn": 9,
+        "workerMs": 522,
+        "wallMs": 2549,
+        "events": 1
+      },
+      {
+        "turn": 10,
+        "workerMs": 533.0000000000073,
+        "wallMs": 2273.9999999999927,
+        "events": 0
+      },
+      {
+        "turn": 11,
+        "workerMs": 431,
+        "wallMs": 513,
+        "events": 1
+      },
+      {
+        "turn": 12,
+        "workerMs": 400,
+        "wallMs": 436,
+        "events": 0
+      },
+      {
+        "turn": 13,
+        "workerMs": 625,
+        "wallMs": 3104.0000000000073,
+        "events": 1
+      },
+      {
+        "turn": 14,
+        "workerMs": 565,
+        "wallMs": 2022,
+        "events": 1
+      },
+      {
+        "turn": 15,
+        "workerMs": 519,
+        "wallMs": 2038,
+        "events": 0
+      },
+      {
+        "turn": 16,
+        "workerMs": 429,
+        "wallMs": 3192,
+        "events": 1
+      },
+      {
+        "turn": 17,
+        "workerMs": 565,
+        "wallMs": 3446.9999999999854,
+        "events": 1
+      },
+      {
+        "turn": 18,
+        "workerMs": 567,
+        "wallMs": 2101,
+        "events": 1
+      },
+      {
+        "turn": 19,
+        "workerMs": 833.0000000000146,
+        "wallMs": 4006,
+        "events": 1
+      },
+      {
+        "turn": 20,
+        "workerMs": 650,
+        "wallMs": 2500,
+        "events": 1
+      }
+    ]
+  }
+}

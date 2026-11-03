@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- World War 3 app icon (D-083): an original design — an abstract night globe with a
+       graticule and a single amber trajectory arc. No flags, insignia or real-world emblems. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#101826"/>
+      <stop offset="1" stop-color="#04070d"/>
+    </linearGradient>
+    <radialGradient id="sea" cx="0.38" cy="0.34" r="0.75">
+      <stop offset="0" stop-color="#1f4f7a"/>
+      <stop offset="0.55" stop-color="#0e2840"/>
+      <stop offset="1" stop-color="#050c16"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0.86" stop-color="#5fb6ff" stop-opacity="0"/>
+      <stop offset="0.97" stop-color="#5fb6ff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#5fb6ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="arc" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffb347" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#ffb347"/>
+      <stop offset="1" stop-color="#ffe2b0"/>
+    </linearGradient>
+    <clipPath id="ball"><circle cx="512" cy="540" r="330"/></clipPath>
+  </defs>
+  <g transform="translate(512 512) scale(0.92) translate(-512 -512)">
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="url(#bg)"/>
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="none" stroke="#2a3a52" stroke-width="6"/>
+  <circle cx="512" cy="540" r="372" fill="url(#rim)"/>
+  <circle cx="512" cy="540" r="330" fill="url(#sea)"/>
+  <g clip-path="url(#ball)" fill="none" stroke="#7fb8e6" stroke-opacity="0.35" stroke-width="7">
+    <ellipse cx="512" cy="540" rx="330" ry="110"/>
+    <ellipse cx="512" cy="540" rx="330" ry="230"/>
+    <line x1="182" y1="540" x2="842" y2="540"/>
+    <ellipse cx="512" cy="540" rx="110" ry="330"/>
+    <ellipse cx="512" cy="540" rx="230" ry="330"/>
+    <line x1="512" y1="210" x2="512" y2="870"/>
+  </g>
+  <!-- abstract land masses: soft shapes, not real coastlines -->
+  <g clip-path="url(#ball)" fill="#2f6a4f" fill-opacity="0.75">
+    <path d="M300 420 q60 -70 150 -40 q50 20 30 70 q-30 50 -100 40 q-60 20 -80 -70 z"/>
+    <path d="M560 360 q90 -30 160 20 q40 40 0 90 q-60 30 -100 0 q-70 -20 -60 -110 z"/>
+    <path d="M470 600 q70 -30 120 20 q30 60 -20 120 q-50 40 -90 -20 q-40 -60 -10 -120 z"/>
+  </g>
+  <circle cx="512" cy="540" r="330" fill="none" stroke="#9fd2ff" stroke-opacity="0.5" stroke-width="5"/>
+  <!-- trajectory arc -->
+  <path d="M250 780 Q 470 120 800 330" fill="none" stroke="url(#arc)" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="800" cy="330" r="30" fill="#ffe2b0"/>
+  <circle cx="800" cy="330" r="58" fill="none" stroke="#ffb347" stroke-opacity="0.6" stroke-width="8"/>
+  </g>
+</svg>
