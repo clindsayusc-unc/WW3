@@ -92,15 +92,28 @@ export function runAi(world: World, state: GameState): void {
   for (const n of Object.values(state.nations))
     if (n.alive) ctx.power.set(n.iso3, militaryPower(world, state, n.iso3));
   for (const n of Object.values(state.nations)) {
-    if (!n.alive || (n.iso3 === state.player && !state.observer)) continue;
+    if (!n.alive) continue;
+    if (n.iso3 === state.player && !state.observer) {
+      // Simple mode (D-086): the AI runs the player's economy, research, production and armies by
+      // the player leader's traits; war, peace, alliances and sanctions stay the player's (cards).
+      if (state.mode === 'simple') aiNation(world, state, ctx, n.iso3, true);
+      continue;
+    }
     aiNation(world, state, ctx, n.iso3);
   }
   // Expire stale proposals to the player.
   state.proposals = state.proposals.filter((p) => state.turn - p.turn < 3);
 }
 
-function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
+/**
+ * One nation's month. `managed` is the player in Simple mode (D-086): the domestic and military
+ * sections run, steered by the player's spending lean and war stances; strategic strikes,
+ * diplomacy, sanctions and nuclear use are left to the player.
+ */
+function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3, managed = false): void {
   const n = state.nations[iso]!;
+  const stances = managed ? (state.simple?.stances ?? {}) : {};
+  const stanceOf = (c: Iso3 | null | undefined) => (c ? stances[c] : undefined);
   const t = traitsOf(world, iso, state);
   const meta = world.nations.get(iso)!;
   const enemies = enemiesOf(state, iso);
@@ -122,6 +135,12 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
   }
   const held = controlShare(world, state, iso);
 
+  // A border the player asked to guard (Simple mode) is the main threat for garrisons.
+  if (managed && !atWarNow) {
+    const guard = Object.keys(stances).find((x) => stances[x] === 'defend' && state.nations[x]?.alive);
+    if (guard) mainThreat = guard;
+  }
+
   // 1. Budget -----------------------------------------------------------------------------------
   let military =
     10 +
@@ -141,11 +160,33 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
     military -= 4;
     infrastructure -= 4;
   }
+  if (managed) {
+    // A government that faces its voters (D-086): the managed player guards public support and
+    // does not let unspent military money pile up in the treasury.
+    if (n.support < 50) {
+      social += 10;
+      military -= 6;
+    }
+    if (n.treasury > monthlyRevenue(n, held) * 2) {
+      military -= 12;
+      social += 8;
+      infrastructure += 4;
+    }
+    if (social < 40) {
+      military -= 40 - social;
+      social = 40;
+    }
+    // The player's lean (Decision Cards) moves points between the army and social spending.
+    const bias = state.simple?.militaryBias ?? 0;
+    military += bias;
+    social = Math.max(10, social - bias);
+  }
   if (social < 10) {
     const over = 10 - social;
     social = 10;
     military -= over;
   }
+  if (managed && military < 3) military = 3;
   const sum = military + research + infrastructure + debt + social;
   n.budget = {
     military: Math.round((military / sum) * 100),
@@ -326,6 +367,10 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
             : land;
         for (const target of [...targets, ...amphib]) {
           if (capitalFront && land.length - movers.length < 1) continue;
+          // Simple-mode stances (D-086): "defend" never invades; "attack" presses into the enemy
+          // even while on the defensive, at slightly lower odds than the leader alone would accept.
+          const stance = stanceOf(state.regions[target]?.controller);
+          if (stance === 'defend' && state.regions[target]?.owner !== iso) continue;
           const odds = estimateOdds(
             world,
             state,
@@ -336,8 +381,13 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
           // own regions but invades the enemy's homeland only at overwhelming odds (D-072).
           const owner = state.regions[target]?.owner;
           const ownLand = owner === iso;
-          if (!ownLand && onDefensive && held < 0.999) continue;
-          const need = ownLand || !onDefensive ? attackThreshold : Math.max(2.2, attackThreshold * 1.8);
+          if (!ownLand && onDefensive && held < 0.999 && stance !== 'attack') continue;
+          const need =
+            stance === 'attack'
+              ? attackThreshold * 0.9
+              : ownLand || !onDefensive
+                ? attackThreshold
+                : Math.max(2.2, attackThreshold * 1.8);
           if (odds.ratio >= need && (!best || odds.ratio > best.ratio))
             best = { target, ratio: odds.ratio };
         }
@@ -347,16 +397,21 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
           n.aiNote = `Attacking ${world.regions.get(best.target)!.name} at ${best.ratio === Infinity ? 'no' : best.ratio.toFixed(1) + ':1'} odds.`;
           continue;
         }
-        // Otherwise reinforce the weakest frontier region.
+        // Otherwise reinforce the weakest frontier region — in Simple mode, the front facing the
+        // enemy the player ordered an attack on, when there is one.
+        const focus = managed
+          ? frontier.filter((f) => (enemyAdjacent.get(f) ?? []).some((e) => stanceOf(state.regions[e]?.controller) === 'attack'))
+          : [];
+        const fronts = focus.length > 0 ? focus : frontier;
         if (
-          frontier.length > 0 &&
-          !frontier.includes(region) &&
-          !frontSaturated &&
+          fronts.length > 0 &&
+          !fronts.includes(region) &&
+          (!frontSaturated || focus.length > 0) &&
           roll(state) < 0.7
         ) {
           let weakest: RegionId | null = null;
           let worst = Infinity;
-          for (const f of frontier) {
+          for (const f of fronts) {
             const defenders = (ctx.byRegion.get(f) ?? []).filter((u) => u.owner === iso).length;
             const threatN = (enemyAdjacent.get(f) ?? []).reduce(
               (s, e) =>
@@ -421,7 +476,7 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
     } else if (air.length > 0) {
       for (const u of air) u.mission = pickMission(world, state, u, false);
     }
-    if (!atWarNow && mainThreat && land.length > 2 && roll(state) < 0.15) {
+    if (!atWarNow && mainThreat && land.length > 2 && roll(state) < (managed && stanceOf(mainThreat) === 'defend' ? 0.5 : 0.15)) {
       // Peacetime: garrison the border with the main threat.
       const border = Object.values(state.regions).filter(
         (r) =>
@@ -440,6 +495,14 @@ function aiNation(world: World, state: GameState, ctx: Ctx, iso: Iso3): void {
         }
       }
     }
+  }
+
+  if (managed) {
+    // The player keeps strikes, diplomacy, sanctions and the bomb; only war finance is automatic.
+    if (atWarNow && n.treasury < revenue * 2 && canIssueWarBonds(state, iso) === null && roll(state) < 0.3)
+      issueWarBonds(world, state, iso);
+    n.aiNote = '';
+    return;
   }
 
   // 5b. Strategic operations (D-059) -------------------------------------------------------------------------

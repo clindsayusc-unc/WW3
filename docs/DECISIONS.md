@@ -1497,3 +1497,63 @@ Pezeshkian president, so `data/leaders.json` was already correct.
 - **Flashpoint.** `iran-israel-gulf` tension rises from 70 to 80. Its description and events now
   describe talks rather than a ceasefire; the US decision event ("A deal with Iran on the table")
   can end the war (`peace` USA–IRN).
+
+## D-086 — 2026-11-03 — Simple mode: the president's game
+
+The full game asks a new player to learn budgets, production queues, an 81-tech tree, supply and
+unit orders before the first month makes sense. Simple mode is a second way to play the same
+simulation, understandable in two minutes. Nothing is removed from the simulation; the details are
+managed for the player.
+
+- **Mode lives in the game state** (`GameState.mode`, `GameState.simple`), because it changes what
+  the simulation does each month and must be saved, replayed and deterministic. `setMode` switches
+  at any time (Settings → How you play) and touches nothing else: the switching test checks the rest
+  of the state is deep-equal before and after, both ways. Saves without `mode` are Full. New Game asks
+  "How do you want to play?" first; Simple is selected for a first game (`prefs.lastMode` null) and
+  the last choice afterwards.
+- **The AI runs the player** (`aiNation(…, managed = true)` in `ai.ts`): budget, mobilisation,
+  research, production, unit placement and air missions, from the player leader's traits, exactly as
+  for an AI nation, plus war bonds. It does **not** take strategic strikes, cyber, ASAT or spy
+  operations, diplomacy, sanctions or nuclear decisions — those stay the player's, through Decision
+  Cards and Attack/Defend. Three managed-only adjustments, because the AI's budget ignored the voters
+  it never faced: social spending has a floor of 40 % (+10 while support is under 50), and unspent
+  military money (treasury over two months' revenue) is moved to social and infrastructure. Without
+  them a managed United States spent 44 % on the military at war with Iran, hoarded US$ 4 trn and fell
+  from 56 to 35 approval in 14 months; with them it holds ≈ 50, close to an untouched Full game. The
+  player's spending lean (`militaryBias`, ±15 points in steps of 5) is applied after these rules,
+  moving points between the army and social spending.
+- **Stances.** Attack or Defend per nation (`setStance`). Attack declares war if needed (confirmed in
+  the UI) and lets the managed AI invade at 0.9 × its attack threshold even when on the defensive,
+  concentrating reinforcements on that front. Defend never invades (own land is still liberated); in
+  peacetime it makes that nation the garrison target and raises the garrison chance from 15 to 50 %.
+  Attack orders lapse when the war ends.
+- **Decision Cards** (`src/sim/simple.ts`) are derived from the state, never stored: a pure
+  function both the UI and the worker evaluate, so a `decide {card, option}` command names a card and
+  the worker re-derives it and applies the option's ordinary commands (`resolveEvent`, `respond`,
+  `propose`, `setStance`, `setMilitaryBias`, `setTaxRate`, `issueWarBonds`, `leaveBloc`). Kinds, in
+  priority order: crises (the event deck's player decisions, replacing the event modal), peace offers,
+  wars (Attack / Hold the line / Offer peace), threats (a war plan against us, or a hostile power:
+  Guard the border / Sanctions or talks / Strike first), money shortages, pacts with great powers,
+  arms requests, sanctions to lift or impose, a defence pact a friendly nation would sign, a bloc
+  falling apart, and military spending. At most three a month; at least one at the start of every
+  month (military spending when nothing else is on the desk); answered cards come back after a
+  per-kind cooldown. Every option shows its likely effect in words — odds from `warOdds` (side
+  strength ratio → "Likely win, heavy losses"), feelings from relation changes ("China will be
+  furious"), acceptance from the AI's own `evaluateProposal`. Each option carries `sensible`; a test
+  plays 60 Simple turns by clicking only card buttons and End Turn and asserts every card has a
+  sensible option. Unanswered cards are left as they are (crises take their first option, as in Full).
+- **HUD.** Four meters: Money (treasury), Military strength (share of the strongest great power's
+  power, and rank), Public support, Danger of nuclear war (max of global tension and 22 per DEFCON
+  step below 5, with "DEFCON n (5 = peace)" beside it). Date, goal line, one End Turn button, one
+  Advanced button that opens every Full screen, and Settings. The map shows Countries, plus a War view
+  (the military map mode) while at war; unit symbols are drawn only in the war view.
+- **Goal tracker.** "Be the top power in 2040 without a nuclear war: N % of the way there": the share
+  of the time to January 2040 elapsed, scaled by the standing rank (1st ×1, each place −15 %, floor
+  30 %). After a detonation the line switches to the Hegemony victory (bloc share of world GDP ÷ 55 %).
+- **Report.** `endTurn` writes up to three plain bullets (`simple.report`): new wars and peace,
+  regions lost or taken, a nuclear detonation, alert level changes, approval swings, an election
+  within three months, money, the ongoing war, research, one world headline — highest score first.
+- **Tutorial.** Simple mode has its own five steps (`SIMPLE_TUTORIAL_STEPS`); the 27-step tutorial
+  is unchanged for Full mode.
+- **Keyboard.** In Simple mode only Enter, Escape, H, L, ? and the two map keys act; screens are
+  reached through Advanced.

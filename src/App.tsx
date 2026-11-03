@@ -11,6 +11,11 @@ import { BreakingBanner, NewsModal } from './ui/modals/NewsModal';
 import { TooltipLayer } from './ui/overlays/TooltipLayer';
 import { ConfirmDialog } from './ui/overlays/ConfirmDialog';
 import { AdvisorPanel } from './ui/AdvisorPanel';
+import { SimpleHud, SimpleMapModes } from './ui/simple/SimpleHud';
+import { DecisionCards } from './ui/simple/DecisionCards';
+import { CountryPanel } from './ui/simple/CountryPanel';
+import { SimpleEndTurn, TurnReport } from './ui/simple/SimpleBottom';
+import { SIMPLE_MAP_MODES } from './state/uiStore';
 import { useGameStore } from './state/gameStore';
 import { loadGame } from './state/simBridge';
 import { useUiStore } from './state/uiStore';
@@ -120,6 +125,12 @@ export function App() {
     if (musicOn && screen === 'game') startMusic();
     else stopMusic();
   }, [musicOn, muted, screen]);
+  const simple = game?.mode === 'simple';
+  // Simple mode shows the political map and, at war, the war view only (D-086).
+  const mapMode = useUiStore((s) => s.mapMode);
+  useEffect(() => {
+    if (simple && !SIMPLE_MAP_MODES.includes(mapMode)) useUiStore.getState().setMapMode('political');
+  }, [simple, mapMode]);
   const defcon = game?.nations[game.player]?.defcon ?? 5;
   useEffect(() => {
     setMusicIntensity(musicIntensityFor(defcon));
@@ -141,19 +152,33 @@ export function App() {
       <div
         className="ui-root"
         style={{ ['--ui-scale' as string]: prefs.uiScale }}
-        data-advisor={screen === 'game' && game ? (prefs.advisor ? 'open' : 'closed') : 'none'}
+        data-advisor={screen === 'game' && game && !simple ? (prefs.advisor ? 'open' : 'closed') : 'none'}
+        data-mode={simple ? 'simple' : 'full'}
         data-testid="ui-root"
       >
         {screen === 'menu' && <MainMenu onStart={() => setScreen('game')} />}
         {screen === 'game' && game && (
           <>
-            <Hud />
-            <MapModeBar />
-            <NationPanel />
-            <ContextPanel />
-            <AdvisorPanel />
-            <BottomBar />
-            {game.nations[game.player]!.defcon === 1 &&
+            {simple ? (
+              <>
+                <SimpleHud />
+                <SimpleMapModes />
+                <DecisionCards />
+                <CountryPanel />
+                <SimpleEndTurn />
+              </>
+            ) : (
+              <>
+                <Hud />
+                <MapModeBar />
+                <NationPanel />
+                <ContextPanel />
+                <AdvisorPanel />
+                <BottomBar />
+              </>
+            )}
+            {!simple &&
+              game.nations[game.player]!.defcon === 1 &&
               game.nations[game.player]!.warheads > 0 &&
               modal !== 'nuclear' && (
                 <button
@@ -228,8 +253,9 @@ export function App() {
                 </Lazy>
               )}
             </AnimatePresence>
-            {!modal && <BreakingBanner />}
-            {game.pendingEvents.length > 0 && !modal && <EventModal />}
+            {!modal && !simple && <BreakingBanner />}
+            {game.pendingEvents.length > 0 && !modal && !simple && <EventModal />}
+            {simple && !modal && <TurnReport />}
             {ended && (
               <Lazy>
                 <EndScreen onMainMenu={toMenu} onContinue={() => setModal('end')} />

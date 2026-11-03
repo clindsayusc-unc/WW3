@@ -205,6 +205,11 @@ export function Units() {
     const scale = geo.getAttribute('iScale') as InstancedBufferAttribute;
     const hi = geo.getAttribute('iHighlight') as InstancedBufferAttribute;
     const ui = useUiStore.getState();
+    // Simple mode (D-086): the countries view stays clean; unit symbols appear in the war view.
+    if (game.mode === 'simple' && ui.mapMode !== 'military') {
+      if (mesh.count !== 0) mesh.count = 0;
+      return;
+    }
     const t = Math.min(1, (performance.now() - animStart.current) / 1000 / ANIM_SECONDS);
     const ease = 1 - Math.pow(1 - t, 3);
     const selectedSet = new Set(ui.selectedUnitIds);
