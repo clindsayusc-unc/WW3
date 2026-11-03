@@ -162,6 +162,8 @@ test('new game as USA: every screen, 10 turns, no console errors', async ({ page
   await shot(page, 'main-menu');
 
   await page.getByTestId('menu-new').click();
+  await page.getByTestId('mode-full').click(); // Full mode (Simple is the first-game default, D-086)
+  await page.getByTestId('mode-next').click();
   await page.getByTestId('scenario-world').click();
   await page.getByTestId('scenario-next').click();
   await expect(page.getByTestId('leader-grid')).toBeVisible();
@@ -514,6 +516,8 @@ test('Taiwan Strait Crisis as China: 50 turns without errors', async ({ page }) 
   await page.goto('/');
   await expect(page.getByTestId('loading')).toBeHidden({ timeout: 120_000 });
   await page.getByTestId('menu-new').click();
+  await page.getByTestId('mode-full').click(); // Full mode (Simple is the first-game default, D-086)
+  await page.getByTestId('mode-next').click();
   await page.getByTestId('scenario-taiwan').click();
   await page.getByTestId('scenario-next').click();
   await page.getByTestId('leader-grid').getByTestId('leader-CHN').click();
@@ -632,6 +636,8 @@ test('nuclear aftermath: fallout on the map and the nobody-wins ending', async (
   await page.goto('/');
   await expect(page.getByTestId('loading')).toBeHidden({ timeout: 120_000 });
   await page.getByTestId('menu-new').click();
+  await page.getByTestId('mode-full').click(); // Full mode (Simple is the first-game default, D-086)
+  await page.getByTestId('mode-next').click();
   await page.getByTestId('scenario-world').click();
   await page.getByTestId('scenario-next').click();
   await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
@@ -755,6 +761,9 @@ test('tutorial: five guided months, every screen, readability (D-080)', async ({
   await expect(id('loading')).toBeHidden({ timeout: 120_000 });
   await look('menu');
   await id('menu-new').click();
+  await expect(id('mode-simple')).toHaveClass(/selected/); // Simple is the default for a first game (D-086)
+  await id('mode-full').click();
+  await id('mode-next').click();
   await id('scenario-world').click();
   await id('scenario-next').click();
   await id('leader-grid').getByTestId('leader-USA').click();
@@ -906,5 +915,117 @@ test('tutorial: five guided months, every screen, readability (D-080)', async ({
   await look('ui-scale-125');
   await page.evaluate(() => (globalThis as unknown as { ww3: { ui: { getState: () => { setPrefs: (p: object) => void } } } }).ww3.ui.getState().setPrefs({ uiScale: 1 }));
   expect(small, small.slice(0, 10).join('\n')).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test('simple mode: meters, Decision Cards, Attack/Defend, report, mode switch (D-086)', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(m.text());
+  });
+  const id = (t: string) => page.getByTestId(t);
+  await page.goto('/');
+  await expect(id('loading')).toBeHidden({ timeout: 120_000 });
+  await id('menu-new').click();
+  // A first game defaults to Simple.
+  await expect(id('mode-step')).toContainText('How do you want to play?');
+  await expect(id('mode-simple')).toHaveClass(/selected/);
+  await shot(page, 'simple-mode-choice');
+  await id('mode-next').click();
+  await id('scenario-world').click();
+  await id('scenario-next').click();
+  await id('leader-grid').getByTestId('leader-USA').click();
+  await startGame(page);
+  await expect(id('hud')).toBeVisible({ timeout: 60_000 });
+  if (await id('music-hint-dismiss').isVisible().catch(() => false)) await id('music-hint-dismiss').click();
+  // Four meters, the date, the goal and one big End Turn; no other screens on show.
+  for (const m of ['meter-money', 'meter-military', 'meter-support', 'meter-danger']) await expect(id(m)).toBeVisible();
+  await expect(id('s-date')).toContainText('January 2027');
+  await expect(id('goal-tracker')).toContainText('% of the way there');
+  await expect(id('meter-danger')).toContainText('DEFCON');
+  await expect(id('nav-budget')).toHaveCount(0);
+  await expect(id('advisor')).toHaveCount(0);
+  await expect(id('end-turn')).toBeVisible();
+  // The US starts at war with Iran (D-085): political map plus the war view.
+  await expect(id('mapmodes').locator('button')).toHaveCount(2);
+  await expect(id('decision-card').first()).toBeVisible();
+  const cards = await id('decision-card').count();
+  expect(cards).toBeGreaterThanOrEqual(1);
+  expect(cards).toBeLessThanOrEqual(3);
+  await page.waitForTimeout(3000);
+  await shot(page, 'simple-hud');
+  await id('decision-card').first().screenshot({ path: `${SHOTS}/simple-decision-card.png` });
+
+  // Click a country, then Attack: armies are assigned to fronts, odds in words.
+  await page.evaluate(() => {
+    const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
+    w.ui.getState().select(w.capital('IRN')!);
+  });
+  await expect(id('country-panel')).toContainText('Iran');
+  await expect(id('country-odds')).toHaveText(/win|fight|fail|defeat/i);
+  await id('simple-attack').click();
+  await expect(id('country-status')).toContainText('attacking');
+  await shot(page, 'simple-country-attack');
+  // Attacking a nation we are not at war with asks first.
+  await page.evaluate(() => {
+    const w = (globalThis as unknown as { ww3: Ww3Hook }).ww3;
+    w.ui.getState().select(w.capital('VEN')!);
+  });
+  await expect(id('country-panel')).toContainText('Venezuela');
+  await id('simple-attack').click();
+  await expect(id('confirm-dialog')).toContainText('Go to war');
+  await id('confirm-cancel').click();
+  await id('simple-defend').click();
+  await expect(id('country-status')).toContainText('guarding the border');
+  await page.keyboard.press('Escape');
+
+  // Answer cards and end turns, reading the report each month.
+  for (let t = 0; t < 3; t++) {
+    for (let k = 0; k < 3; k++) {
+      const card = id('decision-card').first();
+      if (!(await card.isVisible().catch(() => false))) break;
+      const before = await id('decision-card').count();
+      const options = await card.getByRole('button', { name: /./ }).count();
+      // The second button is the cautious one on most cards (hold the line, reject, keep).
+      await card.getByTestId(options > 2 ? 'card-option-1' : 'card-option-0').click();
+      // A choice that starts a war asks first; go ahead (it is still a card button).
+      if (await id('confirm-dialog').isVisible().catch(() => false)) await id('confirm-ok').click();
+      await expect.poll(async () => id('decision-card').count(), { timeout: 30_000 }).not.toBe(before);
+    }
+    await id('end-turn').click();
+    await expect(id('turn-report')).toBeVisible({ timeout: 120_000 });
+    const bullets = await id('turn-report').locator('li').count();
+    expect(bullets).toBeGreaterThanOrEqual(1);
+    expect(bullets).toBeLessThanOrEqual(3);
+    if (t === 0) {
+      await page.waitForTimeout(1500);
+      await shot(page, 'simple-turn-report');
+      await id('turn-report').screenshot({ path: `${SHOTS}/simple-turn-report-card.png` });
+    }
+    await id('report-continue').click();
+    await expect(id('turn-report')).toBeHidden();
+  }
+
+  // Advanced opens every other screen.
+  await id('advanced').click();
+  await expect(id('advanced-menu')).toBeVisible();
+  await id('adv-research').click();
+  await expect(id('modal-research')).toBeVisible();
+  await page.keyboard.press('Escape');
+  // Switch to Full and back: same game, same month.
+  const month = await id('s-date').innerText();
+  await id('nav-settings').click();
+  await id('settings-mode-full').click();
+  await page.keyboard.press('Escape');
+  await expect(id('nav-budget')).toBeVisible();
+  await expect(id('hud')).toContainText(month);
+  await id('nav-settings').click();
+  await id('settings-mode-simple').click();
+  await page.keyboard.press('Escape');
+  await expect(id('meter-money')).toBeVisible();
+  await expect(id('s-date')).toHaveText(month);
+  await page.waitForTimeout(2500);
+  await shot(page, branchSlug());
   expect(errors).toEqual([]);
 });

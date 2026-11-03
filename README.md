@@ -116,6 +116,16 @@ job runs it after every build; numbers are recorded in `docs/PERF.md`.
 
 ## How to play
 
+New Game first asks **how you want to play**:
+
+- **Simple** (the default for a first game): your ministers run the economy, budget, factories,
+  research and armies. Each month you answer one to three **Decision Cards** — a crisis, a war, an
+  offer, a threat, military spending — whose buttons say in plain words what will probably happen.
+  Click a country on the globe and press **Attack** or **Defend**; armies go to the fronts on their
+  own. Four meters (money, military strength, public support, danger of nuclear war), a one-line goal
+  and a three-line report each month. **Advanced** opens every Full screen.
+- **Full**: every lever by hand, as below. Switch at any time in Settings without losing your game.
+
 1. **New Game** → pick a scenario (_World of 2027_ or _Taiwan Strait Crisis_) and a nation from the
    leader cards.
 2. Each month: read the alerts and news ticker, set your **Budget** (B), queue **Production** (P),

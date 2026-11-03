@@ -4,7 +4,8 @@
  */
 import { nationName, type World } from '../sim/world';
 import type { Command, GameState } from '../sim/types';
-import { alliesOf } from '../sim/query';
+import { alliesOf, atWar } from '../sim/query';
+import { findDecision, warOdds } from '../sim/simple';
 import { STRIKE_INFO } from '../sim/strikes';
 
 export interface ConfirmText {
@@ -41,6 +42,32 @@ export function confirmText(world: World, game: GameState, c: Command): ConfirmT
         default:
           return null;
       }
+    }
+    case 'setStance': {
+      // Simple mode (D-086): Attack on a nation we are not fighting declares war.
+      if (c.stance !== 'attack' || atWar(game, game.player, c.target)) return null;
+      const who = name(c.target);
+      const allies = alliesOf(world, game, c.target).filter((a) => game.nations[a]?.alive).map(name);
+      return {
+        title: `Go to war with ${who}?`,
+        body: `This cannot be undone. Our generals expect: ${warOdds(world, game, c.target).words.toLowerCase()}.${allies.length ? ` ${allies.slice(0, 4).join(', ')}${allies.length > 4 ? ` and ${allies.length - 4} more` : ''} may join in to defend ${who}.` : ''} The world will think less of us, and the danger of a wider war rises.`,
+        confirm: 'Go to war',
+        danger: true,
+      };
+    }
+    case 'decide': {
+      // A card only asks again when its choice starts a war or walks out of an alliance.
+      const opt = findDecision(world, game, c.card, c.option);
+      if (typeof opt === 'string') return null;
+      for (const a of opt.actions) {
+        if (a.type === 'setStance' || a.type === 'leaveBloc') {
+          const t = confirmText(world, game, a);
+          if (t) return t;
+        }
+        if (a.type === 'resolveEvent' && /war with/i.test(opt.effect))
+          return { title: `${opt.label}?`, body: `${opt.effect}. This cannot be undone.`, confirm: opt.label, danger: true };
+      }
+      return null;
     }
     case 'missileStrike': {
       const region = world.regions.get(c.region)?.name ?? 'the target';

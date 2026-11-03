@@ -14,7 +14,7 @@ import {
   savesLocation,
   type SaveMeta,
 } from '../../state/saves';
-import { loadGame } from '../../state/simBridge';
+import { dispatch, loadGame } from '../../state/simBridge';
 import { toggleFullscreen } from '../../state/native';
 import { playSound } from '../audio';
 import { AudioSettingsPanel } from '../AudioSettings';
@@ -37,6 +37,37 @@ export function SettingsModal({ onMainMenu }: { onMainMenu: () => void }) {
   }, []);
   return (
     <Modal icon={<ScreenIcon id="settings" />} title="Settings" subtitle="Accessibility, graphics, audio and saves." testId="modal-settings">
+      {game && (
+        <>
+          <div className="section-title">How you play</div>
+          <div className="seg" role="radiogroup" aria-label="Play mode" data-testid="settings-mode">
+            {(
+              [
+                ['simple', 'Simple', 'Your ministers run the economy, research, factories and armies; you answer a few Decision Cards each month.'],
+                ['full', 'Full', 'Every lever by hand: budget, production, research, every unit, diplomacy and the UN.'],
+              ] as const
+            ).map(([id, label, tip]) => (
+              <button
+                key={id}
+                className={`seg-btn ${(game.mode ?? 'full') === id ? 'active' : ''}`}
+                role="radio"
+                aria-checked={(game.mode ?? 'full') === id}
+                data-tip={tip}
+                data-testid={`settings-mode-${id}`}
+                onClick={() => {
+                  if ((game.mode ?? 'full') === id) return;
+                  playSound('click');
+                  dispatch({ type: 'setMode', mode: id });
+                  ui.setPrefs({ lastMode: id });
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="hint">Switching keeps your game exactly as it is.</p>
+        </>
+      )}
       <div className="section-title">Accessibility &amp; guidance</div>
       <AccessibilitySettings />
       <GraphicsSettings />

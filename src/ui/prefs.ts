@@ -15,6 +15,8 @@ export interface UiPrefs {
   advisor: boolean;
   /** Tutorial finished or dismissed (it is offered again from the main menu). */
   tutorialDone: boolean;
+  /** How the last new game was played (D-086); null before the first game, which defaults to Simple. */
+  lastMode: 'simple' | 'full' | null;
 }
 
 export const PREFS_KEY = 'ww3.prefs';
@@ -26,6 +28,7 @@ export const DEFAULT_PREFS: UiPrefs = {
   confirmIrreversible: true,
   advisor: true,
   tutorialDone: false,
+  lastMode: null,
 };
 
 export function clampScale(v: unknown): number {
@@ -43,6 +46,7 @@ export function parsePrefs(raw: string | null): UiPrefs {
       confirmIrreversible: o.confirmIrreversible !== false,
       advisor: o.advisor !== false,
       tutorialDone: o.tutorialDone === true,
+      lastMode: o.lastMode === 'simple' || o.lastMode === 'full' ? o.lastMode : null,
     };
   } catch {
     return { ...DEFAULT_PREFS };

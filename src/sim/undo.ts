@@ -23,6 +23,8 @@ const UNDOABLE: ReadonlySet<Command['type']> = new Set([
   'setMobilization',
   'disband',
   'setAid',
+  'setMode',
+  'setMilitaryBias',
 ]);
 
 export const isUndoable = (c: Command): boolean => UNDOABLE.has(c.type);
@@ -53,6 +55,10 @@ export function undoLabel(world: World, c: Command): string {
       return 'disband';
     case 'setAid':
       return 'aid programme';
+    case 'setMode':
+      return `switch to ${c.mode} mode`;
+    case 'setMilitaryBias':
+      return 'military spending';
     default:
       return c.type;
   }

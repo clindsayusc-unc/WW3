@@ -272,3 +272,48 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
     body: 'That is everything you need. I will keep my three recommendations coming each month. Press H to replay this briefing at any time. Good luck — and try to keep it below DEFCON 1.',
   },
 ];
+
+/**
+ * The Simple-mode tutorial (D-086): five steps, about two minutes. Full mode keeps the 27-step
+ * tutorial above.
+ */
+export const SIMPLE_TUTORIAL_STEPS: readonly TutorialStep[] = [
+  {
+    id: 's-welcome',
+    turn: 0,
+    title: 'You are in charge',
+    body: `I am ${ADVISOR.name}, your chief of staff (a fictional officer). You lead your country from January 2027. Your ministers run the economy, factories, research and armies for you. You make the big calls.`,
+  },
+  {
+    id: 's-meters',
+    turn: 0,
+    target: 'topbar-stats',
+    title: 'Four things to watch',
+    body: 'Money in the bank. How strong your military is. How many people support you. And the danger of nuclear war. DEFCON is your forces’ alert level: 5 is peacetime, 1 means ready to launch nuclear weapons. Hover any number to see why it is what it is.',
+  },
+  {
+    id: 's-goal',
+    turn: 0,
+    target: 'goal-tracker',
+    title: 'How to win',
+    body: 'Reach 2040 without a nuclear war as the great power that gained the most: a growing economy and the land you hold. This line shows how close you are.',
+  },
+  {
+    id: 's-cards',
+    turn: 0,
+    target: 'decision-cards',
+    title: 'Your decisions',
+    body: 'Every month brings one to three cards: a crisis, a war, an offer, a threat. Each button says what will probably happen. Click a country on the globe to Attack or Defend it.',
+    task: 'Choose one button on a card.',
+    done: (c) => Object.keys(c.game.simple?.decided ?? {}).length > 0,
+  },
+  {
+    id: 's-end',
+    turn: 0,
+    target: 'end-turn',
+    title: 'End the month',
+    body: 'When you are done, end the turn. You will get three lines on what happened. Advanced opens every detailed screen if you want more; Settings switches to Full mode. Press H to see this again.',
+    task: 'Press End Turn.',
+    done: turnEnded,
+  },
+];

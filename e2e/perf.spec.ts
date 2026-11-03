@@ -94,6 +94,8 @@ test('performance profile: Low/Medium/High sweep and 20 turns', async ({ page })
   await page.goto('/');
   await expect(page.getByTestId('loading')).toBeHidden({ timeout: 180_000 });
   await page.getByTestId('menu-new').click();
+  await page.getByTestId('mode-full').click(); // Full mode (Simple is the first-game default, D-086)
+  await page.getByTestId('mode-next').click();
   await page.getByTestId('scenario-next').click();
   await page.getByTestId('leader-grid').getByTestId('leader-USA').click();
   const toggle = page.getByTestId('tutorial-toggle');

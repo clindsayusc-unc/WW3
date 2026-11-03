@@ -724,8 +724,30 @@ export interface GameState {
   nuclearLog: NuclearRecord[];
   /** World GDP at the start (for the end-of-game statistics). */
   worldGdpStart: number;
+  /** How the player plays (D-086): absent means Full. Simple hands the details to the AI. */
+  mode?: PlayMode;
+  /** Simple-mode state: spending lean, war stances, answered Decision Cards, last report (D-086). */
+  simple?: SimpleState;
   /** Each great power's January 2027 position, for the Deterrence victory's standing (D-081). */
   standingStart?: Record<Iso3, { readonly gdp: number; readonly regions: number; readonly turn: number }>;
+}
+
+/** Full: every lever by hand. Simple: the AI runs economy, budget, production, research and armies (D-086). */
+export type PlayMode = 'simple' | 'full';
+/** The player's orders for a war (or a border) in Simple mode. */
+export type WarStance = 'attack' | 'defend';
+
+export interface SimpleState {
+  /** Percentage points added to (or taken from) the military share the AI would choose, −15..+15. */
+  militaryBias: number;
+  /** Attack or defend, per nation. Attack pushes into their territory; defend holds and guards the border. */
+  stances: Record<Iso3, WarStance>;
+  /** Decision Cards answered: card id → turn answered. */
+  decided: Record<string, number>;
+  /** The last end-of-turn report: up to three plain-language bullets. */
+  report: string[];
+  /** Turn the report describes (the turn just resolved). */
+  reportTurn: number;
 }
 
 export interface WorldEconomy {
@@ -789,7 +811,15 @@ export type Command =
   | { readonly type: 'unPropose'; readonly kind: ResolutionKind; readonly target: Iso3 }
   | { readonly type: 'unVote'; readonly resolutionId: number; readonly vote: UnVote }
   | { readonly type: 'setAid'; readonly recipient: Iso3; readonly level: number }
-  | { readonly type: 'leaveBloc'; readonly bloc: BlocId };
+  | { readonly type: 'leaveBloc'; readonly bloc: BlocId }
+  /** Switch between Simple and Full play; the game itself is untouched (D-086). */
+  | { readonly type: 'setMode'; readonly mode: PlayMode }
+  /** Answer a Simple-mode Decision Card: carries out the option's orders (D-086). */
+  | { readonly type: 'decide'; readonly card: string; readonly option: number }
+  /** Simple mode: attack (declaring war if needed) or defend against a nation; null clears it. */
+  | { readonly type: 'setStance'; readonly target: Iso3; readonly stance: WarStance | null }
+  /** Simple mode: lean the AI-run budget toward (+) or away from (−) the military, absolute points. */
+  | { readonly type: 'setMilitaryBias'; readonly bias: number };
 
 export interface NewGameOptions {
   readonly seed: number;
@@ -797,6 +827,8 @@ export interface NewGameOptions {
   readonly scenario: 'world-2027' | 'taiwan-crisis';
   /** All-AI game: the player nation is run by the AI too (balance runs). */
   readonly observer?: boolean;
+  /** Simple or Full play (D-086); Full when absent. */
+  readonly mode?: PlayMode;
 }
 
 export type WorkerRequest =

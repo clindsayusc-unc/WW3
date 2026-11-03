@@ -65,7 +65,8 @@ import { runAid } from './aid';
 import { initBlocs, leaveBloc, runBlocs } from './blocs';
 import { castPlayerVote, initUn, runUn, tableResolution } from './un';
 import { decayMemories } from './personality';
-import { adjustRelation, clamp, controlledRegions, getRelation, log, headline } from './query';
+import { adjustRelation, atWar, clamp, controlledRegions, getRelation, log, headline } from './query';
+import { BIAS_MAX, BIAS_MIN, emptySimple, findDecision, reportBefore, turnReport } from './simple';
 
 export { START_DATE };
 export const MONTHS_PER_TURN = 1;
@@ -257,6 +258,42 @@ export function applyCommand(world: World, input: GameState, command: Command): 
     case 'leaveBloc':
       leaveBloc(world, state, player, command.bloc);
       return state;
+    case 'setMode': {
+      // Switching modes never touches the simulation itself (D-086).
+      state.mode = command.mode;
+      state.simple ??= emptySimple();
+      return state;
+    }
+    case 'setMilitaryBias': {
+      state.simple ??= emptySimple();
+      state.simple.militaryBias = clamp(Math.round(Number.isFinite(command.bias) ? command.bias : 0), BIAS_MIN, BIAS_MAX);
+      return state;
+    }
+    case 'setStance': {
+      state.simple ??= emptySimple();
+      const target = command.target;
+      if (target === player || !state.nations[target]?.alive) throw new Error('That nation no longer exists');
+      if (command.stance === null) {
+        delete state.simple.stances[target];
+        return state;
+      }
+      // Attacking a nation we are not at war with declares war on it.
+      if (command.stance === 'attack' && !atWar(state, player, target)) {
+        executeProposal(world, state, player, target, 'declareWar');
+        if (!atWar(state, player, target)) throw new Error('War could not be declared');
+      }
+      state.simple.stances[target] = command.stance;
+      return state;
+    }
+    case 'decide': {
+      const opt = findDecision(world, state, command.card, command.option);
+      if (typeof opt === 'string') throw new Error(opt);
+      let s: GameState = state;
+      for (const a of opt.actions) s = applyCommand(world, s, a);
+      s.simple ??= emptySimple();
+      s.simple.decided[command.card] = s.turn;
+      return s;
+    }
     case 'nuclearStrike': {
       // Release needs DEFCON 1 and two separate confirmations from the commander (D-076).
       if (!(command.confirmations >= 2)) throw new Error('Nuclear release requires two confirmations.');
@@ -359,6 +396,7 @@ export function endTurn(world: World, state: GameState): GameState {
   state.battleReports = state.battleReports.filter((b) => state.turn - b.turn < 1);
   // Unresolved player events pick their first option.
   for (const p of [...state.pendingEvents]) resolvePendingEvent(world, state, p.id, 0);
+  const simpleBefore = state.mode === 'simple' ? reportBefore(state) : null;
 
   // 1. AI decides (budgets, production, orders, diplomacy), then the strategic layer (war plans,
   // balancing coalitions) and foreign aid (D-071, D-072).
@@ -429,6 +467,15 @@ export function endTurn(world: World, state: GameState): GameState {
   if (state.news.length === 0) state.news.push(defaultHeadline(world, state));
   // Trim the log.
   state.log = state.log.filter((e) => state.turn - e.turn <= LOG_KEEP_TURNS);
+  if (simpleBefore) {
+    // Simple mode (D-086): the plain-language report, and attack orders lapse once a war is over.
+    state.simple ??= emptySimple();
+    for (const x of Object.keys(state.simple.stances))
+      if (!state.nations[x]?.alive || (state.simple.stances[x] === 'attack' && !atWar(state, player, x))) delete state.simple.stances[x];
+    for (const [id, t] of Object.entries(state.simple.decided)) if (state.turn - t > 24) delete state.simple.decided[id];
+    state.simple.report = turnReport(world, simpleBefore, state);
+    state.simple.reportTurn = state.turn - 1;
+  }
   return state;
 }
 

@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, MousePointerClick, X } from 'lucide-react';
 import { useGameStore } from '../../state/gameStore';
 import { useUiStore } from '../../state/uiStore';
 import { Portrait } from '../Portrait';
-import { ADVISOR, TUTORIAL_STEPS, type TutorialContext } from './steps';
+import { ADVISOR, SIMPLE_TUTORIAL_STEPS, TUTORIAL_STEPS as FULL_STEPS, type TutorialContext } from './steps';
 import { playSound } from '../audio';
 
 interface Box {
@@ -26,6 +26,9 @@ export function TutorialOverlay() {
   const selectedRegion = useUiStore((s) => s.selectedRegion);
   const game = useGameStore((s) => s.game);
   const [box, setBox] = useState<Box | null>(null);
+  // Simple mode has its own five-step tutorial (D-086).
+  const simple = game?.mode === 'simple';
+  const TUTORIAL_STEPS = simple ? SIMPLE_TUTORIAL_STEPS : FULL_STEPS;
   const step = tut.active ? TUTORIAL_STEPS[tut.step] : undefined;
 
   // Measure the target (it may move, open or close) a few times a second.
@@ -68,11 +71,11 @@ export function TutorialOverlay() {
       setTutorial({ active: false, step: 0 });
       useUiStore.getState().setPrefs({ tutorialDone: true });
     }
-  }, [tut.active, tut.step, setTutorial]);
+  }, [tut.active, tut.step, setTutorial, TUTORIAL_STEPS.length]);
 
   if (!step || !game) return null;
-  // A decision (event) takes precedence: the tutorial waits beside it.
-  if (game.pendingEvents.length > 0 && !modal)
+  // A decision (event) takes precedence: the tutorial waits beside it (Simple mode shows events as cards).
+  if (game.pendingEvents.length > 0 && !modal && !simple)
     return (
       <div className="tutorial-layer" data-testid="tutorial">
         <div className="tutorial-pill" data-testid="tutorial-paused">
@@ -145,7 +148,7 @@ export function TutorialOverlay() {
                 {ADVISOR.name} <span className="chip tiny">fictional</span>
               </div>
               <div className="tutorial-role">
-                {ADVISOR.title} · Month {step.turn + 1} of 5 · {indexInTurn}/{turnSteps.length}
+                {simple ? `${ADVISOR.title} · Step ${tut.step + 1} of ${TUTORIAL_STEPS.length}` : `${ADVISOR.title} · Month ${step.turn + 1} of 5 · ${indexInTurn}/${turnSteps.length}`}
               </div>
             </div>
             <button className="icon-btn" onClick={finish} data-tip="End the tutorial (H replays it)" data-testid="tutorial-close" aria-label="End the tutorial">

@@ -218,6 +218,7 @@ export function createGame(world: World, options: NewGameOptions): GameState {
     scenario,
     player,
     ...(options.observer ? { observer: true } : {}),
+    ...(options.mode === 'simple' ? { mode: 'simple' as const, simple: { militaryBias: 0, stances: {}, decided: {}, report: [], reportTurn: -1 } } : {}),
     turn: 0,
     date: START_DATE,
     isoDate: isoYearMonth(START_DATE),

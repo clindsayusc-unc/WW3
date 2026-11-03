@@ -100,6 +100,8 @@ export const MAP_MODES: { id: MapMode; label: string; key: string; tooltip: stri
       'Strategic resources: pick oil, gas, rare earths, chips, food or steel. Green exporters (brighter = larger surplus), amber importers (deeper = more dependent), red where demand goes unmet.',
   },
 ];
+/** Simple mode shows only the political map, and a war view while at war (D-086). */
+export const SIMPLE_MAP_MODES: readonly MapMode[] = ['political', 'military'];
 export type Quality = 'low' | 'medium' | 'high';
 
 export interface FlyTarget {
@@ -135,6 +137,9 @@ interface UiStore {
   breakingSeen: number;
   /** Battle report shown by the battle modal (D-059). */
   battleReportId: number | null;
+  /** Simple mode: the turn whose end-of-turn report the player has dismissed (D-086). */
+  reportSeen: number;
+  setReportSeen: (turn: number) => void;
   flyTo: FlyTarget | null;
   quality: Quality;
   /** Set when the globe's textures failed to load (shown on the loading screen). */
@@ -207,6 +212,8 @@ export const useUiStore = create<UiStore>((set) => ({
   diplomacyTab: 'nations',
   breakingSeen: 0,
   battleReportId: null,
+  reportSeen: 0,
+  setReportSeen: (reportSeen) => set({ reportSeen }),
   flyTo: null,
   quality: 'high',
   assetError: null,

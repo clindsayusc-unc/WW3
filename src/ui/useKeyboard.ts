@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MAP_MODES, useUiStore } from '../state/uiStore';
+import { MAP_MODES, SIMPLE_MAP_MODES, useUiStore } from '../state/uiStore';
 import { useGameStore } from '../state/gameStore';
 import { dispatch, undoLast } from '../state/simBridge';
 import { playSound } from './audio';
@@ -47,12 +47,21 @@ export function useKeyboard(): void {
         !game.victory &&
         !game.defeat
       ) {
-        if (game.pendingEvents.length > 0) return; // resolve events first
+        if (game.pendingEvents.length > 0 && game.mode !== 'simple') return; // resolve events first
         playSound('endTurn');
         dispatch({ type: 'endTurn' });
         return;
       }
+      // Simple mode (D-086): every other screen sits behind the Advanced button.
+      const simple = game?.mode === 'simple';
       const mode = MAP_MODES.find((m) => m.key === e.key);
+      if (simple) {
+        if (mode && SIMPLE_MAP_MODES.includes(mode.id)) ui.setMapMode(mode.id);
+        const k = e.key.toLowerCase();
+        if (k === 'h' && !e.metaKey && !e.ctrlKey) ui.setTutorial({ active: true, step: 0 });
+        if (k === 'l') ui.toggleLabels();
+        return;
+      }
       if (mode) {
         ui.setMapMode(mode.id);
         return;
